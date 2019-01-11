@@ -17,19 +17,18 @@ CREATE TABLE `organization`
 	`updated_at` datetime
 );
 
-CREATE TABLE `clientproject` 
-(
-	`id` int,
-	`org_id` int,
-	`name` varchar(255),
-	`description` varchar(255),
-	`business_goal` varchar(255),
-	`progress` int,
-	`start_date` date,
-	`end_date` date,
-	`created_at` datetime,
-	`updated_at` datetime
-);
+CREATE TABLE `clientproject` (
+  `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `org_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `business_goal` varchar(255) DEFAULT NULL,
+  `progress` int(11) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=innodb DEFAULT CHARSET=latin1;
 
 CREATE TABLE `clientprojectowner` 
 (

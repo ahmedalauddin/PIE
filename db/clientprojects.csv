@@ -1,0 +1,19 @@
+﻿org_id,name,description,business_goal,progress,start_date,end_date
+1,Increase Plant Availability,Effort to increase the availability of all plants.,Increase the availability of all plants to 95%.,0,1/4/2016,12/25/2016
+2,Inventory Reduction,Reduce inventory in all warehouses,Reduce inventory by 20%,0,9/9/2015,9/5/2016
+3,Logistics - Northwest,Improve logistics in facilities in Northwest,Improve logistics in facilities in Northwest,0,4/30/2015,7/23/2015
+1,Plant closing,Effort to increase the availability of all plants.,Increase the availability of all plants to 95%.,25,1/8/2015,8/9/2015
+2,Inventory Reduction,Reduce inventory in all warehouses,Reduce inventory by 20%,50,9/24/2015,4/19/2016
+3,Logistics - Northwest,Improve logistics in facilities in Northwest,Improve logistics in facilities in Northwest,75,1/15/2016,10/13/2016
+1,Plant closing,Close least efficient plants,Goal TBD,100,2/23/2015,6/18/2015
+2,Internet of Things,Effort to increase the availability of all plants.,Goal TBD,10,6/26/2015,10/7/2015
+3,Lean operations,Reduce inventory in all warehouses,Goal TBD,20,2/8/2016,8/2/2016
+1,Logistics - Northwest,Improve logistics in facilities in Northwest,Goal TBD,50,4/7/2016,5/13/2016
+2,Plant closing,Reduce inventory in all warehouses,Goal TBD,75,5/5/2015,12/15/2015
+3,Optimize supply chain,Improve logistics in facilities in Northwest,Goal TBD,100,11/7/2015,8/9/2016
+4,Lean operations,Effort to increase the availability of all plants.,Goal TBD,10,11/15/2015,8/4/2016
+5,Logistics - Northwest,Reduce inventory in all warehouses,Reduce inventory by 20%,20,4/1/2016,7/28/2016
+6,Plant closing,Improve logistics in facilities in Northwest,Reduce inventory by 20%,50,1/20/2015,12/26/2015
+1,Optimize supply chain,Close least efficient plants,Reduce inventory by 20%,75,3/4/2015,7/3/2015
+2,Lean operations,Effort to increase the availability of all plants.,Reduce inventory by 20%,100,12/27/2015,4/14/2016
+3,RFID tagging of inventory,Reduce inventory in all warehouses,Reduce inventory by 20%,10,5/14/2015,9/25/2015

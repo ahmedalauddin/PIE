@@ -19,3 +19,6 @@
 logs
 *.log
 npm-debug.log*
+
+### db folder files ###
+.db/*.xslx

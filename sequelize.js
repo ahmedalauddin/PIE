@@ -13,7 +13,7 @@ const sequelize = new Sequelize(database, user, pass, {
     dialect: 'mysql',
     operatorsAliases: false,
     // logging should go to console.log
-    logging: true,
+    logging: false,
 
     pool: {
         max: 5,

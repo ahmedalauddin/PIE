@@ -1,15 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
-
-// Use the Sequelize connection pool.
-
-// Load the MySQL pool connection
-//const pool = require('../data/config');
-
-User.findAll().then(users => {
-  console.log(users)
-})
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+    res.json([{
+        id: 1,
+        full_name: "Darrin Tisdale",
+        username: "darrintisdale"
+    }, {
+        id: 2,
+        username: "Brad Kaufman",
+        username: "bradkaufman"
+    }]);
+});
 
 module.exports = router;
-

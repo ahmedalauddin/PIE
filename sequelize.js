@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize');
-const PersonModel = require('../models/person');
-const OrganizationModel = require('../models/organization');
-const KpiModel = require('../models/kpi');
+const PersonModel = require('./models/person');
+const OrganizationModel = require('./models/organization');
+const KpiModel = require('./models/kpi');
 
 mySqlDb = 'valueinfinity1.cgrq1bgu4ual.us-east-2.rds.amazonaws.com';
-database = 'valueinfinity1';
+database = 'valueinfinity';
 user = 'thoughtiveadmin';
 pass = 'Th0ughtiveSql*';
 

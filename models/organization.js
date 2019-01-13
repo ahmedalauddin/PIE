@@ -4,7 +4,8 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('organization', {
     id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true
+      allowNull: false,
+      primaryKey: true
     },
     user_id: {
       type: DataTypes.INTEGER(11),

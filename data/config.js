@@ -1,5 +1,5 @@
-const mysql = require('mysql');
-const Sequelize = require('sequelize');
+//const mysql = require('mysql');
+//const Sequelize = require('sequelize');
 
 
 // Or you can simply use a connection uri

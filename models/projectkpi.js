@@ -4,7 +4,8 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('projectkpi', {
     id: {
       type: DataTypes.INTEGER(11),
-      allowNull: true
+      allowNull: false,
+      primaryKey: true
     },
     project_id: {
       type: DataTypes.INTEGER(11),

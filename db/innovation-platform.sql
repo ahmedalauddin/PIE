@@ -10,8 +10,7 @@ CREATE TABLE `person`
 
 CREATE TABLE `organization` 
 (
-	`id` int,
-	`user_id` int,
+	`id` int(11)  NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`name` varchar(255),
 	`created_at` datetime,
 	`updated_at` datetime
@@ -94,7 +93,7 @@ CREATE TABLE `kpi`
 	`updated_at` datetime
 );
 
-ALTER TABLE `organization` ADD FOREIGN KEY (`user_id`) REFERENCES `person` (`id`);
+ALTER TABLE `person` ADD FOREIGN KEY (`org_id`) REFERENCES `organization` (`id`);
 
 ALTER TABLE `projectkpi` ADD FOREIGN KEY (`kpi_id`) REFERENCES `kpi` (`id`);
 

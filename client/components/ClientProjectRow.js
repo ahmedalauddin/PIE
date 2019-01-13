@@ -10,10 +10,12 @@ class ClientProjectRow extends PureComponent {
         /* todo */
     }
     render() {
-        return (
-            <div className="client-projects"> {}
+        return <div>hello</div>;
+        /*(
+         */            <div className="client-projects"> {}
             </div>
-        );
+        );  */
+*/
     }
 
 }

@@ -1,2 +1,2 @@
 // Load the MySQL pool connection
-const pool = require('../data/config');
+//const pool = require('../data/config');

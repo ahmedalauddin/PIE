@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var bodyParser = require('body-parser')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -16,7 +17,13 @@ const {Person, Organization, Kpi} = require('./sequelize');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// Log requests to the console
 app.use(logger('dev'));
+
+// Parse incoming requests data (https://github.com/expressjs/body-parser)
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

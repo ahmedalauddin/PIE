@@ -1,6 +1,7 @@
 var express = require('express');
+const PersonModel = require('./models/person');
+
 var router = express.Router();
-const Person = require('../models/person');
 const sequelize = require('../sequelize');
 
 /* GET users listing. */
@@ -19,11 +20,12 @@ router.get('/', function(req, res, next) {
         full_name: "John Jones",
         username: "johnjones"
     }]);
-}); */
+});
+*/
+const Person = PersonModel(sequelize, Sequelize);
 
 router.get('/', function(req, res, next) {
     // Get some users to test sequelize.
-    // try this
     Person.findAll({
         attributes: ['id', 'full_name']
     });

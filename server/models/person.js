@@ -36,13 +36,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'person'
   });
-
+/*
   Person.associate = (models) => {
     Person.belongsTo(models.Organization, {
       foreignKey: 'orgId',
       onDelete: 'cascade'
     });
-  };
+  };*/
 
   return Person;
 };

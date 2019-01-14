@@ -30,13 +30,14 @@ module.exports = {
       },
       orgId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: false
+        /*
         onDelete: 'CASCADE',
         references: {
           model: 'Organization',
           key: 'id',
           as: 'orgId'
-        }
+        }*/
       }
     });
   },

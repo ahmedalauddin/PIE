@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('organization', {
+    var Organization = queryInterface.createTable('organization', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,6 +27,16 @@ module.exports = {
         defaultValue: Sequelize.NOW
       }
     });
+
+    /*
+    Organization.associate = (models) => {
+      Organization.hasMany(models.Persons, {
+        foreignKey: 'orgId',
+        as: 'persons'
+      });
+    }; */
+
+    return Organization;
   },
   down: (queryInterface/*, Sequelize */) => {
     return queryInterface.dropTable('organization');

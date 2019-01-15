@@ -5,17 +5,18 @@ module.exports = {
     return queryInterface.bulkInsert('person', [{
       username: 'darrintisdale',
       fullName: 'Darrin Tisdale',
-      orgId: 2,
       email: 'darrin@thoughtive.io'
     }, {
       username: 'bradkaufman',
       fullName: 'Brad Kaufman',
-      orgId: 2,
       email: 'brad@thoughtive.io'
+    }, {
+      username: 'tomjones',
+      fullName: 'Tom Jones',
+      email: 'tomjones@thoughtive.io'
     }, {
       username: 'alauddinahmed',
       fullName: 'Alauddin Ahmed',
-      orgId: 1,
       email: 'alauddinahmed@value-infinfinity.com'
     }], {});
   },

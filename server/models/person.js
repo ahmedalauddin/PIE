@@ -22,8 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     orgId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+      references: {
+        table: 'organization',
+        key: 'id'
+      },
+     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: true
@@ -36,13 +39,14 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'person'
   });
-/*
+
+
   Person.associate = (models) => {
     Person.belongsTo(models.Organization, {
       foreignKey: 'orgId',
       onDelete: 'cascade'
     });
-  };*/
+  };
 
   return Person;
 };

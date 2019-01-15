@@ -29,13 +29,14 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'organization'
   });
 
-  /*
+
   Organization.associate = (models) => {
     Organization.hasMany(models.Person, {
       foreignKey: 'orgId',
-      as: 'persons'
+      as: 'persons',
     });
   };
-  */
+
+
   return Organization;
 };

@@ -22,3 +22,6 @@ npm-debug.log*
 
 ### db folder files ###
 .db/*.xslx
+
+### new temp models folder ###
+models-new/*

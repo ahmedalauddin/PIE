@@ -17,6 +17,12 @@ module.exports = {
 
     list(req, res) {
         return Person
+            /*.findAll({
+                include: [{
+                    model: Organization ,
+                    as: 'organization',
+                }],
+            }) */
             .all()
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));

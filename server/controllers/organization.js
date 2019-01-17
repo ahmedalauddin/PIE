@@ -15,12 +15,13 @@ module.exports = {
     },
     list(req, res) {
         return Organization
-            .findAll({
+            /*.findAll({
                 include: [{
                     model: Person,
                     as: 'persons',
                 }],
-            })
+            })*/
+            .all()
             .then(organization => res.status(200).send(organization))
             .catch(error => res.status(400).send(error));
     },

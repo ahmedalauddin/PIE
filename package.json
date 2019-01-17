@@ -3,12 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start:dev": "nodemon ./bin/www",
+    "start:other": "nodemon ./bin/www",
+    "client": "cd client && npm start",
+    "server": "nodemon ./bin/www",
+    "start": "concurrently \"npm run client\" \"npm run server\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "babel": "^6.23.0",
     "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "^4.16.4",

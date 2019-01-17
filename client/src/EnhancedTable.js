@@ -159,7 +159,7 @@ let EnhancedTableToolbar = props => {
                     </Typography>
                 ) : (
                     <Typography variant="h6" id="tableTitle">
-                        Nutrition
+                        Users
                     </Typography>
                 )}
             </div>

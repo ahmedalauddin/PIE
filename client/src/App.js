@@ -4,16 +4,15 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import EnhancedTable from './EnhancedTable';
 import Dashboard from "./dashboard";
-import SimpleTable from "./SimpleTable";
+import AppDrawer from "./AppDrawer";
 
 function createData(fullname, username, email, orgId) {
-    return { fullname, username, email, orgId };
+    return {fullname, username, email, orgId};
 };
 
 
 class App extends Component {
     state = {users: []};
-
 
     componentDidMount() {
         fetch('/api/person')
@@ -21,25 +20,21 @@ class App extends Component {
             .then(users => this.setState({users}));
     };
 
-
-
-
     render() {
         return (
             <div className="App">
-                <Typography component="div">
-                    <h1>Users</h1>
-                    {this.state.users.map(user =>
-                        <div key={user.id}>{user.username}, {user.fullName}</div>
-                    )}
-
-
-                    <EnhancedTable />
-
-                </Typography>
+                <div>
+                    <AppDrawer/>
+                </div>
+                <div>
+                    <Typography component="div">
+                        <EnhancedTable/>
+                    </Typography>
+                </div>
             </div>);
     }
 
 }
+
 export default App;
 

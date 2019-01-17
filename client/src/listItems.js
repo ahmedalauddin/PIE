@@ -1,3 +1,4 @@
+// Lists used by the app drawer for navigation
 import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';

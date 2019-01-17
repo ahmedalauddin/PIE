@@ -1,4 +1,5 @@
-// EnhancedTable.js, currently displays list of users.
+//
+// Lists projects for a client.  Currently lists projects for all clients.
 //
 import React from 'react';
 import classNames from 'classnames';
@@ -50,9 +51,9 @@ function getSorting(order, orderBy) {
 
 const rows = [
     {id: 'id', numeric: true, disablePadding: false, label: 'ID'},
-    {id: 'username', numeric: false, disablePadding: true, label: 'Username'},
-    {id: 'fullname', numeric: true, disablePadding: false, label: 'Full Name'},
-    {id: 'email', numeric: true, disablePadding: false, label: 'Email'},
+    {id: 'name', numeric: false, disablePadding: true, label: 'Project Name'},
+    {id: 'description', numeric: true, disablePadding: false, label: 'Description'},
+    {id: 'goal', numeric: true, disablePadding: false, label: 'Business Goal'},
     {id: 'orgid', numeric: true, disablePadding: false, label: 'Org ID'},
 ];
 
@@ -155,7 +156,7 @@ let EnhancedTableToolbar = props => {
                     </Typography>
                 ) : (
                     <Typography variant="h6" id="tableTitle">
-                        Users
+                        Projects
                     </Typography>
                 )}
             </div>
@@ -204,15 +205,15 @@ class EnhancedTable extends React.Component {
         order: 'asc',
         orderBy: 'calories',
         selected: [],
-        users: [],
+        projects: [],
         page: 0,
         rowsPerPage: 5,
     };
 
     componentDidMount() {
-        fetch('/api/person')
+        fetch('/api/clientproject')
             .then(res => res.json())
-            .then(users => this.setState({users}));
+            .then(projects => this.setState({projects}));
     }
     ;
 
@@ -270,9 +271,9 @@ class EnhancedTable extends React.Component {
     render() {
 
         const {classes} = this.props;
-        const {users, order, orderBy, selected, rowsPerPage, page} = this.state;
+        const {projects, order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, numRecords - page * rowsPerPage);
-        let numRecords = users.length;
+        let numRecords = projects.length;
 
         return (
             <Paper className={classes.root}>
@@ -288,30 +289,30 @@ class EnhancedTable extends React.Component {
                             rowCount={numRecords}
                         />
                         <TableBody>
-                            {stableSort(this.state.users, getSorting(order, orderBy))
+                            {stableSort(this.state.projects, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(person => {
-                                    const isSelected = this.isSelected(person.id);
+                                .map(project => {
+                                    const isSelected = this.isSelected(project.id);
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => this.handleClick(event, person.id)}
+                                            onClick={event => this.handleClick(event, project.id)}
                                             role="checkbox"
                                             aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={person.id}
+                                            key={project.id}
                                             selected={isSelected}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox checked={isSelected}/>
                                             </TableCell>
                                             <TableCell component="th" scope="row" padding="none">
-                                                {person.id}
+                                                {project.id}
                                             </TableCell>
-                                            <TableCell align="right">{person.username}</TableCell>
-                                            <TableCell align="right">{person.fullName}</TableCell>
-                                            <TableCell align="right">{person.email}</TableCell>
-                                            <TableCell align="right">{person.orgId}</TableCell>
+                                            <TableCell align="right">{project.name}</TableCell>
+                                            <TableCell align="right">{project.description}</TableCell>
+                                            <TableCell align="right">{project.businessGoal}</TableCell>
+                                            <TableCell align="right">{project.orgId}</TableCell>
                                         </TableRow>
                                     );
                                 })}

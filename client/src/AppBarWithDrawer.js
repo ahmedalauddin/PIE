@@ -1,3 +1,4 @@
+// App drawer extracted from the dashboard.js file.
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -17,7 +18,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import SimpleLineChart from './SimpleLineChart';
 import ProjectTable from "./ProjectTable";
-import AppBarWithDrawer from "./AppBarWithDrawer";
 
 const drawerWidth = 240;
 
@@ -98,9 +98,9 @@ const styles = theme => ({
     },
 });
 
-class Dashboard extends React.Component {
+class AppBarWithDrawer extends React.Component {
     state = {
-        open: true,
+        open: false,
     };
 
     handleDrawerOpen = () => {
@@ -116,23 +116,63 @@ class Dashboard extends React.Component {
 
         return (
             <div className={classes.root}>
-                <AppBarWithDrawer/>
-                <main className={classes.content}>
-                    <div className={classes.appBarSpacer} />
-                    <Typography variant="h4" gutterBottom component="h2">
-                        Projects
-                    </Typography>
-                    <Typography component="div" className={classes.chartContainer}>
-                        <ProjectTable />
-                    </Typography>
-                </main>
+                <CssBaseline />
+                <AppBar
+                    position="absolute"
+                    className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+                >
+                    <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
+                        <IconButton
+                            color="inherit"
+                            aria-label="Open drawer"
+                            onClick={this.handleDrawerOpen}
+                            className={classNames(
+                                classes.menuButton,
+                                this.state.open && classes.menuButtonHidden,
+                            )}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography
+                            component="h1"
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                            className={classes.title}
+                        >
+                            ValueInfinity Innovation Platform
+                        </Typography>
+                        <IconButton color="inherit">
+                            <Badge badgeContent={4} color="secondary">
+                                <NotificationsIcon />
+                            </Badge>
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
+                <Drawer
+                    variant="permanent"
+                    classes={{
+                        paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                    }}
+                    open={this.state.open}
+                >
+                    <div className={classes.toolbarIcon}>
+                        <IconButton onClick={this.handleDrawerClose}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    </div>
+                    <Divider />
+                    <List>{mainListItems}</List>
+                    <Divider />
+                    <List>{secondaryListItems}</List>
+                </Drawer>
             </div>
         );
     }
 }
 
-Dashboard.propTypes = {
+AppBarWithDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Dashboard);
+export default withStyles(styles)(AppBarWithDrawer);

@@ -1,4 +1,5 @@
 const ClientProject = require('../models').ClientProject;
+const Organization = require('../models').Organization;
 
 module.exports = {
     create: function (req, res) {
@@ -20,8 +21,16 @@ module.exports = {
 
     list(req, res) {
         return ClientProject
-            .all()
+            .findAll({
+                include: [{
+                    model: Organization,
+                    as: 'Organization',
+                }],
+            })
             .then(clientproject => res.status(200).send(clientproject))
-            .catch(error => res.status(400).send(error));
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
 };

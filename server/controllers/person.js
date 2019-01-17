@@ -1,4 +1,5 @@
 const Person = require('../models').Person;
+const Organization = require('../models').Organization;
 
 module.exports = {
     create: function (req, res) {
@@ -17,14 +18,16 @@ module.exports = {
 
     list(req, res) {
         return Person
-            /*.findAll({
+            .findAll({
                 include: [{
-                    model: Organization ,
-                    as: 'organization',
+                    model: Organization,
+                    as: 'Organization',
                 }],
-            }) */
-            .all()
+            })
             .then(person => res.status(200).send(person))
-            .catch(error => res.status(400).send(error));
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
 };

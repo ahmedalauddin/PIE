@@ -1,18 +1,17 @@
 import React, {Component} from 'react';
 import './App.css';
-import EnhancedTable from './EnhancedTable';
 import Dashboard from "./dashboard";
+import ReactDOM, {render} from "react-dom";
+import Header from "./header";
+import routes from "./routes";
 
-class App extends Component {
-    render() {
-        return (
-            <div className="App">
-                <div>
-                    <Dashboard/>
-                </div>
-            </div>);
-    }
-}
+const App = () => (
+    <div>
+        <Header />
+        <Dashboard />
+        <routes />
+    </div>
+)
 
 export default App;
 

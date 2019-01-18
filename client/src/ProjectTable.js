@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
+import TableCell, {TableCellProps as row} from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
@@ -52,8 +52,8 @@ function getSorting(order, orderBy) {
 const rows = [
     {id: 'id', numeric: true, disablePadding: false, label: 'ID'},
     {id: 'name', numeric: false, disablePadding: true, label: 'Project Name'},
-    {id: 'description', numeric: true, disablePadding: false, label: 'Description'},
-    {id: 'goal', numeric: true, disablePadding: false, label: 'Business Goal'},
+    {id: 'description', numeric: false, disablePadding: false, label: 'Description'},
+    {id: 'goal', numeric: false, disablePadding: false, label: 'Business Goal'},
     {id: 'orgid', numeric: true, disablePadding: false, label: 'Org ID'},
 ];
 
@@ -274,6 +274,12 @@ class EnhancedTable extends React.Component {
         const {projects, order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, numRecords - page * rowsPerPage);
         let numRecords = projects.length;
+        var isNumeric = (celldata) => {
+            var alignment = "left";
+            if (celldata.numeric)
+                alignment = "right";
+            return alignment;
+        }
 
         return (
             <Paper className={classes.root}>
@@ -306,13 +312,13 @@ class EnhancedTable extends React.Component {
                                             <TableCell padding="checkbox">
                                                 <Checkbox checked={isSelected}/>
                                             </TableCell>
-                                            <TableCell component="th" scope="row" padding="none">
+                                            <TableCell component="th" scope="row" padding="none" align="{alignment(project.id}">
                                                 {project.id}
                                             </TableCell>
-                                            <TableCell align="right">{project.name}</TableCell>
-                                            <TableCell align="right">{project.description}</TableCell>
-                                            <TableCell align="right">{project.businessGoal}</TableCell>
-                                            <TableCell align="right">{project.orgId}</TableCell>
+                                            <TableCell align="{alignment(project.name}">{project.name}</TableCell>
+                                            <TableCell align="{alignment(project.description)}">{project.description}</TableCell>
+                                            <TableCell align="{alignment(project.businessGoal)}">{project.businessGoal}</TableCell>
+                                            <TableCell align="{alignment(project.orgId)}">{project.orgId}</TableCell>
                                         </TableRow>
                                     );
                                 })}

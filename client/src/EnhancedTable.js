@@ -20,6 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {lighten} from '@material-ui/core/styles/colorManipulator';
+import {TableCellProps as row} from "@material-ui/core/TableCell/TableCell";
 
 let counter = 0;
 
@@ -274,6 +275,14 @@ class EnhancedTable extends React.Component {
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, numRecords - page * rowsPerPage);
         let numRecords = users.length;
 
+        var align = (cellDatatype) => {
+            var alignment = "left";
+            if (cellDatatype === "Numeric") {
+                alignment = "right";
+            }
+            return "left";
+        };
+
         return (
             <Paper className={classes.root}>
                 <EnhancedTableToolbar numSelected={selected.length}/>
@@ -308,7 +317,7 @@ class EnhancedTable extends React.Component {
                                             <TableCell component="th" scope="row" padding="none">
                                                 {person.id}
                                             </TableCell>
-                                            <TableCell align="right">{person.username}</TableCell>
+                                            <TableCell align={row.numeric ? 'right' : 'left'}>{person.username}</TableCell>
                                             <TableCell align="right">{person.fullName}</TableCell>
                                             <TableCell align="right">{person.email}</TableCell>
                                             <TableCell align="right">{person.orgId}</TableCell>

@@ -1,3 +1,4 @@
+// Simple line chart, sample from the React dashboard.
 import React from 'react';
 import ResponsiveContainer from 'recharts/lib/component/ResponsiveContainer';
 import LineChart from 'recharts/lib/chart/LineChart';

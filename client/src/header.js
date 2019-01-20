@@ -7,7 +7,7 @@ const Header = () => (
     <header>
         <nav>
             <ul>
-                <li><Link to='/'>Home</Link></li>
+                <li><Link to='/home.js'>Home</Link></li>
                 <li><Link to='/dashboard'>Dashboard</Link></li>
                 <li><Link to='/ProjectForm'>Create New Project</Link></li>
             </ul>

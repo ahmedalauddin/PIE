@@ -1,4 +1,3 @@
-// App drawer extracted from the dashboard.js file.
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,9 +14,9 @@ import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
+import { mainListItems, secondaryListItems } from '../listItems';
 import SimpleLineChart from './SimpleLineChart';
-import ProjectTable from "./ProjectTable";
+import SimpleTable from '../SimpleTable';
 
 const drawerWidth = 240;
 
@@ -98,7 +97,7 @@ const styles = theme => ({
     },
 });
 
-class AppBarWithDrawer extends React.Component {
+class AppDrawer extends React.Component {
     state = {
         open: false,
     };
@@ -140,7 +139,7 @@ class AppBarWithDrawer extends React.Component {
                             noWrap
                             className={classes.title}
                         >
-                            ValueInfinity Innovation Platform
+                            Innovation Platform
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -171,8 +170,8 @@ class AppBarWithDrawer extends React.Component {
     }
 }
 
-AppBarWithDrawer.propTypes = {
+AppDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AppBarWithDrawer);
+export default withStyles(styles)(AppDrawer);

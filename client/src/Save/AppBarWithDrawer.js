@@ -1,3 +1,4 @@
+// App drawer extracted from the dashboard.js file.
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,9 +15,9 @@ import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
+import { mainListItems, secondaryListItems } from '../listItems';
 import SimpleLineChart from './SimpleLineChart';
-import SimpleTable from './SimpleTable';
+import ProjectTable from "../ProjectTable";
 
 const drawerWidth = 240;
 
@@ -97,9 +98,9 @@ const styles = theme => ({
     },
 });
 
-class Dashboard extends React.Component {
+class AppBarWithDrawer extends React.Component {
     state = {
-        open: true,
+        open: false,
     };
 
     handleDrawerOpen = () => {
@@ -139,7 +140,7 @@ class Dashboard extends React.Component {
                             noWrap
                             className={classes.title}
                         >
-                            Dashboard
+                            ValueInfinity Innovation Platform
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -165,28 +166,13 @@ class Dashboard extends React.Component {
                     <Divider />
                     <List>{secondaryListItems}</List>
                 </Drawer>
-                <main className={classes.content}>
-                    <div className={classes.appBarSpacer} />
-                    <Typography variant="h4" gutterBottom component="h2">
-                        Orders
-                    </Typography>
-                    <Typography component="div" className={classes.chartContainer}>
-                        <SimpleLineChart />
-                    </Typography>
-                    <Typography variant="h4" gutterBottom component="h2">
-                        Products
-                    </Typography>
-                    <div className={classes.tableContainer}>
-                        <SimpleTable />
-                    </div>
-                </main>
             </div>
         );
     }
 }
 
-Dashboard.propTypes = {
+AppBarWithDrawer.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Dashboard);
+export default withStyles(styles)(AppBarWithDrawer);

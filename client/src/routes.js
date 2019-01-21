@@ -5,7 +5,7 @@ import Dashboard from './components/Dashboard'
 import Cards from './components/Cards'
 import Main from './components/Main'
 import ScrollToTop from './components/ScrollTop'
-import ProjectForm from "./components/ProjectForm";
+import NewProject from "./components/NewProject";
 
 export default props => (
     <HashRouter>
@@ -13,7 +13,7 @@ export default props => (
             <Switch>
                 <Route exact path='/' component={ Main } />
                 <Route exact path='/dashboard' component={ Dashboard } />
-                <Route exact path='/newproject' component={ ProjectForm } />
+                <Route exact path='/newproject' component={ NewProject } />
                 <Route exact path='/cards' component={ Cards } />
             </Switch>
         </ScrollToTop>

@@ -11,12 +11,7 @@ import InstructionDialog from './dialogs/InstructionDialog';
 import SwipeDialog from './dialogs/SwipeDialog';
 import Topbar from './Topbar';
 import {Formik, Field, Form} from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell, {TableCellProps as row} from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
+
 const backgroundShape = require('../images/shape.svg');
 
 const styles = theme => ({
@@ -179,80 +174,56 @@ class Login extends Component {
                                                     <Formik
                                                         initialValues={{
                                                             email: '',
-                                                            password: ''
+                                                            organization: ''
                                                         }}
 
-
-                                                        // Validate the data passed in.
+                                                        // Validates our data
+                                                        /*
                                                         validate={values => {
-                                                            const errors = {};
+                                                            //const errors = {};
 
                                                             if (!values.email) errors.email = "Required";
 
                                                             if (
                                                                 !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
                                                             ) {
-                                                                errors.email = "You must supply a valid email address";
-                                                            }
-
-                                                            if (values.password.length < 8) {
-                                                                errors.password = "Passwords must be at least 8 characters";
-                                                            }
-
-                                                            if (values.email === values.password) {
-                                                                errors.password =
-                                                                    "Your password shouldn't be the same as your email";
+                                                                errors.email = "You must provide a valid email address.";
                                                             }
 
                                                             return errors;
                                                         }}
+                                                        */
 
-                                                        // Handles our submission
-                                                        onSubmit={(values, { setSubmitting }) => {
-                                                            // This is where you could wire up axios or superagent
-                                                            console.log("Submitted Values:", values);
-                                                            // Simulates the delay of a real request
-                                                            setTimeout(() => setSubmitting(false), 3 * 1000);
+                                                        onSubmit={values => {
+                                                            setTimeout(() => {
+                                                                alert(JSON.stringify(values, null, 2));
+                                                            }, 500);
                                                         }}
-
                                                         render={() => (
                                                             <Form>
                                                                 <div>
-                                                                <Table>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <label htmlFor="email">Email</label>
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <Field name="email" placeholder=""/>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <label htmlFor="password">Password</label>
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <Field name="password" placeholder=""/>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <button
-                                                                                className="login__form__submit-btn"
-                                                                                disabled={isSubmitting}
-                                                                                type="submit"
-                                                                            >
-                                                                                Login
-                                                                            </button>
-                                                                        </TableCell>
-                                                                        <TableCell/>
-                                                                    </TableRow>
-                                                                </Table>
+                                                                    <label htmlFor="email">Email</label>
+                                                                    <Field name="email" placeholder="Jane"/>
+                                                                </div>
+                                                                <div>
+                                                                    <label
+                                                                        htmlFor="organization">Organization</label>
+                                                                    <Field
+                                                                        name="organization"
+                                                                        component="select"
+                                                                        placeholder="Organization"
+                                                                    >
+                                                                        {this.state.orgs.map(org =>
+                                                                            <option value={org.name}>{org.name}</option>)
+                                                                        }
+                                                                    </Field>
+                                                                </div>
+                                                                <div>
+                                                                    <button type="submit">Submit</button>
                                                                 </div>
                                                             </Form>
                                                         )}
                                                     />
-
                                                 </Typography>
                                             </div>
                                         </div>

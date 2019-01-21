@@ -22,8 +22,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {lighten} from '@material-ui/core/styles/colorManipulator';
 
-let counter = 0;
-
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -54,7 +52,9 @@ const rows = [
     {id: 'name', numeric: false, disablePadding: true, label: 'Project Name'},
     {id: 'description', numeric: false, disablePadding: false, label: 'Description'},
     {id: 'goal', numeric: false, disablePadding: false, label: 'Business Goal'},
-    {id: 'orgid', numeric: true, disablePadding: false, label: 'Org ID'},
+    {id: 'organization', numeric: false, disablePadding: false, label: 'Organization'},
+    {id: 'startAt', numeric: false, disablePadding: false, label: 'Start Date'},
+    {id: 'endAt', numeric: false, disablePadding: false, label: 'End Date'},
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -151,11 +151,11 @@ let EnhancedTableToolbar = props => {
         >
             <div className={classes.title}>
                 {numSelected > 0 ? (
-                    <Typography color="inherit" variant="subtitle1">
+                    <Typography color="inherit" variant="body1">
                         {numSelected} selected
                     </Typography>
                 ) : (
-                    <Typography variant="h6" id="tableTitle">
+                    <Typography variant="body1" id="tableTitle">
                         Projects
                     </Typography>
                 )}
@@ -211,7 +211,7 @@ class EnhancedTable extends React.Component {
     };
 
     componentDidMount() {
-        fetch('/api/clientproject')
+        fetch('/api/project')
             .then(res => res.json())
             .then(projects => this.setState({projects}));
     }
@@ -300,7 +300,7 @@ class EnhancedTable extends React.Component {
                                 .map(project => {
                                     const isSelected = this.isSelected(project.id);
                                     return (
-                                        <TableRow
+                                            <TableRow
                                             hover
                                             onClick={event => this.handleClick(event, project.id)}
                                             role="checkbox"
@@ -309,17 +309,23 @@ class EnhancedTable extends React.Component {
                                             key={project.id}
                                             selected={isSelected}
                                         >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox checked={isSelected}/>
-                                            </TableCell>
-                                            <TableCell component="th" scope="row" padding="none" align="{alignment(project.id}">
-                                                {project.id}
-                                            </TableCell>
-                                            <TableCell align="{alignment(project.name}">{project.name}</TableCell>
-                                            <TableCell align="{alignment(project.description)}">{project.description}</TableCell>
-                                            <TableCell align="{alignment(project.businessGoal)}">{project.businessGoal}</TableCell>
-                                            <TableCell align="{alignment(project.orgId)}">{project.orgId}</TableCell>
-                                        </TableRow>
+
+                                                <TableCell padding="checkbox">
+                                                    <Checkbox checked={isSelected}/>
+                                                </TableCell>
+                                                <TableCell component="th" scope="row" padding="none"
+                                                           align="{alignment(project.id}">
+                                                    {project.id}
+                                                </TableCell>
+                                                <TableCell align="left">{project.title}</TableCell>
+                                                <TableCell align="left">{project.description}</TableCell>
+                                                <TableCell align="left">{project.businessGoal}</TableCell>
+                                                <TableCell align="left">{project.Organization.name}</TableCell>
+                                                <TableCell align="left">{project.startAt}</TableCell>
+                                                <TableCell align="left">{project.endAt}</TableCell>
+
+                                            </TableRow>
+
                                     );
                                 })}
                             {emptyRows > 0 && (

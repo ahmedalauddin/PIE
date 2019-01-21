@@ -152,7 +152,9 @@ class Dashboard extends Component {
                           </Typography>
                         </div>
                         <div>
-                          <ProjectTable />
+                          <Typography variant="body1" gutterBottom>
+                            <ProjectTable />
+                          </Typography>
                         </div>
                       </div>
                     </Paper>

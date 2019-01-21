@@ -1,5 +1,6 @@
 const Organization = require('../models').Organization;
 const Person = require('../models').Person;
+const Project = require('../models').Project;
 
 module.exports = {
     create(req, res) {
@@ -19,7 +20,10 @@ module.exports = {
                 include: [{
                     model: Person,
                     as: 'Persons',
-                }],
+                }, {
+                    model: Project,
+                    as: 'Projects',
+                }]
             })
             .then(organization => res.status(200).send(organization))
             .catch(error => {

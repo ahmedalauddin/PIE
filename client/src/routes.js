@@ -1,24 +1,21 @@
 // Main routes component for react Router.
 import React from 'react'
-import { Switch, Route } from 'react-router-dom'
-import Home from './Home'
-import App from "./App";
-import ProjectForm from "./ProjectForm";
-import {Dashboard} from "@material-ui/icons";
+import { Route, HashRouter, Switch } from 'react-router-dom'
+import Dashboard from './components/Dashboard'
+import Cards from './components/Cards'
+import Main from './components/Main'
+import ScrollToTop from './components/ScrollTop'
+import ProjectForm from "./components/ProjectForm";
 
-// The routes component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
-const routes = () => (
-    <routes>
-        <Switch>
-            <Route exact path='/App' component={App}/>
-            <Route path='/Dashboard' component={Dashboard}/>
-            <Route path='/ProjectForm' component={ProjectForm}/>
-        </Switch>
-    </routes>
+export default props => (
+    <HashRouter>
+        <ScrollToTop>
+            <Switch>
+                <Route exact path='/' component={ Main } />
+                <Route exact path='/dashboard' component={ Dashboard } />
+                <Route exact path='/newproject' component={ ProjectForm } />
+                <Route exact path='/cards' component={ Cards } />
+            </Switch>
+        </ScrollToTop>
+    </HashRouter>
 )
-
-export default routes

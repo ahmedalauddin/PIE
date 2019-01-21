@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-
 import Typography from '@material-ui/core/Typography';
+import ProjectTable from "../components/ProjectTable";
 
-import ProjectTable from "./ProjectTable";
-import AppBarWithDrawer from "./Save/AppBarWithDrawer";
 
 const drawerWidth = 240;
 

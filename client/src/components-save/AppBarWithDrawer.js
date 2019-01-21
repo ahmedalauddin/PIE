@@ -1,4 +1,4 @@
-// App drawer extracted from the dashboard.js file.
+// App drawer extracted from the Dashboard.js file.
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -15,9 +15,9 @@ import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from '../listItems';
+import { mainListItems, secondaryListItems } from '../components/ListItems';
 import SimpleLineChart from './SimpleLineChart';
-import ProjectTable from "../ProjectTable";
+import ProjectTable from "../components/ProjectTable";
 
 const drawerWidth = 240;
 

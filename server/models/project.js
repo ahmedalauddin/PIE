@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  const ClientProject = sequelize.define('ClientProject', {
+  const Project = sequelize.define('Project', {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       },
     },
-    name: {
+    title: {
       type: DataTypes.STRING,
       allowNull: true
     },
@@ -31,11 +31,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    startDate: {
+    startAt: {
       type: DataTypes.DATEONLY,
       allowNull: true
     },
-    endDate: {
+    endAt: {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
@@ -49,17 +49,17 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW
     }
   }, {
-    tableName: 'clientproject'
+    tableName: 'Projects'
   });
 
-  ClientProject.associate = (models) => {
-    ClientProject.belongsTo(models.Organization, {
+  Project.associate = (models) => {
+    Project.belongsTo(models.Organization, {
       foreignKey: 'orgId',
       onDelete: 'cascade'
     });
   };
 
-  return ClientProject;
+  return Project;
 };
 
 

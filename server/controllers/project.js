@@ -1,17 +1,17 @@
-const ClientProject = require('../models').ClientProject;
+const Project = require('../models').Project;
 const Organization = require('../models').Organization;
 
 module.exports = {
     create: function (req, res) {
-        return ClientProject
+        return Project
             .create({
-                name: req.body.name,
+                title: req.body.title,
                 description: req.body.description,
                 businessGoal: req.body.businessGoal,
                 orgId: req.body.orgId,
                 progress: req.body.progress,
-                startDate: req.body.startDate,
-                endDate: req.body.endDate,
+                startAt: req.body.startAt,
+                endAt: req.body.endAt,
                 createdAt: req.body.createdAt,
                 updatedAt: req.body.updatedAt
             })
@@ -20,14 +20,14 @@ module.exports = {
     },
 
     list(req, res) {
-        return ClientProject
+        return Project
             .findAll({
                 include: [{
                     model: Organization,
                     as: 'Organization',
                 }],
             })
-            .then(clientproject => res.status(200).send(clientproject))
+            .then(project => res.status(200).send(project))
             .catch(error => {
                 console.log(error.stack);
                 res.status(400).send(error);

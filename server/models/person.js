@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true
         },
-        fullName: {
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        lastName: {
             type: DataTypes.STRING,
             allowNull: true
         },
@@ -37,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.NOW
         }
     }, {
-        tableName: 'person'
+        tableName: 'Persons'
     });
 
 

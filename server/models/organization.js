@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: DataTypes.NOW
         }
     }, {
-        tableName: 'organization'
+        tableName: 'Organizations'
     });
 
 
@@ -35,9 +35,9 @@ module.exports = function(sequelize, DataTypes) {
             foreignKey: 'orgId',
             as: 'Persons',
         });
-        Organization.hasMany(models.ClientProject, {
+        Organization.hasMany(models.Project, {
             foreignKey: 'orgId',
-            as: 'ClientProjects',
+            as: 'Projects',
         });
     };
 

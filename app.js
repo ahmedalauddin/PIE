@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Require our routes into the application.
 require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
-require('./server/routes/clientproject')(app);
+require('./server/routes/project')(app);
 app.get('*', (req, res) => res.status(200).send({
   message: 'Welcome to the beginning of nothingness.',
 }));

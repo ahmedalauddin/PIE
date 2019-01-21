@@ -1,9 +1,15 @@
 import React from 'react'
+import Dashboard from "./dashboard";
+import {Route} from "react-router-dom";
+import ProjectForm from "./ProjectForm";
+import Toolbar from "./MenuAppBar";
 
 const Home = () => (
     <div>
-        <h1>Innovation Platform</h1>
+        <Route exact path="/" component={Home}/>
+        <Route path="/Dashboard" component={Dashboard}/>
+        <Route path="/ProjectForm" component={ProjectForm}/>
     </div>
-)
+);
 
-export default Home
+export default Home;

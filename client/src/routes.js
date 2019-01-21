@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
 import App from "./App";
 import ProjectForm from "./ProjectForm";
+import {Dashboard} from "@material-ui/icons";
 
 // The routes component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -14,6 +15,7 @@ const routes = () => (
     <routes>
         <Switch>
             <Route exact path='/App' component={App}/>
+            <Route path='/Dashboard' component={Dashboard}/>
             <Route path='/ProjectForm' component={ProjectForm}/>
         </Switch>
     </routes>

@@ -191,16 +191,23 @@ class ListProjects extends Component {
     // via client/routes.js.
     // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
     handleClick = (event, id) => {
+        alert('In handleClick.');
         console.log('You Changed the URL');
         this.state.toProject = true;
+        alert('In handleClick, state should be changed.');
+        // I commented this line out.  I should not have to call render().  It is a state
+        // change, so should automatically call render.
+        this.render();
     };
 
     render() {
+        alert('render called, this.state.toProject = ' + this.state.toProject);
         const {classes} = this.props;
-        {
-            if (this.state.toProject === true)
-                return <Redirect to='/listprojects'/>
+        if (this.state.toProject === true) {
+            alert('I am true, I should be redirecting.');
+            return <Redirect to='/editproject' />
         }
+
         return (
             <React.Fragment>
                 <CssBaseline/>
@@ -224,7 +231,8 @@ class ListProjects extends Component {
                                             <Typography variant="body1" gutterBottom>
                                                 <Paper className={classes.root}>
                                                     <div className={classes.tableWrapper}>
-                                                        <Table className={classes.table} aria-labelledby="tableTitle">
+                                                        <Table className={classes.table}
+                                                               aria-labelledby="tableTitle">
                                                             <MyTableHead/>
                                                             <TableBody>
                                                                 {stableSort(this.state.projects, getSorting('asc', 'title'))
@@ -232,14 +240,21 @@ class ListProjects extends Component {
                                                                         return (
                                                                             <TableRow
                                                                                 hover
-                                                                                onClick={event => this.handleClick(event, project.id)}
+                                                                                onClick={event => {
+                                                                                    alert('clicked.');
+                                                                                    this.handleClick(event, project.id)
+                                                                                }}
                                                                                 tabIndex={-1}
                                                                                 key={project.id}
                                                                             >
-                                                                                <TableCell align="right">{project.id}</TableCell>
-                                                                                <TableCell align="left">{project.title}</TableCell>
-                                                                                <TableCell align="left">{project.description}</TableCell>
-                                                                                <TableCell align="left">{project.Organization.name}</TableCell>
+                                                                                <TableCell
+                                                                                    align="right">{project.id}</TableCell>
+                                                                                <TableCell
+                                                                                    align="left">{project.title}</TableCell>
+                                                                                <TableCell
+                                                                                    align="left">{project.description}</TableCell>
+                                                                                <TableCell
+                                                                                    align="left">{project.Organization.name}</TableCell>
                                                                             </TableRow>
                                                                         );
                                                                     })}
@@ -257,54 +272,6 @@ class ListProjects extends Component {
                         </Grid>
                     </Grid>
                 </div>
-            </React.Fragment>
-        )
-    }
-}
-
-class ProjectTable extends Component {
-    constructor() {
-        super();
-    };
-
-
-
-
-    render() {
-        const {classes} = this.props;
-        {
-            if (this.state.toProject === true)
-                return <Redirect to='/listprojects'/>
-        }
-
-        return (
-            <React.Fragment>
-                <Paper className={classes.root}>
-                    <div className={classes.tableWrapper}>
-                        <Table className={classes.table} aria-labelledby="tableTitle">
-                            <MyTableHead/>
-                            <TableBody>
-                                {stableSort(this.state.projects, getSorting('asc', 'title'))
-                                    .map(project => {
-                                        return (
-                                            <TableRow
-                                                hover
-                                                onClick={event => this.handleClick(event, project.id)}
-                                                tabIndex={-1}
-                                                key={project.id}
-                                            >
-                                                <TableCell align="right">{project.id}</TableCell>
-                                                <TableCell align="left">{project.title}</TableCell>
-                                                <TableCell align="left">{project.description}</TableCell>
-                                                <TableCell align="left">{project.Organization.name}</TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-
-                            </TableBody>
-                        </Table>
-                    </div>
-                </Paper>
             </React.Fragment>
         )
     }

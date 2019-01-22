@@ -15,7 +15,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Menu from './Menu';
 
-const logo = require('../images/logo.svg');
+// const logo = require('../images/logo.svg');
+const logo = require('../images/ValueInfLogo.png');
 
 const styles = theme => ({
     appBar: {
@@ -102,11 +103,20 @@ class Topbar extends Component {
         if(this.props.currentPath === '/dashboard') {
             return 1
         }
-        if(this.props.currentPath === '/newproject') {
+        if(this.props.currentPath === '/login') {
             return 2
         }
-        if(this.props.currentPath === '/cards') {
+        if(this.props.currentPath === '/editproject') {
+            return 3
+        }
+        if(this.props.currentPath === '/newproject') {
             return 4
+        }
+        if(this.props.currentPath === '/cards') {
+            return 5
+        }
+        if(this.props.currentPath === '/listprojects') {
+            return 6
         }
 
     };
@@ -123,8 +133,7 @@ class Topbar extends Component {
                             <div className={classes.inline}>
                                 <Typography variant="h6" color="inherit" noWrap>
                                     <Link to='/' className={classes.link}>
-                                        <img width={20} src={logo} />
-                                        <span className={classes.tagline}>Material Sense</span>
+                                        <img width={125} src={logo} />
                                     </Link>
                                 </Typography>
                             </div>
@@ -132,7 +141,7 @@ class Topbar extends Component {
                                 <React.Fragment>
                                     <div className={classes.productLogo}>
                                         <Typography>
-                                            A material UI Template
+                                           Material Sense Template
                                         </Typography>
                                     </div>
                                     <div className={classes.iconContainer}>

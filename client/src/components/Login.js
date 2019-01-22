@@ -155,7 +155,7 @@ class Login extends Component {
 
 
     render() {
-        const {classes} = this.props;
+        const {classes, isSubmitting} = this.props;
 
         //const organizations = this.state.orgs;
 
@@ -239,7 +239,6 @@ class Login extends Component {
                                                                         <TableCell>
                                                                             <button
                                                                                 className="login__form__submit-btn"
-                                                                                disabled={isSubmitting}
                                                                                 type="submit"
                                                                             >
                                                                                 Login

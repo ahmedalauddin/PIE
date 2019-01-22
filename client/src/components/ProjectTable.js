@@ -214,8 +214,7 @@ class EnhancedTable extends React.Component {
         fetch('/api/project')
             .then(res => res.json())
             .then(projects => this.setState({projects}));
-    }
-    ;
+    };
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -269,7 +268,6 @@ class EnhancedTable extends React.Component {
 
 
     render() {
-
         const {classes} = this.props;
         const {projects, order, orderBy, selected, rowsPerPage, page} = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, numRecords - page * rowsPerPage);

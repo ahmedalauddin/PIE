@@ -19,6 +19,34 @@ module.exports = {
             .catch(error => res.status(400).send(error));
     },
 
+    // Update a project
+    update(req, res) {
+        const id = req.params.id;
+        return Project
+            .update({
+                    title: req.body.title,
+                    description: req.body.description,
+                    businessGoal: req.body.businessGoal,
+                    orgId: req.body.orgId,
+                    progress: req.body.progress,
+                    startAt: req.body.startAt,
+                    endAt: req.body.endAt,
+                    createdAt: req.body.createdAt,
+                    updatedAt: req.body.updatedAt
+                },
+                {returning: true, where: {id: id}}
+            ).then(person => res.status(200).send(person))
+            .catch(error => res.status(400).send(error));
+    },
+
+
+    // Find a project by id
+    findById(req, res) {
+        return Project
+            .findById(req.params.id)
+            .then(person => res.status(200).send(person))
+            .catch(error => res.status(400).send(error));
+    },
     list(req, res) {
         return Project
             .findAll({

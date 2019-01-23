@@ -87,7 +87,7 @@ const styles = theme => ({
 
 class EditProject extends React.Component {
     state = {
-        project: '',
+        person: '',
     };
 
     constructor(props) {
@@ -95,11 +95,11 @@ class EditProject extends React.Component {
     };
 
     componentDidMount() {
-        const url1 = '/api/project/' + this.props.match.params.id;
+        const url1 = '/api/person/' + this.props.match.params.id;
         //if (projid > 0) {
         fetch(url1)
             .then(res => res.json())
-            .then(project => this.setState({project}));
+            .then(person => this.setState({person}));
         //}
     };
 
@@ -122,23 +122,23 @@ class EditProject extends React.Component {
                                     <Paper className={classes.paper}>
                                         <form>
                                             <Typography variant="body1" gutterBottom>
-                                                <label htmlFor="title">Project title</label><br/>
-                                                <input id="title" name="title" type="text" value={this.state.project.title}/>
+                                                <label htmlFor="username">Username</label><br/>
+                                                <input id="username" name="username" type="text" value={this.state.person.username}/>
                                             </Typography>
 
                                             <Typography variant="body1" gutterBottom>
-                                                <label htmlFor="description">Description</label><br/>
-                                                <input id="description" name="description" type="description" value={this.state.project.description}/>
+                                                <label htmlFor="firstName">First name</label><br/>
+                                                <input id="firstName" name="firstName" type="text" value={this.state.person.firstName}/>
                                             </Typography>
 
                                             <Typography variant="body2" gutterBottom>
-                                                <label htmlFor="progress">Progress</label><br/>
-                                                <input id="progress" name="progress" type="text" value={this.state.project.progress}/>
+                                                <label htmlFor="lastName">Last name</label><br/>
+                                                <input id="lastName" name="lastName" type="text" value={this.state.person.lastName}/>
                                             </Typography>
 
                                             <Typography variant="body2" gutterBottom>
-                                                <label htmlFor="startDate">Start date</label><br/>
-                                                <input id="startDate" name="startDate" type="text" value={this.state.project.startDate}/>
+                                                <label htmlFor="email">Email</label><br/>
+                                                <input id="email" name="email" type="text" value={this.state.person.email}/>
                                             </Typography>
 
                                             <Typography variant="body2" gutterBottom>

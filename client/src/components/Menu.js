@@ -16,6 +16,10 @@ const Menu = [
         pathname: "/editproject"
     },
     {
+        label: "Edit Person",
+        pathname: "/editperson"
+    },
+    {
         label: "New Project",
         pathname: "/newproject"
     },

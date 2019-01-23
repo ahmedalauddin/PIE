@@ -84,7 +84,6 @@ const styles = theme => ({
         left: '40%'
     }
 });
-var id = 0;
 
 class EditProject extends React.Component {
     constructor(props) {
@@ -109,7 +108,12 @@ class EditProject extends React.Component {
     };
 
     componentDidMount() {
-        this.id = this.props.match.params.id;
+        /* 
+           my question: where have you queried the data from the model?
+           this should be done here so that the rest of the project
+           information is available in this component so that it can 
+           be rendered
+        */
     }
 
 
@@ -117,13 +121,15 @@ class EditProject extends React.Component {
     render() {
         const {classes} = this.props;
 
+        /* react-router has injected the value of the attribute ID into the params */
+        let id = this.props.match.params.id;
+
         return (
             <React.Fragment>
                 <CssBaseline/>
                 <Topbar/>
                 <div className={classes.root}>
-                    <h1>Hello, your id is {this.id}</h1>
-                    <h1>Hello, your id is {this.props.match.params.id}</h1>
+                    <h1>Hello, your id is {id}</h1>
 
                     <Grid container justify="center">
                         <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>

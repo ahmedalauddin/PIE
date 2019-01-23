@@ -47,6 +47,8 @@ module.exports = {
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },
+
+    // FInd all projects
     list(req, res) {
         return Project
             .findAll({

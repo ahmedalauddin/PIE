@@ -17,8 +17,6 @@ import Typography from '@material-ui/core/Typography';
 
 import {BrowserRouter, Link} from 'react-router-dom'
 
-
-
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -241,7 +239,7 @@ class ListProjects extends Component {
                                                                                 <TableCell
                                                                                     align="right">{project.id}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left"><Link to={`/editproject/id:${project.id}`}>{project.title}</Link></TableCell>
+                                                                                    align="left"><Link to={`/editproject/${project.id}`}>{project.title}</Link></TableCell>
                                                                                 <TableCell
                                                                                     align="left">{project.description}</TableCell>
                                                                                 <TableCell

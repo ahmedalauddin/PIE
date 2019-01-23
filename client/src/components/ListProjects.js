@@ -14,7 +14,10 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import {Router, Link, Navigation, Redirect} from 'react-router';
+
+import {BrowserRouter, Link} from 'react-router-dom'
+
+
 
 const styles = theme => ({
     root: {
@@ -191,22 +194,11 @@ class ListProjects extends Component {
     // via client/routes.js.
     // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
     handleClick = (event, id) => {
-        alert('In handleClick.');
-        console.log('You Changed the URL');
-        this.state.toProject = true;
-        alert('In handleClick, state should be changed.');
-        // I commented this line out.  I should not have to call render().  It is a state
-        // change, so should automatically call render.
-        this.render();
+
     };
 
     render() {
-        alert('render called, this.state.toProject = ' + this.state.toProject);
         const {classes} = this.props;
-        if (this.state.toProject === true) {
-            alert('I am true, I should be redirecting.');
-            return <Redirect to='/editproject' />
-        }
 
         return (
             <React.Fragment>
@@ -241,7 +233,6 @@ class ListProjects extends Component {
                                                                             <TableRow
                                                                                 hover
                                                                                 onClick={event => {
-                                                                                    alert('clicked.');
                                                                                     this.handleClick(event, project.id)
                                                                                 }}
                                                                                 tabIndex={-1}
@@ -250,7 +241,7 @@ class ListProjects extends Component {
                                                                                 <TableCell
                                                                                     align="right">{project.id}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left">{project.title}</TableCell>
+                                                                                    align="left"><Link to={`/editproject/id:${project.id}`}>{project.title}</Link></TableCell>
                                                                                 <TableCell
                                                                                     align="left">{project.description}</TableCell>
                                                                                 <TableCell

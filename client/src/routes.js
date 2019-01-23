@@ -19,6 +19,7 @@ export default props => (
                 <Route exact path='/dashboard' component={ Dashboard } />
                 <Route exact path='/login' component={ Login } />
                 <Route exact path='/editproject' component={ EditProject } />
+                <Route path='/editproject/:id' component={ EditProject } />
                 <Route exact path='/newproject' component={ NewProject } />
                 <Route exact path='/listprojects' component={ ListProjects } />
                 <Route exact path='/cards' component={ Cards } />

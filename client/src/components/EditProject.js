@@ -84,15 +84,20 @@ const styles = theme => ({
         left: '40%'
     }
 });
+var id = 0;
 
-class EditProject extends Component {
-    constructor() {
-        super();
+class EditProject extends React.Component {
+    constructor(props) {
+        super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
 
-    // Handles submit
+
+
+
     handleSubmit(event) {
+
+        /*
         event.preventDefault();
         const data = new FormData(event.target);
 
@@ -100,16 +105,26 @@ class EditProject extends Component {
         fetch('/api/form-submit-url', {
             method: 'POST',
             body: data,
-        });
+        });*/
     };
+
+    componentDidMount() {
+        this.id = this.props.match.params.id;
+    }
+
+
 
     render() {
         const {classes} = this.props;
+
         return (
             <React.Fragment>
                 <CssBaseline/>
                 <Topbar/>
                 <div className={classes.root}>
+                    <h1>Hello, your id is {this.id}</h1>
+                    <h1>Hello, your id is {this.props.match.params.id}</h1>
+
                     <Grid container justify="center">
                         <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                             <Grid container item xs={12}>
@@ -118,7 +133,7 @@ class EditProject extends Component {
                                         <form>
                                             <Typography variant="body1" gutterBottom>
                                                 <label htmlFor="title">Project title</label>
-                                                <input id="title" name="title" type="text"/>
+                                                <input id="title" name="title" type="text" value={this.props.value}/>
                                             </Typography>
 
                                             <Typography variant="body1" gutterBottom>
@@ -133,7 +148,7 @@ class EditProject extends Component {
                                             </Typography>
 
                                             <Typography variant="body2" gutterBottom>
-                                               <button>Submit</button>
+                                                <button>Submit</button>
                                             </Typography>
 
                                         </form>

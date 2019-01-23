@@ -1,5 +1,5 @@
-// List for editing projects, 1/22/19.
-// Will be removed eventually.  Essentially a test harness for EditProject.
+// List for editing persons, 1/22/19.
+// Will be removed eventually.  Essentially a test harness for EditPerson.
 import React, {Component} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Topbar from './Topbar';
@@ -106,8 +106,10 @@ function desc(a, b, orderBy) {
 
 const rows = [
     {id: 'id', numeric: true, disablePadding: false, label: 'ID'},
-    {id: 'name', numeric: false, disablePadding: true, label: 'Project Name'},
-    {id: 'description', numeric: false, disablePadding: false, label: 'Description'},
+    {id: 'username', numeric: false, disablePadding: true, label: 'Username'},
+    {id: 'firstName', numeric: false, disablePadding: true, label: 'First name'},
+    {id: 'lastName', numeric: false, disablePadding: true, label: 'Last name'},
+    {id: 'email', numeric: false, disablePadding: false, label: 'Email address'},
     {id: 'organization', numeric: false, disablePadding: false, label: 'Organization'},
 ];
 
@@ -167,7 +169,7 @@ class MyTableHead extends React.Component {
     }
 }
 
-class ListProjects extends Component {
+class ListPersons extends Component {
     constructor() {
         super();
     };
@@ -176,24 +178,15 @@ class ListProjects extends Component {
         order: 'asc',
         orderBy: '',
         selected: [],
-        projects: [],
-        toProject: 'false',
-        toProjectId: '',
+        persons: [],
     };
 
     componentDidMount() {
-        fetch('/api/project')
+        fetch('/api/person')
             .then(res => res.json())
-            .then(projects => this.setState({projects}));
+            .then(persons => this.setState({persons}));
     };
 
-
-    // Here I just want to use something like the construct in Topbar to navigate
-    // via client/routes.js.
-    // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
-    handleClick = (event, id) => {
-
-    };
 
     render() {
         const {classes} = this.props;
@@ -225,25 +218,28 @@ class ListProjects extends Component {
                                                                aria-labelledby="tableTitle">
                                                             <MyTableHead/>
                                                             <TableBody>
-                                                                {stableSort(this.state.projects, getSorting('asc', 'title'))
-                                                                    .map(project => {
+                                                                {stableSort(this.state.persons, getSorting('asc', 'username'))
+                                                                    .map(person => {
                                                                         return (
                                                                             <TableRow
                                                                                 hover
                                                                                 onClick={event => {
-                                                                                    this.handleClick(event, project.id)
                                                                                 }}
                                                                                 tabIndex={-1}
-                                                                                key={project.id}
+                                                                                key={person.id}
                                                                             >
                                                                                 <TableCell
-                                                                                    align="right">{project.id}</TableCell>
+                                                                                    align="right">{person.id}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left"><Link to={`/editproject/${project.id}`}>{project.title}</Link></TableCell>
+                                                                                    align="left"><Link to={`/editperson/${person.id}`}>{person.username}</Link></TableCell>
                                                                                 <TableCell
-                                                                                    align="left">{project.description}</TableCell>
+                                                                                    align="left">{person.firstName}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left">{project.Organization.name}</TableCell>
+                                                                                    align="left">{person.lastName}</TableCell>
+                                                                                <TableCell
+                                                                                    align="left">{person.email}</TableCell>
+                                                                                <TableCell
+                                                                                    align="left">{person.Organization.name}</TableCell>
                                                                             </TableRow>
                                                                         );
                                                                     })}
@@ -266,5 +262,5 @@ class ListProjects extends Component {
     }
 }
 
-export default withStyles(styles)(ListProjects);
+export default withStyles(styles)(ListPersons);
 

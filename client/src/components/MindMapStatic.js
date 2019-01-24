@@ -192,6 +192,7 @@ class ListKpis extends Component {
 
     render() {
         const {classes} = this.props;
+        const mindmap = require('../images/mindmap-sample.png');
 
         return (
             <React.Fragment>
@@ -203,10 +204,10 @@ class ListKpis extends Component {
                             <Grid container item xs={12}>
                                 <Grid item xs={12}>
                                     <Paper className={classes.paper}>
-                                        <div>
+                                        <div align="center">
                                             <Typography variant="body1" gutterBottom>
                                                 <Paper className={classes.root}>
-                                                    Hello
+                                                    <img width={1000} src={mindmap} />
                                                 </Paper>
                                             </Typography>
                                         </div>

@@ -38,8 +38,11 @@ const Menu = [
     {
         label: "List KPIs",
         pathname: "/listkpis"
+    },
+    {
+        label: "Mind Map",
+        pathname: "/mindmapstatic"
     }
-
 ];
 
 export default Menu;

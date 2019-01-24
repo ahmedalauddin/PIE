@@ -13,7 +13,7 @@ import EditKpi from "./components/EditKpi";
 import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListKpis from "./components/ListKpis";
-
+import MindMapStatic from "./components/MindMapStatic";
 
 
 export default props => (
@@ -29,6 +29,7 @@ export default props => (
                 <Route path='/editperson/:id' component={ EditPerson } />
                 <Route path='/editkpi/:id' component={ EditKpi } />
                 <Route exact path='/newproject' component={ NewProject } />
+                <Route exact path='/mindmapstatic' component={ MindMapStatic } />
                 <Route exact path='/listprojects' component={ ListProjects } />
                 <Route exact path='/listpersons' component={ ListPersons } />
                 <Route exact path='/listkpis' component={ ListKpis } />

@@ -14,8 +14,11 @@ module.exports = {
                 createdAt: req.body.createdAt,
                 updatedAt: req.body.updatedAt
             })
-            .then(person => res.status(201).send(person))
-            .catch(error => res.status(400).send(error));
+            .then(kpi => res.status(201).send(kpi))
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
 
     // Update a Kpi
@@ -33,17 +36,27 @@ module.exports = {
                     updatedAt: req.body.updatedAt
                 },
                 {returning: true, where: {id: id}}
-            ).then(person => res.status(200).send(person))
-            .catch(error => res.status(400).send(error));
+            ).then(kpi => res.status(200).send(kpi))
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
-
 
     // Find a Kpi by Id
     findById(req, res) {
         return Kpi
-            .findById(req.params.id)
-            .then(person => res.status(200).send(person))
-            .catch(error => res.status(400).send(error));
+            .findByPk(req.params.id, {
+                include: [{
+                    model: Organization,
+                    as: 'Organization',
+                }],
+            })
+            .then(kpi => res.status(200).send(kpi))
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
 
     // List all persons

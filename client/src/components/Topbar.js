@@ -124,6 +124,9 @@ class Topbar extends Component {
         if(this.props.currentPath === '/listpersons') {
             return 8
         }
+        if(this.props.currentPath === '/listkpis') {
+            return 9
+        }
     };
 
     render() {

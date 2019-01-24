@@ -34,6 +34,10 @@ const Menu = [
     {
         label: "List Persons",
         pathname: "/listpersons"
+    },
+    {
+        label: "List KPIs",
+        pathname: "/listkpis"
     }
 
 ];

@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-    const Person = sequelize.define('Kpi', {
+    const Kpi = sequelize.define('Kpi', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.NOW
         }
     }, {
-        tableName: 'Persons'
+        tableName: 'Kpis'
     });
 
     Kpi.associate = (models) => {

@@ -179,11 +179,12 @@ class ListKpis extends Component {
         order: 'asc',
         orderBy: '',
         selected: [],
-        persons: [],
+        kpis: [],
     };
 
     componentDidMount() {
-        fetch('/api/person')
+        // Use fetch to get all the KPIs
+        fetch('/api/kpi')
             .then(res => res.json())
             .then(kpis => this.setState({kpis}));
     };
@@ -210,7 +211,7 @@ class ListKpis extends Component {
                                                                aria-labelledby="tableTitle">
                                                             <MyTableHead/>
                                                             <TableBody>
-                                                                {stableSort(this.state.persons, getSorting('asc', 'title'))
+                                                                {stableSort(this.state.kpis, getSorting('asc', 'title'))
                                                                     .map(kpi => {
                                                                         return (
                                                                             <TableRow
@@ -218,14 +219,12 @@ class ListKpis extends Component {
                                                                                 onClick={event => {
                                                                                 }}
                                                                                 tabIndex={-1}
-                                                                                key={person.id}
+                                                                                key={kpi.id}
                                                                             >
                                                                                 <TableCell
                                                                                     align="right">{kpi.id}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left"><Link to={`/editkpi/${kpi.id}`}>{kpi.username}</Link></TableCell>
-                                                                                <TableCell
-                                                                                    align="left">{kpi.title}</TableCell>
+                                                                                    align="left"><Link to={`/editkpi/${kpi.id}`}>{kpi.title}</Link></TableCell>
                                                                                 <TableCell
                                                                                     align="left">{kpi.description}</TableCell>
                                                                                 <TableCell
@@ -246,7 +245,6 @@ class ListKpis extends Component {
                                                 </Paper>
                                             </Typography>
                                         </div>
-
                                     </Paper>
                                 </Grid>
                             </Grid>

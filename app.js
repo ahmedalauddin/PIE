@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
+require('./server/routes/kpi')(app);
 app.get('*', (req, res) => res.status(200).send({
   message: 'Welcome to the beginning of nothingness.',
 }));

@@ -12,8 +12,16 @@ const Menu = [
         pathname: "/login"
     },
     {
+        label: "Mind Map",
+        pathname: "/mindmapstatic"
+    },
+    {
         label: "Edit Project",
         pathname: "/editproject"
+    },
+    {
+        label: "Edit Person",
+        pathname: "/editperson"
     },
     {
         label: "New Project",
@@ -30,6 +38,10 @@ const Menu = [
     {
         label: "List Persons",
         pathname: "/listpersons"
+    },
+    {
+        label: "List KPIs",
+        pathname: "/listkpis"
     }
 
 ];

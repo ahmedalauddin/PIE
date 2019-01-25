@@ -14,6 +14,7 @@ import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListKpis from "./components/ListKpis";
 import MindMapStatic from "./components/MindMapStatic";
+import Signin from "./components/Signin";
 
 
 export default props => (
@@ -23,6 +24,7 @@ export default props => (
                 <Route exact path='/' component={ Main } />
                 <Route exact path='/dashboard' component={ Dashboard } />
                 <Route exact path='/login' component={ Login } />
+                <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/editproject' component={ EditProject } />
                 <Route exact path='/editkpi' component={ EditKpi } />
                 <Route path='/editproject/:id' component={ EditProject } />

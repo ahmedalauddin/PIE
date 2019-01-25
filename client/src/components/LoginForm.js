@@ -8,31 +8,11 @@ export class LoginForm extends React.Component {
         props = this.props,
         setSubmitting
     }) => {
-
         console.log(values);
-        alert('Form Submitted');
         setSubmitting(false);
-        this.props.history.push('/listprojects');
+        this.props.history.push('/signin');
     }
-
-    componentDidMount() {
-        const url1 = '/api/person/' + this.props.match.params.id;
-        //if (projid > 0) {
-        fetch(url1)
-            .then(res => res.json())
-            .then(person => this.setState({person}));
-        //}
-    };
-
-    handleLogin = (values, {
-        props = this.props
-    }) => {
-        const url1 = '/api/auth/' + this.props.match.params.id;
-        //if (projid > 0) {
-        fetch(url1)
-            .then(res => res.json())
-            .then(person => this.setState({person}));
-    }
+    
 
     render() {
         return (
@@ -55,31 +35,34 @@ export class LoginForm extends React.Component {
                 render={formProps => {
                     return (
                         <Form>
+                            <label htmlFor="username">Username</label><br/>
                             <Field
                                 type="text"
                                 name="username"
                                 placeholder="Username"
                             />
-                            <ErrorMessage name="first_name"/>
+                            <ErrorMessage name="first_name"/><br/><br/>
 
+                            <label htmlFor="username">Username</label><br/>
                             <Field
                                 type="text"
                                 name="email"
                                 placeholder="Email address"
                             />
-                            <ErrorMessage name="email"/>
+                            <ErrorMessage name="email"/><br/>
 
+                            <label htmlFor="password">Password</label><br/>
                             <Field
-                            type="password"
-                            name="password"
-                            placeholder="Password"/>
-                            <ErrorMessage name="password"/>
+                                type="password"
+                                name="password"
+                                placeholder=""/>
+                            <ErrorMessage name="password"/><br/><br/>
 
                             <button
                                 type="submit"
                                 disabled={formProps.isSubmitting}>
-                                Submit Form
-                            </button>
+                                Login
+                            </button><br/>
                         </Form>
                     );
                 }}

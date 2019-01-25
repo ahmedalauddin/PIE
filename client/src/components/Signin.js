@@ -1,5 +1,4 @@
-// Login form using Formik.
-//
+// Signin
 import React, {Component} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
@@ -7,7 +6,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import { render } from 'react-dom';
 import Topbar from './Topbar';
 import LoginForm from './LoginForm';
 
@@ -89,7 +87,7 @@ const styles = theme => ({
     }
 });
 
-class Login extends Component {
+class Signin extends Component {
     state = {
         order: 'asc',
         orderBy: 'name',
@@ -98,11 +96,6 @@ class Login extends Component {
         getStartedDialog: false
     };
 
-    componentDidMount() {
-        fetch('/api/organization')
-            .then(res => res.json())
-            .then(orgs => this.setState({orgs}));
-    };
 
     render() {
         const {classes} = this.props;
@@ -123,7 +116,7 @@ class Login extends Component {
                                                     Please login.
                                                 </Typography>
                                                 <Typography variant="body2" gutterBottom>
-                                                    <LoginForm/>
+                                                    You are signed in.
                                                 </Typography>
                                             </div>
                                         </div>
@@ -138,4 +131,4 @@ class Login extends Component {
     }
 };
 
-export default withRouter(withStyles(styles)(Login));
+export default withRouter(withStyles(styles)(Signin));

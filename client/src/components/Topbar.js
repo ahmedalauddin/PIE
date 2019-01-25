@@ -152,7 +152,7 @@ class Topbar extends Component {
                                 <React.Fragment>
                                     <div className={classes.productLogo}>
                                         <Typography>
-                                           Material Sense Template
+                                           Innovation Platform
                                         </Typography>
                                     </div>
                                     <div className={classes.iconContainer}>

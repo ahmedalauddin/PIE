@@ -3,7 +3,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var passport   = require('passport');
+var session    = require('express-session')
+var env = require('dotenv').load();
 
 var app = express();
 
@@ -23,6 +26,8 @@ require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
+var models = require('./server/models');
+
 app.get('*', (req, res) => res.status(200).send({
   message: 'Welcome to the beginning of nothingness.',
 }));
@@ -33,10 +38,18 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+// For Passport
+app.use(session({ secret: 'quid-pro-quo',resave: true, saveUninitialized:true})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+//load passport strategies
+require('./server/config/passport/passport.js')(passport, models.person);
 
 // error handler
 app.use(function(err, req, res, next) {

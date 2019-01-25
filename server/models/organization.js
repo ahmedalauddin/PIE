@@ -39,6 +39,10 @@ module.exports = function(sequelize, DataTypes) {
             foreignKey: 'orgId',
             as: 'Projects',
         });
+        Organization.hasMany(models.Kpi, {
+            foreignKey: 'orgId',
+            as: 'Kpis',
+        });
     };
 
 

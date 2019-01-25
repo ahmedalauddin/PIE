@@ -31,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id'
             },
         },
+        hash: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        lastLogin: {
+            type: Sequelize.DATE,
+            allowNull: true
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: true

@@ -3,7 +3,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var passport   = require('passport');
+var env = require('dotenv').load();
+var exphbs = require('express-handlebars');
 
 var app = express();
 
@@ -33,10 +36,32 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+//For Handlebars
+app.set('views', './app/views')
+app.engine('hbs', exphbs({
+  extname: '.hbs'
+}));
+app.set('view engine', '.hbs');
+
+
+// For Passport
+app.use(session({ secret: 'quid-pro-quo',resave: true, saveUninitialized:true})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+//Models
+var models = require("./app/models");
+
+//Routes
+var authRoute = require('./app/routes/auth.js')(app);
+
+//load passport strategies
+require('./app/config/passport/passport.js')(passport, models.user);
 
 // error handler
 app.use(function(err, req, res, next) {

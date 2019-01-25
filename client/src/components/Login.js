@@ -9,16 +9,11 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import InstructionDialog from './dialogs/InstructionDialog';
 import SwipeDialog from './dialogs/SwipeDialog';
+import { render } from 'react-dom';
 import Topbar from './Topbar';
-import {Formik, Field, Form} from 'formik';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell, {TableCellProps as row} from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-const backgroundShape = require('../images/shape.svg');
+import LoginForm from './LoginForm';
 
+const backgroundShape = require('../images/shape.svg');
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -130,6 +125,7 @@ class Login extends Component {
         getStartedDialog: false
     };
 
+
     componentDidMount() {
         fetch('/api/organization')
             .then(res => res.json())
@@ -153,12 +149,10 @@ class Login extends Component {
     };
 
 
-
     render() {
-        const {classes, isSubmitting} = this.props;
+        const {classes} = this.props;
 
-        //const organizations = this.state.orgs;
-
+        //const organizations = this.state.orgs
 
         return (
             <React.Fragment>
@@ -176,82 +170,7 @@ class Login extends Component {
                                                     Please login.
                                                 </Typography>
                                                 <Typography variant="body2" gutterBottom>
-                                                    <Formik
-                                                        initialValues={{
-                                                            email: '',
-                                                            password: ''
-                                                        }}
-
-
-                                                        // Validate the data passed in.
-                                                        validate={values => {
-                                                            const errors = {};
-
-                                                            if (!values.email) errors.email = "Required";
-
-                                                            if (
-                                                                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-                                                            ) {
-                                                                errors.email = "You must supply a valid email address";
-                                                            }
-
-                                                            if (values.password.length < 8) {
-                                                                errors.password = "Passwords must be at least 8 characters";
-                                                            }
-
-                                                            if (values.email === values.password) {
-                                                                errors.password =
-                                                                    "Your password shouldn't be the same as your email";
-                                                            }
-
-                                                            return errors;
-                                                        }}
-
-                                                        // Handles our submission
-                                                        onSubmit={(values, { setSubmitting }) => {
-                                                            // This is where you could wire up axios or superagent
-                                                            console.log("Submitted Values:", values);
-                                                            // Simulates the delay of a real request
-                                                            setTimeout(() => setSubmitting(false), 3 * 1000);
-                                                        }}
-
-                                                        render={() => (
-                                                            <Form>
-                                                                <div>
-                                                                <Table>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <label htmlFor="email">Email</label>
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <Field name="email" placeholder=""/>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <label htmlFor="password">Password</label>
-                                                                        </TableCell>
-                                                                        <TableCell>
-                                                                            <Field name="password" placeholder=""/>
-                                                                        </TableCell>
-                                                                    </TableRow>
-                                                                    <TableRow>
-                                                                        <TableCell>
-                                                                            <button
-                                                                                className="login__form__submit-btn"
-                                                                                type="submit"
-                                                                            >
-                                                                                Login
-                                                                            </button>
-                                                                        </TableCell>
-                                                                        <TableCell/>
-                                                                    </TableRow>
-                                                                </Table>
-                                                                </div>
-                                                            </Form>
-                                                        )}
-                                                    />
-
+                                                    <LoginForm/>
                                                 </Typography>
                                             </div>
                                         </div>

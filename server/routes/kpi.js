@@ -15,3 +15,4 @@ module.exports = (app) => {
 
     app.get('/api/kpi', kpiController.list);
 };
+

@@ -26,6 +26,7 @@ require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
+require('./server/routes/auth')(app);
 var models = require('./server/models');
 
 app.get('*', (req, res) => res.status(200).send({

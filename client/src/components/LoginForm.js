@@ -10,9 +10,12 @@ export class LoginForm extends React.Component {
     }) => {
         console.log(values);
         setSubmitting(false);
-        this.props.history.push('/signin');
+        fetch('/signin', {
+            method: 'POST',
+            body: values,
+        });
     }
-    
+
 
     render() {
         return (

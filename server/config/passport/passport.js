@@ -21,6 +21,7 @@ module.exports = function(passport,user){
         });
     });
 
+    // Local signup
     passport.use('local-signup', new LocalStrategy(
         {
             usernameField : 'email',
@@ -41,10 +42,11 @@ module.exports = function(passport,user){
 
                 else
                 {
+                    // NB: userPassword is hash
                     var userPassword = generateHash(password);
                     var data =
                         { email:email,
-                            password:userPassword,
+                            password: userPassword,
                             firstname: req.body.firstname,
                             lastname: req.body.lastname
                         };
@@ -95,8 +97,8 @@ module.exports = function(passport,user){
                 return done(null, userinfo);
 
             }).catch(function(err){
-                console.log("Error:",err);
-                return done(null, false, { message: 'Something went wrong with your Signin' });
+                console.log("Error:", err);
+                return done(null, false, { message: 'Something went wrong with your signin.' });
             });
 
         }

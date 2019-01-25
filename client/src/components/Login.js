@@ -98,11 +98,13 @@ class Login extends Component {
         getStartedDialog: false
     };
 
+    /*
     componentDidMount() {
         fetch('/api/organization')
             .then(res => res.json())
             .then(orgs => this.setState({orgs}));
     };
+    */
 
     render() {
         const {classes} = this.props;

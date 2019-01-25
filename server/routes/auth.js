@@ -5,6 +5,7 @@ module.exports = function(app, passport) {
 
     app.get('/signin', authController.signin);
 
+    // This needs to be changed.
     app.post('/signup', passport.authenticate('local-signup', {
             successRedirect: '/dashboard',
             failureRedirect: '/signup'
@@ -19,6 +20,8 @@ module.exports = function(app, passport) {
         successRedirect: '/dashboard',
         failureRedirect: '/login'}
     ));
+
+    // TO DO need is logged check first on signup
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

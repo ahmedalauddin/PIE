@@ -2,7 +2,7 @@ import React from 'react';
 import {Formik, FormikProps, Form, Field, ErrorMessage} from 'formik';
 import { withRouter } from 'react-router-dom';
 
-export class LoginForm extends React.Component {
+export class Signup extends React.Component {
 
     handleSubmit = (values, {
         props = this.props,
@@ -60,7 +60,7 @@ export class LoginForm extends React.Component {
                                 name="username"
                                 placeholder="Username"
                             />
-                            <ErrorMessage name="first_name"/>
+                            <ErrorMessage name="username"/>
 
                             <Field
                                 type="text"
@@ -70,10 +70,17 @@ export class LoginForm extends React.Component {
                             <ErrorMessage name="email"/>
 
                             <Field
-                            type="password"
-                            name="password"
-                            placeholder="Password"/>
+                                type="password"
+                                name="password"
+                                placeholder="Password"/>
                             <ErrorMessage name="password"/>
+
+
+                            <Field
+                                type="password"
+                                name="confirmpassword"
+                                placeholder="confirmpassword"/>
+                            <ErrorMessage name="confirmpassword"/>
 
                             <button
                                 type="submit"
@@ -87,4 +94,4 @@ export class LoginForm extends React.Component {
     }
 }
 
-export default withRouter(LoginForm);
+export default withRouter(Signup);

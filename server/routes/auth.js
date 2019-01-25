@@ -7,7 +7,6 @@ module.exports = function(app, passport) {
 
     app.post('/signup', passport.authenticate('local-signup', {
             successRedirect: '/dashboard',
-
             failureRedirect: '/signup'
         }
     ));
@@ -20,7 +19,7 @@ module.exports = function(app, passport) {
         successRedirect: '/dashboard',
         failureRedirect: '/signin'}
     ));
-    
+
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
             return next();

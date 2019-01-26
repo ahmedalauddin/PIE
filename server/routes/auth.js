@@ -21,7 +21,7 @@ module.exports = function(app, passport) {
         failureRedirect: '/login'}
     ));
 
-    // TO DO need is logged check first on signup
+    // TODO need is logged check first on signup
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

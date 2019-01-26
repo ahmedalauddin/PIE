@@ -1,39 +1,25 @@
 /* jshint indent: 2 */
 
+/* define the model for the Mindmap table */
 module.exports = (sequelize, DataTypes) => {
-    const Kpi = sequelize.define('Kpi', {
+    const Mindmap = sequelize.define('Mindmap', {
         id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
-        title: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        description: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        level: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        type: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        status: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         orgId: {
             type: DataTypes.INTEGER,
+            allowNull: false,
             references: {
                 table: 'Organizations',
                 key: 'id'
             },
+        },
+        mapData: {
+            type: DataTypes.JSON,
+            allowNull: true
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -45,16 +31,17 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.NOW
         }
     }, {
-        tableName: 'Kpis'
+        tableName: 'Mindmaps'
     });
 
-    Kpi.associate = (models) => {
-        Kpi.belongsTo(models.Organization, {
+    /* set up the associations */
+    Mindmap.associate = (models) => {
+        Mindmap.belongsTo(models.Organization, {
             foreignKey: 'orgId',
             onDelete: 'cascade'
         });
     };
 
-    return Kpi;
+    /* return the model */
+    return Mindmap;
 };
-

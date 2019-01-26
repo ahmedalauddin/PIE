@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Topbar from './Topbar';
 import Grid from '@material-ui/core/Grid';
-import withStyles from "@material-ui/core/styles/withStyles";
+import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,7 +15,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 
-import {BrowserRouter, Link} from 'react-router-dom'
+import {BrowserRouter, Link} from 'react-router-dom';
 
 const styles = theme => ({
     root: {
@@ -172,7 +172,7 @@ class MyTableHead extends React.Component {
 class ListPersons extends Component {
     constructor() {
         super();
-    };
+    }
 
     state = {
         order: 'asc',
@@ -185,7 +185,7 @@ class ListPersons extends Component {
         fetch('/api/person')
             .then(res => res.json())
             .then(persons => this.setState({persons}));
-    };
+    }
 
 
     render() {
@@ -215,7 +215,7 @@ class ListPersons extends Component {
                                                 <Paper className={classes.root}>
                                                     <div className={classes.tableWrapper}>
                                                         <Table className={classes.table}
-                                                               aria-labelledby="tableTitle">
+                                                            aria-labelledby="tableTitle">
                                                             <MyTableHead/>
                                                             <TableBody>
                                                                 {stableSort(this.state.persons, getSorting('asc', 'username'))
@@ -258,7 +258,7 @@ class ListPersons extends Component {
                     </Grid>
                 </div>
             </React.Fragment>
-        )
+        );
     }
 }
 

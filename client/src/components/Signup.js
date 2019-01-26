@@ -22,7 +22,7 @@ export class Signup extends React.Component {
             .then(res => res.json())
             .then(person => this.setState({person}));
         //}
-    };
+    }
 
     handleLogin = (values, {
         props = this.props
@@ -46,7 +46,7 @@ export class Signup extends React.Component {
                     let errors = [];
 
                     if (!values.email)
-                        errors.email = "Email Address Required";
+                        errors.email = 'Email Address Required';
 
                     //check if my values have errors
                     return errors;

@@ -20,7 +20,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {lighten} from '@material-ui/core/styles/colorManipulator';
-import {TableCellProps as row} from "@material-ui/core/TableCell/TableCell";
+import {TableCellProps as row} from '@material-ui/core/TableCell/TableCell';
 
 let counter = 0;
 
@@ -215,7 +215,7 @@ class EnhancedTable extends React.Component {
             .then(res => res.json())
             .then(users => this.setState({users}));
     }
-    ;
+    
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -276,11 +276,11 @@ class EnhancedTable extends React.Component {
         let numRecords = users.length;
 
         var align = (cellDatatype) => {
-            var alignment = "left";
-            if (cellDatatype === "Numeric") {
-                alignment = "right";
+            var alignment = 'left';
+            if (cellDatatype === 'Numeric') {
+                alignment = 'right';
             }
-            return "left";
+            return 'left';
         };
 
         return (

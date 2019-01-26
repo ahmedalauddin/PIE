@@ -1,47 +1,47 @@
 const Menu = [
     {
-        label: "Home",
-        pathname: "/"
+        label: 'Home',
+        pathname: '/'
     },
     {
-        label: "Dashboard",
-        pathname: "/dashboard"
+        label: 'Dashboard',
+        pathname: '/dashboard'
     },
     {
-        label: "Login",
-        pathname: "/login"
+        label: 'Login',
+        pathname: '/login'
     },
     {
-        label: "Mind Map",
-        pathname: "/mindmapstatic"
+        label: 'Mind Map',
+        pathname: '/mindmapstatic'
     },
     {
-        label: "Edit Project",
-        pathname: "/editproject"
+        label: 'Edit Project',
+        pathname: '/editproject'
     },
     {
-        label: "Edit Person",
-        pathname: "/editperson"
+        label: 'Edit Person',
+        pathname: '/editperson'
     },
     {
-        label: "New Project",
-        pathname: "/newproject"
+        label: 'New Project',
+        pathname: '/newproject'
     },
     {
-        label: "Cards",
-        pathname: "/cards"
+        label: 'Cards',
+        pathname: '/cards'
     },
     {
-        label: "List Projects",
-        pathname: "/listprojects"
+        label: 'List Projects',
+        pathname: '/listprojects'
     },
     {
-        label: "List Persons",
-        pathname: "/listpersons"
+        label: 'List Persons',
+        pathname: '/listpersons'
     },
     {
-        label: "List KPIs",
-        pathname: "/listkpis"
+        label: 'List KPIs',
+        pathname: '/listkpis'
     }
 
 ];

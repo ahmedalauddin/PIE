@@ -10,7 +10,6 @@ import Grid from '@material-ui/core/Grid';
 import InstructionDialog from './dialogs/InstructionDialog';
 import SwipeDialog from './dialogs/SwipeDialog';
 import Topbar from './Topbar';
-import ProjectTable from "./ProjectTable";
 import {Formik, Field, Form} from 'formik';
 import {Debug} from './Debug';
 
@@ -177,7 +176,7 @@ class Dashboard extends Component {
                                                                 <div>
                                                                     <label htmlFor="email">Email</label>
                                                                     <Field name="email" placeholder="jane@acme.com"
-                                                                           type="email"/>
+                                                                        type="email"/>
                                                                     <button type="submit">Submit</button>
                                                                 </div>
                                                                 <div>
@@ -203,7 +202,7 @@ class Dashboard extends Component {
                     />
                 </div>
             </React.Fragment>
-        )
+        );
     }
 }
 

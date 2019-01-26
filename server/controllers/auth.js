@@ -1,11 +1,18 @@
+const passport = require('passport');
 
 module.exports = {
-    signup (req, res) {
-        res.render('signup');
+    signin (req, res) {
+        passport.authenticate('local-signin', {
+            successRedirect: '/dashboard',
+            failureRedirect: '/login'
+        });
     },
 
-    siginin (req, res) {
-        res.render('signin');
+    signup (req, res) {
+        passport.authenticate('local-signup', {
+            successRedirect: '/dashboard',
+            failureRedirect: '/signup'
+        });
     },
 
     dashboard (req, res) {

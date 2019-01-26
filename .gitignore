@@ -28,3 +28,6 @@ client/**/node_modules
 
 ### new temp models folder ###
 models-new/*
+
+# my saved React components
+client/src/components-save

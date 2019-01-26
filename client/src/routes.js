@@ -1,20 +1,22 @@
 // Main routes component for react Router.
-import React from 'react'
-import {Route, Switch, BrowserRouter} from 'react-router-dom'
-import Dashboard from './components/Dashboard'
-import Cards from './components/Cards'
-import Main from './components/Main'
-import Login from "./components/Login";
-import ScrollToTop from './components/ScrollTop'
-import NewProject from "./components/NewProject";
-import EditPerson from "./components/EditPerson";
-import EditProject from "./components/EditProject";
-import EditKpi from "./components/EditKpi";
-import ListProjects from "./components/ListProjects";
-import ListPersons from "./components/ListPersons";
-import ListKpis from "./components/ListKpis";
-import MindMapStatic from "./components/MindMapStatic";
-import Signin from "./components/Signin";
+import React from 'react';
+import {Route, Switch, BrowserRouter} from 'react-router-dom';
+import Dashboard from './components/Dashboard';
+import Cards from './components/Cards';
+import Main from './components/Main';
+import ScrollToTop from './components/ScrollTop';
+import NewProject from './components/NewProject';
+import EditPerson from './components/EditPerson';
+import EditProject from './components/EditProject';
+import EditKpi from './components/EditKpi';
+import ListProjects from './components/ListProjects';
+import ListPersons from './components/ListPersons';
+import ListKpis from './components/ListKpis';
+import MindMapStatic from './components/MindMapStatic';
+import Signin from './components/Signin';
+import Signup from './components/Signup';
+import Login from './components/Login';
+import Logout from './components/Logout';
 
 
 export default props => (
@@ -23,8 +25,10 @@ export default props => (
             <Switch>
                 <Route exact path='/' component={ Main } />
                 <Route exact path='/dashboard' component={ Dashboard } />
+                <Route exact path='/logout' component={ Logout } />
                 <Route exact path='/login' component={ Login } />
                 <Route exact path='/signin' component={ Signin } />
+                <Route exact path='/signup' component={ Signup } />
                 <Route exact path='/editproject' component={ EditProject } />
                 <Route exact path='/editkpi' component={ EditKpi } />
                 <Route path='/editproject/:id' component={ EditProject } />
@@ -39,4 +43,4 @@ export default props => (
             </Switch>
         </ScrollToTop>
     </BrowserRouter>
-)
+);

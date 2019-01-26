@@ -1,22 +1,26 @@
 const authController = require('../controllers').auth;
 
 module.exports = function(app, passport) {
-    app.get('/signup', authController.signup);
+    app.get('/api', (req, res) => res.status(200).send({
+        message: 'Welcome to the auth API!',
+    }));
 
-    app.get('/signin', authController.signin);
+    app.get('/api/signup', authController.signup);
 
-    // This needs to be changed.
-    app.post('/signup', passport.authenticate('local-signup', {
-            successRedirect: '/dashboard',
-            failureRedirect: '/signup'
-        }
+    app.get('/api/signin', authController.signin);
+
+    // TODO - This needs to be changed.
+    app.post('/api/signup', passport.authenticate('local-signup', {
+        successRedirect: '/dashboard',
+        failureRedirect: '/signup'
+    }
     ));
 
     app.get('/dashboard',isLoggedIn, authController.dashboard);
 
-    app.get('/logout',authController.logout);
+    app.get('/api/logout', authController.logout);
 
-    app.post('/signin', passport.authenticate('local-signin', {
+    app.post('/api/signin', passport.authenticate('local-signin', {
         successRedirect: '/dashboard',
         failureRedirect: '/login'}
     ));
@@ -26,6 +30,7 @@ module.exports = function(app, passport) {
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
             return next();
+        // This is React's component.
         res.redirect('/signin');
     }
-}
+};

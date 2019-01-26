@@ -21,15 +21,15 @@ module.exports = {
         const id = req.params.id;
         return Person
             .update({
-                    username: req.body.username,
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    email: req.body.email,
-                    orgId: req.body.orgId,
-                    createdAt: req.body.createdAt,
-                    updatedAt: req.body.updatedAt
-                },
-                {returning: true, where: {id: id}}
+                username: req.body.username,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                orgId: req.body.orgId,
+                createdAt: req.body.createdAt,
+                updatedAt: req.body.updatedAt
+            },
+            {returning: true, where: {id: id}}
             ).then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },

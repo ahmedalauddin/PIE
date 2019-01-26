@@ -7,9 +7,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import { render } from 'react-dom';
 import Topbar from './Topbar';
-import LoginForm from './LoginForm';
+import {ErrorMessage, Field, Form, Formik} from 'formik';
 
 const backgroundShape = require('../images/shape.svg');
 const styles = theme => ({
@@ -89,6 +88,86 @@ const styles = theme => ({
     }
 });
 
+const Layout = ({children, classes}) => (
+    <div className="wrapper">
+        <CssBaseline/>
+        <Topbar/>
+        <div className={classes.root}>
+            <Grid container justify="center">
+                <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+                    <Grid container item xs={12}>
+                        <Grid item xs={12}>
+                            <Paper className={classes.paper}>
+                                <div>
+                                    <div className={classes.box}>
+                                        <Typography variant="body2" gutterBottom>
+                                            {children}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </div>
+    </div>
+);
+
+const FormikLogin = (
+    <Formik
+        initialValues={{
+            username: '',
+            email_address: '',
+            password: ''
+        }}
+        validate={(values) => {
+            let errors = [];
+
+            if (!values.email)
+                errors.email = 'Email Address Required';
+
+            //check if my values have errors
+            return errors;
+        }}
+        onSubmit={this.handleSubmit}
+        render={formProps => {
+            return (
+                <Form>
+                    <label htmlFor="username">Username</label><br/>
+                    <Field
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                    />
+                    <ErrorMessage name="first_name"/><br/><br/>
+
+                    <label htmlFor="username">Username</label><br/>
+                    <Field
+                        type="text"
+                        name="email"
+                        placeholder="Email address"
+                    />
+                    <ErrorMessage name="email"/><br/>
+
+                    <label htmlFor="password">Password</label><br/>
+                    <Field
+                        type="password"
+                        name="password"
+                        placeholder=""/>
+                    <ErrorMessage name="password"/><br/><br/>
+
+                    <button
+                        type="submit"
+                        disabled={formProps.isSubmitting}>
+                        Login
+                    </button><br/>
+                </Form>
+            );
+        }}
+    />
+);
+
 class Login extends Component {
     state = {
         order: 'asc',
@@ -98,46 +177,13 @@ class Login extends Component {
         getStartedDialog: false
     };
 
-    /*
-    componentDidMount() {
-        fetch('/api/organization')
-            .then(res => res.json())
-            .then(orgs => this.setState({orgs}));
-    };
-    */
-
     render() {
-        const {classes} = this.props;
-
         return (
-            <React.Fragment>
-                <CssBaseline/>
-                <Topbar/>
-                <div className={classes.root}>
-                    <Grid container justify="center">
-                        <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-                            <Grid container item xs={12}>
-                                <Grid item xs={12}>
-                                    <Paper className={classes.paper}>
-                                        <div>
-                                            <div className={classes.box}>
-                                                <Typography color='secondary' gutterBottom>
-                                                    Please login.
-                                                </Typography>
-                                                <Typography variant="body2" gutterBottom>
-                                                    <LoginForm/>
-                                                </Typography>
-                                            </div>
-                                        </div>
-                                    </Paper>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </div>
-            </React.Fragment>
+            <Layout>
+                <FormikLogin/>
+            </Layout>
         );
     }
-};
+}
 
 export default withRouter(withStyles(styles)(Login));

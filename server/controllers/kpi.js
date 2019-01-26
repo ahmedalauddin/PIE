@@ -26,16 +26,16 @@ module.exports = {
         const id = req.params.id;
         return Kpi
             .update({
-                    title: req.body.title,
-                    description: req.body.description,
-                    type: req.body.type,
-                    level: req.body.level,
-                    status: req.body.status,
-                    orgId: req.body.orgId,
-                    createdAt: req.body.createdAt,
-                    updatedAt: req.body.updatedAt
-                },
-                {returning: true, where: {id: id}}
+                title: req.body.title,
+                description: req.body.description,
+                type: req.body.type,
+                level: req.body.level,
+                status: req.body.status,
+                orgId: req.body.orgId,
+                createdAt: req.body.createdAt,
+                updatedAt: req.body.updatedAt
+            },
+            {returning: true, where: {id: id}}
             ).then(kpi => res.status(200).send(kpi))
             .catch(error => {
                 console.log(error.stack);

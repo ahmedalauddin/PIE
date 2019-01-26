@@ -1,10 +1,10 @@
-// Signin
-import React, {Component} from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
-import {withRouter} from 'react-router-dom';
+import React from 'react';
+import Topbar from './Topbar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
-
-const backgroundShape = require('../images/shape.svg');
 const styles = theme => ({
     root: {
         flexGrow: 1,
@@ -82,25 +82,47 @@ const styles = theme => ({
     }
 });
 
-class Signin extends Component {
-    state = {
-        order: 'asc',
-        orderBy: 'name',
-        orgs: [],
-        learnMoredialog: false,
-        getStartedDialog: false
-    };
 
+class LoginFormContainer extends React.Component {
+    constructor() {
+        super();
+        this.state =({ children: children });
+    }
 
     render() {
-
-
         return (
-            <React.Fragment>
-
-            </React.Fragment>
+            <Layout>
+                { this.state.children }
+            </Layout>
         );
     }
 }
 
-export default withRouter(withStyles(styles)(Signin));
+
+const Layout = ({children, classes}) => (
+    <div className="wrapper">
+        <CssBaseline/>
+        <Topbar/>
+        <div className={classes.root}>
+            <Grid container justify="center">
+                <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+                    <Grid container item xs={12}>
+                        <Grid item xs={12}>
+                            <Paper className={classes.paper}>
+                                <div>
+                                    <div className={classes.box}>
+                                        <Typography variant="body2" gutterBottom>
+                                            {children}
+                                        </Typography>
+                                    </div>
+                                </div>
+                            </Paper>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </div>
+    </div>
+);
+
+export default LoginFormContainer;

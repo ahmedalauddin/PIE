@@ -1,7 +1,19 @@
-const Person = require('../models').Person;
 
 module.exports = {
-    signup: function(req, res) {
+    signup (req, res) {
         res.render('signup');
-    }
+    },
+
+    siginin (req, res) {
+        res.render('signin');
+    },
+
+    dashboard (req, res) {
+        res.render('dashboard');
+    },
+
+    logout (req, res) {
+        res.render('logout');
+    },
+
 };

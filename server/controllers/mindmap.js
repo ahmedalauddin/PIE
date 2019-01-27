@@ -1,6 +1,5 @@
 const Organization = require('../models').Organization;
 const Mindmap = require('../models').Mindmap;
-
 //TODO determine means to handle nodes of mindmap creating/updating/deleting projects
 
 module.exports = {

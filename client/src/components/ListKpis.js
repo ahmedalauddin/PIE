@@ -14,9 +14,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-import {BrowserRouter, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-import {styles, backgroundShape} from './MaterialSense';
+import {styles} from './MaterialSense';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {

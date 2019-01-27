@@ -1,4 +1,5 @@
 const kpiController = require('../controllers').kpi;
+require('./index');
 
 module.exports = (app) => {
     app.post('/api/kpi', kpiController.create);

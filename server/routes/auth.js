@@ -18,7 +18,7 @@ module.exports = function(app) {
 
     app.post('/api/signin', authController.signin);
 
-    // TO DO need is logged check first on signup
+    // TODO need is logged check first on signup
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

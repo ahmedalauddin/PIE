@@ -1,0 +1,22 @@
+{
+    "extends": "google",
+    "indent": ["error", 4],
+    "react/jsx-indent": ["error", 4],
+    "react/jsx-indent-props": ["error", 4],
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "env": {
+        "browser": true
+    },
+    "rules": {
+        "semi": 2
+    },
+    "plugins": [
+        "html"
+    ]
+}

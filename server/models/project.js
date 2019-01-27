@@ -27,6 +27,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    mindmapId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    nodeId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     progress: {
       type: DataTypes.INTEGER,
       allowNull: true,

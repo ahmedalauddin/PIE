@@ -9,13 +9,15 @@ module.exports = {
                 description: req.body.description,
                 businessGoal: req.body.businessGoal,
                 orgId: req.body.orgId,
+                mindmapId: req.body.mindmapId,
+                nodeId: req.body.nodeId,
                 progress: req.body.progress,
                 startAt: req.body.startAt,
                 endAt: req.body.endAt,
                 createdAt: req.body.createdAt,
                 updatedAt: req.body.updatedAt
             })
-            .then(clientproject => res.status(201).send(clientproject))
+            .then(p => res.status(201).send(p))
             .catch(error => res.status(400).send(error));
     },
 
@@ -28,6 +30,8 @@ module.exports = {
                     description: req.body.description,
                     businessGoal: req.body.businessGoal,
                     orgId: req.body.orgId,
+                    mindmapId: req.body.mindmapId,
+                    nodeId: req.body.mindmapId,
                     progress: req.body.progress,
                     startAt: req.body.startAt,
                     endAt: req.body.endAt,
@@ -35,7 +39,7 @@ module.exports = {
                     updatedAt: req.body.updatedAt
                 },
                 {returning: true, where: {id: id}}
-            ).then(person => res.status(200).send(person))
+            ).then(p => res.status(200).send(p))
             .catch(error => res.status(400).send(error));
     },
 
@@ -44,7 +48,7 @@ module.exports = {
     findById(req, res) {
         return Project
             .findById(req.params.id)
-            .then(person => res.status(200).send(person))
+            .then(p => res.status(200).send(p))
             .catch(error => res.status(400).send(error));
     },
 
@@ -57,7 +61,7 @@ module.exports = {
                     as: 'Organization',
                 }],
             })
-            .then(project => res.status(200).send(project))
+            .then(p => res.status(200).send(p))
             .catch(error => {
                 console.log(error.stack);
                 res.status(400).send(error);

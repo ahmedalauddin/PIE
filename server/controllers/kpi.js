@@ -2,7 +2,7 @@ const Kpi = require('../models').Kpi;
 const Organization = require('../models').Organization;
 
 module.exports = {
-    create: function (req, res) {
+    create(req, res) {
         return Kpi
             .create({
                 title: req.body.title,
@@ -10,9 +10,7 @@ module.exports = {
                 type: req.body.type,
                 level: req.body.level,
                 status: req.body.status,
-                orgId: req.body.orgId,
-                createdAt: req.body.createdAt,
-                updatedAt: req.body.updatedAt
+                orgId: req.body.orgId
             })
             .then(kpi => res.status(201).send(kpi))
             .catch(error => {

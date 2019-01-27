@@ -2,7 +2,7 @@ const Project = require('../models').Project;
 const Organization = require('../models').Organization;
 
 module.exports = {
-    create: function (req, res) {
+    create(req, res) {
         return Project
             .create({
                 title: req.body.title,
@@ -14,8 +14,6 @@ module.exports = {
                 progress: req.body.progress,
                 startAt: req.body.startAt,
                 endAt: req.body.endAt,
-                createdAt: req.body.createdAt,
-                updatedAt: req.body.updatedAt
             })
             .then(p => res.status(201).send(p))
             .catch(error => res.status(400).send(error));

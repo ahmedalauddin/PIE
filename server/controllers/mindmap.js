@@ -3,9 +3,7 @@ const Mindmap = require('../models').Mindmap;
 //TODO determine means to handle nodes of mindmap creating/updating/deleting projects
 
 module.exports = {
-
-    // Create a mindmap
-    create: function(req, res) {
+    create(req, res) {
         return Mindmap
             .create({
                 orgId: req.body.orgId,

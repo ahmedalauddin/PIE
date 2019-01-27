@@ -1,5 +1,4 @@
 const mindmapController = require('../controllers').mindmap;
-require('./index');
 
 module.exports = (app) => {
 

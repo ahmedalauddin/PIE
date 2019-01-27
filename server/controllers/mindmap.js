@@ -6,7 +6,7 @@ const Mindmap = require('../models').Mindmap;
 module.exports = {
 
     // Create a mindmap
-    create(req, res) {
+    create: function(req, res) {
         return Mindmap
             .create({
                 orgId: req.body.orgId,

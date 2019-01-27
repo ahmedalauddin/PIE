@@ -63,6 +63,7 @@ create table Projects
   progress          int             default 0,
   startAt    	      datetime        default CURRENT_TIMESTAMP,
   endAt             date            null,
+
   createdAt 		    datetime     		default CURRENT_TIMESTAMP,
   updatedAt 		    datetime     		default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	constraint Projects_pk

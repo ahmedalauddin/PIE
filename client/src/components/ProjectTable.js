@@ -214,7 +214,7 @@ class EnhancedTable extends React.Component {
         fetch('/api/project')
             .then(res => res.json())
             .then(projects => this.setState({projects}));
-    };
+    }
 
     handleRequestSort = (event, property) => {
         const orderBy = property;
@@ -273,11 +273,11 @@ class EnhancedTable extends React.Component {
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, numRecords - page * rowsPerPage);
         let numRecords = projects.length;
         var isNumeric = (celldata) => {
-            var alignment = "left";
+            var alignment = 'left';
             if (celldata.numeric)
-                alignment = "right";
+                alignment = 'right';
             return alignment;
-        }
+        };
 
         return (
             <Paper className={classes.root}>
@@ -298,7 +298,7 @@ class EnhancedTable extends React.Component {
                                 .map(project => {
                                     const isSelected = this.isSelected(project.id);
                                     return (
-                                            <TableRow
+                                        <TableRow
                                             hover
                                             onClick={event => this.handleClick(event, project.id)}
                                             role="checkbox"
@@ -308,21 +308,21 @@ class EnhancedTable extends React.Component {
                                             selected={isSelected}
                                         >
 
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox checked={isSelected}/>
-                                                </TableCell>
-                                                <TableCell component="th" scope="row" padding="none"
-                                                           align="{alignment(project.id}">
-                                                    {project.id}
-                                                </TableCell>
-                                                <TableCell align="left">{project.title}</TableCell>
-                                                <TableCell align="left">{project.description}</TableCell>
-                                                <TableCell align="left">{project.businessGoal}</TableCell>
-                                                <TableCell align="left">{project.Organization.name}</TableCell>
-                                                <TableCell align="left">{project.startAt}</TableCell>
-                                                <TableCell align="left">{project.endAt}</TableCell>
+                                            <TableCell padding="checkbox">
+                                                <Checkbox checked={isSelected}/>
+                                            </TableCell>
+                                            <TableCell component="th" scope="row" padding="none"
+                                                align="{alignment(project.id}">
+                                                {project.id}
+                                            </TableCell>
+                                            <TableCell align="left">{project.title}</TableCell>
+                                            <TableCell align="left">{project.description}</TableCell>
+                                            <TableCell align="left">{project.businessGoal}</TableCell>
+                                            <TableCell align="left">{project.Organization.name}</TableCell>
+                                            <TableCell align="left">{project.startAt}</TableCell>
+                                            <TableCell align="left">{project.endAt}</TableCell>
 
-                                            </TableRow>
+                                        </TableRow>
 
                                     );
                                 })}

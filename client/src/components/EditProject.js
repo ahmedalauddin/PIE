@@ -1,10 +1,9 @@
 // Simpler version of edit project, 1/22/19.
-import React, {Component} from 'react';
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Topbar from './Topbar';
 import Grid from '@material-ui/core/Grid';
-import {withRouter} from "react-router-dom";
-import withStyles from "@material-ui/core/styles/withStyles";
+import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
@@ -90,10 +89,6 @@ class EditProject extends React.Component {
         project: '',
     };
 
-    constructor(props) {
-        super(props);
-    };
-
     componentDidMount() {
         const url1 = '/api/project/' + this.props.match.params.id;
         //if (projid > 0) {
@@ -101,7 +96,7 @@ class EditProject extends React.Component {
             .then(res => res.json())
             .then(project => this.setState({project}));
         //}
-    };
+    }
 
 
     render() {
@@ -153,10 +148,10 @@ class EditProject extends React.Component {
                     </Grid>
                 </div>
             </React.Fragment>
-        )
+        );
     }
 }
-;
+
 
 export default withStyles(styles)(EditProject);
 

@@ -12,7 +12,7 @@ module.exports = (app) => {
     app.get('/api/mindmap/:id', mindmapController.findById);
 
     // get a mindmap by the orgId
-    app.get('/api/mindmap/?orgId=:ordId', mindmapController.findByOrgId);
+    app.get('/api/mindmap/?orgId=:orgId', mindmapController.findByOrgId);
 
     // update a mindmap
     app.put('/api/mindmap/:id', mindmapController.update);

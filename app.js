@@ -4,8 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var passport   = require('passport');
-var session    = require('express-session')
+var passport = require('passport');
+var session = require('express-session')
 var env = require('dotenv').load();
 
 var app = express();
@@ -19,14 +19,18 @@ app.use(logger('dev'));
 
 // Parse incoming requests data (https://github.com/expressjs/body-parser)
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
-// Require our routes into the application.
+// Require our routes into the application
+require('./server/routes/index')(app);
 require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
 require('./server/routes/auth')(app);
+require('./server/routes/mindmap')(app);
 var models = require('./server/models');
 
 app.get('*', (req, res) => res.status(200).send({
@@ -34,18 +38,23 @@ app.get('*', (req, res) => res.status(200).send({
 }));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // For Passport
-app.use(session({ secret: 'quid-pro-quo',resave: true, saveUninitialized:true})); // session secret
+app.use(session({
+  secret: 'quid-pro-quo',
+  resave: true,
+  saveUninitialized: true
+})); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 

@@ -3,7 +3,6 @@
 import React, {Component} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
-
 import {ErrorMessage, Field, Form, Formik} from 'formik';
 import LoginFormContainer from './LoginFormContainer';
 
@@ -147,7 +146,6 @@ class Login extends Component {
         orgs: [],
     };
 
-
     render() {
         const {classes} = this.props;
         return (
@@ -155,7 +153,6 @@ class Login extends Component {
         );
     }
 }
-
 
 export default withRouter(withStyles(styles)(Login));
 

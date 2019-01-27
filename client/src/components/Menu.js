@@ -43,7 +43,6 @@ const Menu = [
         label: 'List KPIs',
         pathname: '/listkpis'
     }
-
 ];
 
 export default Menu;

@@ -29,7 +29,6 @@ module.exports = function(sequelize, DataTypes) {
         tableName: 'Organizations'
     });
 
-
     Organization.associate = (models) => {
         Organization.hasMany(models.Person, {
             foreignKey: 'orgId',
@@ -43,9 +42,11 @@ module.exports = function(sequelize, DataTypes) {
             foreignKey: 'orgId',
             as: 'Kpis',
         });
+        Organization.hasMany(models.Mindmap, {
+            foreignKey: 'orgId',
+            as: 'Mindmaps',
+        });
     };
-
-
 
     return Organization;
 };

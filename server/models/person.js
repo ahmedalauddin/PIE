@@ -52,7 +52,6 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'Persons'
     });
 
-
     Person.associate = (models) => {
         Person.belongsTo(models.Organization, {
             foreignKey: 'orgId',

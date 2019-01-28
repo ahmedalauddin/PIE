@@ -14,6 +14,18 @@
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
+### VisualStudioCode ###
+**/*.code-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
 ### Node ###
 # Logs
 logs
@@ -22,12 +34,6 @@ npm-debug.log*
 **/node_modules
 node_modules
 client/**/node_modules
-
-### db folder files ###
-.db/*.xslx
-
-### new temp models folder ###
-models-new/*
 
 # my saved React components
 client/src/components-save

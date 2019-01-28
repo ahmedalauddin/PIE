@@ -8,7 +8,7 @@ module.exports = {
         return Organization
             .create({
                 name: req.body.name,
-                owningOrg: req.body.owningOrg
+                owningOrg: req.body.owningOrg,
             })
             .then(organization => res.status(201).send(organization))
             .catch(error => res.status(400).send(error));

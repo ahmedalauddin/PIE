@@ -40,16 +40,28 @@ function SignUpForm(props) {
             <div className="form-field-error">{errors.username}</div>
 
             <label className="form-field" htmlFor="fullName">
-                <span>Full Name:</span><br/>
-                <input name="fullName" type="text" onChange={handleChange} />
+                <span>First Name:</span><br/>
+                <input name="firstName" type="text" onChange={handleChange} />
             </label>
-            <div className="form-field-error">{errors.fullName}</div>
+            <div className="form-field-error">{errors.firstName}</div>
+
+            <label className="form-field" htmlFor="fullName">
+                <span>Last Name:</span><br/>
+                <input name="lastName" type="text" onChange={handleChange} />
+            </label>
+            <div className="form-field-error">{errors.lastName}</div>
 
             <label className="form-field" htmlFor="orgId">
                 <span>Org ID:</span><br/>
                 <input name="orgId" type="text" onChange={handleChange} />
             </label>
             <div className="form-field-error">{errors.orgId}</div>
+
+            <label className="form-field" htmlFor="pwdhash">
+                <span>Hash:</span><br/>
+                <input name="pwdhash" type="text" onChange={handleChange} />
+            </label>
+            <div className="form-field-error">{errors.pwdhash}</div>
 
             <label className="form-field" htmlFor="password">
                 <span>Password:</span><br/>
@@ -62,7 +74,6 @@ function SignUpForm(props) {
                 <input name="passwordConfirmation" type="password" onChange={handleChange} />
             </label>
             <div className="form-field-error">{errors.passwordConfirmation}</div>
-
 
             <button onClick={handleSubmit}>{isSubmitting ? 'Loading' : 'Sign Up'}</button>
         </div>
@@ -86,16 +97,14 @@ function onSubmit(values, { setSubmitting, setErrors }) {
         alert(JSON.stringify(values, null, 2));
         setSubmitting(false);
 
-        var myValues = setSubmitValues(values);
-
-
+        //var myValues = setSubmitValues(values);
         //myValues = JSON.stringify(myValues);
 
         //alert(values('email'));
         fetch('/api/person', {
             method: 'POST',
             body: JSON.stringify({
-                myValues
+                values
             }),
             headers: {"Content-Type": "application/json"}
         }).then(function (data) {

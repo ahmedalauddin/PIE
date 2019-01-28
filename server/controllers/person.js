@@ -13,26 +13,25 @@ function getHash(value) {
             res.status(400).send(error);
         });
     }
-
     console.log('hashedValue = ' + hashedValue);
 
     return hashedValue;
-
 }
 
 module.exports = {
     create(req, res) {
         console.log(req.body);
         hashed = getHash(req.body.pwdhash);
+        console.log("hashed value = " + hashed);
         return Person
             .create({
                 username: req.body.username,
                 fullName: req.body.fullName,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                orgId: parseInt(req.body.orgId),
+                orgId: req.body.orgId,
                 email: req.body.email,
-                pwdhash: hashed,
+                pwdhash: req.body.pwdhash,
 
             })
             .then(person => {
@@ -56,6 +55,7 @@ module.exports = {
                     lastName: req.body.lastName,
                     email: req.body.email,
                     orgId: req.body.orgId,
+                    logging: console.log,
                 },
                 {returning: true, where: {id: id}}
             ).then(person => res.status(200).send(person))

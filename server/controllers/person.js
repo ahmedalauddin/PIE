@@ -3,12 +3,13 @@ const Organization = require('../models').Organization;
 
 module.exports = {
     create(req, res) {
+        console.log(req.body);
         return Person
             .create({
                 username: req.body.username,
                 fullName: req.body.fullName,
                 email: req.body.email,
-                hash: req.body.hash,
+                pwdhash: req.body.pwdhash,
                 orgId: req.body.orgId,
             })
             .then(person => res.status(201).send(person))
@@ -18,6 +19,7 @@ module.exports = {
     // Update a person
     update(req, res) {
         const id = req.params.id;
+        console.log(req.body);
         return Person
             .update({
                 username: req.body.username,

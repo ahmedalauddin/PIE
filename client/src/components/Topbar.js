@@ -71,7 +71,7 @@ const styles = theme => ({
         paddingBottom: 20,
         minWidth: 'auto'
     }
-})
+});
 
 class Topbar extends Component {
 
@@ -98,37 +98,37 @@ class Topbar extends Component {
 
     current = () => {
         if(this.props.currentPath === '/home') {
-            return 0
+            return 0;
         }
         if(this.props.currentPath === '/dashboard') {
-            return 1
+            return 1;
         }
         if(this.props.currentPath === '/login') {
-            return 2
+            return 2;
         }
         if(this.props.currentPath === '/editproject') {
-            return 3
+            return 3;
         }
         if(this.props.currentPath === '/mindmapstatic') {
-            return 4
+            return 4;
         }
         if(this.props.currentPath === '/editperson') {
-            return 5
+            return 5;
         }
         if(this.props.currentPath === '/newproject') {
-            return 6
+            return 6;
         }
         if(this.props.currentPath === '/cards') {
-            return 7
+            return 7;
         }
         if(this.props.currentPath === '/listprojects') {
-            return 8
+            return 8;
         }
         if(this.props.currentPath === '/listpersons') {
-            return 9
+            return 9;
         }
         if(this.props.currentPath === '/listkpis') {
-            return 10
+            return 10;
         }
     };
 
@@ -188,8 +188,8 @@ class Topbar extends Component {
                     </Grid>
                 </Toolbar>
             </AppBar>
-        )
+        );
     }
 }
 
-export default withRouter(withStyles(styles)(Topbar))
+export default withRouter(withStyles(styles)(Topbar));

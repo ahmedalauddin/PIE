@@ -8,6 +8,7 @@ module.exports = {
                 username: req.body.username,
                 fullName: req.body.fullName,
                 email: req.body.email,
+                hash: req.body.hash,
                 orgId: req.body.orgId,
             })
             .then(person => res.status(201).send(person))

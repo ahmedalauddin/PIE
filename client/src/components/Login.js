@@ -5,7 +5,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
 import {ErrorMessage, Field, Form, Formik} from 'formik';
 import LoginFormContainer from './LoginFormContainer';
-import {styles, backgroundShape} from './MaterialSense';
+import {styles} from './MaterialSense';
 
 // TODO - need to add a handleSubmit
 

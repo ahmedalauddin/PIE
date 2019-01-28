@@ -15,8 +15,8 @@ import ListKpis from './components/ListKpis';
 import MindMapStatic from './components/MindMapStatic';
 import Signin from './components/Signin';
 import Signup from './components/Signup';
-import Login from './components/Login';
 import Logout from './components/Logout';
+import LoginFormContainer from './components/LoginFormContainer';
 
 
 export default props => (
@@ -26,7 +26,7 @@ export default props => (
                 <Route exact path='/' component={ Main } />
                 <Route exact path='/dashboard' component={ Dashboard } />
                 <Route exact path='/logout' component={ Logout } />
-                <Route exact path='/login' component={ Login } />
+                <Route exact path='/login' component={ LoginFormContainer } />
                 <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/signup' component={ Signup } />
                 <Route exact path='/editproject' component={ EditProject } />

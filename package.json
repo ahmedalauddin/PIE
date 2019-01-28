@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "babel": "^6.23.0",
+    "bcrypt": "^3.0.3",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
     "concurrently": "^4.1.0",

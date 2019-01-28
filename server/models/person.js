@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id'
             },
         },
-        hash: {
+        pwdhash: {
             type: DataTypes.STRING,
             allowNull: false
         },

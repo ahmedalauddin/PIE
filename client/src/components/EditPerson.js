@@ -1,4 +1,4 @@
-// Simpler version of edit project, 1/22/19.
+// Simpler version of edit person, 1/22/19.
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Topbar from './Topbar';

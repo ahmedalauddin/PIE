@@ -11,7 +11,7 @@ var env = require('dotenv').load();
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'server/views'));
 app.set('view engine', 'pug');
 
 // Log requests to the console

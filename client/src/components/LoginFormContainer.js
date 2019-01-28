@@ -12,14 +12,15 @@ import validate from './validate-spected';
 import getValidationSchema from './getValidationSchema-spected';
 
 
-
 const initialValues = {
-    email: '',
-    password: '',
-    passwordConfirmation: '',
-    consent: false,
+    email: 'brad@th.io',
+    password: 'ssssssss',
+    username: 'bk12',
+    lastName: 'Kaufman',
+    firstName: 'BK',
+    fullName: 'Brad Kaufman',
+    passwordConfirmation: 'ssssssss'
 }
-
 
 function SignUpForm(props) {
     const { isSubmitting, errors, handleChange, handleSubmit } = props
@@ -62,35 +63,49 @@ function SignUpForm(props) {
             </label>
             <div className="form-field-error">{errors.passwordConfirmation}</div>
 
-            <label className="form-field" htmlFor="consent">
-                <span>Consent:</span>
-                <input name="consent" type="checkbox" onChange={handleChange} />
-            </label>
-            <div className="form-field-error">{errors.consent}</div>
 
             <button onClick={handleSubmit}>{isSubmitting ? 'Loading' : 'Sign Up'}</button>
         </div>
     );
 }
 
+function setSubmitValues(values) {
+    let email = values.email;
+    let pwdhash = values.password;
+    let organization = values.organization;
+    let username = values.username;
+    let firstname = values.firstname;
+    let lastname = values.lastname;
+    var myvalues = {email: email, orgId: organization, pwdhash: pwdhash, username: username, firstName: firstname, lastName: lastname };
+    return(myvalues);
+}
+
 function onSubmit(values, { setSubmitting, setErrors }) {
 
     setTimeout(() => {
-        console.log('User has been sucessfully saved.', values);
         alert(JSON.stringify(values, null, 2));
         setSubmitting(false);
+
+        var myValues = setSubmitValues(values);
+
+
+        //myValues = JSON.stringify(myValues);
+
+        //alert(values('email'));
         fetch('/api/person', {
             method: 'POST',
-            body: values,
+            body: JSON.stringify({
+                myValues
+            }),
+            headers: {"Content-Type": "application/json"}
         }).then(function (data) {
             console.log(data);
         }).catch(function (err) {
             console.log(err);
         });
+
     }, 2000);
 }
-
-
 
 
 class LoginFormContainer extends React.Component {

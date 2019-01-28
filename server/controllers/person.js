@@ -1,19 +1,48 @@
 const Person = require('../models').Person;
 const Organization = require('../models').Organization;
+const bCrypt = require('bcrypt-nodejs');
+
+function getHash(value) {
+    var hashedValue = '';
+    console.log('value  = ' + value);
+    try {
+        hashedValue = bCrypt.hash(value, 12);
+    } catch {
+        (error => {
+            console.log(error.stack);
+            res.status(400).send(error);
+        });
+    }
+
+    console.log('hashedValue = ' + hashedValue);
+
+    return hashedValue;
+
+}
 
 module.exports = {
     create(req, res) {
         console.log(req.body);
+        hashed = getHash(req.body.pwdhash);
         return Person
             .create({
                 username: req.body.username,
                 fullName: req.body.fullName,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                orgId: parseInt(req.body.orgId),
                 email: req.body.email,
-                pwdhash: req.body.pwdhash,
-                orgId: req.body.orgId,
+                pwdhash: hashed,
+
             })
-            .then(person => res.status(201).send(person))
-            .catch(error => res.status(400).send(error));
+            .then(person => {
+                console.log('Adding person');
+                res.status(201).send(person);
+            })
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
     },
 
     // Update a person
@@ -22,13 +51,13 @@ module.exports = {
         console.log(req.body);
         return Person
             .update({
-                username: req.body.username,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                orgId: req.body.orgId,
-            },
-            {returning: true, where: {id: id}}
+                    username: req.body.username,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
+                    orgId: req.body.orgId,
+                },
+                {returning: true, where: {id: id}}
             ).then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },

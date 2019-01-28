@@ -16,9 +16,6 @@ export default function getSpectedValidationSchema(values) {
         passwordConfirmation: [
             [value => !isEmpty(value), 'Password confirmation is required.'],
             [value => value === values.password, 'Passwords are not the same.'],
-        ],
-        consent: [
-            [value => value === true, 'You have to agree with our Terms and Conditions.'],
         ]
     };
 }

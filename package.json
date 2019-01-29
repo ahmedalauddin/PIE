@@ -6,7 +6,9 @@
     "start:other": "nodemon ./bin/www",
     "client": "cd client && npm start",
     "server": "nodemon ./bin/www",
+    "debug-server": "nodemon --inspect ./bin/www",
     "start": "concurrently \"npm run client\" \"npm run server\"",
+    "debug": "concurrently \"npm run client\" \"npm run debug-server\"",
     "test": "jest"
   },
   "dependencies": {
@@ -45,7 +47,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
-    "babel-jest": "^24.0.0",
+    "babel-jest": "^23.6.0",
     "jest": "^24.0.0",
     "nodemon": "^1.18.9"
   }

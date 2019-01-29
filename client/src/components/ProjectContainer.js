@@ -1,6 +1,5 @@
 import React from 'react';
 import Topbar from './Topbar';
-import ReactDOM from 'react-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,14 +7,47 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import {styles} from './MaterialSense';
-import {ErrorMessage, Field, Form, Formik} from 'formik';
+import {Form, Formik} from 'formik';
 import {Debug} from './Debug';
 
 function ProjectForm (props) {
-    const {isSubmitting, errors, handleChange, handleSubmit} = props;
+    const {isSubmitting, errors, handleChange} = props;
+
+    function handleSubmit(values, { setSubmitting, setErrors }) {
+        //var myvalues = JSON.stringify(values)
+
+        fetch('/api/project', {
+            method: 'POST',
+            body: values,
+        }).then(function (data) {
+            console.log(data);
+        }).catch(function (err) {
+            console.log(err);
+        });
+    }
+
+    /*
+    const DisplayFormikState = props => {
+
+        <div style={{margin: '1rem 0', background: '#f6f8fa', padding: '.5rem'}}>
+            <strong>Injected Formik props (the form's state)</strong>
+            <div>
+                <code>errors:</code> {JSON.stringify(props.errors, null, 2)}
+            </div>
+            <div>
+                <code>values:</code> {JSON.stringify(props.values, null, 2)}
+            </div>
+            <div>
+                <code>isSubmitting:</code> {JSON.stringify(props.isSubmitting, null, 2)}
+            </div>
+        </div>
+
+    }; */
+
     return (
-        <Formik
+        <Formik id="formik-form" name="formik-form"
             render={() => (
+
                 <Form>
                     <Typography variant="body1" gutterBottom>
                         <label className="form-field" htmlFor="title">Project title</label><br/>
@@ -47,25 +79,15 @@ function ProjectForm (props) {
                     </Typography>
 
                     <Debug/>
+
                 </Form>
+
+
             )}
         />
     );
 }
 
-function handleSubmit(values, { setSubmitting, setErrors }) {
-    alert(JSON.stringify(values, null, 2));
-    alert(values);
-
-    fetch('/api/project', {
-        method: 'POST',
-        body: values,
-    }).then(function (data) {
-        console.log(data);
-    }).catch(function (err) {
-        console.log(err);
-    });
-};
 
 class ProjectContainer extends React.Component {
     constructor(props) {
@@ -89,7 +111,7 @@ class ProjectContainer extends React.Component {
                                             <Typography variant="body1" gutterBottom>
                                                 <Paper className={classes.root}>
                                                     <Formik
-                                                        onSubmit={handleSubmit}
+                                                        onSubmit={ProjectForm.handleSubmit}
                                                         render={ProjectForm}
                                                     />
                                                 </Paper>

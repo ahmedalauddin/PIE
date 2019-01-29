@@ -10,7 +10,6 @@ import SwipeDialog from './dialogs/SwipeDialog';
 import Topbar from './Topbar';
 import ProjectTable from './ProjectTable';
 import { styles } from './MaterialSense';
-//const backgroundShape = require('../images/shape.svg');
 
 class Dashboard extends Component {
 

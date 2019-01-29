@@ -1,30 +1,25 @@
-const Organization = require('../models/organization');
+const Organization = require('../models').Organization;
+const Project = require('../models').Project;
 const express = require('express');
 const bodyParser = require('body-parser');
-var app = express();
-
-// parse application/x-www-form-urlencoded
-//app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
-//app.use(bodyParser.json());
-
+const util = require('util');
 
 module.exports = {
     create(req, res) {
-        try {
-            console.log(JSON.stringify(req.body, null, 2));
-            console.log('body is: ' +  req.body);
-            //console.log('json is: ' +  jsonParser.parse(req.body));
-        }
-        catch {
-            error => res.status(400).send(error);
-        }
+        // parse application/x-www-form-urlencoded
+        //var app = express();
+        //app.use(bodyParser.urlencoded({ extended: false }));
+        // parse application/json
+        //app.use(bodyParser.json());
+        console.log("dump object: " + util.inspect(req, {showHidden: false, depth: null}));
+        //console.log('body: ' + req.body.title);
 
         return Project
             .create({
                 title: req.body.title,
                 description: req.body.description,
-                progress: parseInt(req.body.progress),
+                orgId: parseInt(req.body.orgId),
+                //progress: parseInt(req.body.progress),
                 //startAt: req.params.startDate,
                 //endAt: req.params.endDate,
             })

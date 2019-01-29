@@ -7,7 +7,7 @@
     "client": "cd client && npm start",
     "server": "nodemon ./bin/www",
     "debug-server": "nodemon --inspect ./bin/www",
-    "start": "concurrently \"npm run client\" \"npm run server\"",
+    "start": "concurrently \"npm run client\" \"npm run debug-server\"",
     "debug": "concurrently \"npm run client\" \"npm run debug-server\"",
     "test": "jest"
   },

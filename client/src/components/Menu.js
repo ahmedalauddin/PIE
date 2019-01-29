@@ -17,19 +17,15 @@ const Menu = [
     },
     {
         label: 'Edit Project',
-        pathname: '/editproject'
+        pathname: '/projectcontainer'
     },
     {
         label: 'Edit Person',
         pathname: '/editperson'
     },
     {
-        label: 'New Project',
-        pathname: '/newproject'
-    },
-    {
-        label: 'Cards',
-        pathname: '/cards'
+        label: 'Project',
+        pathname: '/projectcard'
     },
     {
         label: 'List Projects',

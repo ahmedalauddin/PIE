@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var passport = require('passport');
+//var passport = require('passport');
 var session = require('express-session')
 var env = require('dotenv').load();
 
@@ -29,7 +29,7 @@ require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
-require('./server/routes/auth')(app);
+//require('./server/routes/auth')(app);
 require('./server/routes/mindmap')(app);
 var models = require('./server/models');
 
@@ -44,6 +44,7 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+/*
 // For Passport
 app.use(session({
   secret: 'quid-pro-quo',
@@ -52,6 +53,8 @@ app.use(session({
 })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
+*/
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -59,7 +62,7 @@ app.use(function (req, res, next) {
 });
 
 //load passport strategies
-require('./server/config/passport/passport.js')(passport, models.person);
+//require('./server/config/passport/passport.js')(passport, models.person);
 
 // error handler
 app.use(function(err, req, res, next) {

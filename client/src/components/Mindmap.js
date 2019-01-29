@@ -30,7 +30,7 @@ class Mindmap extends Component {
                 .then(res => res.json())
                 .then(mindmap => this.setState({mindmap}));
         }
-    };
+    }
 
     componentDidUpdate() {
         // set up the options
@@ -38,7 +38,7 @@ class Mindmap extends Component {
             container: 'mindmap',
             theme: 'green',
             editable: true
-        }
+        };
         let jm = new jsMind(options);
         jm.show(this.state.mindmapData);
     }
@@ -70,7 +70,7 @@ class Mindmap extends Component {
                     </Grid>
                 </div>
             </React.Fragment>
-        )
+        );
     }
 }
 

@@ -17,6 +17,8 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
+import ProjectContainer from './components/ProjectContainer';
+import ProjectCard from './components/ProjectCard';
 
 
 export default props => (
@@ -29,7 +31,8 @@ export default props => (
                 <Route exact path='/login' component={ LoginFormContainer } />
                 <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/signup' component={ Signup } />
-                <Route exact path='/editproject' component={ EditProject } />
+                <Route exact path='/projectcontainer' component={ ProjectContainer } />
+                <Route exact path='/projectcard' component={ ProjectCard } />
                 <Route exact path='/editkpi' component={ EditKpi } />
                 <Route path='/editproject/:id' component={ EditProject } />
                 <Route path='/editperson/:id' component={ EditPerson } />

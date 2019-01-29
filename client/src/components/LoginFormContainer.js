@@ -1,5 +1,6 @@
 import React from 'react';
 import Topbar from './Topbar';
+import ReactDOM from 'react-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -39,13 +40,13 @@ function SignUpForm(props) {
             </label>
             <div className="form-field-error">{errors.username}</div>
 
-            <label className="form-field" htmlFor="fullName">
+            <label className="form-field" htmlFor="firstName">
                 <span>First Name:</span><br/>
                 <input name="firstName" type="text" onChange={handleChange} />
             </label>
             <div className="form-field-error">{errors.firstName}</div>
 
-            <label className="form-field" htmlFor="fullName">
+            <label className="form-field" htmlFor="lastName">
                 <span>Last Name:</span><br/>
                 <input name="lastName" type="text" onChange={handleChange} />
             </label>
@@ -78,8 +79,9 @@ function SignUpForm(props) {
             <button onClick={handleSubmit}>{isSubmitting ? 'Loading' : 'Sign Up'}</button>
         </div>
     );
-}
+};
 
+/*
 function setSubmitValues(values) {
     let email = values.email;
     let pwdhash = values.password;
@@ -90,30 +92,23 @@ function setSubmitValues(values) {
     var myvalues = {email: email, orgId: organization, pwdhash: pwdhash, username: username, firstName: firstname, lastName: lastname };
     return(myvalues);
 }
+*/
 
 function onSubmit(values, { setSubmitting, setErrors }) {
+    alert(JSON.stringify(values, null, 2));
+    setSubmitting(false);
 
-    setTimeout(() => {
-        alert(JSON.stringify(values, null, 2));
-        setSubmitting(false);
+    //var myValues = setSubmitValues(values);
+    //myValues = JSON.stringify(myValues);
 
-        //var myValues = setSubmitValues(values);
-        //myValues = JSON.stringify(myValues);
-
-        //alert(values('email'));
-        fetch('/api/person', {
-            method: 'POST',
-            body: JSON.stringify({
-                values
-            }),
-            headers: {"Content-Type": "application/json"}
-        }).then(function (data) {
-            console.log(data);
-        }).catch(function (err) {
-            console.log(err);
-        });
-
-    }, 2000);
+    fetch('/api/person', {
+        method: 'POST',
+        body: values,
+    }).then(function (data) {
+        console.log(data);
+    }).catch(function (err) {
+        console.log(err);
+    });
 }
 
 
@@ -162,6 +157,7 @@ class LoginFormContainer extends React.Component {
         );
     }
 }
+
 
 
 export default withRouter(withStyles(styles)(LoginFormContainer));

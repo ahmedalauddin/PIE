@@ -1,24 +1,40 @@
-const Project = require('../models').Project;
-const Organization = require('../models').Organization;
+const Organization = require('../models/organization');
+const express = require('express');
+const bodyParser = require('body-parser');
+var app = express();
+
+// parse application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+//app.use(bodyParser.json());
+
 
 module.exports = {
     create(req, res) {
+        try {
+            console.log(JSON.stringify(req.body, null, 2));
+            console.log('body is: ' +  req.body);
+            //console.log('json is: ' +  jsonParser.parse(req.body));
+        }
+        catch {
+            error => res.status(400).send(error);
+        }
+
         return Project
             .create({
                 title: req.body.title,
                 description: req.body.description,
-                businessGoal: req.body.businessGoal,
-                orgId: req.body.orgId,
-                mindmapId: req.body.mindmapId,
-                nodeId: req.body.nodeId,
-                progress: req.body.progress,
-                startAt: req.body.startAt,
-                endAt: req.body.endAt,
+                progress: parseInt(req.body.progress),
+                //startAt: req.params.startDate,
+                //endAt: req.params.endDate,
             })
             .then(p => res.status(201).send(p))
             .catch(error => res.status(400).send(error));
     },
-
+    //businessGoal: req.body.businessGoal,
+    //orgId: req.body.orgId,
+    //mindmapId: req.body.mindmapId,
+    //nodeId: req.body.nodeId,
     // Update a project
     update(req, res) {
         const id = req.params.id;

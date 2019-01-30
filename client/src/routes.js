@@ -4,6 +4,7 @@ import {Route, Switch, BrowserRouter} from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import Cards from './components/Cards';
 import Main from './components/Main';
+import Main2 from './components/Main2';
 import ScrollToTop from './components/ScrollTop';
 import NewProject from './components/NewProject';
 import EditPerson from './components/EditPerson';
@@ -26,7 +27,7 @@ export default props => (
     <BrowserRouter>
         <ScrollToTop>
             <Switch>
-                <Route exact path='/' component={ Main } />
+                <Route exact path='/' component={ Main2 } />
                 <Route exact path='/dashboard' component={ Dashboard } />
                 <Route exact path='/logout' component={ Logout } />
                 <Route exact path='/login' component={ LoginFormContainer } />

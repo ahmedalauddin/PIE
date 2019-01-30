@@ -20,13 +20,9 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Collapse from '@material-ui/core/Collapse';
 import classnames from 'classnames';
 import {red} from '@material-ui/core/colors';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
 import Moment from 'react-moment';
 
-const styles2 = theme => ({
+const cardstyles = theme => ({
     card: {
         maxWidth: 400,
     },
@@ -51,6 +47,109 @@ const styles2 = theme => ({
         backgroundColor: red[500],
     },
 });
+
+const TitleSectionGridItem = (classes, project) => {
+    return (
+        <div className={classes.inline}>
+            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                Project
+            </Typography>
+            <Typography variant="h5" component="h2">
+                {project.title}<br/><br/>
+            </Typography>
+        </div>
+    );
+};
+
+const DescriptionSectionGridItem = (classes, project) => {
+    return (
+        <div className={classes.inline}>
+            <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
+                Description
+            </Typography>
+            <Typography component="p">
+                {project.description}<br/><br/>
+            </Typography>
+            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                Business Goal
+            </Typography>
+            <Typography component="p">
+                {project.businessGoal}<br/><br/>
+            </Typography>
+        </div>
+    );
+};
+
+const RightSectionGridItem = (classes, project) => {
+    return (
+        <div className={classes.inlineRight}>
+            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                Start Date
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+                <Moment format="D MMM YYYY" withTitle>
+                    {project.startAt}
+                </Moment>
+            </Typography>
+            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                End Date
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+                <Moment format="D MMM YYYY" withTitle>
+                    {project.endAt}
+                </Moment>
+            </Typography>
+            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                Progress
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+                {project.progress}%
+            </Typography>
+            <ButtonBar/>
+        </div>
+    );
+};
+
+const ExpandingSectionGridItem = (classes, project) => {
+    return (
+        <div className={classes.inlineLeft}>
+            <Typography variant="h6" style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                Other Prioritized KPIs
+            </Typography>
+            <Typography variant="h5" gutterBottom>
+                Service BOM Accuracy
+            </Typography>
+            <Typography variant="h7" gutterBottom>
+                Leading KPI<br/>Project started 12 February 2018<br/><br/>
+            </Typography>
+            <Typography variant="h5" gutterBottom>
+                Reduction in Unplanned Activities
+            </Typography>
+            <Typography variant="h7" gutterBottom>
+                Leading KPI<br/>Project started 14 March 2018<br/><br/>
+            </Typography>
+            <Typography variant="h5" gutterBottom>
+                Increase in Local Source
+            </Typography>
+            <Typography variant="h7" gutterBottom>
+                Leading KPI<br/>Project started 14 March 2018<br/><br/>
+            </Typography>
+            <Typography variant="h5"  gutterBottom>
+                Improve Predictablity of Failure
+            </Typography>
+            <Typography variant="h7" gutterBottom>
+                Leading KPI<br/>Project in planning<br/><br/>
+            </Typography>
+            <Typography variant="h5"  gutterBottom>
+                First Time Right
+            </Typography>
+            <Typography variant="h7" gutterBottom>
+                Leading KPI<br/>Project in planning<br/><br/><br/>
+            </Typography>
+        </div>
+    );
+};
+
 
 class ProjectCard2 extends React.Component {
     state = {
@@ -94,64 +193,19 @@ class ProjectCard2 extends React.Component {
                                 <SectionHeader title="Project Details" subtitle="" />
                                 <Card className={classes.card}>
                                     <CardContent>
-                                        <Table>
-                                            <TableRow>
-                                                <TableCell width="300">
-                                                    <div className={classes.inline}>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Project
-                                                        </Typography>
-                                                        <Typography variant="h5" component="h2">
-                                                            {this.state.project.title}<br/><br/>
-                                                        </Typography>
-
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell width="510">
-                                                    <div className={classes.inline}>
-                                                        <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
-                                                            Description
-                                                        </Typography>
-                                                        <Typography component="p">
-                                                            {this.state.project.description}<br/><br/>
-                                                        </Typography>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Business Goal
-                                                        </Typography>
-                                                        <Typography component="p">
-                                                            {this.state.project.businessGoal}<br/><br/>
-                                                        </Typography>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell align="right">
-                                                    <div className={classes.inlineRight}>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Start Date
-                                                        </Typography>
-                                                        <Typography variant="h6" gutterBottom>
-                                                            <Moment format="D MMM YYYY" withTitle>
-                                                                {this.state.project.startAt}
-                                                            </Moment>
-                                                        </Typography>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            End Date
-                                                        </Typography>
-                                                        <Typography variant="h6" gutterBottom>
-                                                            <Moment format="D MMM YYYY" withTitle>
-                                                                {this.state.project.endAt}
-                                                            </Moment>
-                                                        </Typography>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Progress
-                                                        </Typography>
-                                                        <Typography variant="h6" gutterBottom>
-                                                            {this.state.project.progress}%
-                                                        </Typography>
-                                                        <ButtonBar/>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        </Table>
+                                        <Grid container justify="center">
+                                            <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+                                                <Grid item xs={12} md={4}>
+                                                    {TitleSectionGridItem(classes, this.state.project)}
+                                                </Grid>
+                                                <Grid item xs={12} md={4}>
+                                                    {DescriptionSectionGridItem(classes, this.state.project)}
+                                                </Grid>
+                                                <Grid item xs={12} md={4}>
+                                                    {RightSectionGridItem(classes, this.state.project)}
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
                                     </CardContent>
                                     <CardActions className={classes.actions} disableActionSpacing>
                                         <IconButton
@@ -167,41 +221,7 @@ class ProjectCard2 extends React.Component {
                                     </CardActions>
                                     <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                                         <CardContent>
-                                            <div className={classes.inlineLeft}>
-                                                <Typography variant="h6" style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                                                    Other Prioritized KPIs
-                                                </Typography>
-                                                <Typography variant="h5" gutterBottom>
-                                                    Service BOM Accuracy
-                                                </Typography>
-                                                <Typography variant="h7" gutterBottom>
-                                                    Leading KPI<br/>Project started 12 February 2018<br/><br/>
-                                                </Typography>
-                                                <Typography variant="h5" gutterBottom>
-                                                    Reduction in Unplanned Activities
-                                                </Typography>
-                                                <Typography variant="h7" gutterBottom>
-                                                    Leading KPI<br/>Project started 14 March 2018<br/><br/>
-                                                </Typography>
-                                                <Typography variant="h5" gutterBottom>
-                                                    Increase in Local Source
-                                                </Typography>
-                                                <Typography variant="h7" gutterBottom>
-                                                    Leading KPI<br/>Project started 14 March 2018<br/><br/>
-                                                </Typography>
-                                                <Typography variant="h5"  gutterBottom>
-                                                    Improve Predictablity of Failure
-                                                </Typography>
-                                                <Typography variant="h7" gutterBottom>
-                                                    Leading KPI<br/>Project in planning<br/><br/>
-                                                </Typography>
-                                                <Typography variant="h5"  gutterBottom>
-                                                    First Time Right
-                                                </Typography>
-                                                <Typography variant="h7" gutterBottom>
-                                                    Leading KPI<br/>Project in planning<br/><br/><br/>
-                                                </Typography>
-                                            </div>
+                                            {ExpandingSectionGridItem(classes, this.state.project)}
                                         </CardContent>
                                     </Collapse>
 

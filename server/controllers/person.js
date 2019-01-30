@@ -1,6 +1,21 @@
 const Person = require('../models').Person;
 const Organization = require('../models').Organization;
 const bCrypt = require('bcrypt-nodejs');
+var express = require('express');
+const bodyParser = require('body-parser');
+
+
+
+/*
+
+app.use(bodyParser.json())
+
+app.use(function (req, res) {
+    res.setHeader('Content-Type', 'text/plain')
+    res.write('you posted:\n')
+    res.end(JSON.stringify(req.body, null, 2))
+})
+*/
 
 function getHash(value) {
     var hashedValue = '';
@@ -18,21 +33,22 @@ function getHash(value) {
     return hashedValue;
 }
 
+
+
 module.exports = {
     create(req, res) {
-        console.log(req.body);
-        hashed = getHash(req.body.pwdhash);
-        console.log("hashed value = " + hashed);
+        //console.log(req.body);
+        //let hashed = getHash(req.body.pwdhash);
+        //console.log("hashed value = " + hashed);
+        //let fullname = req.body.firstName + ' ' + req.body.lastName;
         return Person
             .create({
-                username: req.body.username,
-                fullName: req.body.fullName,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                orgId: req.body.orgId,
-                email: req.body.email,
-                pwdhash: req.body.pwdhash,
-
+                username: req.body.values.username,
+                //firstName: req.body.firstName,
+                //lastName: req.body.lastName,
+                orgId: '2',
+                email: req.body.values.email,
+                pwdhash: 'hsjdfhsjdfhdsjf',
             })
             .then(person => {
                 console.log('Adding person');
@@ -66,7 +82,12 @@ module.exports = {
     // Find a person by Id
     findById(req, res) {
         return Person
-            .findById(req.params.id)
+            .findById(req.params.id, {
+                include: [{
+                    model: Organization,
+                    as: 'Organization',
+                }],
+            })
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },

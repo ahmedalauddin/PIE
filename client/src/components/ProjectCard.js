@@ -5,7 +5,10 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import DescriptionIcon from '@material-ui/icons/Description';
-import ButtonBar from '../buttons/ButtonBar';
+import ButtonBar from './buttons/ButtonBar';
+import CssBaseline from './ProjectContainer';
+import Topbar from './Topbar';
+import Grid from './MindMapStatic';
 
 const styles = theme => ({
     paper: {
@@ -71,13 +74,15 @@ const styles = theme => ({
     }
 });
 
-class CardItem extends Component {
 
+
+class ProjectCard extends Component {
     render() {
         const { classes } = this.props;
 
         return (
-            <div className={classes.root}>
+            <React.Fragment>
+                <Topbar/>
                 <Paper className={classes.paper}>
                     <div className={classes.itemContainer}>
                         <div className={classes.avatarContainer}>
@@ -88,43 +93,77 @@ class CardItem extends Component {
                         <div className={classes.baseline}>
                             <div className={classes.inline}>
                                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Months
+                                    Project
+                                </Typography>
+                                <Typography variant="h4" gutterBottom>
+                                    Improve predictability of failure<br/><br/>
+                                </Typography>
+                                <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                                    Description
                                 </Typography>
                                 <Typography variant="h6" gutterBottom>
-                  4 month(s)
+                                    Analyze and categorize historical data coming from all plants and systems to <br/>
+                                    understand typical causes and indicators of impending failures.<br/>Affects requirement planning.<br/><br/>
                                 </Typography>
                             </div>
                             <div className={classes.inline}>
                                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Creation date
+
                                 </Typography>
                                 <Typography variant="h6" gutterBottom>
-                  01 February 2019
+
                                 </Typography>
                             </div>
                             <div className={classes.inline}>
                                 <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                  Amount
+                                    Business Goal
                                 </Typography>
                                 <Typography variant="h6" gutterBottom>
-                  6,600 USD
+                                    Improved reliability of systems, identification of signs to replace parts to eliminate<br/> most system failures.
                                 </Typography>
+                                <ButtonBar />
                             </div>
                         </div>
-                        <div className={classes.inlineRight}>
-                            <Typography style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                Other Amount
+                        <div className={classes.inlineLeft}>
+                            <Typography variant="h6" style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
+                                Prioritized KPIs
                             </Typography>
-                            <Typography variant="h4" gutterBottom>
-                Once a month
+                            <Typography variant="h5" gutterBottom>
+                                Service BOM Accuracy
                             </Typography>
-                            <ButtonBar />
+                            <Typography variant="h7" gutterBottom>
+                                Leading KPI<br/>Project started 12 February 2018<br/><br/>
+                            </Typography>
+                            <Typography variant="h5" gutterBottom>
+                                Reduction in Unplanned Activities
+                            </Typography>
+                            <Typography variant="h7" gutterBottom>
+                                Leading KPI<br/>Project started 14 March 2018<br/><br/>
+                            </Typography>
+                            <Typography variant="h5" gutterBottom>
+                                Increase in Local Source
+                            </Typography>
+                            <Typography variant="h7" gutterBottom>
+                                Leading KPI<br/>Project started 14 March 2018<br/><br/>
+                            </Typography>
+                            <Typography variant="h5"  gutterBottom>
+                                Improve Predictablity of Failure
+                            </Typography>
+                            <Typography variant="h7" gutterBottom>
+                                Leading KPI<br/>Project in planning<br/><br/>
+                            </Typography>
+                            <Typography variant="h5"  gutterBottom>
+                                First Time Right
+                            </Typography>
+                            <Typography variant="h7" gutterBottom>
+                                Leading KPI<br/>Project in planning<br/><br/><br/>
+                            </Typography>
                         </div>
                     </div>
                 </Paper>
-            </div>
+            </React.Fragment>
         );
     }
 }
 
-export default withStyles(styles)(CardItem);
+export default withStyles(styles)(ProjectCard);

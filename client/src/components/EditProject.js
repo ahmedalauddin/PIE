@@ -14,12 +14,15 @@ class EditProject extends React.Component {
     };
 
     componentDidMount() {
-        const url1 = '/api/project/' + this.props.match.params.id;
-        //if (projid > 0) {
-        fetch(url1)
-            .then(res => res.json())
-            .then(project => this.setState({project}));
-        //}
+        if (this.props.match.params.id != '') {
+
+            const url1 = '/api/project/' + this.props.match.params.id;
+            //if (projid > 0) {
+            fetch(url1)
+                .then(res => res.json())
+                .then(project => this.setState({project}));
+            //}
+        }
     }
 
 

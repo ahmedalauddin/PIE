@@ -1,27 +1,12 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-    const Person = sequelize.define('Person', {
+    const ClientProject = sequelize.define('ClientProject', {
         id: {
             type: DataTypes.INTEGER,
+            allowNull: false,
             primaryKey: true,
             autoIncrement: true
-        },
-        firstName: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        lastName: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: true,
         },
         orgId: {
             type: DataTypes.INTEGER,
@@ -30,13 +15,29 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id'
             },
         },
-        pwdhash: {
+        name: {
             type: DataTypes.STRING,
-            allowNull: false
-        },
-        lastLogin: {
-            type: DataTypes.DATE,
             allowNull: true
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        businessGoal: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        progress: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        startDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: true
+        },
+        endDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: true,
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -48,16 +49,17 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.NOW
         }
     }, {
-        tableName: 'Persons'
+        tableName: 'clientproject'
     });
 
-    Person.associate = (models) => {
-        Person.belongsTo(models.Organization, {
+    
+    ClientProject.associate = (models) => {
+        ClientProject.belongsTo(models.Organization, {
             foreignKey: 'orgId',
             onDelete: 'cascade'
         });
     };
 
-    return Person;
+    return ClientProject;
 };
 

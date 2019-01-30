@@ -9,40 +9,16 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import {styles} from './MaterialSense';
 
-function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
 
-class ListKpis extends Component {
-
-    state = {
-        order: 'asc',
-        orderBy: '',
-        selected: [],
-        kpis: [],
-    };
-
-    componentDidMount() {
-        // Use fetch to get all the KPIs
-        fetch('/api/kpi')
-            .then(res => res.json())
-            .then(kpis => this.setState({kpis}));
-    };
-
+class MindMapStatic extends Component {
 
     render() {
         const {classes} = this.props;
-        const mindmap = require('../images/mindmap-sample.png');
+        const mindmap = require('../images/Mindmap2.JPG');
 
         return (
             <React.Fragment>
-                <CssBaseline/>
+
                 <Topbar/>
                 <div className={classes.root}>
                     <Grid container justify="center">
@@ -53,7 +29,7 @@ class ListKpis extends Component {
                                         <div align="center">
                                             <Typography variant="body1" gutterBottom>
                                                 <Paper className={classes.root}>
-                                                    <img width={1000} src={mindmap} />
+                                                    <img width={900} src={mindmap} />
                                                 </Paper>
                                             </Typography>
                                         </div>
@@ -68,5 +44,5 @@ class ListKpis extends Component {
     }
 }
 
-export default withStyles(styles)(ListKpis);
+export default withStyles(styles)(MindMapStatic);
 

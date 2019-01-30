@@ -14,7 +14,7 @@ import {Formik, Field, Form} from 'formik';
 import {Debug} from './Debug';
 import {styles} from './MaterialSense';
 
-const backgroundShape = require('../images/shape.svg');
+//const backgroundShape = require('../images/shape.svg');
 
 class Dashboard extends Component {
 

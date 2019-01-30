@@ -1,5 +1,9 @@
-const passport = require('passport');
+/*
 
+const passport = require('passport');
+*/
+
+/*
 module.exports = {
     signin (req, res) {
         passport.authenticate('local-signin', {
@@ -24,3 +28,4 @@ module.exports = {
     },
 
 };
+*/

@@ -1,10 +1,9 @@
-/* jshint indent: 2 */
+
 
 module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define('Project', {
     id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
@@ -40,11 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     startAt: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: true
     },
     endAt: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: true,
     },
     createdAt: {

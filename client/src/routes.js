@@ -4,6 +4,7 @@ import {Route, Switch, BrowserRouter} from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import Cards from './components/Cards';
 import Main from './components/Main';
+import Main2 from './components/Main2';
 import ScrollToTop from './components/ScrollTop';
 import NewProject from './components/NewProject';
 import EditPerson from './components/EditPerson';
@@ -17,20 +18,26 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
+import ProjContainer from './components/ProjContainer';
+import ProjectCard from './components/ProjectCard';
+import ProjectCard2 from './components/ProjectCard2';
 
 
 export default props => (
     <BrowserRouter>
         <ScrollToTop>
             <Switch>
-                <Route exact path='/' component={ Main } />
+                <Route exact path='/' component={ Main2 } />
                 <Route exact path='/dashboard' component={ Dashboard } />
                 <Route exact path='/logout' component={ Logout } />
                 <Route exact path='/login' component={ LoginFormContainer } />
                 <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/signup' component={ Signup } />
-                <Route exact path='/editproject' component={ EditProject } />
+                <Route exact path='/projectcontainer' component={ ProjContainer } />
+                <Route exact path='/projectcard' component={ ProjectCard } />
+                <Route exact path='/projectcard2' component={ ProjectCard2 } />
                 <Route exact path='/editkpi' component={ EditKpi } />
+                <Route path='/projectcard2/:id' component={ ProjectCard2 } />
                 <Route path='/editproject/:id' component={ EditProject } />
                 <Route path='/editperson/:id' component={ EditPerson } />
                 <Route path='/editkpi/:id' component={ EditKpi } />

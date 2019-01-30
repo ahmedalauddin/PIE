@@ -90,7 +90,7 @@ const styles = theme => ({
     }
 });
 
-class Main extends Component {
+class Main2 extends Component {
 
     state = {
         learnMoredialog: false,
@@ -142,10 +142,10 @@ class Main extends Component {
                                 </Paper>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <Paper className={classes.paper}>
-                                    <div className={classes.box}>
+
+                                    <div>
                                         <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                            Another box
+                                            Another box@@@@@
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
                                             A default box
@@ -156,7 +156,7 @@ class Main extends Component {
                                             Learn more
                                         </Button>
                                     </div>
-                                </Paper>
+
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Paper className={classes.paper}>
@@ -214,4 +214,4 @@ class Main extends Component {
     }
 }
 
-export default withRouter(withStyles(styles)(Main));
+export default withRouter(withStyles(styles)(Main2));

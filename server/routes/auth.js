@@ -1,24 +1,25 @@
+/*
 const authController = require('../controllers').auth;
 
 module.exports = function(app) {
-    /*
+
     app.get('/api', (req, res) => res.status(200).send({
         message: 'Welcome to the auth API!',
     }));
-    */
+
 
     //app.get('/api/signup', authController.signup);
 
     //app.get('/api/signin', authController.signin);
 
     // TODO
-    app.post('/api/signup', authController.signup);
+    //app.post('/api/signup', authController.signup);
 
-    app.get('/dashboard',isLoggedIn, authController.dashboard);
+    //app.get('/dashboard',isLoggedIn, authController.dashboard);
 
-    app.get('/api/logout', authController.logout);
+    //app.get('/api/logout', authController.logout);
 
-    app.post('/api/signin', authController.signin);
+    //app.post('/api/signin', authController.signin);
 
     // TODO need is logged check first on signup
 
@@ -29,3 +30,5 @@ module.exports = function(app) {
         res.redirect('/signin');
     }
 };
+
+*/

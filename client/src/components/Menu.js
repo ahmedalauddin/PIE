@@ -25,7 +25,7 @@ const Menu = [
     },
     {
         label: 'Project',
-        pathname: '/projectcard'
+        pathname: '/projectcard2'
     },
     {
         label: 'List Projects',

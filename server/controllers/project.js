@@ -6,22 +6,20 @@ const util = require('util');
 
 module.exports = {
     create(req, res) {
-        // parse application/x-www-form-urlencoded
-        //var app = express();
-        //app.use(bodyParser.urlencoded({ extended: false }));
-        // parse application/json
-        //app.use(bodyParser.json());
         console.log("dump object: " + util.inspect(req, {showHidden: false, depth: null}));
-        //console.log('body: ' + req.body.title);
 
         return Project
             .create({
                 title: req.body.title,
                 description: req.body.description,
                 orgId: parseInt(req.body.orgId),
-                //progress: parseInt(req.body.progress),
-                //startAt: req.params.startDate,
-                //endAt: req.params.endDate,
+                businessGoal: req.body.businessGoal,
+                orgId: req.body.orgId,
+                mindmapId: req.body.mindmapId,
+                nodeId: req.body.nodeId,
+                progress: parseInt(req.body.progress),
+                startAt: req.params.startDate,
+                endAt: req.params.endDate,
             })
             .then(p => res.status(201).send(p))
             .catch(error => res.status(400).send(error));
@@ -56,7 +54,12 @@ module.exports = {
     // Find a project by id
     findById(req, res) {
         return Project
-            .findById(req.params.id)
+            .findById(req.params.id, {
+                include: [{
+                    model: Organization,
+                    as: 'Organization',
+                }],
+            })
             .then(p => res.status(200).send(p))
             .catch(error => res.status(400).send(error));
     },

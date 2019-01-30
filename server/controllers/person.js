@@ -3,8 +3,7 @@ const Organization = require('../models').Organization;
 const bCrypt = require('bcrypt-nodejs');
 var express = require('express');
 const bodyParser = require('body-parser');
-// parse application/json
-var app = express();
+
 
 
 /*
@@ -83,7 +82,12 @@ module.exports = {
     // Find a person by Id
     findById(req, res) {
         return Person
-            .findById(req.params.id)
+            .findById(req.params.id, {
+                include: [{
+                    model: Organization,
+                    as: 'Organization',
+                }],
+            })
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },

@@ -115,7 +115,7 @@ class Topbar extends Component {
         if(this.props.currentPath === '/editperson') {
             return 5;
         }
-        if(this.props.currentPath === '/projectcard') {
+        if(this.props.currentPath === '/projectcard2') {
             return 7;
         }
         if(this.props.currentPath === '/listprojects') {

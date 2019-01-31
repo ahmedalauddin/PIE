@@ -33,7 +33,7 @@ export default props => (
                 <Route exact path='/login' component={ LoginFormContainer } />
                 <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/signup' component={ Signup } />
-                <Route exact path='/projectcontainer' component={ ProjContainer } />
+                <Route exact path='/projcontainer' component={ ProjContainer } />
                 <Route exact path='/projectcard' component={ ProjectCard } />
                 <Route exact path='/projectcard2' component={ ProjectCard2 } />
                 <Route exact path='/editkpi' component={ EditKpi } />

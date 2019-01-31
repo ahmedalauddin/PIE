@@ -21,13 +21,15 @@ import {red} from '@material-ui/core/colors';
 import Moment from 'react-moment';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import FilledInput from '@material-ui/core/FilledInput';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {getSorting, stableSort} from './TableFunctions';
+import Table from '@material-ui/core/Table';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import moment from 'moment';
+import Log from './Log';
 const materialstyles = theme => ({
     card: {
         maxWidth: 400,
@@ -69,55 +71,6 @@ const materialstyles = theme => ({
     },
 });
 
-/*
-const DescriptionSectionGridItem = (classes, project) => {
-    return (
-        <div className={classes.inline}>
-            <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
-                Description
-            </Typography>
-            <Typography component="p">
-                {project.description}<br/><br/>
-            </Typography>
-            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                Business Goal
-            </Typography>
-            <Typography component="p">
-                {project.businessGoal}<br/><br/>
-            </Typography>
-        </div>
-    );
-};
-*/
-const RightSectionGridItem = (classes, project) => {
-    return (
-        <div className={classes.inlineRight}>
-            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                Start Date
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-                <Moment format="D MMM YYYY" withTitle>
-                    {project.startAt}
-                </Moment>
-            </Typography>
-            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                End Date
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-                <Moment format="D MMM YYYY" withTitle>
-                    {project.endAt}
-                </Moment>
-            </Typography>
-            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                Progress
-            </Typography>
-            <Typography variant="h6" gutterBottom>
-                {project.progress}%
-            </Typography>
-            <ButtonBar/>
-        </div>
-    );
-};
 
 const ExpandingSectionGridItem = (classes, project) => {
     return (
@@ -164,18 +117,24 @@ class ProjectCard extends React.Component {
     state = {
         project: {},
         organizations: [],
+        projid: 0,
         title: '',
         goal: '',
         org: '',
         description: '',
+        startAt: '',
+        endAt: '',
+        progress: 0,
         isEditing: false,
         isNew: false,
         expanded: false,
         labelWidth: 0,
     };
 
+
     constructor(props) {
         super(props);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     /*
@@ -192,14 +151,63 @@ class ProjectCard extends React.Component {
         this.setState(state => ({ expanded: !state.expanded }));
     };
 
+    //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
+    handleSubmit(event) {
+        event.preventDefault();
+
+        setTimeout(() => {
+            if (this.state.id > 0) {
+                alert('We have an ID');
+                // We have a project id passed through the URL, do an
+                // update on the project.
+                let updatePath = '/api/project/' + this.state.id;
+                fetch(updatePath, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(this.state),
+                }).then(function (data) {
+                    //console.log(data);
+                }).catch(function (err) {
+                    //console.log(err);
+                });
+            } else {
+                // No project id, so we will do a create.  The difference
+                // is we do a POST instead of a PUT.
+                fetch('/api/project', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(this.state),
+                }).then(function (data) {
+                    //console.log(data);
+                }).catch(function (err) {
+                    //console.log(err);
+                });
+            }
+
+            //setSubmitting(false);
+        }, 2000);
+    }
+
+    // Return boolean for whether the project exists.
+    doesProjectExist() {
+
+    }
+
     componentDidMount() {
         if (parseInt(this.props.match.params.id) > 0) {
             fetch('/api/project/' + this.props.match.params.id)
                 .then(res => res.json())
-                .then(project => this.setState({goal: project.businessGoal,
-                    title: project.title,
-                    description: project.description,
-                }));
+                .then(project => this.setState(
+                    {id:  this.props.match.params.id,
+                        goal: project.businessGoal,
+                        title: project.title,
+                        description: project.description,
+                        org: project.Organization.name,
+                        orgId: project.orgId,
+                        progress: project.progress,
+                        startAt: moment(project.startAt).format('YYYY-MM-DD'),
+                        endAt: project.endAt,
+                    }));
         } else {
             this.setState({isEditing: true});
         }
@@ -213,26 +221,6 @@ class ProjectCard extends React.Component {
         //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
 
-
-
-    /*
-                    <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                    Project - this should be {this.props.title}
-                </Typography>
-     */
-    /*
-                    <TextField
-                    required
-                    id="standard-required"
-                    label="Project Title"
-                    defaultValue="{this.props.title}"
-                    className={classes.textField}
-                    margin="normal"
-                />
-     */
-
-
-
     render() {
         const {classes} = this.props;
         //const currentPath = this.props.location.pathname;
@@ -244,26 +232,25 @@ class ProjectCard extends React.Component {
             <React.Fragment>
                 <CssBaseline />
                 <Topbar />
-                <div className={classes.root}>
-                    <Grid container justify="center">
-                        <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-                            <Grid item xs={12}>
-                                <SectionHeader title="Project Details" subtitle="" />
-                                <Card className={classes.card}>
-                                    <CardContent>
-                                        <Grid container justify="center">
-                                            <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
-                                                <Grid item xs={12} md={4}>
-                                                    <div className={classes.inline}>
+                <form onSubmit={this.handleSubmit}>
+                    <div className={classes.root}>
+                        <Grid container justify="center">
+                            <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
+                                <Grid item xs={12}>
+                                    <SectionHeader title="" subtitle="" />
+                                    <Card className={classes.card}>
+                                        <CardContent>
+                                            <Table>
+                                                <TableRow>
+                                                    <TableCell style={{verticalAlign:'top',}}>
                                                         <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Project<br/>
-                                                            {this.state.project.title}
+                                                                Project
                                                         </Typography>
                                                         <Typography variant="h5" component="h2">
                                                             <TextField
                                                                 required
                                                                 id="standard-required"
-                                                                label=""
+                                                                label="Project"
                                                                 onChange={this.handleChange('title')}
                                                                 value={this.state.title}
                                                                 className={classes.textField}
@@ -277,12 +264,12 @@ class ProjectCard extends React.Component {
                                                                     value={this.state.org}
                                                                     onChange={this.handleChange}
                                                                     inputProps={{
-                                                                        name: 'organization',
-                                                                        id: 'organization-simple',
+                                                                        name: 'org',
+                                                                        id: 'org',
                                                                     }}
                                                                 >
                                                                     <MenuItem value="">
-                                                                    None
+                                                                        None
                                                                     </MenuItem>
                                                                     {stableSort(this.state.organizations, getSorting('asc', 'name'))
                                                                         .map(organizations => {
@@ -293,12 +280,10 @@ class ProjectCard extends React.Component {
                                                                 </Select>
                                                             </FormControl>
                                                         </Typography>
-                                                    </div>
-                                                </Grid>
-                                                <Grid item xs={12} md={4}>
-                                                    <div className={classes.inline}>
+                                                    </TableCell>
+                                                    <TableCell style={{verticalAlign:'top', width: '55%'}}>
                                                         <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
-                                                            Description
+                                                                Description
                                                         </Typography>
                                                         <Typography component="p">
                                                             <TextField
@@ -317,7 +302,7 @@ class ProjectCard extends React.Component {
                                                             />
                                                         </Typography>
                                                         <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Business Goal
+                                                                Business Goal
                                                         </Typography>
                                                         <Typography component="p">
                                                             <TextField
@@ -335,40 +320,71 @@ class ProjectCard extends React.Component {
                                                                 }}
                                                             />
                                                         </Typography>
-                                                    </div>
-                                                </Grid>
-                                                <Grid item xs={12} md={4}>
-                                                //RightSectionGridItem(classes, this.state.project)}
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </CardContent>
-                                    <CardActions className={classes.actions} disableActionSpacing>
-                                        <IconButton
-                                            className={classnames(classes.expand, {
-                                                [classes.expandOpen]: this.state.expanded,
-                                            })}
-                                            onClick={this.handleExpandClick}
-                                            aria-expanded={this.state.expanded}
-                                            aria-label="Show more"
-                                        >
-                                            <ExpandMoreIcon />
-                                        </IconButton>
-                                    </CardActions>
-                                    <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-                                        <CardContent>
-                                            {ExpandingSectionGridItem(classes, this.state.project)}
-                                        </CardContent>
-                                    </Collapse>
+                                                    </TableCell>
+                                                    <TableCell style={{verticalAlign:'top', width: '25%'}}>
+                                                        <div className={classes.inlineRight}>
+                                                            <Typography variant="h6" gutterBottom>
+                                                                <TextField
+                                                                    id="startdate"
+                                                                    label="Start Date"
+                                                                    type="date"
+                                                                    defaultValue={this.state.startAt}
+                                                                    className={classes.textField}
+                                                                    InputLabelProps={{
+                                                                        shrink: true,
+                                                                    }}
+                                                                />
+                                                            </Typography>
+                                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                                End Date
+                                                            </Typography>
+                                                            <Typography variant="h6" gutterBottom>
+                                                                <Moment format="D MMM YYYY" withTitle>
+                                                                    {this.state.endAt}
+                                                                </Moment>
+                                                            </Typography>
+                                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                                Progress
+                                                            </Typography>
+                                                            <Typography variant="h6" gutterBottom>
+                                                                {this.state.progress}%
+                                                            </Typography>
+                                                            <ButtonBar/>
+                                                            <button onClick={this.handleSubmit}>Submit</button>
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </Table>
 
-                                </Card>
+                                        </CardContent>
+                                        <CardActions className={classes.actions} disableActionSpacing>
+                                            <IconButton
+                                                className={classnames(classes.expand, {
+                                                    [classes.expandOpen]: this.state.expanded,
+                                                })}
+                                                onClick={this.handleExpandClick}
+                                                aria-expanded={this.state.expanded}
+                                                aria-label="Show more"
+                                            >
+                                                <ExpandMoreIcon />
+                                            </IconButton>
+                                        </CardActions>
+                                        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+                                            <CardContent>
+                                                {ExpandingSectionGridItem(classes, this.state.project)}
+                                            </CardContent>
+                                        </Collapse>
+
+                                    </Card>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </div>
+                    </div>
+                </form>
             </React.Fragment>
         );
     }
 }
+
 
 export default withStyles(styles)(ProjectCard);

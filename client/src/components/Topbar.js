@@ -106,7 +106,7 @@ class Topbar extends Component {
         if(this.props.currentPath === '/login') {
             return 2;
         }
-        if(this.props.currentPath === '/projectcontainer') {
+        if(this.props.currentPath === '/projcontainer') {
             return 3;
         }
         if(this.props.currentPath === '/mindmapstatic') {

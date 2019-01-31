@@ -8,7 +8,8 @@ module.exports = (app) => {
     // Create a project
     app.post('/api/project', projectController.create);
 
-    app.get('/api/project', projectController.list);
+    // get a list of projects
+    app.get('/api/projects', projectController.list);
 
     // Retrieve a single project by Id
     app.get('/api/project/:id', projectController.findById);

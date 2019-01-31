@@ -19,8 +19,8 @@ import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
 import ProjContainer from './components/ProjContainer';
-import ProjectCard from './components/ProjectCard';
-import ProjectCard2 from './components/ProjectCard2';
+import ProjectCard from './components/project/ProjectCard';
+import ProjectCard2 from './components/ProjectCard';
 
 
 export default props => (

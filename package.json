@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
     "bcrypt": "^3.0.3",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",

@@ -28,7 +28,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {getSorting, stableSort} from './TableFunctions';
-import ProjectTitleSectionEditable from './project/ProjectTitleSectionEditable';
 const materialstyles = theme => ({
     card: {
         maxWidth: 400,
@@ -69,24 +68,8 @@ const materialstyles = theme => ({
         width: 200,
     },
 });
-var organizations = {};
 
-
-const TitleSectionStatic = (classes, project) => {
-    return (
-        <div className={classes.inline}>
-            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                Project
-            </Typography>
-            <Typography variant="h5" component="h2">
-                {project.title}<br/><br/>
-            </Typography>
-        </div>
-    );
-};
-
-
-
+/*
 const DescriptionSectionGridItem = (classes, project) => {
     return (
         <div className={classes.inline}>
@@ -105,7 +88,7 @@ const DescriptionSectionGridItem = (classes, project) => {
         </div>
     );
 };
-
+*/
 const RightSectionGridItem = (classes, project) => {
     return (
         <div className={classes.inlineRight}>
@@ -177,16 +160,33 @@ const ExpandingSectionGridItem = (classes, project) => {
 };
 
 class ProjectCard extends React.Component {
+    // Note that I'll need the individual fields for handleChange.
     state = {
         project: {},
+        organizations: [],
+        title: '',
+        goal: '',
+        org: '',
+        description: '',
         isEditing: false,
         isNew: false,
-        expanded: false
+        expanded: false,
+        labelWidth: 0,
     };
 
     constructor(props) {
         super(props);
     }
+
+    /*
+    handleChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+    */
+
+    handleChange = name => event => {
+        this.setState({[name]: event.target.value,});
+    };
 
     handleExpandClick = () => {
         this.setState(state => ({ expanded: !state.expanded }));
@@ -194,15 +194,43 @@ class ProjectCard extends React.Component {
 
     componentDidMount() {
         if (parseInt(this.props.match.params.id) > 0) {
-            const getUri = '/api/project/' + this.props.match.params.id;
-
-            fetch(getUri)
+            fetch('/api/project/' + this.props.match.params.id)
                 .then(res => res.json())
-                .then(project => this.setState({project}));
+                .then(project => this.setState({goal: project.businessGoal,
+                    title: project.title,
+                    description: project.description,
+                }));
         } else {
-            this.setState({isNew: true});
+            this.setState({isEditing: true});
         }
+        // Have to set the state of the individual fields for the handleChange function for the TextFields.
+        // Do this using the project state.
+
+        fetch('/api/organizations/')
+            .then(results => results.json())
+            .then(organizations => this.setState({organizations}));
+        //this.setState({
+        //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
+
+
+
+    /*
+                    <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                    Project - this should be {this.props.title}
+                </Typography>
+     */
+    /*
+                    <TextField
+                    required
+                    id="standard-required"
+                    label="Project Title"
+                    defaultValue="{this.props.title}"
+                    className={classes.textField}
+                    margin="normal"
+                />
+     */
+
 
 
     render() {
@@ -211,12 +239,11 @@ class ProjectCard extends React.Component {
 
         /* react-router has injected the value of the attribute ID into the params */
         let id = this.props.match.params.id;
-        alert('Title is:' + this.state.project.title);
+
         return (
             <React.Fragment>
                 <CssBaseline />
                 <Topbar />
-
                 <div className={classes.root}>
                     <Grid container justify="center">
                         <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
@@ -227,18 +254,91 @@ class ProjectCard extends React.Component {
                                         <Grid container justify="center">
                                             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                                                 <Grid item xs={12} md={4}>
-                                                    <ProjectTitleSectionEditable
-                                                        title="{this.state.project.title}"
-                                                        projid="{this.props.match.params.id}"
-                                                        orgid="{this.state.project.orgId}"/>
+                                                    <div className={classes.inline}>
+                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                            Project<br/>
+                                                            {this.state.project.title}
+                                                        </Typography>
+                                                        <Typography variant="h5" component="h2">
+                                                            <TextField
+                                                                required
+                                                                id="standard-required"
+                                                                label=""
+                                                                onChange={this.handleChange('title')}
+                                                                value={this.state.title}
+                                                                className={classes.textField}
+                                                                margin="normal"
+                                                            />
+                                                        </Typography>
+                                                        <Typography variant="h5" component="h2">
+                                                            <FormControl className={classes.formControl}>
+                                                                <InputLabel htmlFor="organization-simple">Organization</InputLabel>
+                                                                <Select
+                                                                    value={this.state.org}
+                                                                    onChange={this.handleChange}
+                                                                    inputProps={{
+                                                                        name: 'organization',
+                                                                        id: 'organization-simple',
+                                                                    }}
+                                                                >
+                                                                    <MenuItem value="">
+                                                                    None
+                                                                    </MenuItem>
+                                                                    {stableSort(this.state.organizations, getSorting('asc', 'name'))
+                                                                        .map(organizations => {
+                                                                            return (
+                                                                                <MenuItem value="{organizations.id}">{organizations.name}</MenuItem>
+                                                                            );
+                                                                        })}
+                                                                </Select>
+                                                            </FormControl>
+                                                        </Typography>
+                                                    </div>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
-
-                                                    hi, this should be the {this.state.project.title} project.
-                                                    {DescriptionSectionGridItem(classes, this.state.project)}
+                                                    <div className={classes.inline}>
+                                                        <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
+                                                            Description
+                                                        </Typography>
+                                                        <Typography component="p">
+                                                            <TextField
+                                                                id="description"
+                                                                label=""
+                                                                multiline
+                                                                rowsMax="6"
+                                                                value={this.state.description}
+                                                                onChange={this.handleChange('description')}
+                                                                className={classes.textField}
+                                                                fullWidth
+                                                                margin="normal"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                            />
+                                                        </Typography>
+                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                            Business Goal
+                                                        </Typography>
+                                                        <Typography component="p">
+                                                            <TextField
+                                                                id="goal"
+                                                                label=""
+                                                                multiline
+                                                                rowsMax="4"
+                                                                value={this.state.goal}
+                                                                onChange={this.handleChange('goal')}
+                                                                className={classes.textField}
+                                                                fullWidth
+                                                                margin="normal"
+                                                                InputLabelProps={{
+                                                                    shrink: true,
+                                                                }}
+                                                            />
+                                                        </Typography>
+                                                    </div>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
-                                                    {RightSectionGridItem(classes, this.state.project)}
+                                                //RightSectionGridItem(classes, this.state.project)}
                                                 </Grid>
                                             </Grid>
                                         </Grid>

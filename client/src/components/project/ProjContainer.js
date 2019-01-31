@@ -5,8 +5,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Topbar from './Topbar';
-import { styles } from './MaterialSense';
+import Topbar from '../Topbar';
+import { styles } from '../MaterialSense';
 import { withFormik, Form, Field } from 'formik';
 import Yup from 'yup';
 

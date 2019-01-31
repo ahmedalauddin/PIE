@@ -18,7 +18,7 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
-import ProjContainer from './components/ProjContainer';
+import ProjContainer from './components/project/ProjContainer';
 import ProjectCard from './components/project/ProjectCard';
 import ProjectCard2 from './components/ProjectCard';
 

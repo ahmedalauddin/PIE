@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ButtonBar from '../buttons/ButtonBar';
-import CssBaseline from '../ProjectContainer';
+import CssBaseline from './ProjectContainer';
 import Topbar from '../Topbar';
 import Grid from '../MindMapStatic';
 

@@ -238,15 +238,6 @@ class ProjectCard extends React.Component {
         //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
 
-    orgSection = (classes, state) => {
-        return (
-            <React.Fragment>
-                org: {this.state.org}
-
-            </React.Fragment>
-        );
-    }
-
 
     render() {
         const {classes} = this.props;

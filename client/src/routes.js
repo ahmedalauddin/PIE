@@ -3,12 +3,9 @@ import React from 'react';
 import {Route, Switch, BrowserRouter} from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import Cards from './components/Cards';
-import Main from './components/Main';
 import Main2 from './components/Main2';
 import ScrollToTop from './components/ScrollTop';
-import NewProject from './components/NewProject';
 import EditPerson from './components/EditPerson';
-import EditProject from './components/EditProject';
 import EditKpi from './components/EditKpi';
 import ListProjects from './components/ListProjects';
 import ListPersons from './components/ListPersons';
@@ -19,8 +16,7 @@ import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
 import ProjContainer from './components/project/ProjContainer';
-import ProjectCard from './components/project/ProjectCard';
-import ProjectCard2 from './components/ProjectCard';
+import ProjectCard from './components/ProjectCard';
 
 
 export default props => (
@@ -35,13 +31,10 @@ export default props => (
                 <Route exact path='/signup' component={ Signup } />
                 <Route exact path='/projcontainer' component={ ProjContainer } />
                 <Route exact path='/projectcard' component={ ProjectCard } />
-                <Route exact path='/projectcard2' component={ ProjectCard2 } />
                 <Route exact path='/editkpi' component={ EditKpi } />
-                <Route path='/projectcard2/:id' component={ ProjectCard2 } />
-                <Route path='/editproject/:id' component={ EditProject } />
+                <Route path='/projectcard/:id' component={ ProjectCard } />
                 <Route path='/editperson/:id' component={ EditPerson } />
                 <Route path='/editkpi/:id' component={ EditKpi } />
-                <Route exact path='/newproject' component={ NewProject } />
                 <Route exact path='/mindmapstatic' component={ MindMapStatic } />
                 <Route exact path='/listprojects' component={ ListProjects } />
                 <Route exact path='/listpersons' component={ ListPersons } />

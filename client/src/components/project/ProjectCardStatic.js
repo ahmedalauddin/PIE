@@ -76,7 +76,7 @@ const styles = theme => ({
 
 
 
-class ProjectCard extends Component {
+class ProjectCardStatic extends Component {
     render() {
         const { classes } = this.props;
 
@@ -166,4 +166,4 @@ class ProjectCard extends Component {
     }
 }
 
-export default withStyles(styles)(ProjectCard);
+export default withStyles(styles)(ProjectCardStatic);

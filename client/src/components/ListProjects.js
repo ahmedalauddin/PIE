@@ -83,7 +83,7 @@ class ListProjects extends Component {
     };
 
     componentDidMount() {
-        fetch('/api/project')
+        fetch('/api/projects')
             .then(res => res.json())
             .then(projects => this.setState({projects}));
     }
@@ -111,10 +111,7 @@ class ListProjects extends Component {
                                     <Paper className={classes.paper}>
                                         <div className={classes.box}>
                                             <Typography color='secondary' gutterBottom>
-                                                Full box
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                This is an example of a full-width box
+                                                Full list of all ValueInfinity projects
                                             </Typography>
                                         </div>
                                         <div>
@@ -139,8 +136,8 @@ class ListProjects extends Component {
                                                                                 <TableCell
                                                                                     align="right">{project.id}</TableCell>
                                                                                 <TableCell
-                                                                                    align="left"><Link to={`/editproject/${project.id}`}>{project.title}</Link></TableCell>
-                                                                                <TableCell
+                                                                                    align="left"><Link to={`/projectcard/${project.id}`}>{project.title}</Link></TableCell>
+                                                                                <TableCell width="45%"
                                                                                     align="left">{project.description}</TableCell>
                                                                                 <TableCell
                                                                                     align="left">{project.Organization.name}</TableCell>

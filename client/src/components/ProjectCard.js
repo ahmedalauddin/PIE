@@ -1,3 +1,9 @@
+/**
+ * ProjectCard - add and edit projects component
+ *
+ * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
+ *
+ */
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -71,8 +77,8 @@ const materialstyles = theme => ({
     },
 });
 
-
 const ExpandingSectionGridItem = (classes, project) => {
+    // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
     return (
         <div className={classes.inlineLeft}>
             <Typography variant="h6" style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
@@ -113,7 +119,8 @@ const ExpandingSectionGridItem = (classes, project) => {
 };
 
 class ProjectCard extends React.Component {
-    // Note that I'll need the individual fields for handleChange.
+    // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
+    // fields.
     state = {
         project: {},
         organizations: [],
@@ -121,6 +128,7 @@ class ProjectCard extends React.Component {
         title: '',
         goal: '',
         org: '',
+        orgId: '',
         description: '',
         startAt: '',
         endAt: '',
@@ -131,9 +139,10 @@ class ProjectCard extends React.Component {
         labelWidth: 0,
     };
 
-
     constructor(props) {
         super(props);
+        // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
+        // state values.
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -189,25 +198,33 @@ class ProjectCard extends React.Component {
     }
 
     // Return boolean for whether the project exists.
-    doesProjectExist() {
-
+    projectExists() {
+        if (parseInt(this.props.match.params.id) > 0) {
+            return(true);
+        } else{
+            return(false);
+        }
     }
 
     componentDidMount() {
         if (parseInt(this.props.match.params.id) > 0) {
             fetch('/api/project/' + this.props.match.params.id)
                 .then(res => res.json())
-                .then(project => this.setState(
-                    {id:  this.props.match.params.id,
-                        goal: project.businessGoal,
-                        title: project.title,
-                        description: project.description,
-                        org: project.Organization.name,
-                        orgId: project.orgId,
-                        progress: project.progress,
-                        startAt: moment(project.startAt).format('YYYY-MM-DD'),
-                        endAt: project.endAt,
-                    }));
+                .then(project => {
+                    this.setState(
+                        {
+                            id: this.props.match.params.id,
+                            goal: project.businessGoal,
+                            title: project.title,
+                            description: project.description,
+                            org: project.Organization.name,
+                            orgId: project.orgId,
+                            progress: project.progress,
+                            startAt: moment(project.startAt).format('YYYY-MM-DD'),
+                            endAt: project.endAt,
+                        });
+                    //alert('project.orgId = ' + this.state.orgId + ', title = ' + this.state.title + ', org = ' + this.state.org);
+                });
         } else {
             this.setState({isEditing: true});
         }
@@ -220,6 +237,7 @@ class ProjectCard extends React.Component {
         //this.setState({
         //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
+
 
     render() {
         const {classes} = this.props;
@@ -261,16 +279,14 @@ class ProjectCard extends React.Component {
                                                             <FormControl className={classes.formControl}>
                                                                 <InputLabel htmlFor="organization-simple">Organization</InputLabel>
                                                                 <Select
-                                                                    value={this.state.org}
+                                                                    value={this.state.orgId}
                                                                     onChange={this.handleChange}
+                                                                    renderValue={value => this.state.org}
                                                                     inputProps={{
                                                                         name: 'org',
-                                                                        id: 'org',
+                                                                        id: 'orgId',
                                                                     }}
                                                                 >
-                                                                    <MenuItem value="">
-                                                                        None
-                                                                    </MenuItem>
                                                                     {stableSort(this.state.organizations, getSorting('asc', 'name'))
                                                                         .map(organizations => {
                                                                             return (
@@ -278,8 +294,7 @@ class ProjectCard extends React.Component {
                                                                             );
                                                                         })}
                                                                 </Select>
-                                                            </FormControl>
-                                                        </Typography>
+                                                            </FormControl>                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell style={{verticalAlign:'top', width: '55%'}}>
                                                         <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>

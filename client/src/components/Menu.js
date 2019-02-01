@@ -16,16 +16,8 @@ const Menu = [
         pathname: '/mindmapstatic'
     },
     {
-        label: 'Edit Project',
-        pathname: '/projcontainer'
-    },
-    {
-        label: 'Edit Person',
-        pathname: '/editperson'
-    },
-    {
-        label: 'Project',
-        pathname: '/projectcard2'
+        label: 'New Project',
+        pathname: '/projectcard'
     },
     {
         label: 'List Projects',

@@ -142,21 +142,23 @@ class Main2 extends Component {
                                 </Paper>
                             </Grid>
                             <Grid item xs={12} md={4}>
-
-                                    <div>
-                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                            Another box@@@@@
-                                        </Typography>
-                                        <Typography variant="body1" gutterBottom>
-                                            A default box
-                                        </Typography>
-                                    </div>
-                                    <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                                        <Button color='primary' variant="contained" className={classes.actionButtom}>
-                                            Learn more
-                                        </Button>
-                                    </div>
-
+                                <Grid item xs={12} md={4}>
+                                    <Paper className={classes.paper}>
+                                        <div>
+                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                    Another box@@@@@
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                    A default box
+                                            </Typography>
+                                        </div>
+                                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                            <Button color='primary' variant="contained" className={classes.actionButtom}>
+                                                    Learn more
+                                            </Button>
+                                        </div>
+                                    </Paper>
+                                </Grid>
                             </Grid>
                             <Grid item xs={12} md={4}>
                                 <Paper className={classes.paper}>

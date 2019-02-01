@@ -3,7 +3,6 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "refresh": "npm install && cd client && npm install",
     "start:other": "nodemon ./bin/www",
     "client": "cd client && npm start",
     "server": "nodemon ./bin/www",

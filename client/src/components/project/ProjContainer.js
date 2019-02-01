@@ -1,3 +1,4 @@
+// Testing project create using Formik.  Note setting the headers in handleSubmit.
 import React, { Component } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { withRouter } from 'react-router-dom';
@@ -5,8 +6,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Topbar from './Topbar';
-import { styles } from './MaterialSense';
+import Topbar from '../Topbar';
+import { styles } from '../MaterialSense';
 import { withFormik, Form, Field } from 'formik';
 import Yup from 'yup';
 
@@ -77,13 +78,7 @@ const FormikApp = withFormik({
             orgId: orgId || '0'
         };
     },
-    /*
-    validationSchema: Yup.object().shape({
-        //email: Yup.string().email('Email not valid').required('Email is required'),
-        //fullname: Yup.string().required('Full Name is required!'),
-        //password: Yup.string().min(9, 'Password must be 9 characters or longer').required('Password is required')
-    }),
-    */
+
     handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
         alert(JSON.stringify(values));
         setTimeout(() => {

@@ -18,9 +18,9 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import Logout from './components/Logout';
 import LoginFormContainer from './components/LoginFormContainer';
-import ProjContainer from './components/ProjContainer';
-import ProjectCard from './components/ProjectCard';
-import ProjectCard2 from './components/ProjectCard2';
+import ProjContainer from './components/project/ProjContainer';
+import ProjectCard from './components/project/ProjectCard';
+import ProjectCard2 from './components/ProjectCard';
 
 
 export default props => (
@@ -33,7 +33,7 @@ export default props => (
                 <Route exact path='/login' component={ LoginFormContainer } />
                 <Route exact path='/signin' component={ Signin } />
                 <Route exact path='/signup' component={ Signup } />
-                <Route exact path='/projectcontainer' component={ ProjContainer } />
+                <Route exact path='/projcontainer' component={ ProjContainer } />
                 <Route exact path='/projectcard' component={ ProjectCard } />
                 <Route exact path='/projectcard2' component={ ProjectCard2 } />
                 <Route exact path='/editkpi' component={ EditKpi } />

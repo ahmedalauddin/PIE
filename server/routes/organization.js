@@ -7,6 +7,6 @@ module.exports = (app) => {
 
     app.post('/api/organization', organizationController.create);
 
-    app.get('/api/organization', organizationController.list);
+    app.get('/api/organizations', organizationController.list);
 
 };

@@ -30,7 +30,10 @@ module.exports = {
     //nodeId: req.body.nodeId,
     // Update a project
     update(req, res) {
-        const id = req.params.id;
+        console.log("dump object: " + util.inspect(req, {showHidden: false, depth: null}));
+        console.log("Trying to perform update.");
+
+        const id = req.body.id;
         return Project
             .update({
                     title: req.body.title,

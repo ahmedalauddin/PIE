@@ -17,7 +17,7 @@ const Menu = [
     },
     {
         label: 'Edit Project',
-        pathname: '/projectcontainer'
+        pathname: '/projcontainer'
     },
     {
         label: 'Edit Person',

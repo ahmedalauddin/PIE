@@ -21,10 +21,13 @@ module.exports = {
         const id = req.params.id;
         return Mindmap
             .update({
-                    mapData: req.body.mapData
-                },
-                {returning: true, where: {id: id}}
-            ).then(mindmap => res.status(200).send(mindmap))
+                mapData: req.body.mapData
+            }, {
+                returning: true,
+                where: {
+                    id: id
+                }
+            }).then(mindmap => res.status(200).send(mindmap))
             .catch(error => {
                 console.log(error.stack);
                 res.status(400).send(error)
@@ -32,15 +35,14 @@ module.exports = {
     },
 
     // Delete a mindmap
-    delete(req,res) {
+    delete(req, res) {
         const id = req.params.id;
         return Mindmap
             .destroy({
                 where: {
                     id: id
-                    }
                 }
-            ).success(deletedCount => res.status(200).send(deletedCount))
+            }).success(deletedCount => res.status(200).send(deletedCount))
             .catch(error => {
                 console.log(error.stack);
                 res.status(400).send(error)
@@ -59,13 +61,13 @@ module.exports = {
     },
 
     // Find by organization
-    findByOrgId(req,res) {
+    findByOrgId(req, res) {
         const orgId = req.params.orgId;
         return Mindmap
             .findAll({
                 where: {
                     orgId: orgId
-                }   
+                }
             })
             .then(mindmap => res.status(200).send(mindmap))
             .catch(error => {

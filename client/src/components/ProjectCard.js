@@ -4,15 +4,14 @@
  * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  *
  */
-import React from 'react';
+import React, {Component} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import Topbar from './Topbar';
-import ButtonBar from './buttons/ButtonBar';
+//import ButtonBar from './buttons/ButtonBar';
+//import Button from '@material-ui/core/Button';
 import {styles} from './MaterialSense';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -24,7 +23,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Collapse from '@material-ui/core/Collapse';
 import classnames from 'classnames';
 import {red} from '@material-ui/core/colors';
-import Moment from 'react-moment';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -36,6 +34,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import moment from 'moment';
 import Log from './Log';
+import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
 const materialstyles = theme => ({
     card: {
         maxWidth: 400,
@@ -118,6 +118,21 @@ const ExpandingSectionGridItem = (classes, project) => {
     );
 };
 
+
+const buttonstyles = theme => ({
+    primary: {
+        marginRight: theme.spacing.unit * 2
+    },
+    secondary: {
+        background: theme.palette.secondary['100'],
+        color: 'white'
+    },
+    spaceTop: {
+        marginTop: 20
+    }
+});
+
+
 class ProjectCard extends React.Component {
     // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
     // fields.
@@ -126,7 +141,7 @@ class ProjectCard extends React.Component {
         organizations: [],
         projid: 0,
         title: '',
-        goal: '',
+        businessGoal: '',
         org: '',
         orgId: '',
         description: '',
@@ -146,12 +161,6 @@ class ProjectCard extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    /*
-    handleChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-    */
-
     handleChange = name => event => {
         this.setState({[name]: event.target.value,});
     };
@@ -166,7 +175,7 @@ class ProjectCard extends React.Component {
 
         setTimeout(() => {
             if (this.state.id > 0) {
-                alert('We have an ID');
+                // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
                 // We have a project id passed through the URL, do an
                 // update on the project.
                 let updatePath = '/api/project/' + this.state.id;
@@ -192,7 +201,6 @@ class ProjectCard extends React.Component {
                     //console.log(err);
                 });
             }
-
             //setSubmitting(false);
         }, 2000);
     }
@@ -207,21 +215,21 @@ class ProjectCard extends React.Component {
     }
 
     componentDidMount() {
-        if (parseInt(this.props.match.params.id) > 0) {
+        if (this.projectExists) {
             fetch('/api/project/' + this.props.match.params.id)
                 .then(res => res.json())
                 .then(project => {
                     this.setState(
                         {
                             id: this.props.match.params.id,
-                            goal: project.businessGoal,
+                            businessGoal: project.businessGoal,
                             title: project.title,
                             description: project.description,
                             org: project.Organization.name,
                             orgId: project.orgId,
                             progress: project.progress,
                             startAt: moment(project.startAt).format('YYYY-MM-DD'),
-                            endAt: project.endAt,
+                            endAt: moment(project.endAt).format('YYYY-MM-DD'),
                         });
                     //alert('project.orgId = ' + this.state.orgId + ', title = ' + this.state.title + ', org = ' + this.state.org);
                 });
@@ -250,7 +258,7 @@ class ProjectCard extends React.Component {
             <React.Fragment>
                 <CssBaseline />
                 <Topbar />
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.handleSubmit} noValidate>
                     <div className={classes.root}>
                         <Grid container justify="center">
                             <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
@@ -262,13 +270,17 @@ class ProjectCard extends React.Component {
                                                 <TableRow>
                                                     <TableCell style={{verticalAlign:'top',}}>
                                                         <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                                Project
+                                                            Project
                                                         </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell style={{verticalAlign:'top',}}>
                                                         <Typography variant="h5" component="h2">
                                                             <TextField
                                                                 required
                                                                 id="standard-required"
-                                                                label="Project"
+                                                                label="Title"
                                                                 onChange={this.handleChange('title')}
                                                                 value={this.state.title}
                                                                 className={classes.textField}
@@ -297,13 +309,10 @@ class ProjectCard extends React.Component {
                                                             </FormControl>                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell style={{verticalAlign:'top', width: '55%'}}>
-                                                        <Typography style={{textTransform: 'uppercase'}} color="secondary" gutterBottom>
-                                                                Description
-                                                        </Typography>
                                                         <Typography component="p">
                                                             <TextField
                                                                 id="description"
-                                                                label=""
+                                                                label="Description"
                                                                 multiline
                                                                 rowsMax="6"
                                                                 value={this.state.description}
@@ -316,17 +325,14 @@ class ProjectCard extends React.Component {
                                                                 }}
                                                             />
                                                         </Typography>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                                Business Goal
-                                                        </Typography>
                                                         <Typography component="p">
                                                             <TextField
-                                                                id="goal"
-                                                                label=""
+                                                                id="businessGoal"
+                                                                label="Business Goal"
                                                                 multiline
                                                                 rowsMax="4"
-                                                                value={this.state.goal}
-                                                                onChange={this.handleChange('goal')}
+                                                                value={this.state.businessGoal}
+                                                                onChange={this.handleChange('businessGoal')}
                                                                 className={classes.textField}
                                                                 fullWidth
                                                                 margin="normal"
@@ -340,32 +346,54 @@ class ProjectCard extends React.Component {
                                                         <div className={classes.inlineRight}>
                                                             <Typography variant="h6" gutterBottom>
                                                                 <TextField
-                                                                    id="startdate"
+                                                                    id="startAt"
                                                                     label="Start Date"
                                                                     type="date"
-                                                                    defaultValue={this.state.startAt}
+                                                                    value={this.state.startAt}
+                                                                    onChange={this.handleChange('startAt')}
                                                                     className={classes.textField}
                                                                     InputLabelProps={{
                                                                         shrink: true,
                                                                     }}
                                                                 />
                                                             </Typography>
-                                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                                End Date
+                                                            <Typography variant="h6" gutterBottom>
+                                                                <TextField
+                                                                    id="endAt"
+                                                                    label="End Date"
+                                                                    type="date"
+                                                                    value={this.state.endAt}
+                                                                    onChange={this.handleChange('endAt')}
+                                                                    className={classes.textField}
+                                                                    InputLabelProps={{
+                                                                        shrink: true,
+                                                                    }}
+                                                                />
                                                             </Typography>
                                                             <Typography variant="h6" gutterBottom>
-                                                                <Moment format="D MMM YYYY" withTitle>
-                                                                    {this.state.endAt}
-                                                                </Moment>
+                                                                <Typography variant="h5" component="h2">
+                                                                    <TextField
+                                                                        id="standard-required"
+                                                                        label="Progress"
+                                                                        onChange={this.handleChange('progress')}
+                                                                        value={this.state.progress}
+                                                                        className={classes.textField}
+                                                                        InputProps={{
+                                                                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                                                        }}
+                                                                    />
+                                                                </Typography>
                                                             </Typography>
-                                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                                Progress
-                                                            </Typography>
-                                                            <Typography variant="h6" gutterBottom>
-                                                                {this.state.progress}%
-                                                            </Typography>
-                                                            <ButtonBar/>
-                                                            <button onClick={this.handleSubmit}>Submit</button>
+                                                            <div className={classes.spaceTop}>
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={this.handleSubmit}
+                                                                    className={classes.secondary}
+                                                                >
+                                                                    Submit
+                                                                </Button>
+                                                            </div>
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>

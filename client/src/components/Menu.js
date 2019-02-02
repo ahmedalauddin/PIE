@@ -16,6 +16,10 @@ const Menu = [
         pathname: '/mindmapstatic'
     },
     {
+        label: 'Signup',
+        pathname: '/signup'
+    },
+    {
         label: 'New Project',
         pathname: '/projectcard'
     },

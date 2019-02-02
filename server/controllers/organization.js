@@ -43,4 +43,32 @@ module.exports = {
                 res.status(400).send(error);
             });
     },
+    // Find an org by Name
+    findByName(req, res) {
+        console.log('name is: ' + req.params.name);
+        return Organization
+            .findOne({where: {name: req.params.name}})
+            .then(organization => res.status(200).send(organization))
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
+    },
 };
+
+
+
+
+/*
+// search for attributes
+Sequelize.fn('lower', Sequelize.col('username')), sequelize.fn('lower', username)
+})
+
+
+
+where:
+    sequelize.fn('lower', Sequelize.col('name')),
+        sequelize.fn('lower', req.body.name)
+})
+
+*/

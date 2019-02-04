@@ -1,14 +1,7 @@
-/*
 const authController = require('../controllers').auth;
 
 module.exports = function(app) {
-
-    app.get('/api', (req, res) => res.status(200).send({
-        message: 'Welcome to the auth API!',
-    }));
-
-
-    //app.get('/api/signup', authController.signup);
+    app.get('/api/authenticate', authController.authenticate);
 
     //app.get('/api/signin', authController.signin);
 
@@ -23,12 +16,13 @@ module.exports = function(app) {
 
     // TODO need is logged check first on signup
 
+    /*
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
             return next();
         // This is React's component.
         res.redirect('/signin');
     }
+    */
 };
 
-*/

@@ -36,6 +36,21 @@ module.exports = {
                 res.status(400).send(error);
             });
     },
+    // This one is for a select list, just give me id and name, I don't need everything.
+    selectlist(req, res) {
+        return Organization
+            .findAll({
+                attributes: ['id', 'name'],
+                order: [
+                    ['name', 'ASC'],
+                ],
+            })
+            .then(organization => res.status(200).send(organization))
+            .catch(error => {
+                console.log(error.stack);
+                res.status(400).send(error);
+            });
+    },
     // Find an org by Id
     findById(req, res) {
         return Organization
@@ -59,19 +74,3 @@ module.exports = {
     },
 };
 
-
-
-
-/*
-// search for attributes
-Sequelize.fn('lower', Sequelize.col('username')), sequelize.fn('lower', username)
-})
-
-
-
-where:
-    sequelize.fn('lower', Sequelize.col('name')),
-        sequelize.fn('lower', req.body.name)
-})
-
-*/

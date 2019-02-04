@@ -10,6 +10,9 @@ module.exports = (app) => {
     // Retrieve a single person by Id
     app.get('/api/person/:id', personController.findById);
 
+    // Retrieve a single person by username
+    app.get('/api/person/username/:username', personController.findByUsername);
+
     // Update a person with id
     app.put('/api/person/:id', personController.update);
 

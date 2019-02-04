@@ -28,11 +28,6 @@ import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import {getSorting, stableSort} from './TableFunctions';
-import Table from '@material-ui/core/Table';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import moment from 'moment';
 import Log from './Log';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -105,6 +100,7 @@ const buttonstyles = theme => ({
     }
 });
 
+const saltRounds = 4;
 
 class Signup extends React.Component {
     // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -115,7 +111,7 @@ class Signup extends React.Component {
         lastName: '',
         email: '',
         username: '',
-        pwdHash: '',
+        password: '',
         org: '',
         orgId: 0,
         organizations: [],
@@ -228,7 +224,7 @@ class Signup extends React.Component {
                             firstName: person.firstName,
                             lastName: person.lastName,
                             orgId: person.orgId,
-                            pwdHash: person.pwdHash,
+                            pwdhash: person.pwdhash,
                             username: person.username,
                         });
                     //alert('project.orgId = ' + this.state.orgId + ', title = ' + this.state.title + ', org = ' + this.state.org);
@@ -239,9 +235,12 @@ class Signup extends React.Component {
         // Have to set the state of the individual fields for the handleChange function for the TextFields.
         // Do this using the project state.
 
-        fetch('/api/organizations/')
+        fetch('/api/organizations/select')
             .then(results => results.json())
-            .then(organizations => this.setState({organizations}));
+            .then(organizations => {
+                this.setState({organizations});
+            });
+
     }
 
 
@@ -273,7 +272,6 @@ class Signup extends React.Component {
                                                     required
                                                     id="firstName"
                                                     label="First Name"
-                                                    defaultValue='Brad'
                                                     onChange={this.handleChange('firstName')}
                                                     className={classes.textField}
                                                     margin="normal"
@@ -284,9 +282,7 @@ class Signup extends React.Component {
                                                     required
                                                     id="lastName"
                                                     label="Last Name"
-                                                    defaultValue='Smith'
                                                     onChange={this.handleChange('lastName')}
-                                                    defaultValue='Smith'
                                                     className={classes.textField}
                                                     margin="normal"
                                                 />
@@ -316,24 +312,28 @@ class Signup extends React.Component {
                                             <Typography variant="h5" component="h2">
                                                 <TextField
                                                     required
-                                                    id="pwdHash"
+                                                    id="password"
                                                     label="Password"
-                                                    onChange={this.handleChange('pwdHash')}
-                                                    value={this.state.pwdHash}
+                                                    onChange={this.handleChange('password')}
+                                                    value={this.state.password}
                                                     className={classes.textField}
                                                     margin="normal"
                                                 />
                                             </Typography>
                                             <Typography variant="h5" component="h2">
                                                 <FormControl className={classes.formControl}>
-                                                    <InputLabel htmlFor="orgId">Organization</InputLabel>
+                                                    <InputLabel htmlFor="org-simple">Organization</InputLabel>
                                                     <Select
                                                         value={this.state.orgId}
                                                         onChange={this.handleSelectChange}
+                                                        inputProps={{
+                                                            name: 'orgId',
+                                                            id: 'org-simple',
+                                                        }}
                                                     >
-                                                        {this.state.organizations.map(organizations => {
+                                                        {this.state.organizations.map(org => {
                                                             return (
-                                                                <MenuItem key="{organizations.id}" value="{organizations.id}">{organizations.name}</MenuItem>
+                                                                <MenuItem key={org.id} value={org.id}>{org.name}</MenuItem>
                                                             );
                                                         })}
                                                     </Select>

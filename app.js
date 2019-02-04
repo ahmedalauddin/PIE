@@ -29,7 +29,7 @@ require('./server/routes/organization')(app);
 require('./server/routes/person')(app);
 require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
-//require('./server/routes/auth')(app);
+require('./server/routes/auth')(app);
 require('./server/routes/mindmap')(app);
 var models = require('./server/models');
 

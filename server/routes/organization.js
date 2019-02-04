@@ -9,6 +9,8 @@ module.exports = (app) => {
 
     app.get('/api/organizations', organizationController.list);
 
+    app.get('/api/organizations/select', organizationController.selectlist);
+
     app.get('/api/organization/:id', organizationController.findById);
 
     app.get('/api/organization/name/:name', organizationController.findByName);

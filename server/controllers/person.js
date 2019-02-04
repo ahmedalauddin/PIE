@@ -1,6 +1,6 @@
 const Person = require('../models').Person;
 const Organization = require('../models').Organization;
-const bCrypt = require('bcrypt-nodejs');
+const bCrypt = require('bcrypt');
 var express = require('express');
 const bodyParser = require('body-parser');
 const emailAddresses = require('email-addresses');
@@ -9,15 +9,11 @@ const OrgController = require('./organization');
 function getHash(value) {
     var hashedValue = '';
     console.log('value  = ' + value);
-    try {
-        hashedValue = bCrypt.hash(value, 12);
-    } catch {
-        (error => {
-            console.log(error.stack);
-            res.status(400).send(error);
-        });
-    }
-    console.log('hashedValue = ' + hashedValue);
+
+    bcrypt.hash(value, 12, function(err, hashedValue) {
+        console.log('hashedValue = ' + hashedValue);
+    });
+
 
     return hashedValue;
 }
@@ -53,44 +49,59 @@ module.exports = {
         }
         */
 
-        return Person
-            .create({
-                username: req.body.username,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                orgId: req.body.orgId,
-                email: req.body.email,
-                pwdhash: req.body.pwdhash,
-            })
-            .then(person => {
-                console.log('Adding person');
-                res.status(201).send(person);
-            })
-            .catch(error => {
-                console.log(error.stack);
-                res.status(400).send(error);
+        var hashedValue = '';
+        console.log('req.body.password  = ' + req.body.password);
+
+        try{
+            bCrypt.hash(req.body.password, 12, function(err, hashedValue) {
+                console.log('hashedValue = ' + hashedValue);
             });
+        } catch {
+            console.log(err.stackTrace);
+        }
+        console.log('password: ' + req.body.password + ', hash:' + hashedValue);
+        bCrypt.hash(req.body.password, 12, function(err, hashedValue) {
+            Person
+                .create({
+                    username: req.body.username,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    orgId: req.body.orgId,
+                    email: req.body.email,
+                    pwdhash: hashedValue,
+                })
+                .then(person => {
+                    console.log('Adding person');
+                    res.status(201).send(person);
+                })
+                .catch(error => {
+                    console.log(error.stack);
+                    res.status(400).send(error);
+                });
+        });
+
+        return Person;
+
+
     },
 
     // Update a person
     update(req, res) {
         const id = req.params.id;
-        console.log(req.body);
+        console.log('Body is: ' + req.body);
         return Person
             .update({
                     username: req.body.username,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     email: req.body.email,
-                    pwdHash: req.body.pwdHash,
+                    pwdhash: req.body.pwdhash,
                     orgId: req.body.orgId,
-                    logging: console.log,
                 },
                 {returning: true, where: {id: id}}
             ).then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },
-
 
     // Find a person by Id
     findById(req, res) {
@@ -104,6 +115,15 @@ module.exports = {
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },
+
+    // Find a person by Id
+    findByUsername(req, res) {
+        return Person
+            .findOne({where: {username: req.params.username}})
+            .then(person => res.status(200).send(person))
+            .catch(error => res.status(400).send(error));
+    },
+
 
     // List all persons
     list(req, res) {

@@ -8,91 +8,14 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
-import TableCell, {TableCellProps as row} from '@material-ui/core/TableCell';
+import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-
-import {BrowserRouter, Link} from 'react-router-dom';
-
-const styles = theme => ({
-    root: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.grey['100'],
-        overflow: 'hidden',
-        background: '',
-        backgroundSize: 'cover',
-        backgroundPosition: '0 400px',
-        paddingBottom: 200
-    },
-    grid: {
-        width: 1200,
-        marginTop: 40,
-        [theme.breakpoints.down('sm')]: {
-            width: 'calc(100% - 20px)'
-        }
-    },
-    paper: {
-        padding: theme.spacing.unit * 3,
-        textAlign: 'left',
-        color: theme.palette.text.secondary,
-    },
-    rangeLabel: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        paddingTop: theme.spacing.unit * 2
-    },
-    topBar: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 32
-    },
-    outlinedButtom: {
-        textTransform: 'uppercase',
-        margin: theme.spacing.unit
-    },
-    actionButtom: {
-        textTransform: 'uppercase',
-        margin: theme.spacing.unit,
-        width: 152
-    },
-    blockCenter: {
-        padding: theme.spacing.unit * 2,
-        textAlign: 'center'
-    },
-    block: {
-        padding: theme.spacing.unit * 2,
-    },
-    box: {
-        marginBottom: 40,
-        height: 65
-    },
-    inlining: {
-        display: 'inline-block',
-        marginRight: 10
-    },
-    buttonBar: {
-        display: 'flex'
-    },
-    alignRight: {
-        display: 'flex',
-        justifyContent: 'flex-end'
-    },
-    noBorder: {
-        borderBottomStyle: 'hidden'
-    },
-    loadingState: {
-        opacity: 0.05
-    },
-    loadingMessage: {
-        position: 'absolute',
-        top: '40%',
-        left: '40%'
-    }
-});
+import {Link} from 'react-router-dom';
+import { styles } from './MaterialSense';
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {

@@ -165,6 +165,10 @@ class ProjectCard extends React.Component {
         this.setState({[name]: event.target.value,});
     };
 
+    handleSelectChange = event => {
+        this.setState({ orgId: event.target.value });
+    };
+
     handleExpandClick = () => {
         this.setState(state => ({ expanded: !state.expanded }));
     };
@@ -215,7 +219,7 @@ class ProjectCard extends React.Component {
     }
 
     componentDidMount() {
-        if (this.projectExists) {
+        if (parseInt(this.props.match.params.id) > 0) {
             fetch('/api/project/' + this.props.match.params.id)
                 .then(res => res.json())
                 .then(project => {
@@ -242,8 +246,6 @@ class ProjectCard extends React.Component {
         fetch('/api/organizations/')
             .then(results => results.json())
             .then(organizations => this.setState({organizations}));
-        //this.setState({
-        //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
 
 
@@ -279,7 +281,7 @@ class ProjectCard extends React.Component {
                                                         <Typography variant="h5" component="h2">
                                                             <TextField
                                                                 required
-                                                                id="standard-required"
+                                                                id="title-required"
                                                                 label="Title"
                                                                 onChange={this.handleChange('title')}
                                                                 value={this.state.title}
@@ -292,8 +294,8 @@ class ProjectCard extends React.Component {
                                                                 <InputLabel htmlFor="organization-simple">Organization</InputLabel>
                                                                 <Select
                                                                     value={this.state.orgId}
-                                                                    onChange={this.handleChange}
-                                                                    renderValue={value => this.state.org}
+                                                                    onChange={this.handleSelectChange}
+                                                                    renderValue={value => this.state.orgId}
                                                                     inputProps={{
                                                                         name: 'org',
                                                                         id: 'orgId',
@@ -306,7 +308,8 @@ class ProjectCard extends React.Component {
                                                                             );
                                                                         })}
                                                                 </Select>
-                                                            </FormControl>                                                        </Typography>
+                                                            </FormControl>
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell style={{verticalAlign:'top', width: '55%'}}>
                                                         <Typography component="p">

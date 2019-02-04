@@ -29,6 +29,7 @@ module.exports = {
         //console.log("hashed value = " + hashed);
         //let fullname = req.body.firstName + ' ' + req.body.lastName;
         // Get the user's org by email address.
+        /*
         try {
             console.log('In person.Create');
             const orgResult = {};
@@ -50,14 +51,14 @@ module.exports = {
         } catch {
             error.stackTrace;
         }
-
+        */
 
         return Person
             .create({
                 username: req.body.username,
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                orgId: '2',
+                orgId: req.body.orgId,
                 email: req.body.email,
                 pwdhash: req.body.pwdhash,
             })
@@ -112,6 +113,9 @@ module.exports = {
                     model: Organization,
                     as: 'Organization',
                 }],
+                order: [
+                    ['username', 'ASC'],
+                ],
             })
             .then(person => res.status(200).send(person))
             .catch(error => {

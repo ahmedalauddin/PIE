@@ -159,7 +159,7 @@ class Topbar extends Component {
                                             <AppBar title="Menu" />
                                             <List>
                                                 {Menu.map((item, index) => (
-                                                    <ListItem component={Link} to={{pathname: item.pathname, search: this.props.location.search}} button key={item.index}>
+                                                    <ListItem key={item.index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} button>
                                                         <ListItemText primary={item.label} />
                                                     </ListItem>
                                                 ))}

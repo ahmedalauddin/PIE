@@ -13,5 +13,5 @@ module.exports = (app) => {
     // Update a person with id
     app.put('/api/person/:id', personController.update);
 
-    app.get('/api/person', personController.list);
+    app.get('/api/persons', personController.list);
 };

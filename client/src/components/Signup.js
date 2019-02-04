@@ -88,33 +88,6 @@ const ExpandingSectionGridItem = (classes, project) => {
             <Typography variant="h5" gutterBottom>
                 Service BOM Accuracy
             </Typography>
-            <Typography variant="h7" gutterBottom>
-                Leading KPI<br/>Project started 12 February 2018<br/><br/>
-            </Typography>
-            <Typography variant="h5" gutterBottom>
-                Reduction in Unplanned Activities
-            </Typography>
-            <Typography variant="h7" gutterBottom>
-                Leading KPI<br/>Project started 14 March 2018<br/><br/>
-            </Typography>
-            <Typography variant="h5" gutterBottom>
-                Increase in Local Source
-            </Typography>
-            <Typography variant="h7" gutterBottom>
-                Leading KPI<br/>Project started 14 March 2018<br/><br/>
-            </Typography>
-            <Typography variant="h5"  gutterBottom>
-                Improve Predictablity of Failure
-            </Typography>
-            <Typography variant="h7" gutterBottom>
-                Leading KPI<br/>Project in planning<br/><br/>
-            </Typography>
-            <Typography variant="h5"  gutterBottom>
-                First Time Right
-            </Typography>
-            <Typography variant="h7" gutterBottom>
-                Leading KPI<br/>Project in planning<br/><br/><br/>
-            </Typography>
         </div>
     );
 };
@@ -133,7 +106,7 @@ const buttonstyles = theme => ({
 });
 
 
-class ProjectCard extends React.Component {
+class Signup extends React.Component {
     // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
     // fields.
     state = {
@@ -145,6 +118,7 @@ class ProjectCard extends React.Component {
         pwdHash: '',
         org: '',
         orgId: 0,
+        organizations: [],
         isEditing: false,
         isNew: false,
         expanded: false,
@@ -159,8 +133,15 @@ class ProjectCard extends React.Component {
     }
 
     handleChange = name => event => {
-        this.setState({[name]: event.target.value,});
+        this.setState({
+            [name]: event.target.value,
+        });
     };
+
+    handleSelectChange = event => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
 
     handleExpandClick = () => {
         this.setState(state => ({ expanded: !state.expanded }));
@@ -174,7 +155,7 @@ class ProjectCard extends React.Component {
         domainarr = domain.split('.');
         const company = domainarr[domainarr.length-2];
         alert('company: ' + company);
-        var orgId = 0;
+        var orgId = 1;
 
         var orgPath = '/api/organization/name/' + company;
         alert('orgPath: ' + orgPath);
@@ -194,9 +175,6 @@ class ProjectCard extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        var orgId = this.getOrgFromEmail();
-
-        alert('org: ' + this.state.orgId);
         setTimeout(() => {
             if (this.state.id > 0) {
                 // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
@@ -249,6 +227,7 @@ class ProjectCard extends React.Component {
                             email: person.email,
                             firstName: person.firstName,
                             lastName: person.lastName,
+                            orgId: person.orgId,
                             pwdHash: person.pwdHash,
                             username: person.username,
                         });
@@ -263,8 +242,6 @@ class ProjectCard extends React.Component {
         fetch('/api/organizations/')
             .then(results => results.json())
             .then(organizations => this.setState({organizations}));
-        //this.setState({
-        //labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,});
     }
 
 
@@ -287,87 +264,93 @@ class ProjectCard extends React.Component {
                                     <SectionHeader title="" subtitle="" />
                                     <Card className={classes.card}>
                                         <CardContent>
-                                            <Table>
-                                                <TableRow>
-                                                    <TableCell style={{verticalAlign:'top',}}>
-                                                        <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
-                                                            Signup
-                                                        </Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell style={{verticalAlign:'top',}}>
-                                                        <Typography variant="h5" component="h2">
-                                                            <TextField
-                                                                required
-                                                                id="standard-required"
-                                                                label="First Name"
-                                                                defaultValue='Brad'
-                                                                onChange={this.handleChange('firstName')}
-                                                                className={classes.textField}
-                                                                margin="normal"
-                                                            />
-                                                        </Typography>
-                                                        <Typography variant="h5" component="h2">
-                                                            <TextField
-                                                                required
-                                                                id="standard-required"
-                                                                label="Last Name"
-                                                                defaultValue='Smith'
-                                                                onChange={this.handleChange('lastName')}
-                                                                defaultValue='Smith'
-                                                                className={classes.textField}
-                                                                margin="normal"
-                                                            />
-                                                        </Typography>
-                                                        <Typography variant="h5" component="h2">
-                                                            <TextField
-                                                                required
-                                                                id="standard-required"
-                                                                label="Email Address"
-                                                                onChange={this.handleChange('email')}
-                                                                value={this.state.email}
-                                                                className={classes.textField}
-                                                                margin="normal"
-                                                            />
-                                                        </Typography>
-                                                        <Typography variant="h5" component="h2">
-                                                            <TextField
-                                                                required
-                                                                id="standard-required"
-                                                                label="Username"
-                                                                onChange={this.handleChange('username')}
-                                                                value={this.state.username}
-                                                                className={classes.textField}
-                                                                margin="normal"
-                                                            />
-                                                        </Typography>
-                                                        <Typography variant="h5" component="h2">
-                                                            <TextField
-                                                                required
-                                                                id="standard-required"
-                                                                label="Password"
-                                                                onChange={this.handleChange('pwdHash')}
-                                                                value={this.state.pwdHash}
-                                                                className={classes.textField}
-                                                                margin="normal"
-                                                            />
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell style={{verticalAlign:'top', width: '25%'}}>
-                                                        <div className={classes.spaceTop}>
-                                                            <Button
-                                                                variant="contained"
-                                                                color="primary"
-                                                                onClick={this.handleSubmit}
-                                                                className={classes.secondary}
-                                                            >
-                                                                Submit
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            </Table>
+                                            <Typography style={{textTransform: 'uppercase'}} color='secondary' gutterBottom>
+                                                Signup
+                                            </Typography>
+
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="firstName"
+                                                    label="First Name"
+                                                    defaultValue='Brad'
+                                                    onChange={this.handleChange('firstName')}
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="lastName"
+                                                    label="Last Name"
+                                                    defaultValue='Smith'
+                                                    onChange={this.handleChange('lastName')}
+                                                    defaultValue='Smith'
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="email"
+                                                    label="Email Address"
+                                                    onChange={this.handleChange('email')}
+                                                    value={this.state.email}
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="username"
+                                                    label="Username"
+                                                    onChange={this.handleChange('username')}
+                                                    value={this.state.username}
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="pwdHash"
+                                                    label="Password"
+                                                    onChange={this.handleChange('pwdHash')}
+                                                    value={this.state.pwdHash}
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <FormControl className={classes.formControl}>
+                                                    <InputLabel htmlFor="orgId">Organization</InputLabel>
+                                                    <Select
+                                                        value={this.state.orgId}
+                                                        onChange={this.handleSelectChange}
+                                                    >
+                                                        {this.state.organizations.map(organizations => {
+                                                            return (
+                                                                <MenuItem key="{organizations.id}" value="{organizations.id}">{organizations.name}</MenuItem>
+                                                            );
+                                                        })}
+                                                    </Select>
+                                                </FormControl><br/><br/><br/>
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <div className={classes.spaceTop}>
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={this.handleSubmit}
+                                                        className={classes.secondary}
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </div>
+                                            </Typography>
                                         </CardContent>
                                     </Card>
                                 </Grid>
@@ -381,4 +364,4 @@ class ProjectCard extends React.Component {
 }
 
 
-export default withStyles(styles)(ProjectCard);
+export default withStyles(styles)(Signup);

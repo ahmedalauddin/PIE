@@ -25,7 +25,10 @@ module.exports = {
                 }, {
                     model: Kpi,
                     as: 'Kpis',
-                }]
+                }],
+                order: [
+                    ['name', 'ASC'],
+                ],
             })
             .then(organization => res.status(200).send(organization))
             .catch(error => {

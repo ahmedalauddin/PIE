@@ -9,11 +9,9 @@ import Grid from '@material-ui/core/Grid';
 import Topbar from '../Topbar';
 import { styles } from '../MaterialSense';
 import { withFormik, Form, Field } from 'formik';
-import Yup from 'yup';
 
 const App = props => {
     const {
-        values,
         errors,
         touched,
         handleChange,

@@ -25,6 +25,7 @@ import Log from './Log';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import EmailAddresses from 'email-addresses';
+
 const materialstyles = theme => ({
     card: {
         maxWidth: 400,
@@ -122,16 +123,18 @@ class Login extends React.Component {
     //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
     handleSubmit(event) {
         event.preventDefault();
-        alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
+        //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
         setTimeout(() => {
             // Authenticate against the username
             fetch('/api/authenticate/', {
             //fetch('/api/person/username/' + this.state.username, {
-                method: 'GET',
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(this.state),
             }).then(function (data) {
-                alert('data: ' + JSON.stringify(data));
+                alert('Result from post: ' + data.result);
             }).catch(function (err) {
-                alert(err);
+                alert('login failed');
             });
             //setSubmitting(false);
         }, 2000);

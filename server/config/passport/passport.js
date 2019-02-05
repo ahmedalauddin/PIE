@@ -2,7 +2,7 @@
 //var bCrypt = require('bcrypt-nodejs');
 
 /*
-module.exports = function(passport,user){
+module.exports = function(passport, user) {
     var User = user;
     var LocalStrategy = require('passport-local').Strategy;
 
@@ -26,34 +26,36 @@ module.exports = function(passport,user){
     passport.use('local-signup', new LocalStrategy(
         {
             usernameField : 'email',
-            passwordField : 'password',
+            passwordField : 'pwdhash',
             passReqToCallback : true // allows us to pass back the entire request to the callback
         },
 
         function(req, email, password, done){
+            console.log('passport before generating hash.');
             var generateHash = function(password) {
+                console.log('passport generating hash.');
                 return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
             };
 
             User.findOne({where: {email:email}}).then(function(user){
-                if(user)
-                {
-                    return done(null, false, {message : 'That email is already taken'} );
+                if(user) {
+                    return done(null, false, {message : 'That email is already used.'} );
                 }
 
-                else
-                {
+                else {
                     // NB: userPassword is hash
                     var userPassword = generateHash(password);
                     var data =
-                        { email:email,
-                            password: userPassword,
-                            firstname: req.body.firstname,
-                            lastname: req.body.lastname
+                        {
+                            username: req.body.username,
+                            firstName: req.body.firstName,
+                            lastName: req.body.lastName,
+                            email: email,
+                            pwdhash: userPassword,
+                            orgId: req.body.orgId,
                         };
 
-
-                    User.create(data).then(function(newUser,created){
+                    User.create(data).then(function(newUser, created){
                         if(!newUser){
                             return done(null,false);
                         }
@@ -73,7 +75,7 @@ module.exports = function(passport,user){
         {
             // by default, local strategy uses username and password, we will override with email
             usernameField : 'email',
-            passwordField : 'password',
+            passwordField : 'pwdhash',
             passReqToCallback : true // allows us to pass back the entire request to the callback
         },
 

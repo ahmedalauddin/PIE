@@ -1,7 +1,7 @@
 const authController = require('../controllers').auth;
 
 module.exports = function(app) {
-    app.get('/api/authenticate', authController.authenticate);
+    app.post('/api/authenticate', authController.authenticate);
 
     //app.get('/api/signin', authController.signin);
 

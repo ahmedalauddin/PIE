@@ -32,6 +32,7 @@ import Log from './Log';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import EmailAddresses from 'email-addresses';
+
 const materialstyles = theme => ({
     card: {
         maxWidth: 400,
@@ -143,35 +144,13 @@ class Signup extends React.Component {
         this.setState(state => ({ expanded: !state.expanded }));
     };
 
-    getOrgFromEmail = () => {
-        // Figure out what the organization is from the email address.
-        const emailParsed = EmailAddresses.parseOneAddress(this.state.email);
-        const domain = emailParsed.domain;
-        var domainarr = [];
-        domainarr = domain.split('.');
-        const company = domainarr[domainarr.length-2];
-        alert('company: ' + company);
-        var orgId = 1;
-
-        var orgPath = '/api/organization/name/' + company;
-        alert('orgPath: ' + orgPath);
-        setTimeout(() => {
-            fetch(orgPath)
-                .then(res => res.json())
-                .then(results => {
-                    orgId = results.id;
-                });
-        }, 2000);
-
-        return(orgId);
-
-    }
 
     //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
     handleSubmit(event) {
         event.preventDefault();
 
         setTimeout(() => {
+            /*
             if (this.state.id > 0) {
                 // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
                 // We have a project id passed through the URL, do an
@@ -187,18 +166,22 @@ class Signup extends React.Component {
                     //console.log(err);
                 });
             } else {
-                // No project id, so we will do a create.  The difference
-                // is we do a POST instead of a PUT.
-                fetch('/api/person', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(this.state),
-                }).then(function (data) {
-                    //console.log(data);
-                }).catch(function (err) {
-                    //console.log(err);
-                });
-            }
+            */
+            // No person id, so we will do a create.  The difference
+            // is we do a POST instead of a PUT.
+
+            // Trying with person create
+            fetch('/api/person', {
+            //fetch('/api/signup', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(this.state),
+            }).then(function (data) {
+                //console.log(data);
+            }).catch(function (err) {
+                //console.log(err);
+            });
+            //}
             //setSubmitting(false);
         }, 2000);
     }
@@ -365,3 +348,28 @@ class Signup extends React.Component {
 
 
 export default withStyles(styles)(Signup);
+
+/*
+getOrgFromEmail = () => {
+    // Figure out what the organization is from the email address.
+    const emailParsed = EmailAddresses.parseOneAddress(this.state.email);
+    const domain = emailParsed.domain;
+    var domainarr = [];
+    domainarr = domain.split('.');
+    const company = domainarr[domainarr.length-2];
+    alert('company: ' + company);
+    var orgId = 1;
+
+    var orgPath = '/api/organization/name/' + company;
+    alert('orgPath: ' + orgPath);
+    setTimeout(() => {
+        fetch(orgPath)
+            .then(res => res.json())
+            .then(results => {
+                orgId = results.id;
+            });
+    }, 2000);
+
+    return(orgId);
+}
+*/

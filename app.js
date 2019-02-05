@@ -4,10 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-//var passport = require('passport');
+var passport = require('passport');
 var session = require('express-session');
 var env = require('dotenv').load();
-
+var Person = require('./server/models/person');
 var app = express();
 
 // view engine setup
@@ -34,18 +34,19 @@ require('./server/routes/mindmap')(app);
 var models = require('./server/models');
 
 app.get('*', (req, res) => res.status(200).send({
-  message: 'Welcome to the beginning of nothingness.',
+    message: 'Welcome to the beginning of nothingness.',
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({
-  extended: false
+    extended: false
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/*
+
 // For Passport
+/*
 app.use(session({
   secret: 'quid-pro-quo',
   resave: true,
@@ -53,16 +54,17 @@ app.use(session({
 })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
-*/
 
+
+//load passport strategies
+require('./server/config/passport/passport.js')(passport, Person);
+*/
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+    next(createError(404));
 });
 
-//load passport strategies
-//require('./server/config/passport/passport.js')(passport, models.person);
 
 // error handler
 app.use(function(err, req, res, next) {

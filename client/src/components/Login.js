@@ -100,6 +100,7 @@ class Login extends React.Component {
         id: '',
         email: '',
         username: '',
+        pwdhash: '',
         password: '',
         isEditing: false,
         expanded: false,
@@ -131,10 +132,13 @@ class Login extends React.Component {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(this.state),
-            }).then(function (data) {
-                alert('Result from post: ' + data.result);
+            }).then(function (response) {
+                //alert('Response from post: ' + response.json());
+                //alert('Response from post: ' + response.statusMessage);
+                //alert('Response from post (message): ' + response.get('message'));
+                alert('Response from post: ' + response.json());
             }).catch(function (err) {
-                alert('login failed');
+                //alert('login failed');
             });
             //setSubmitting(false);
         }, 2000);
@@ -173,6 +177,17 @@ class Login extends React.Component {
                                                     label="Username"
                                                     onChange={this.handleChange('username')}
                                                     value={this.state.username}
+                                                    className={classes.textField}
+                                                    margin="normal"
+                                                />
+                                            </Typography>
+                                            <Typography variant="h5" component="h2">
+                                                <TextField
+                                                    required
+                                                    id="email"
+                                                    label="Email"
+                                                    onChange={this.handleChange('email')}
+                                                    value={this.state.email}
                                                     className={classes.textField}
                                                     margin="normal"
                                                 />

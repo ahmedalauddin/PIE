@@ -170,9 +170,8 @@ class Signup extends React.Component {
             // No person id, so we will do a create.  The difference
             // is we do a POST instead of a PUT.
 
-            // Trying with person create
+            // This uses the Person Create function.
             fetch('/api/person', {
-            //fetch('/api/signup', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(this.state),

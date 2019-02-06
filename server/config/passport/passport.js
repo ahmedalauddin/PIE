@@ -1,5 +1,5 @@
 //load bcrypt
-//var bCrypt = require('bcrypt-nodejs');
+var bCrypt = require('bcrypt-nodejs');
 
 /*
 module.exports = function(passport, user) {
@@ -21,6 +21,7 @@ module.exports = function(passport, user) {
             }
         });
     });
+
 
     // Local signup
     passport.use('local-signup', new LocalStrategy(
@@ -70,6 +71,8 @@ module.exports = function(passport, user) {
         }
     ));
 
+
+
     //LOCAL SIGNIN
     passport.use('local-signin', new LocalStrategy(
         {
@@ -82,7 +85,7 @@ module.exports = function(passport, user) {
         function(req, email, password, done) {
             var User = user;
 
-            var isValidPassword = function(userpass,password){
+            var isValidPassword = function(userpass, password){
                 return bCrypt.compareSync(password, userpass);
             }
 
@@ -109,3 +112,4 @@ module.exports = function(passport, user) {
 
 }
 */
+

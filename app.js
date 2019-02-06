@@ -4,10 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var passport = require('passport');
 var session = require('express-session');
 var env = require('dotenv').load();
-var Person = require('./server/models/person');
+var models = require('./server/models');
+var Auth = require('./server/controllers/auth.js');
+var middleware = require('./server/Middleware.js');
 var app = express();
 
 // view engine setup
@@ -23,6 +24,8 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+var Person = require('./server/models').Person;
+
 // Require our routes into the application
 require('./server/routes/index')(app);
 require('./server/routes/organization')(app);
@@ -31,7 +34,11 @@ require('./server/routes/project')(app);
 require('./server/routes/kpi')(app);
 require('./server/routes/auth')(app);
 require('./server/routes/mindmap')(app);
-var models = require('./server/models');
+
+// This should just use the auth route
+app.post('/api/authenticate');
+app.get('/api/checktoken');
+
 
 app.get('*', (req, res) => res.status(200).send({
     message: 'Welcome to the beginning of nothingness.',
@@ -56,9 +63,11 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 
-//load passport strategies
+//load passport strategies, pass in the Person model.
 require('./server/config/passport/passport.js')(passport, Person);
 */
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

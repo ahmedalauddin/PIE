@@ -7,8 +7,8 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var env = require('dotenv').load();
 var models = require('./server/models');
-var Auth = require('./server/controllers/auth.js');
-var middleware = require('./server/Middleware.js');
+var exjwt = require('express-jwt');
+
 var app = express();
 
 // view engine setup
@@ -35,9 +35,6 @@ require('./server/routes/kpi')(app);
 require('./server/routes/auth')(app);
 require('./server/routes/mindmap')(app);
 
-// This should just use the auth route
-app.post('/api/authenticate');
-app.get('/api/checktoken');
 
 
 app.get('*', (req, res) => res.status(200).send({
@@ -48,25 +45,9 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: false
 }));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-
-// For Passport
-/*
-app.use(session({
-  secret: 'quid-pro-quo',
-  resave: true,
-  saveUninitialized: true
-})); // session secret
-app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-
-
-//load passport strategies, pass in the Person model.
-require('./server/config/passport/passport.js')(passport, Person);
-*/
-
 
 
 // catch 404 and forward to error handler

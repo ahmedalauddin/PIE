@@ -9,76 +9,16 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Topbar from './Topbar';
-//import ButtonBar from './buttons/ButtonBar';
-//import Button from '@material-ui/core/Button';
 import {styles} from './MaterialSense';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import SectionHeader from './typo/SectionHeader';
-import classnames from 'classnames';
-import {red} from '@material-ui/core/colors';
 import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Log from './Log';
 import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import EmailAddresses from 'email-addresses';
 
-const materialstyles = theme => ({
-    card: {
-        maxWidth: 400,
-    },
-    media: {
-        height: 0,
-        paddingTop: '56.25%', // 16:9
-    },
-    actions: {
-        display: 'flex',
-    },
-    expand: {
-        transform: 'rotate(0deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        transform: 'rotate(180deg)',
-    },
-    avatar: {
-        backgroundColor: red[500],
-    },
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: 200,
-    },
-    dense: {
-        marginTop: 19,
-    },
-    menu: {
-        width: 200,
-    },
-});
-const ExpandingSectionGridItem = (classes, project) => {
-    // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
-    return (
-        <div className={classes.inlineLeft}>
-            <Typography variant="h6" style={{ textTransform: 'uppercase' }} color='secondary' gutterBottom>
-                Other Prioritized KPIs
-            </Typography>
-            <Typography variant="h5" gutterBottom>
-                Service BOM Accuracy
-            </Typography>
-        </div>
-    );
-};
+
 const buttonstyles = theme => ({
     primary: {
         marginRight: theme.spacing.unit * 2

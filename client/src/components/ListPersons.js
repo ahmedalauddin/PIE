@@ -16,16 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import {Link} from 'react-router-dom';
 import { styles } from './MaterialSense';
-
-function desc(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+import { stableSort, desc, getSorting } from './TableFunctions';
 
 const rows = [
     {id: 'id', numeric: true, disablePadding: false, label: 'ID'},
@@ -36,19 +27,6 @@ const rows = [
     {id: 'organization', numeric: false, disablePadding: false, label: 'Organization'},
 ];
 
-function stableSort(array, cmp) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = cmp(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
 
 class MyTableHead extends React.Component {
     createSortHandler = property => event => {
@@ -105,7 +83,7 @@ class ListPersons extends Component {
     };
 
     componentDidMount() {
-        fetch('/api/person')
+        fetch('/api/persons')
             .then(res => res.json())
             .then(persons => this.setState({persons}));
     }
@@ -124,13 +102,9 @@ class ListPersons extends Component {
                             <Grid container item xs={12}>
                                 <Grid item xs={12}>
                                     <Paper className={classes.paper}>
-
                                         <div className={classes.box}>
                                             <Typography color='secondary' gutterBottom>
-                                                Full box
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                This is an example of a full-width box
+                                                Innovation Platform Person List
                                             </Typography>
                                         </div>
                                         <div>

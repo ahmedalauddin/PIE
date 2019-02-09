@@ -1,10 +1,11 @@
 const authController = require('../controllers').auth;
-const middleware = require('../Middleware');
 
 module.exports = function(app) {
     app.post('/api/authenticate', authController.authenticate);
 
-    app.get('/api/checktoken', middleware.checkToken);
+    //app.get('/api/checktoken', middleware.checkToken);
+
+
     //app.post('/api/signin', authController.signin);
 
     //app.post('/api/signup', authController.signup);

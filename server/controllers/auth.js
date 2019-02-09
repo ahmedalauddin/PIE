@@ -1,8 +1,9 @@
 const Person = require('../models').Person;
 const bCrypt = require('bcrypt');
-let jwt = require('jsonwebtoken');
-let config = require('../config');
-let middleware = require('../middleware');
+const jwt = require('jsonwebtoken');
+const exjwt = require('express-jwt');
+const jwtconfig = require('../config/jwtconfig');
+
 
 module.exports = {
     authenticate(req, res) {
@@ -24,25 +25,33 @@ module.exports = {
                     // Logged in successfully.
                     console.log('Logged in successfully.');
                     let token = jwt.sign({username: Person.username},
-                        config.secret,
+                        jwtconfig.jwtMW.secret,
                         {
                             expiresIn: '24h' // expires in 24 hours
                         }
                     );
                     // return the JWT token for the future API calls
-                    console.log('Token set.');
-                    res.status(200).send({ auth: true, message: 'Authorized.', token: token });
-                    console.log('JSON result set.');
+                    res.json({
+                        sucess: true,
+                        err: null,
+                        token
+                    });
+
                 } else {
                     // Login failed.
                     console.log('Login failed.');
-                    res.status(200).send({ auth: false, message: 'No token.' });
+                    res.status(401).json({
+                        sucess: false,
+                        token: null,
+                        err: 'Username or password is incorrect'
+                    });
                 }
             });
         }).catch(failed => {
             res.status(400).send({ auth: false, message: 'Failed.' });
         });
     },
+
 
     index(req, res) {
         res.json({

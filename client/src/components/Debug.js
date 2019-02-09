@@ -37,8 +37,8 @@ export const Debug = () => (
                         overflowX: 'scroll',
                     }}
                 >
-          {JSON.stringify(rest, null, 2)}
-        </pre>
+                    {JSON.stringify(rest, null, 2)}
+                </pre>
             )}
         </FormikConsumer>
     </div>

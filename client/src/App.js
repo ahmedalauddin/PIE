@@ -3,6 +3,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './App.css';
 import Routes from './routes';
 import { blue, indigo } from '@material-ui/core/colors';
+import withAuth from './components/withAuth';
 
 const theme = createMuiTheme({
     palette: {
@@ -22,7 +23,6 @@ const theme = createMuiTheme({
     }
 });
 
-
 class App extends Component {
     render() {
         return (
@@ -35,4 +35,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default withAuth(App);

@@ -17,7 +17,7 @@ import SectionHeader from './typo/SectionHeader';
 import TextField from '@material-ui/core/TextField';
 import Log from './Log';
 import Button from '@material-ui/core/Button';
-
+import AuthHelper from './AuthHelper';
 
 const buttonstyles = theme => ({
     primary: {
@@ -61,7 +61,7 @@ class Login extends React.Component {
     };
 
 
-    //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
+/*
     handleSubmit(event) {
         event.preventDefault();
         //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
@@ -83,7 +83,22 @@ class Login extends React.Component {
             //setSubmitting(false);
         }, 2000);
     }
+*/
+    handleSubmit = e => {
+        e.preventDefault();
 
+        /* Here is where all the login logic will go. Upon clicking the login button, we would like to utilize a login method that will send our entered credentials over to the server for verification. Once verified, it should store your token and send you to the protected route. */
+        this.Auth.login(this.state.username, this.state.password)
+            .then(res => {
+                if (res === false) {
+                    return alert('Sorry those credentials don\'t exist!');
+                }
+                this.props.history.replace('/');
+            })
+            .catch(err => {
+                alert(err);
+            });
+    };
     componentDidMount() {
 
     }

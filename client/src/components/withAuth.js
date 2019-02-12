@@ -16,12 +16,13 @@ export default function withAuth(AuthComponent) {
         prior to granting them enterance into the app. */
         componentDidMount() {
             if (!Auth.loggedIn()) {
-                this.props.history.replace("/login");
+                // TODO - see if we have history here.  Is this in props?
+                this.props.history.replace('/login');
             } else {
                 /* Try to get confirmation message from the Auth helper. */
                 try {
                     const confirm = Auth.getConfirm();
-                    console.log("confirmation is:", confirm);
+                    console.log('confirmation is:', confirm);
                     this.setState({
                         confirm: confirm,
                         loaded: true
@@ -30,7 +31,7 @@ export default function withAuth(AuthComponent) {
                     /* Oh snap! Looks like there's an error so we'll print it out and log the user out for security reasons. */
                     console.log(err);
                     Auth.logout();
-                    this.props.history.replace("/login");
+                    this.props.history.replace('/login');
                 }
             }
         }
@@ -38,7 +39,7 @@ export default function withAuth(AuthComponent) {
         render() {
             if (this.state.loaded == true) {
                 if (this.state.confirm) {
-                    console.log("confirmed!");
+                    console.log('confirmed!');
                     return (
                         /* component that is currently being wrapper(App.js) */
                         <AuthComponent
@@ -47,7 +48,7 @@ export default function withAuth(AuthComponent) {
                         />
                     );
                 } else {
-                    console.log("not confirmed!");
+                    console.log('not confirmed!');
                     return null;
                 }
             } else {

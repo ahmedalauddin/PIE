@@ -9,6 +9,7 @@
     "classnames": "^2.2.6",
     "debug": "^4.1.1",
     "formik": "^1.4.2",
+    "jwt-decode": "^2.2.0",
     "node-csv": "^0.1.2",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",

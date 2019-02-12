@@ -1,6 +1,6 @@
 import decode from 'jwt-decode';
 
-export default class AuthHelperMethods {
+export default class AuthHelper {
     // Initializing important variables
     constructor(domain) {
         //THIS LINE IS ONLY USED WHEN YOU'RE IN PRODUCTION MODE!

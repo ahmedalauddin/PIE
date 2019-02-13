@@ -17,7 +17,7 @@ export default function withAuth(AuthComponent) {
         componentDidMount() {
             if (!Auth.loggedIn()) {
                 // TODO - see if we have history here.  Is this in props?
-                this.props.history.replace('/login');
+                //this.props.history.replace('/login');
             } else {
                 /* Try to get confirmation message from the Auth helper. */
                 try {
@@ -31,7 +31,7 @@ export default function withAuth(AuthComponent) {
                     /* Oh snap! Looks like there's an error so we'll print it out and log the user out for security reasons. */
                     console.log(err);
                     Auth.logout();
-                    this.props.history.replace('/login');
+                    //this.props.history.replace('/login');
                 }
             }
         }

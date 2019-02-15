@@ -1,3 +1,6 @@
+/**
+ * React class for authentication.  Sends requests to Express API routes.
+ */
 import decode from 'jwt-decode';
 
 export default class AuthHelper {

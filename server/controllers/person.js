@@ -124,7 +124,6 @@ module.exports = {
             .catch(error => res.status(400).send(error));
     },
 
-
     // List all persons
     list(req, res) {
         return Person

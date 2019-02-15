@@ -5,7 +5,6 @@ module.exports = function(app) {
 
     //app.get('/api/checktoken', middleware.checkToken);
 
-
     //app.post('/api/signin', authController.signin);
 
     //app.post('/api/signup', authController.signup);

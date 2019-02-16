@@ -1,38 +1,56 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+import {
+  readdirSync
+} from 'fs';
+import {
+  basename as _basename,
+  join
+} from 'path';
+import Sequelize from 'sequelize';
+const basename = _basename(__filename);
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+// set up environmental variables for connecting to the db
+//database: String, username: String, password: String, options: Object
+let _d = (process.env.DATABASE || 'mvp2');
+let _u = (process.env.USERNAME || 'root');
+let _p = (process.env.PASSWORD || '');
+let _o = {
+  'host': (process.env.DBHOST || 'localhost'),
+  'dialect': (process.env.DBDIALECT || 'mysql')
+};
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+// connect to the db
+let sequelize = new Sequelize(database = _d, username = _u, password = _p, options = _o);
+
+// connect
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+
+    // read the models into sequelize
+    readdirSync(__dirname)
+      .filter(file => {
+        return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+      })
+      .forEach(file => {
+        let model = sequelize['import'](join(__dirname, file));
+        db[model.name] = model;
+      });
+
+    Object.keys(db).forEach(modelName => {
+      if (db[modelName].associate) {
+        db[modelName].associate(db);
+      }
+    });
   })
-  .forEach(file => {
-    const model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
   });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-
-module.exports = db;
+export default db;

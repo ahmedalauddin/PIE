@@ -1,5 +1,5 @@
-const Person = require('../models').Person;
-const Organization = require('../models').Organization;
+const Person = require('../models').default.Person;
+const Organization = require('../models').default.Organization;
 const bCrypt = require('bcrypt');
 var express = require('express');
 const bodyParser = require('body-parser');
@@ -10,7 +10,7 @@ function getHash(value) {
     var hashedValue = '';
     console.log('value  = ' + value);
 
-    bcrypt.hash(value, 12, function(err, hashedValue) {
+    bcrypt.hash(value, 12, function (err, hashedValue) {
         console.log('hashedValue = ' + hashedValue);
     });
 
@@ -52,15 +52,15 @@ module.exports = {
         var hashedValue = '';
         console.log('req.body.password  = ' + req.body.password);
 
-        try{
-            bCrypt.hash(req.body.password, 12, function(err, hashedValue) {
+        try {
+            bCrypt.hash(req.body.password, 12, function (err, hashedValue) {
                 console.log('hashedValue = ' + hashedValue);
             });
         } catch {
             console.log(err.stackTrace);
         }
         console.log('password: ' + req.body.password + ', hash:' + hashedValue);
-        bCrypt.hash(req.body.password, 12, function(err, hashedValue) {
+        bCrypt.hash(req.body.password, 12, function (err, hashedValue) {
             Person
                 .create({
                     username: req.body.username,
@@ -91,15 +91,18 @@ module.exports = {
         console.log('Body is: ' + req.body);
         return Person
             .update({
-                    username: req.body.username,
-                    firstName: req.body.firstName,
-                    lastName: req.body.lastName,
-                    email: req.body.email,
-                    pwdhash: req.body.pwdhash,
-                    orgId: req.body.orgId,
-                },
-                {returning: true, where: {id: id}}
-            ).then(person => res.status(200).send(person))
+                username: req.body.username,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                pwdhash: req.body.pwdhash,
+                orgId: req.body.orgId,
+            }, {
+                returning: true,
+                where: {
+                    id: id
+                }
+            }).then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },
 
@@ -119,7 +122,11 @@ module.exports = {
     // Find a person by Id
     findByUsername(req, res) {
         return Person
-            .findOne({where: {username: req.params.username}})
+            .findOne({
+                where: {
+                    username: req.params.username
+                }
+            })
             .then(person => res.status(200).send(person))
             .catch(error => res.status(400).send(error));
     },

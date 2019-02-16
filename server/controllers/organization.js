@@ -1,7 +1,7 @@
-const Organization = require('../models').Organization;
-const Person = require('../models').Person;
-const Project = require('../models').Project;
-const Kpi = require('../models').Kpi;
+const Organization = require('../models').default.Organization;
+const Person = require('../models').default.Person;
+const Project = require('../models').default.Project;
+const Kpi = require('../models').default.Kpi;
 
 module.exports = {
     create(req, res) {
@@ -65,7 +65,11 @@ module.exports = {
     findByName(req, res) {
         console.log('name is: ' + req.params.name);
         return Organization
-            .findOne({where: {name: req.params.name}})
+            .findOne({
+                where: {
+                    name: req.params.name
+                }
+            })
             .then(organization => res.status(200).send(organization))
             .catch(error => {
                 console.log(error.stack);
@@ -73,4 +77,3 @@ module.exports = {
             });
     },
 };
-

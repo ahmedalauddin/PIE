@@ -1,5 +1,5 @@
-const Kpi = require('../models').Kpi;
-const Organization = require('../models').Organization;
+const Kpi = require('../models').default.Kpi;
+const Organization = require('../models').default.Organization;
 
 module.exports = {
     create(req, res) {
@@ -32,9 +32,12 @@ module.exports = {
                 orgId: req.body.orgId,
                 createdAt: req.body.createdAt,
                 updatedAt: req.body.updatedAt
-            },
-            {returning: true, where: {id: id}}
-            ).then(kpi => res.status(200).send(kpi))
+            }, {
+                returning: true,
+                where: {
+                    id: id
+                }
+            }).then(kpi => res.status(200).send(kpi))
             .catch(error => {
                 console.log(error.stack);
                 res.status(400).send(error);

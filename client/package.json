@@ -1,23 +1,31 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "valueinfinity-mvp-client",
+  "version": "0.3.0",
   "private": true,
+  "engines": {
+    "node": ">=6"
+  },
   "dependencies": {
     "@material-ui/core": "^3.9.0",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.28",
+    "braces": "^2.3.2",
     "classnames": "^2.2.6",
     "debug": "^4.1.1",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-prettier": "^3.0.1",
     "formik": "^1.4.2",
     "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
     "node-csv": "^0.1.2",
+    "prettier": "^1.16.4",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-moment": "^0.8.4",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.3",
+    "react-scripts": "^2.1.5",
     "react-select": "^2.3.0",
     "react-swipeable-views": "^0.13.0",
     "react-swipeable-views-utils": "^0.13.0",
@@ -26,23 +34,29 @@
     "recharts": "^1.4.2",
     "requirejs": "^2.3.6",
     "spected": "^0.7.0",
+    "ts-pnp": "^1.0.0",
     "typeface-roboto": "0.0.54",
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.5",
     "yup": "^0.26.10"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint .",
+    "lint-fix": "npm run lint -- --fix"
   },
   "proxy": "http://localhost:3001",
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.14.1"
+  }
 }

@@ -1,53 +1,64 @@
-'use strict';
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /server/models/index.js
+ * Created:  2019-01-27 13:43:45
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-18 14:57:40
+ * Editor:   Darrin Tisdale
+ */
+"use strict";
 
-import {
-  readdirSync
-} from 'fs';
-import {
-  basename as _basename,
-  join
-} from 'path';
-import Sequelize from 'sequelize';
-const basename = _basename(__filename);
+// declarations
+import { config } from "../config/config";
+import { readdirSync } from "fs";
+import Sequelize from "sequelize";
+const logger = require("../util/logger")(__filename);
+const path = require("path");
 const db = {};
+const callerType = "model";
 
-// set up environmental variables for connecting to the db
-//database: String, username: String, password: String, options: Object
-let _d = (process.env.DATABASE || 'mvp2');
-let _u = (process.env.USERNAME || 'root');
-let _p = (process.env.PASSWORD || '');
-let _o = {
-  'host': (process.env.DBHOST || 'localhost'),
-  'dialect': (process.env.DBDIALECT || 'mysql')
-};
+// get configuration variables
+let _d = config.get("db.name");
+let _u = config.get("db.user");
+let _p = config.get("db.password");
+let _h = config.get("db.host");
+let _l = config.get("db.dialect");
 
 // connect to the db
-let sequelize = new Sequelize(database = _d, username = _u, password = _p, options = _o);
+let sequelize = new Sequelize(_d, _u, _p, { _h, _l });
 
 // connect
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    logger.info("${callerType} -> connection to ${_d} as ${_u} successful");
 
     // read the models into sequelize
     readdirSync(__dirname)
       .filter(file => {
-        return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+        return (
+          file.indexOf(".") !== 0 &&
+          file !== path.basename(__filename) &&
+          path.extname(file) === ".js"
+        );
       })
       .forEach(file => {
-        let model = sequelize['import'](join(__dirname, file));
+        let _m = path.join(__dirname, file);
+        let model = sequelize["import"](_m);
+        logger.debug("${callerType} -> found ${_m}");
         db[model.name] = model;
       });
 
     Object.keys(db).forEach(modelName => {
       if (db[modelName].associate) {
         db[modelName].associate(db);
+        logger.debug("${callerType} -> associated ${modelName} model with db");
       }
     });
   })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
+  .catch(error => {
+    logger.error(`${callerType} error occurred: ${error.stack}`);
   });
 
 db.sequelize = sequelize;

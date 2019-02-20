@@ -33,7 +33,6 @@ logs
 npm-debug.log*
 **/node_modules
 node_modules
-client/**/node_modules
 
 # my saved React components
 client/src/components-save

@@ -1,20 +1,47 @@
-const personController = require('../controllers').person;
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /server/routes/person.js
+ * Created:  2019-02-05 09:23:45
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-18 14:12:46
+ * Editor:   Darrin Tisdale
+ */
+"use strict";
 
-module.exports = (app) => {
-    // app.get('/api', (req, res) => res.status(200).send({
-    //     message: 'Welcome to the person API!',
-    // }));
+// declarations
+import {
+  list,
+  create,
+  update,
+  findById,
+  findByUsername
+} from "../controllers/person";
+const logger = require("../util/logger")(__filename);
 
-    app.post('/api/person', personController.create);
+// module export for routes
+module.exports = router => {
+  const callerType = "router";
 
-    // Retrieve a single person by Id
-    app.get('/api/person/:id', personController.findById);
+  // get all persons
+  logger.debug(`${callerType} GET -> path: /api/persons`);
+  router.get("/api/persons", list);
 
-    // Retrieve a single person by username
-    app.get('/api/person/username/:username', personController.findByUsername);
+  // create a person
+  logger.debug(`${callerType} POST -> path: /api/persons`);
+  router.post("/api/persons", create);
 
-    // Update a person with id
-    app.put('/api/person/:id', personController.update);
+  // Update a person with id
+  logger.debug(`${callerType} PUT -> path: /api/persons/:id`);
+  router.put("/api/persons/:id", update);
 
-    app.get('/api/persons', personController.list);
+  // TODO add DELETE /api/persons/:id for deleting a person
+
+  // get a person
+  logger.debug(`${callerType} GET -> path: /api/persons/:id`);
+  router.get("/api/persons/:id", findById);
+
+  // get a person by username
+  logger.debug(`${callerType} GET -> path: /api/persons/?username=:username`);
+  router.get("/api/persons/?username=:username", findByUsername);
 };

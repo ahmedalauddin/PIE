@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import Typography from '@material-ui/core/Typography';
-import { Link, withRouter } from 'react-router-dom';
+import React, { Component } from "react";
+import withStyles from "@material-ui/core/styles/withStyles";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import Typography from "@material-ui/core/Typography";
+import { Link, withRouter } from "react-router-dom";
 
 const styles = theme => ({
   link: {
-    textDecoration: 'none',
-    color: 'inherit'
+    textDecoration: "none",
+    color: "inherit"
   },
   text: {
-    display: 'inline-block',
-    verticalAlign: 'text-bottom'
+    display: "inline-block",
+    verticalAlign: "text-bottom"
   }
 });
 
@@ -27,7 +27,7 @@ class Back extends Component {
           </Link>
         </Typography>
       </div>
-    )
+    );
   }
 }
 

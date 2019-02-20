@@ -1,42 +1,35 @@
+/* eslint-disable no-console */
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * Project:  valueinfinity-mvp
+ * File:     /bin/www
+ * Created:  2019-01-27 13:43:44
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-18 17:15:51
+ * Editor:   Darrin Tisdale
  */
 
-import app, {
-  set
-} from '../app';
-var debug = require('debug')('valueinfinity-mvp:server');
-import {
-  createServer
-} from 'http';
+// dependencies
+import app from "../app";
+import { createServer } from "http";
+import { config } from "../server/config/config";
 
-/**
- * Get port from environment and store in Express.
- */
+// get the port from the configuration
+var port = normalizePort(config.get("server.port"));
+app.set("port", port);
 
-var port = normalizePort(process.env.PORT || '3001');
-set('port', port);
-
-/**
- * Create HTTP server.
- */
-
+// create http server
 var server = createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-
+// listen on port
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
+// set up handlers
+server.on("error", onError);
 
+// member functions
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
@@ -53,42 +46,25 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
-
+// event listener for errors
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === 'string' ?
-    'Pipe ' + port :
-    'Port ' + port;
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
+  case "EACCES":
+    console.error(bind + " requires elevated privileges");
+    process.exit(1);
+    break;
+  case "EADDRINUSE":
+    console.error(bind + " is already in use");
+    process.exit(1);
+    break;
+  default:
+    throw error;
   }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ?
-    'pipe ' + addr :
-    'port ' + addr.port;
-  debug('Listening on ' + bind);
 }

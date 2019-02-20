@@ -1,23 +1,49 @@
-const mindmapController = require('../controllers').mindmap;
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /server/routes/mindmap.js
+ * Created:  2019-01-27 17:59:36
+ * Author:   Darrin Tisdale
+ * -----
+ * Modified: 2019-02-17 20:52:20
+ * Editor:   Darrin Tisdale
+ */
+"use strict";
 
-module.exports = (app) => {
+// declarations
+import {
+  create,
+  list,
+  findById,
+  findByOrgId,
+  update,
+  deleteMindmap
+} from "../controllers/mindmap";
+const logger = require("../util/logger")(__filename);
 
-    // create a mindmap
-    app.post('/api/mindmap', mindmapController.create);
+module.exports = router => {
+  const callerType = "router";
 
-    // get all mindmaps
-    app.get('/api/mindmap', mindmapController.list);
+  // get all mindmaps
+  logger.debug(`${callerType} GET -> path: /api/mindmaps`);
+  router.get("/api/mindmaps", list);
 
-    // get a mindmap by id
-    app.get('/api/mindmap/:id', mindmapController.findById);
+  // create a mindmap
+  logger.debug(`${callerType} POST -> path: /api/mindmaps`);
+  router.post("/api/mindmaps", create);
 
-    // get a mindmap by the orgId
-    app.get('/api/mindmap/?orgId=:orgId', mindmapController.findByOrgId);
+  // get a mindmap by id
+  logger.debug(`${callerType} GET -> path: /api/mindmaps/:id`);
+  router.get("/api/mindmaps/:id", findById);
 
-    // update a mindmap
-    app.put('/api/mindmap/:id', mindmapController.update);
+  // update a mindmap
+  logger.debug(`${callerType} PUT -> path: /api/mindmaps/:id`);
+  router.put("/api/mindmaps/:id", update);
 
-    // delete a mindmap
-    app.delete('/api/mindmap/:id', mindmapController.delete);
+  // get a mindmap by the orgId
+  logger.debug(`${callerType} GET -> path: /api/mindmaps/?orgId=:orgId`);
+  router.get("/api/mindmaps/?orgId=:orgId", findByOrgId);
 
+  // delete a mindmap
+  logger.debug(`${callerType} DELETE -> path: /api/mindmaps/:id`);
+  router.delete("/api/mindmaps/:id", deleteMindmap);
 };

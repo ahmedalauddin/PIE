@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 11:17:04
+ * Modified: 2019-02-20 11:50:51
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -50,16 +50,16 @@ app.use(express.static(serverPath));
 var router = express.Router();
 
 // set the home path
-logger.debug(`router GET -> path: /*`);
-router.get("/*", (req, res) => {
-  if (isHosted()) {
-    res.sendFile(join(serverPath, "/index.html"));
-  } else {
-    res.status(200).send({
-      message: "Welcome to the Value Infinity MVP API"
-    });
-  }
-});
+// logger.debug(`router GET -> path: /*`);
+// router.get("/*", (req, res) => {
+//   if (isHosted()) {
+//     res.sendFile(join(serverPath, "/index.html"));
+//   } else {
+//     res.status(200).send({
+//       message: "Welcome to the Value Infinity MVP API"
+//     });
+//   }
+// });
 
 // add in the other paths handled by express
 require("./server/routes/index")(router);

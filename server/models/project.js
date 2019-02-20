@@ -4,9 +4,10 @@
  * Created:  2019-01-30 11:33:14
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-18 16:16:37
+ * Modified: 2019-02-20 15:53:57
  * Editor:   Darrin Tisdale
  */
+"use strict";
 
 module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define(

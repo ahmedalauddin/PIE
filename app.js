@@ -4,15 +4,15 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 11:50:51
+ * Modified: 2019-02-20 15:25:15
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
-import express from "express";
-import createError from "http-errors";
-import { join } from "path";
-import { json, urlencoded } from "body-parser";
+const express = require("express");
+const httpErrors = require("http-errors");
+const path = require("path");
+const bodyParser = require("body-parser");
 const logger = require("./server/util/logger")(__filename);
 var expressWinston = require("express-winston");
 var cookieParser = require("cookie-parser")();
@@ -29,20 +29,20 @@ var app = express();
 
 // Parse incoming requests data (https://github.com/expressjs/body-parser)
 logger.debug(`adding parsers`);
-app.use(json());
-app.use(urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser);
 
 // view engine setup
 // TODO maybe we refactor this out?
 logger.debug(`adding views`);
-app.set("views", join(__dirname, "server/views"));
+app.set("views", path.join(__dirname, "server/views"));
 app.set("view engine", "pug");
 
 // add support for static files and the built react app
 let serverPath = isHosted()
-  ? join(__dirname, "client/build")
-  : join(__dirname, "server/public");
+  ? path.join(__dirname, "client/build")
+  : path.join(__dirname, "server/public");
 logger.debug(`setting static root of express server to ${serverPath}`);
 app.use(express.static(serverPath));
 
@@ -73,7 +73,7 @@ require("./server/routes/auth")(router);
 // error handlers
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
-  next(createError(404));
+  next(httpErrors.createError(404));
 });
 
 // error handler
@@ -138,4 +138,4 @@ if (
 }
 
 // export the application object
-export default app;
+module.exports = app;

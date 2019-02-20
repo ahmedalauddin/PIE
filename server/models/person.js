@@ -1,61 +1,64 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  const Person = sequelize.define('Person', {
-    id: {
+  const Person = sequelize.define(
+    "Person",
+    {
+      id: {
         type: DataTypes.INTEGER,
-      primaryKey: true,
+        primaryKey: true,
         autoIncrement: true
-    },
+      },
       firstName: {
         type: DataTypes.STRING,
-      allowNull: true
+        allowNull: true
       },
       lastName: {
         type: DataTypes.STRING,
-      allowNull: true
+        allowNull: true
       },
-    username: {
+      username: {
         type: DataTypes.STRING,
         allowNull: true
-    },
-      email: {
-      type: DataTypes.STRING,
-      allowNull: true,
       },
-    orgId: {
+      email: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      orgId: {
         type: DataTypes.INTEGER,
         references: {
-        table: 'organization',
-        key: 'id'
+          table: "organization",
+          key: "id"
+        }
       },
-      },
-    pwdhash: {
+      pwdhash: {
         type: DataTypes.STRING,
         allowNull: false
-    },
+      },
       lastLogin: {
-      type: DataTypes.DATE,
+        type: DataTypes.DATE,
         allowNull: true
-    },
+      },
       createdAt: {
         type: DataTypes.DATE,
-      allowNull: true
+        allowNull: true
       },
       updatedAt: {
         type: DataTypes.DATE,
-      allowNull: true,
+        allowNull: true,
         defaultValue: DataTypes.NOW
+      }
+    },
+    {
+      tableName: "Persons"
     }
-  },
-    tableName: 'Persons'
-  }
   );
 
-  Person.associate = (models) => {
+  Person.associate = models => {
     Person.belongsTo(models.Organization, {
-      foreignKey: 'orgId',
-      onDelete: 'cascade'
+      foreignKey: "orgId",
+      onDelete: "cascade"
     });
   };
 

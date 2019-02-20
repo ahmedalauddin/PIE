@@ -1,5 +1,18 @@
-const Organization = require("../models").default.Organization;
-const Mindmap = require("../models").default.Mindmap;
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /server/controllers/mindmap.js
+ * Created:  2019-01-27 17:59:36
+ * Author:   Darrin Tisdale
+ * -----
+ * Modified: 2019-02-20 16:26:19
+ * Editor:   Darrin Tisdale
+ */
+"use strict";
+
+// declarations
+const Mindmap = require("../models/Mindmap");
+const logger = require("../util/logger")(__filename);
+const callerType = "controller";
 //TODO determine means to handle nodes of mindmap creating/updating/deleting projects
 
 module.exports = {
@@ -8,9 +21,12 @@ module.exports = {
       orgId: req.body.orgId,
       mapData: req.body.mapData
     })
-      .then(mindmap => res.status(201).send(mindmap))
+      .then(m => {
+        logger.debug(`${callerType} create -> id: ${m.id}`);
+        res.status(201).send(m);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} create -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -29,9 +45,12 @@ module.exports = {
         }
       }
     )
-      .then(mindmap => res.status(200).send(mindmap))
+      .then(m => {
+        logger.debug(`${callerType} update -> updatedAt: ${m.updatedAt}`);
+        res.status(200).send(m);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} update -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -44,9 +63,12 @@ module.exports = {
         id: id
       }
     })
-      .success(deletedCount => res.status(200).send(deletedCount))
+      .success(c => {
+        logger.debug(`${callerType} delete -> ${c} maps deleted`);
+        res.status(200).send(c);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} delete -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -54,9 +76,12 @@ module.exports = {
   // Find a mindmap by id
   findById(req, res) {
     return Mindmap.findById(req.params.id)
-      .then(mindmap => res.status(200).send(mindmap))
+      .success(mms => {
+        logger.debug(`${callerType} findById -> count: ${mms.length}`);
+        res.status(200).send(mms);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -64,14 +89,17 @@ module.exports = {
   // Find by organization
   findByOrgId(req, res) {
     const orgId = req.params.orgId;
-    return Mindmap.findAll({
+    return Mindmap.findOne({
       where: {
         orgId: orgId
       }
     })
-      .then(mindmap => res.status(200).send(mindmap))
+      .success(map => {
+        logger.debug(`${callerType} findByOrgId -> id: ${map.id}`);
+        res.status(200).send(map);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} findByOrgId -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -86,9 +114,12 @@ module.exports = {
         }
       ]
     })
-      .then(mindmap => res.status(200).send(mindmap))
+      .success(maps => {
+        logger.debug(`${callerType} findById -> count: ${maps.length}`);
+        res.status(200).send(maps);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   }

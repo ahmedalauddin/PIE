@@ -1,23 +1,27 @@
 const Person = require("../models").Person;
 const bCrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const exjwt = require("express-jwt");
-const jwtconfig = require("../config/jwtconfig");
+const config = require("../config/config");
+const logger = require("../util/logger")(__filename);
+const mvcType = "controller";
 
 module.exports = {
   authenticate(req, res) {
-    console.log("Body: " + JSON.stringify(req.body));
+    logger.debug(
+      `${mvcType} authenticate -> body: ${JSON.stringify(req.body)}`
+    );
     // Find a person by username.
-    var results = {};
-    console.log("username is: " + req.body.username);
+    logger.debug(`${mvcType} authenticate -> username: ${req.body.username}`);
     Person.findOne({
       where: {
         username: req.body.username
       }
     })
       .then(Person => {
-        console.log("Success, found person, pwdhash:" + Person.pwdhash);
-        console.log("Will run bCrypt compare.");
+        logger.debug(
+          `${mvcType} authenticate -> 
+            Success, found person, pwdhash: ${Person.pwdhash}`
+        );
 
         bCrypt.compare(req.body.password, Person.pwdhash, function(
           err,
@@ -25,40 +29,44 @@ module.exports = {
         ) {
           if (result === true) {
             // Logged in successfully.
-            console.log("Logged in successfully.");
+            logger.debug(`${mvcType} authenticate -> successful`);
             let token = jwt.sign(
               { username: Person.username },
-              jwtconfig.jwtMW.secret,
+              config.get("security.jwtSecret"),
               {
                 expiresIn: "24h" // expires in 24 hours
               }
             );
             // return the JWT token for the future API calls
             res.json({
-              sucess: true,
+              success: true,
               err: null,
               token
             });
           } else {
             // Login failed.
-            console.log("Login failed.");
+            let _m = "Username or password is incorrect";
+            logger.debug(`${mvcType} authenticate -> ${_m}`);
             res.status(401).json({
-              sucess: false,
+              success: false,
               token: null,
-              err: "Username or password is incorrect"
+              err: _m
             });
           }
         });
       })
-      .catch(failed => {
-        res.status(400).send({ auth: false, message: "Failed." });
+      .catch(error => {
+        logger.error(`${mvcType} authenticate -> error: ${error.stack}`);
+        res
+          .status(400)
+          .send({ auth: false, message: "Unknown error occurred" });
       });
   },
 
   index(req, res) {
     res.json({
       success: true,
-      message: "Index page"
+      message: "/"
     });
   }
 };

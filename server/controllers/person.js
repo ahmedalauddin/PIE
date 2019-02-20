@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-19 09:43:17
+ * Modified: 2019-02-20 16:19:39
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -13,14 +13,12 @@
 const Person = require("../models/person");
 const Organization = require("../models/organization");
 const bCrypt = require("bcrypt");
-const emailAddresses = require("email-addresses");
+//const emailAddresses = require("email-addresses");
 const logger = require("../util/logger")(__filename);
-// var express = require('express');
-// const bodyParser = require('body-parser');
-// const OrgController = require('./organization');
 const callerType = "controller";
 
 // construct a hash
+/** eslint no-unused vars */
 function getHash(value) {
   return bCrypt.hash(value, 12, (err, hashedValue) => {
     if (err) {
@@ -33,32 +31,29 @@ function getHash(value) {
 
 module.exports = {
   create(req, res) {
-    bCrypt.hash(req.body.password, 12, function(err, hashedValue) {
-      Person.create({
-        username: req.body.username,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        orgId: req.body.orgId,
-        email: req.body.email,
-        pwdhash: hashedValue
+    let hashedValue = getHash(req.body.password);
+    return Person.create({
+      username: req.body.username,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      orgId: req.body.orgId,
+      email: req.body.email,
+      pwdhash: hashedValue
+    })
+      .then(person => {
+        logger.debug(`${callerType} create -> added person, id: ${person.id}`);
+        res.status(201).send(person);
       })
-        .then(person => {
-          console.log("Adding person");
-          res.status(201).send(person);
-        })
-        .catch(error => {
-          console.log(error.stack);
-          res.status(400).send(error);
-        });
-    });
-
-    return Person;
+      .catch(error => {
+        logger.error(`${callerType} create -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   },
 
   // Update a person
   update(req, res) {
     const id = req.params.id;
-    console.log("Body is: " + req.body);
+    logger.debug(`${callerType} update -> body: ${req.body}`);
     return Person.update(
       {
         username: req.body.username,
@@ -75,8 +70,14 @@ module.exports = {
         }
       }
     )
-      .then(person => res.status(200).send(person))
-      .catch(error => res.status(400).send(error));
+      .then(person => {
+        logger.debug(`${callerType} update -> successful`);
+        res.status(200).send(person);
+      })
+      .catch(error => {
+        logger.error(`${callerType} update -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   },
 
   // Find a person by Id
@@ -89,8 +90,14 @@ module.exports = {
         }
       ]
     })
-      .then(person => res.status(200).send(person))
-      .catch(error => res.status(400).send(error));
+      .then(person => {
+        logger.debug(`${callerType} findById -> username: ${person.username}`);
+        res.status(200).send(person);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   },
 
   // Find a person by Id
@@ -100,8 +107,14 @@ module.exports = {
         username: req.params.username
       }
     })
-      .then(person => res.status(200).send(person))
-      .catch(error => res.status(400).send(error));
+      .then(person => {
+        logger.debug(`${callerType} findByUsername -> id: ${person.id}`);
+        res.status(200).send(person);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByUsername -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   },
 
   // List all persons
@@ -115,9 +128,12 @@ module.exports = {
       ],
       order: [["username", "ASC"]]
     })
-      .then(person => res.status(200).send(person))
+      .then(people => {
+        logger.debug(`${callerType} list -> count: ${people.length}`);
+        res.status(200).send(people);
+      })
       .catch(error => {
-        console.log(error.stack);
+        logger.error(`${callerType} list -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   }

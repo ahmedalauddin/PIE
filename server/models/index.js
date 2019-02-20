@@ -4,15 +4,15 @@
  * Created:  2019-01-27 13:43:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-18 14:57:40
+ * Modified: 2019-02-20 15:27:11
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-import { config } from "../config/config";
-import { readdirSync } from "fs";
-import Sequelize from "sequelize";
+const config = require("../config/config");
+const fs = require("fs");
+const Sequelize = require("sequelize");
 const logger = require("../util/logger")(__filename);
 const path = require("path");
 const db = {};
@@ -32,10 +32,10 @@ let sequelize = new Sequelize(_d, _u, _p, { _h, _l });
 sequelize
   .authenticate()
   .then(() => {
-    logger.info("${callerType} -> connection to ${_d} as ${_u} successful");
+    logger.info(`${callerType} -> connection to ${_d} as ${_u} successful`);
 
     // read the models into sequelize
-    readdirSync(__dirname)
+    fs.readdirSync(__dirname)
       .filter(file => {
         return (
           file.indexOf(".") !== 0 &&
@@ -46,14 +46,14 @@ sequelize
       .forEach(file => {
         let _m = path.join(__dirname, file);
         let model = sequelize["import"](_m);
-        logger.debug("${callerType} -> found ${_m}");
+        logger.debug(`${callerType} -> found ${_m}`);
         db[model.name] = model;
       });
 
     Object.keys(db).forEach(modelName => {
       if (db[modelName].associate) {
         db[modelName].associate(db);
-        logger.debug("${callerType} -> associated ${modelName} model with db");
+        logger.debug(`${callerType} -> associated ${modelName} model with db`);
       }
     });
   })
@@ -64,4 +64,4 @@ sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-export default db;
+module.exports = db;

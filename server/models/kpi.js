@@ -1,58 +1,61 @@
 /* jshint indent: 2 */
 
 module.exports = (sequelize, DataTypes) => {
-  const Kpi = sequelize.define('Kpi', {
+  const Kpi = sequelize.define(
+    "Kpi",
+    {
       id: {
         type: DataTypes.INTEGER,
-      allowNull: false,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
       title: {
         type: DataTypes.STRING,
-      allowNull: true
+        allowNull: true
       },
-    description: {
+      description: {
         type: DataTypes.STRING,
-      allowNull: true
-    },
+        allowNull: true
+      },
       level: {
         type: DataTypes.INTEGER,
         allowNull: true
       },
-    type: {
+      type: {
         type: DataTypes.STRING,
-      allowNull: true,
+        allowNull: true
       },
-    status: {
+      status: {
         type: DataTypes.STRING,
-      allowNull: true,
+        allowNull: true
       },
-    orgId: {
+      orgId: {
         type: DataTypes.INTEGER,
         references: {
-        table: 'Organizations',
-        key: 'id'
-      },
+          table: "Organizations",
+          key: "id"
+        }
       },
       createdAt: {
         type: DataTypes.DATE,
-      allowNull: true
+        allowNull: true
       },
-    updatedAt: {
+      updatedAt: {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: DataTypes.NOW
+      }
+    },
+    {
+      tableName: "Kpis"
     }
-  },
-    tableName: 'Kpis'
-  }
   );
 
-  Kpi.associate = (models) => {
+  Kpi.associate = models => {
     Kpi.belongsTo(models.Organization, {
-      foreignKey: 'orgId',
-      onDelete: 'cascade'
+      foreignKey: "orgId",
+      onDelete: "cascade"
     });
   };
 

@@ -4,13 +4,13 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-18 13:21:42
+ * Modified: 2019-02-20 15:11:11
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-import { authenticate } from "../controllers/auth";
+const authenticate = require("../controllers/auth");
 const logger = require("../util/logger")(__filename);
 
 module.exports = router => {

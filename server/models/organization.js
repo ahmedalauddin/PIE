@@ -1,51 +1,54 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  const Organization = sequelize.define('Organization', {
-    id: {
+  const Organization = sequelize.define(
+    "Organization",
+    {
+      id: {
         type: DataTypes.INTEGER,
-      allowNull: false,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
-    name: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-      owningOrg: {
-      type: DataTypes.BOOLEAN,
-        defaultValue: true,
-      allowNull: false
       },
-    createdAt: {
+      owningOrg: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
+      },
+      createdAt: {
         type: DataTypes.DATE,
         allowNull: true
-    },
+      },
       updatedAt: {
-      type: DataTypes.DATE,
+        type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
+      }
+    },
+    {
+      tableName: "Organizations"
     }
-  },
-    tableName: 'Organizations'
-  }
   );
 
-  Organization.associate = (models) => {
+  Organization.associate = models => {
     Organization.hasMany(models.Person, {
-      foreignKey: 'orgId',
-      as: 'Persons',
+      foreignKey: "orgId",
+      as: "Persons"
     });
     Organization.hasMany(models.Project, {
-      foreignKey: 'orgId',
-      as: 'Projects',
+      foreignKey: "orgId",
+      as: "Projects"
     });
     Organization.hasMany(models.Kpi, {
-      foreignKey: 'orgId',
-      as: 'Kpis',
+      foreignKey: "orgId",
+      as: "Kpis"
     });
     Organization.hasMany(models.Mindmap, {
-      foreignKey: 'orgId',
-      as: 'Mindmaps',
+      foreignKey: "orgId",
+      as: "Mindmaps"
     });
   };
 

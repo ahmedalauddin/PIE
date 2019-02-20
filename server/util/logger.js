@@ -4,14 +4,14 @@
  * Created:  2019-02-17 16:20:48
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-18 12:15:21
+ * Modified: 2019-02-20 16:04:47
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
-import { createLogger, format, transports } from "winston";
-import { basename } from "path";
-import { config } from "../config/config";
+const winston = require("winston");
+const path = require("path");
+const config = require("../config/config");
 
 // TODO add rollover file function
 
@@ -23,12 +23,12 @@ function createTransports(caller) {
   // check for adding the standard logger
   if (isStdActive()) {
     let _sf = config.get("log.outputs.std.path");
-    let _s = new transports.File({
+    let _s = new winston.transports.File({
       filename: _sf,
-      format: format.combine(
-        format.label({ label: basename(caller) }),
-        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        format.json()
+      format: winston.format.combine(
+        winston.format.label({ label: path.basename(caller) }),
+        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        winston.format.json()
       )
     });
     _transports.push(_s);
@@ -37,13 +37,13 @@ function createTransports(caller) {
   // check for adding the error logger
   if (isErrorActive()) {
     let _ef = config.get("log.outputs.error.path");
-    let _e = new transports.File({
+    let _e = new winston.transports.File({
       filename: _ef,
       level: "error",
-      format: format.combine(
-        format.label({ label: basename(caller) }),
-        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        format.json()
+      format: winston.format.combine(
+        winston.format.label({ label: path.basename(caller) }),
+        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        winston.format.json()
       )
     });
     _transports.push(_e);
@@ -51,13 +51,13 @@ function createTransports(caller) {
 
   // check for adding a console logger
   if (isConsoleActive() || _transports.length === 0) {
-    let _c = new transports.Console({
+    let _c = new winston.transports.Console({
       level: getConsoleLogLevel(),
-      format: format.combine(
-        format.label({ label: basename(caller) }),
-        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        format.colorize(),
-        format.printf(
+      format: winston.format.combine(
+        winston.format.label({ label: path.basename(caller) }),
+        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        winston.format.colorize(),
+        winston.format.printf(
           info =>
             `${info.timestamp} ${info.level} [${info.label}]: ${info.message}`
         )
@@ -92,9 +92,9 @@ function isStdActive() {
 
 // construct the logger, with the input from the caller
 const logger = caller => {
-  let _l = createLogger({
+  let _l = winston.createLogger({
     level: config.get("log.level"),
-    format: format.simple(), // overridden by each logger
+    format: winston.format.simple(), // overridden by each logger
     transports: createTransports(caller),
     exitOnError: false
   });

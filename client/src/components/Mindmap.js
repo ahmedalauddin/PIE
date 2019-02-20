@@ -22,9 +22,9 @@ class Mindmap extends Component {
 
   componentDidMount() {
     // check to see if props includes the ID to the mindmap
-    if (this.props.mindmapId) {
+    if (this.props.mindMapId) {
       // Use fetch to get all the KPIs
-      fetch("/api/mindmap/")
+      fetch(`/api/mindmaps/${this.props.mindMapId}`)
         .then(res => res.json())
         .then(mindmap => this.setState({ mindmap }));
     }

@@ -7,11 +7,11 @@ export class SignupOld extends React.Component {
     console.log(values);
     alert("Form Submitted");
     setSubmitting(false);
-    this.props.history.push("/listprojects");
+    this.props.history.push("/api/projects");
   };
 
   componentDidMount() {
-    const url1 = "/api/person/" + this.props.match.params.id;
+    const url1 = `/api/persons/${this.props.match.params.id}`;
     //if (projid > 0) {
     fetch(url1)
       .then(res => res.json())
@@ -20,7 +20,7 @@ export class SignupOld extends React.Component {
   }
 
   handleLogin = (values, { props = this.props }) => {
-    const url1 = "/api/auth/" + this.props.match.params.id;
+    const url1 = `/api/auth/${this.props.match.params.id}`;
     //if (projid > 0) {
     fetch(url1)
       .then(res => res.json())

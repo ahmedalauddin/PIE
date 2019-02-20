@@ -13,18 +13,18 @@ import { styles } from "./MaterialSense";
 
 class Dashboard extends Component {
   state = {
-    learnMoredialog: false,
+    learnMoreDialog: false,
     getStartedDialog: false
   };
 
   componentDidMount() {}
 
   openDialog = event => {
-    this.setState({ learnMoredialog: true });
+    this.setState({ learnMoreDialog: true });
   };
 
   dialogClose = event => {
-    this.setState({ learnMoredialog: false });
+    this.setState({ learnMoreDialog: false });
   };
 
   openGetStartedDialog = event => {
@@ -90,7 +90,7 @@ class Dashboard extends Component {
             </Grid>
           </Grid>
           <SwipeDialog
-            open={this.state.learnMoredialog}
+            open={this.state.learnMoreDialog}
             onClose={this.dialogClose}
           />
           <InstructionDialog

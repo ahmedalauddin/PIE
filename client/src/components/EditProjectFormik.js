@@ -30,7 +30,7 @@ class MyForm extends React.Component {
   }
 
   componentDidMount() {
-    fetch("/api/project")
+    fetch("/api/projects")
       .then(res => res.json())
       .then(project => this.setState({ project }));
   }

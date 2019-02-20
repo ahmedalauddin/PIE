@@ -4,14 +4,14 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-19 23:44:03
+ * Modified: 2019-02-20 11:19:30
  * Editor:   Darrin Tisdale
  */
 
 import React from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
-import App from "./app";
+import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 

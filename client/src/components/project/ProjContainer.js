@@ -90,7 +90,7 @@ const FormikApp = withFormik({
   handleSubmit(values, { resetForm, setErrors, setSubmitting }) {
     alert(JSON.stringify(values));
     setTimeout(() => {
-      fetch("/api/project", {
+      fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values)

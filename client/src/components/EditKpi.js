@@ -94,7 +94,7 @@ class EditKpi extends React.Component {
   }
 
   componentDidMount() {
-    const url1 = "/api/kpi/" + this.props.match.params.id;
+    const url1 = "/api/kpis/" + this.props.match.params.id;
     //if (projid > 0) {
     fetch(url1)
       .then(res => res.json())

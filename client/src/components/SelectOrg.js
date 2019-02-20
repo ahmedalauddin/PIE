@@ -124,22 +124,22 @@ class Login extends Component {
     order: "asc",
     orderBy: "name",
     orgs: [],
-    learnMoredialog: false,
+    learnMoreDialog: false,
     getStartedDialog: false
   };
 
   componentDidMount() {
-    fetch("/api/organization")
+    fetch("/api/organizations/?format=select")
       .then(res => res.json())
       .then(orgs => this.setState({ orgs }));
   }
 
   openDialog = event => {
-    this.setState({ learnMoredialog: true });
+    this.setState({ learnMoreDialog: true });
   };
 
   dialogClose = event => {
-    this.setState({ learnMoredialog: false });
+    this.setState({ learnMoreDialog: false });
   };
 
   openGetStartedDialog = event => {
@@ -241,7 +241,7 @@ class Login extends Component {
             </Grid>
           </Grid>
           <SwipeDialog
-            open={this.state.learnMoredialog}
+            open={this.state.learnMoreDialog}
             onClose={this.dialogClose}
           />
           <InstructionDialog

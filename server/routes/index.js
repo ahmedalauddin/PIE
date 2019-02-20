@@ -4,7 +4,7 @@
  * Created:  2019-01-27 13:44:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-18 16:09:26
+ * Modified: 2019-02-20 10:57:57
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -16,13 +16,7 @@ const logger = require("../util/logger")(__filename);
 module.exports = router => {
   const callerType = "router";
 
-  logger.debug(`${callerType} GET -> path: *`);
-  router.get("*", (req, res) =>
-    res.status(200).send({
-      message: "Welcome to the Value Infinity MVP API"
-    })
-  );
-
+  // all paths handled by the router are done off of /api
   logger.debug(`${callerType} GET -> path: /api`);
   router.get("/api", (req, res) =>
     res.status(200).send({

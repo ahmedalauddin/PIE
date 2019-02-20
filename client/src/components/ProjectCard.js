@@ -201,7 +201,7 @@ class ProjectCard extends React.Component {
         // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
         // We have a project id passed through the URL, do an
         // update on the project.
-        let updatePath = "/api/project/" + this.state.id;
+        let updatePath = "/api/projects/" + this.state.id;
         fetch(updatePath, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -216,7 +216,7 @@ class ProjectCard extends React.Component {
       } else {
         // No project id, so we will do a create.  The difference
         // is we do a POST instead of a PUT.
-        fetch("/api/project", {
+        fetch("/api/projects", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
@@ -243,7 +243,7 @@ class ProjectCard extends React.Component {
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      fetch("/api/project/" + this.props.match.params.id)
+      fetch(`/api/projects/${this.props.match.params.id}`)
         .then(res => res.json())
         .then(project => {
           this.setState({
@@ -265,7 +265,7 @@ class ProjectCard extends React.Component {
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
 
-    fetch("/api/organizations/")
+    fetch("/api/organizations")
       .then(results => results.json())
       .then(organizations => this.setState({ organizations }));
   }

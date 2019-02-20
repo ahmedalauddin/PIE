@@ -18,7 +18,7 @@ class EditProject extends React.Component {
   }
 
   componentDidMount() {
-    const url1 = "/api/person/" + this.props.match.params.id;
+    const url1 = "/api/persons/" + this.props.match.params.id;
     fetch(url1)
       .then(res => res.json())
       .then(person => this.setState({ person }));

@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-18 17:00:35
+ * Modified: 2019-02-20 11:17:04
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -18,29 +18,50 @@ var expressWinston = require("express-winston");
 var cookieParser = require("cookie-parser")();
 var config = require("./server/config/config");
 
+// function to determine environment
+const isHosted = () => {
+  return config.get("env") === "host" || config.get("env") === "prod";
+};
+
 // create the instance of express
+logger.debug(`constructing express app`);
 var app = express();
 
 // Parse incoming requests data (https://github.com/expressjs/body-parser)
+logger.debug(`adding parsers`);
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser);
 
 // view engine setup
+// TODO maybe we refactor this out?
+logger.debug(`adding views`);
 app.set("views", join(__dirname, "server/views"));
 app.set("view engine", "pug");
 
 // add support for static files and the built react app
-let env = config.get("env");
-if (env === "host" || env === "prod") {
-  app.use(express.static(join(__dirname, "client/build")));
-} else {
-  app.use(express.static(join(__dirname, "server/public")));
-}
+let serverPath = isHosted()
+  ? join(__dirname, "client/build")
+  : join(__dirname, "server/public");
+logger.debug(`setting static root of express server to ${serverPath}`);
+app.use(express.static(serverPath));
 
-// add routes to a router, that will be added with the
-// logger so that it works properly
+// create a router
 var router = express.Router();
+
+// set the home path
+logger.debug(`router GET -> path: /*`);
+router.get("/*", (req, res) => {
+  if (isHosted()) {
+    res.sendFile(join(serverPath, "/index.html"));
+  } else {
+    res.status(200).send({
+      message: "Welcome to the Value Infinity MVP API"
+    });
+  }
+});
+
+// add in the other paths handled by express
 require("./server/routes/index")(router);
 require("./server/routes/organization")(router);
 require("./server/routes/person")(router);

@@ -30,7 +30,7 @@ class ProjectTitleSectionEditable extends React.Component {
   };
 
   componentDidMount() {
-    fetch('/api/organizations/')
+    fetch('/api/organizations')
       .then(results => results.json())
       .then(organizations => this.setState({organizations}));
     //this.setState({

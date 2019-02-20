@@ -121,7 +121,7 @@ class ListKpis extends Component {
 
   componentDidMount() {
     // Use fetch to get all the KPIs
-    fetch("/api/kpi")
+    fetch("/api/kpis")
       .then(res => res.json())
       .then(kpis => this.setState({ kpis }));
   }

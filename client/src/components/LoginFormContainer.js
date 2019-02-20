@@ -114,7 +114,7 @@ function onSubmit(values, { setSubmitting, setErrors }) {
   //var myValues = setSubmitValues(values);
   //myValues = JSON.stringify(myValues);
 
-  fetch("/api/person", {
+  fetch("/api/persons", {
     method: "POST",
     body: values
   })

@@ -166,7 +166,7 @@ class Signup extends React.Component {
       // is we do a POST instead of a PUT.
 
       // This uses the Person Create function.
-      fetch("/api/person", {
+      fetch("/api/persons", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.state)
@@ -193,7 +193,7 @@ class Signup extends React.Component {
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      fetch("/api/person/" + this.props.match.params.id)
+      fetch(`/api/persons/${this.props.match.params.id}`)
         .then(res => res.json())
         .then(person => {
           this.setState({

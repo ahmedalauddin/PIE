@@ -17,7 +17,7 @@ function ProjectForm(props) {
   function handleSubmit(values, { setSubmitting, setErrors }) {
     //var myvalues = JSON.stringify(values)
 
-    fetch("/api/project", {
+    fetch("/api/projects", {
       method: "POST",
       body: values
     })

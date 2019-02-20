@@ -67,7 +67,7 @@ const FormikApp = withFormik({
   }),
   handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
     setTimeout(() => {
-      fetch('/api/project', {
+      fetch('/api/projects', {
         method: 'POST',
         body: values,
       }).then(function (data) {

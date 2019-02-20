@@ -220,7 +220,7 @@ class EnhancedTable extends React.Component {
   };
 
   componentDidMount() {
-    fetch("/api/person")
+    fetch("/api/persons")
       .then(res => res.json())
       .then(users => this.setState({ users }));
   }

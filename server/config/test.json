@@ -2,7 +2,7 @@
   "env": "test",
   "db": {
     "user": "viadmin",
-    "password": "",
+    "password": "chary-offshoot-which",
     "name": "mvptest",
     "host": "valueinfinity2.cgrq1bgu4ual.us-east-2.rds.amazonaws.com",
     "dialect": "mysql"

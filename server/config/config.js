@@ -4,9 +4,10 @@
  * Created: 2019-02-16 18:02:01
  * Author:  Darrin Tisdale
  * -----
- * Modified: 2019-02-20 16:30:20
+ * Modified: 2019-02-20 23:05:36
  * Editor:   Darrin Tisdale
  */
+/* eslint-disable no-console */
 "use strict";
 
 // declarations
@@ -84,6 +85,13 @@ const configSchema = {
       default: "mysql",
       arg: "dbDialect",
       env: "DB_DIALECT"
+    },
+    port: {
+      doc: "port for connection to db server",
+      format: Number,
+      default: 3306,
+      arg: "dbPort",
+      env: "DB_PORT"
     }
   },
   log: {
@@ -127,7 +135,7 @@ const configSchema = {
         maxSize: {
           doc: "maximum file size for standard log files",
           format: "Number",
-          default: 5242880,
+          default: 52428800,
           arg: "logFileMaxSize",
           env: "LOG_FILE_MAX_SIZE"
         },
@@ -202,4 +210,9 @@ config.loadFile(path.join(__dirname, `${env}.json`));
 // throws error if config does not conform to schema
 config.validate({ allowed: "strict" });
 
-module.exports = { config, env };
+// eslint-disable-next-line prettier/prettier
+console.debug(
+  `env: ${config.get("env")}, log level: ${config.get("log.level")}`
+);
+
+module.exports = config;

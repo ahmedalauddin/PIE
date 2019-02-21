@@ -4,16 +4,16 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-20 15:54:32
+ * Modified: 2019-02-21 09:58:52
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-const Organization = require("../models/organization");
-const Person = require("../models/person");
-const Project = require("../models/project");
-const Kpi = require("../models/kpi");
+const models = require("../models");
+//const Person = require("../models/person");
+//const Project = require("../models/project");
+//const Kpi = require("../models/kpi");
 const logger = require("../util/logger")(__filename);
 const mvcType = "controller";
 
@@ -21,7 +21,7 @@ const mvcType = "controller";
 module.exports = {
   create(req, res) {
     logger.debug(`${mvcType} create --> name = ${req.params.name}`);
-    return Organization.create({
+    return models.Organization.create({
       name: req.body.name,
       owningOrg: req.body.owningOrg
     })
@@ -38,19 +38,19 @@ module.exports = {
   // select all organizations
   list(req, res) {
     logger.debug(`${mvcType} list -> called`);
-    return Organization.findAll({
+    return models.Organization.findAll({
       include: [
         {
-          model: Person,
-          as: "Persons"
+          model: models.Person,
+          as: "persons"
         },
         {
-          model: Project,
-          as: "Projects"
+          model: models.Project,
+          as: "projects"
         },
         {
-          model: Kpi,
-          as: "Kpis"
+          model: models.Kpi,
+          as: "kpis"
         }
       ],
       order: [["name", "ASC"]]
@@ -68,7 +68,7 @@ module.exports = {
   // formal list for selects
   selectList(req, res) {
     logger.debug(`${mvcType} selectList -> called`);
-    return Organization.findAll({
+    return models.Organization.findAll({
       attributes: ["id", "name"],
       order: [["name", "ASC"]]
     })
@@ -85,7 +85,7 @@ module.exports = {
   // Find an org by Id
   findById(req, res) {
     logger.debug(`${mvcType} findById -> id = ${req.params.id}`);
-    return Organization.findById(req.params.id)
+    return models.Organization.findById(req.params.id)
       .then(org => {
         logger.info(`${mvcType} findById -> org = ${org.name}`);
         res.status(200).send(org);
@@ -99,7 +99,7 @@ module.exports = {
   // find an org by Name
   findByName(req, res) {
     logger.debug(`${mvcType} findByName -> name = ${req.params.name}`);
-    return Organization.findOne({
+    return models.Organization.findOne({
       where: {
         name: req.params.name
       }

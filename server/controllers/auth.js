@@ -1,4 +1,4 @@
-const Person = require("../models").Person;
+const models = require("../models");
 const bCrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
@@ -7,31 +7,26 @@ const mvcType = "controller";
 
 module.exports = {
   authenticate(req, res) {
-    logger.debug(
-      `${mvcType} authenticate -> body: ${JSON.stringify(req.body)}`
-    );
+    logger.debug(`${mvcType} authenticate -> start`);
     // Find a person by username.
     logger.debug(`${mvcType} authenticate -> username: ${req.body.username}`);
-    Person.findOne({
+    return models.Person.findOne({
       where: {
         username: req.body.username
       }
     })
-      .then(Person => {
+      .then(p => {
         logger.debug(
           `${mvcType} authenticate -> 
-            Success, found person, pwdhash: ${Person.pwdhash}`
+            Success, found person, pwdhash: ${p.pwdhash}`
         );
 
-        bCrypt.compare(req.body.password, Person.pwdhash, function(
-          err,
-          result
-        ) {
+        bCrypt.compare(req.body.password, p.pwdhash, function(err, result) {
           if (result === true) {
             // Logged in successfully.
             logger.debug(`${mvcType} authenticate -> successful`);
             let token = jwt.sign(
-              { username: Person.username },
+              { username: p.username },
               config.get("security.jwtSecret"),
               {
                 expiresIn: "24h" // expires in 24 hours

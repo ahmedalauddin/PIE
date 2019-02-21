@@ -4,14 +4,14 @@
  * Created:  2019-02-01 12:39:20
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-18 16:12:34
+ * Modified: 2019-02-21 09:49:55
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-const Organization = require("../models/organization");
-const Project = require("../models/project");
+const Organization = require("../models").Organization;
+const Project = require("../models").Project;
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";
@@ -73,13 +73,13 @@ module.exports = {
 
   // find a project by id
   findById(req, res) {
-    let _obj = util.inspect(req, { showHidden: false, depth: null });
+    let _obj = util.inspect(req.body, { showHidden: false, depth: null });
     logger.debug(`${callerType} findById -> request: ${_obj}`);
     return Project.findById(req.params.id, {
       include: [
         {
           model: Organization,
-          as: "Organization"
+          as: "organization"
         }
       ]
     })
@@ -96,7 +96,7 @@ module.exports = {
 
   // destroy a project by id
   destroy(req, res) {
-    let _obj = util.inspect(req, { showHidden: false, depth: null });
+    let _obj = util.inspect(req.body, { showHidden: false, depth: null });
     logger.debug(`${callerType} destroy -> request: ${_obj}`);
     return Project.destroy({
       where: { id: parseInt(req.body.id) }

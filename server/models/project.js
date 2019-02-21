@@ -4,13 +4,17 @@
  * Created:  2019-01-30 11:33:14
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-20 15:53:57
+ * Modified: 2019-02-21 09:36:00
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
+const logger = require("../util/logger")(__filename);
+const callerType = "model";
+
 module.exports = (sequelize, DataTypes) => {
-  const Project = sequelize.define(
+  logger.debug(`${callerType} Project start definition`);
+  var Project = sequelize.define(
     "Project",
     {
       id: {
@@ -21,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       orgId: {
         type: DataTypes.INTEGER,
         references: {
-          table: "organization",
+          table: "Organizations",
           key: "id"
         }
       },
@@ -71,12 +75,14 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Projects"
     }
   );
+  logger.debug(`${callerType} Person end definition`);
 
   Project.associate = models => {
     Project.belongsTo(models.Organization, {
       foreignKey: "orgId",
       onDelete: "cascade"
     });
+    logger.debug(`${callerType} Project belongsTo Organization`);
   };
 
   return Project;

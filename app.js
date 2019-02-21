@@ -4,19 +4,20 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 15:25:15
+ * Modified: 2019-02-21 10:11:16
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 const express = require("express");
-const httpErrors = require("http-errors");
+//const createError = require("http-errors");
 const path = require("path");
 const bodyParser = require("body-parser");
-const logger = require("./server/util/logger")(__filename);
 var expressWinston = require("express-winston");
 var cookieParser = require("cookie-parser")();
 var config = require("./server/config/config");
+const models = require("./server/models");
+const logger = require("./server/util/logger")(__filename);
 
 // function to determine environment
 const isHosted = () => {
@@ -34,10 +35,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser);
 
 // view engine setup
-// TODO maybe we refactor this out?
-logger.debug(`adding views`);
-app.set("views", path.join(__dirname, "server/views"));
-app.set("view engine", "pug");
+// logger.debug(`adding views`);
+// app.set("views", path.join(__dirname, "server/views"));
+// app.set("view engine", "pug");
 
 // add support for static files and the built react app
 let serverPath = isHosted()
@@ -61,20 +61,30 @@ var router = express.Router();
 //   }
 // });
 
-// add in the other paths handled by express
-require("./server/routes/index")(router);
-require("./server/routes/organization")(router);
-require("./server/routes/person")(router);
-require("./server/routes/project")(router);
-require("./server/routes/kpi")(router);
-require("./server/routes/mindmap")(router);
-require("./server/routes/auth")(router);
+// priot to adding the routes, let's add the models
+// connect
+logger.info(`connecting to database`);
+models.sequelize
+  .sync()
+  .then(() => {
+    logger.info(`connection to database successful, loading routes`);
+    require("./server/routes/index")(router);
+    require("./server/routes/organization")(router);
+    require("./server/routes/person")(router);
+    require("./server/routes/project")(router);
+    require("./server/routes/kpi")(router);
+    require("./server/routes/mindmap")(router);
+    require("./server/routes/auth")(router);
+  })
+  .catch(error => {
+    logger.error(`db/routing error: ${error.stack}`);
+  });
 
 // error handlers
 // catch 404 and forward to error handler
-router.use(function(req, res, next) {
-  next(httpErrors.createError(404));
-});
+//router.use(function(req, res, next) {
+//  next(createError(404));
+//});
 
 // error handler
 router.use(function(err, req, res, next) {
@@ -88,6 +98,7 @@ router.use(function(err, req, res, next) {
 });
 
 // set an expressWinston router for the application
+logger.debug(`adding in express logger`);
 app.use(
   expressWinston.logger({
     transports: logger.transports,
@@ -127,6 +138,7 @@ if (
   config.get("log.outputs.console.handleExceptions") &&
   config.get("log.outputs.console.active")
 ) {
+  logger.debug(`adding in express error logger`);
   app.use(
     expressWinston.errorLogger({
       transports: logger.transports,
@@ -138,4 +150,5 @@ if (
 }
 
 // export the application object
+logger.debug(`exporting app`);
 module.exports = app;

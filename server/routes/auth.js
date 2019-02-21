@@ -4,13 +4,13 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-20 15:11:11
+ * Modified: 2019-02-20 22:33:50
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-const authenticate = require("../controllers/auth");
+const auth = require("../controllers/auth");
 const logger = require("../util/logger")(__filename);
 
 module.exports = router => {
@@ -18,7 +18,7 @@ module.exports = router => {
 
   // authenticate
   logger.debug(`${callerClass} POST -> path: /api/authenticate`);
-  router.post("/api/authenticate", authenticate);
+  router.post("/api/authenticate", auth.authenticate);
 
   //app.get('/api/checktoken', middleware.checkToken);
 

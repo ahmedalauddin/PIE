@@ -1,7 +1,20 @@
-/* jshint indent: 2 */
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /server/models/kpi.js
+ * Created:  2019-01-27 13:44:17
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-21 09:43:25
+ * Editor:   Darrin Tisdale
+ */
+"use strict";
+
+const logger = require("../util/logger")(__filename);
+const callerType = "model";
 
 module.exports = (sequelize, DataTypes) => {
-  const Kpi = sequelize.define(
+  logger.debug(`${callerType} Kpi start definition`);
+  var Kpi = sequelize.define(
     "Kpi",
     {
       id: {
@@ -51,9 +64,12 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Kpis"
     }
   );
+  logger.debug(`${callerType} Kpi end definition`);
 
   Kpi.associate = models => {
+    logger.debug(`${callerType} Kpi belongsTo Organization`);
     Kpi.belongsTo(models.Organization, {
+      as: "Organization",
       foreignKey: "orgId",
       onDelete: "cascade"
     });

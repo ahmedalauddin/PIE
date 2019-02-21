@@ -4,16 +4,16 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 16:19:39
+ * Modified: 2019-02-21 10:00:20
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-const Person = require("../models/person");
-const Organization = require("../models/organization");
+const models = require("../models");
+//const Organization = require("../models").Organization;
 const bCrypt = require("bcrypt");
-//const emailAddresses = require("email-addresses");
+const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
 
@@ -32,7 +32,7 @@ function getHash(value) {
 module.exports = {
   create(req, res) {
     let hashedValue = getHash(req.body.password);
-    return Person.create({
+    return models.Person.create({
       username: req.body.username,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -40,9 +40,9 @@ module.exports = {
       email: req.body.email,
       pwdhash: hashedValue
     })
-      .then(person => {
-        logger.debug(`${callerType} create -> added person, id: ${person.id}`);
-        res.status(201).send(person);
+      .then(p => {
+        logger.debug(`${callerType} create -> added person, id: ${p.id}`);
+        res.status(201).send(p);
       })
       .catch(error => {
         logger.error(`${callerType} create -> error: ${error.stack}`);
@@ -53,8 +53,13 @@ module.exports = {
   // Update a person
   update(req, res) {
     const id = req.params.id;
-    logger.debug(`${callerType} update -> body: ${req.body}`);
-    return Person.update(
+    logger.debug(
+      `${callerType} update -> body: ${util.inspect(req.body, {
+        showHidden: false,
+        depth: null
+      })}`
+    );
+    return models.Person.update(
       {
         username: req.body.username,
         firstName: req.body.firstName,
@@ -70,9 +75,9 @@ module.exports = {
         }
       }
     )
-      .then(person => {
+      .then(p => {
         logger.debug(`${callerType} update -> successful`);
-        res.status(200).send(person);
+        res.status(200).send(p);
       })
       .catch(error => {
         logger.error(`${callerType} update -> error: ${error.stack}`);
@@ -82,7 +87,7 @@ module.exports = {
 
   // Find a person by Id
   findById(req, res) {
-    return Person.findById(req.params.id, {
+    return models.Person.findById(req.params.id, {
       include: [
         {
           model: Organization,
@@ -90,9 +95,9 @@ module.exports = {
         }
       ]
     })
-      .then(person => {
-        logger.debug(`${callerType} findById -> username: ${person.username}`);
-        res.status(200).send(person);
+      .then(p => {
+        logger.debug(`${callerType} findById -> username: ${p.username}`);
+        res.status(200).send(p);
       })
       .catch(error => {
         logger.error(`${callerType} findById -> error: ${error.stack}`);
@@ -102,14 +107,14 @@ module.exports = {
 
   // Find a person by Id
   findByUsername(req, res) {
-    return Person.findOne({
+    return models.Person.findOne({
       where: {
         username: req.params.username
       }
     })
-      .then(person => {
-        logger.debug(`${callerType} findByUsername -> id: ${person.id}`);
-        res.status(200).send(person);
+      .then(p => {
+        logger.debug(`${callerType} findByUsername -> id: ${p.id}`);
+        res.status(200).send(p);
       })
       .catch(error => {
         logger.error(`${callerType} findByUsername -> error: ${error.stack}`);
@@ -119,10 +124,11 @@ module.exports = {
 
   // List all persons
   list(req, res) {
-    return Person.findAll({
+    logger.debug(`${callerType} list -> start`);
+    return models.Person.findAll({
       include: [
         {
-          model: Organization,
+          model: models.Organization,
           as: "Organization"
         }
       ],

@@ -4,20 +4,20 @@
  * Created:  2019-01-27 17:59:36
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 16:26:19
+ * Modified: 2019-02-21 10:03:27
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 // declarations
-const Mindmap = require("../models/Mindmap");
+const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
 //TODO determine means to handle nodes of mindmap creating/updating/deleting projects
 
 module.exports = {
   create(req, res) {
-    return Mindmap.create({
+    return models.Mindmap.create({
       orgId: req.body.orgId,
       mapData: req.body.mapData
     })
@@ -34,7 +34,7 @@ module.exports = {
   // Update a mindmap
   update(req, res) {
     const id = req.params.id;
-    return Mindmap.update(
+    return models.Mindmap.update(
       {
         mapData: req.body.mapData
       },
@@ -58,12 +58,12 @@ module.exports = {
   // Delete a mindmap
   deleteMindmap(req, res) {
     const id = req.params.id;
-    return Mindmap.destroy({
+    return models.Mindmap.destroy({
       where: {
         id: id
       }
     })
-      .success(c => {
+      .then(c => {
         logger.debug(`${callerType} delete -> ${c} maps deleted`);
         res.status(200).send(c);
       })
@@ -75,8 +75,8 @@ module.exports = {
 
   // Find a mindmap by id
   findById(req, res) {
-    return Mindmap.findById(req.params.id)
-      .success(mms => {
+    return models.Mindmap.findById(req.params.id)
+      .then(mms => {
         logger.debug(`${callerType} findById -> count: ${mms.length}`);
         res.status(200).send(mms);
       })
@@ -89,12 +89,12 @@ module.exports = {
   // Find by organization
   findByOrgId(req, res) {
     const orgId = req.params.orgId;
-    return Mindmap.findOne({
+    return models.Mindmap.findOne({
       where: {
         orgId: orgId
       }
     })
-      .success(map => {
+      .then(map => {
         logger.debug(`${callerType} findByOrgId -> id: ${map.id}`);
         res.status(200).send(map);
       })
@@ -106,15 +106,15 @@ module.exports = {
 
   // FInd all mindmaps
   list(req, res) {
-    return Mindmap.findAll({
+    return models.Mindmap.findAll({
       include: [
         {
-          model: Mindmap,
+          model: models.Mindmap,
           as: "Mindmap"
         }
       ]
     })
-      .success(maps => {
+      .then(maps => {
         logger.debug(`${callerType} findById -> count: ${maps.length}`);
         res.status(200).send(maps);
       })

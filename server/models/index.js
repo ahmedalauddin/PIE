@@ -4,7 +4,7 @@
  * Created:  2019-01-27 13:43:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-20 15:27:11
+ * Modified: 2019-02-21 10:21:48
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -13,9 +13,9 @@
 const config = require("../config/config");
 const fs = require("fs");
 const Sequelize = require("sequelize");
-const logger = require("../util/logger")(__filename);
+var logger = require("../util/logger")(__filename);
 const path = require("path");
-const db = {};
+var db = {};
 const callerType = "model";
 
 // get configuration variables
@@ -24,44 +24,50 @@ let _u = config.get("db.user");
 let _p = config.get("db.password");
 let _h = config.get("db.host");
 let _l = config.get("db.dialect");
+let _r = config.get("db.port");
+
+// log configuration
+// eslint-disable-next-line prettier/prettier
+logger.debug(`${_l}://${_u}:${_p}@${_h}:${_r}/${_d}`);
 
 // connect to the db
-let sequelize = new Sequelize(_d, _u, _p, { _h, _l });
+//let sequelize = new Sequelize(_d, _u, _p, { port: _r, host: _h, dialect: _l });
+let sequelize = new Sequelize(`${_l}://${_u}:${_p}@${_h}:${_r}/${_d}`, {
+  dialect: `${_l}`,
+  pool: { maxConnections: 5, maxIdleTime: 30 }
+});
 
-// connect
-sequelize
-  .authenticate()
-  .then(() => {
-    logger.info(`${callerType} -> connection to ${_d} as ${_u} successful`);
+logger.info(`${callerType} -> loading the models`);
 
-    // read the models into sequelize
-    fs.readdirSync(__dirname)
-      .filter(file => {
-        return (
-          file.indexOf(".") !== 0 &&
-          file !== path.basename(__filename) &&
-          path.extname(file) === ".js"
-        );
-      })
-      .forEach(file => {
-        let _m = path.join(__dirname, file);
-        let model = sequelize["import"](_m);
-        logger.debug(`${callerType} -> found ${_m}`);
-        db[model.name] = model;
-      });
-
-    Object.keys(db).forEach(modelName => {
-      if (db[modelName].associate) {
-        db[modelName].associate(db);
-        logger.debug(`${callerType} -> associated ${modelName} model with db`);
-      }
-    });
+// read the models into sequelize
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== path.basename(__filename) &&
+      path.extname(file) === ".js"
+    );
   })
-  .catch(error => {
-    logger.error(`${callerType} error occurred: ${error.stack}`);
+  .forEach(file => {
+    let _m = path.join(__dirname, file);
+    logger.debug(`${callerType} -> importing from ${file}`);
+    let model = sequelize.import(_m);
+    logger = require("../util/logger")(__filename);
+    logger.debug(`${callerType} -> found ${model.name} model`);
+    db[model.name] = model;
   });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+    logger = require("../util/logger")(__filename);
+    logger.debug(`${callerType} -> associations for ${modelName} complete`);
+  }
+});
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+logger.debug(`${callerType} -> exporting sequelize and models`);
 
 module.exports = db;

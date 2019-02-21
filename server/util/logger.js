@@ -4,74 +4,82 @@
  * Created:  2019-02-17 16:20:48
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 16:04:47
+ * Modified: 2019-02-21 10:33:35
  * Editor:   Darrin Tisdale
  */
+/* eslint no-console: "off" */
 "use strict";
 
+// declaraations
 const winston = require("winston");
+require("winston-daily-rotate-file");
 const path = require("path");
 const config = require("../config/config");
 
-// TODO add rollover file function
+/* ONE TIME SETUP
+We set up the winston logger configuration when the
+module is first invoked.On subsequent invocations,
+we use the existing logger */
 
-// function to produce the transports
-function createTransports(caller) {
-  // add in the transports, based on the configuration
-  const _transports = [];
-
-  // check for adding the standard logger
-  if (isStdActive()) {
-    let _sf = config.get("log.outputs.std.path");
-    let _s = new winston.transports.File({
-      filename: _sf,
-      format: winston.format.combine(
-        winston.format.label({ label: path.basename(caller) }),
-        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        winston.format.json()
-      )
-    });
-    _transports.push(_s);
-  }
-
-  // check for adding the error logger
-  if (isErrorActive()) {
-    let _ef = config.get("log.outputs.error.path");
-    let _e = new winston.transports.File({
-      filename: _ef,
-      level: "error",
-      format: winston.format.combine(
-        winston.format.label({ label: path.basename(caller) }),
-        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        winston.format.json()
-      )
-    });
-    _transports.push(_e);
-  }
-
-  // check for adding a console logger
-  if (isConsoleActive() || _transports.length === 0) {
-    let _c = new winston.transports.Console({
+// local variables
+const _transports = {
+  std: {
+    active: isStdActive(),
+    transport: new winston.transports.DailyRotateFile({
+      name: "std",
+      filename: config.get("log.outputs.std.path"),
+      format: winston.format.json(),
+      maxSize: config.get("log.outputs.std.maxSize"),
+      maxFiles: config.get("log.outputs.std.count"),
+      zippedArchive: true
+    })
+  },
+  error: {
+    active: isErrorActive(),
+    transport: new winston.transports.DailyRotateFile({
+      name: "error",
+      filename: config.get("log.outputs.error.path"),
+      format: winston.format.json(),
+      maxSize: config.get("log.outputs.std.maxSize"),
+      maxFiles: config.get("log.outputs.std.count"),
+      zippedArchive: true,
+      handleExceptions: true,
+      humanReadableUnhandledException: true
+    })
+  },
+  console: {
+    active: isConsoleActive() || (!isStdActive() && !isErrorActive()),
+    transport: new winston.transports.Console({
+      name: "console",
       level: getConsoleLogLevel(),
-      format: winston.format.combine(
-        winston.format.label({ label: path.basename(caller) }),
-        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        winston.format.colorize(),
-        winston.format.printf(
-          info =>
-            `${info.timestamp} ${info.level} [${info.label}]: ${info.message}`
-        )
-      )
-    });
-    _transports.push(_c);
+      format: winston.format.json()
+    })
   }
-  return _transports;
+};
+
+function createJsonFormat(label) {
+  return winston.format.combine(
+    winston.format.label({ label: label }),
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.json()
+  );
+}
+
+function createConsoleFormat(label) {
+  return winston.format.combine(
+    winston.format.label({ label: label }),
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    winston.format.colorize(),
+    winston.format.printf(
+      info => `${info.timestamp} ${info.level} [${info.label}]: ${info.message}`
+    )
+  );
 }
 
 // utility to determine console level of logging based on the request for logging exceptions
 function getConsoleLogLevel() {
   return config.get("log.outputs.console.handleExceptions")
-    ? "error"
+    ? "debug"
     : config.get("log.level");
 }
 
@@ -90,26 +98,53 @@ function isStdActive() {
   return config.get("log.outputs.std.active") === true;
 }
 
-// construct the logger, with the input from the caller
-const logger = caller => {
-  let _l = winston.createLogger({
+function getTransports(label = "") {
+  let _t = [];
+  //console.debug(`std.active: ${_transports.std.active}`);
+  if (_transports.std.active) {
+    _transports.std.transport.format = createJsonFormat(label);
+    _t.push(_transports.std.transport);
+  }
+  //console.debug(`error.active: ${_transports.error.active}`);
+  if (_transports.error.active) {
+    _transports.error.transport.format = createJsonFormat(label);
+    _t.push(_transports.error.transport);
+  }
+  //console.debug(`console.active: ${_transports.console.active}`);
+  if (_transports.console.active) {
+    _transports.console.transport.format = createConsoleFormat(label);
+    _t.push(_transports.console.transport);
+  }
+  //console.debug(`transports: ${_t.length}`);
+  return _t;
+}
+
+// debug logger creation
+//console.debug(`creating logger instance, level: ${config.get("log.level")}`);
+const logger = winston.createLogger({
+  level: config.get("log.level"),
+  format: winston.format.json(), // overridden by each logger
+  transports: getTransports(),
+  exitOnError: false
+});
+
+// export the function to adjust the label
+module.exports = module => {
+  // construct the label
+  let _moduleFile = path.basename(module);
+
+  // apply it to the logger
+  //console.debug(`configuring logger label to [${_moduleFile}]`);
+  logger.configure({
     level: config.get("log.level"),
-    format: winston.format.simple(), // overridden by each logger
-    transports: createTransports(caller),
+    format: winston.format.json(),
+    transports: getTransports(_moduleFile),
     exitOnError: false
   });
 
-  // create a stream object with a 'write' function that will be used by streaming loggers, if used
-  _l.stream = {
-    write: function(message, encoding) {
-      // use the 'info' log level so the output will be picked up by both transports (file and console)
-      logger.info(message);
-    }
-  };
-
   // return the logger
-  return _l;
+  //console.debug(`returning logger for [${_moduleFile}]`);
+  return logger;
 };
 
-// set up the export
-module.exports = logger;
+// TODO handle the label better, it still does not work like it really should

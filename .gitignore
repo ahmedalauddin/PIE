@@ -38,4 +38,5 @@ node_modules
 client/src/components-save
 
 # Local log files
+valueinfinity-mvp.log.*.*
 valueinfinity-mvp.log.*

@@ -4,7 +4,7 @@
  * Created:  2019-01-27 17:42:16
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-21 09:41:29
+ * Modified: 2019-02-21 23:38:59
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -34,15 +34,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        defaultValue: sequelize.literal("CURRENT_TIMESTAMP()")
       },
       updatedAt: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        defaultValue: sequelize.literal(
+          "CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()"
+        )
       }
     },
     {
-      tableName: "Organizations"
+      tableName: "Organizations",
+      freezeTableName: true
     }
   );
 
@@ -50,22 +53,22 @@ module.exports = (sequelize, DataTypes) => {
     logger.debug(`${callerType} Organization hasMany Person`);
     Organization.hasMany(models.Person, {
       foreignKey: "orgId",
-      as: "Persons"
+      as: "persons"
     });
     logger.debug(`${callerType} Organization hasMany Project`);
     Organization.hasMany(models.Project, {
       foreignKey: "orgId",
-      as: "Projects"
+      as: "projects"
     });
     logger.debug(`${callerType} Organization hasMany Kpi`);
     Organization.hasMany(models.Kpi, {
       foreignKey: "orgId",
-      as: "Kpis"
+      as: "kpis"
     });
     logger.debug(`${callerType} Organization hasOne Mindmap`);
     Organization.hasOne(models.Mindmap, {
       foreignKey: "orgId",
-      as: "Mindmaps"
+      as: "mindmap"
     });
   };
 

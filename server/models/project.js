@@ -4,7 +4,7 @@
  * Created:  2019-01-30 11:33:14
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-21 09:36:00
+ * Modified: 2019-02-21 23:48:04
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -78,11 +78,47 @@ module.exports = (sequelize, DataTypes) => {
   logger.debug(`${callerType} Person end definition`);
 
   Project.associate = models => {
+    logger.debug(`${callerType} Project belongsTo Organization`);
     Project.belongsTo(models.Organization, {
+      as: "organization",
       foreignKey: "orgId",
       onDelete: "cascade"
     });
-    logger.debug(`${callerType} Project belongsTo Organization`);
+
+    logger.debug(`${callerType} Kpi belongsToMany Project`);
+    Project.belongsToMany(models.Project, {
+      through: "KpiProjects",
+      as: "kpis",
+      foreignKey: "projectId",
+      otherKey: "kpiId",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} Project hasMany Task`);
+    Project.hasMany(models.Task, {
+      as: "tasks",
+      foreignKey: "projectId"
+    });
+
+    logger.debug(`${callerType} Project hasMany Kpi`);
+    Project.hasMany(models.Kpi, {
+      as: "kpis",
+      foreignKey: "projectId"
+    });
+
+    logger.debug(`${callerType} Project hasMany Task`);
+    Project.hasMany(models.Task, {
+      as: "tasks",
+      foreignKey: "projectId"
+    });
+
+    logger.debug(`${callerType} Project belongsToMany Person`);
+    Project.belongsToMany(models.Person, {
+      through: "ProjectPersons",
+      as: "team",
+      foreignKey: "projectId",
+      otherKey: "personId"
+    });
   };
 
   return Project;

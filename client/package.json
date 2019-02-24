@@ -6,7 +6,7 @@
     "node": ">=6"
   },
   "dependencies": {
-    "@material-ui/core": "^3.9.0",
+    "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.28",
     "braces": "^2.3.2",

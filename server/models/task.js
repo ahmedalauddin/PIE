@@ -1,10 +1,10 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /server/models/kpi.js
- * Created:  2019-01-27 13:44:17
- * Author:   Brad Kaufman
+ * File:     /server/models/task.js
+ * Created:  2019-02-21 11:03:04
+ * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-23 12:48:44
+ * Modified: 2019-02-21 23:05:13
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -13,9 +13,9 @@ const logger = require("../util/logger")(__filename);
 const callerType = "model";
 
 module.exports = (sequelize, DataTypes) => {
-  logger.debug(`${callerType} Kpi start definition`);
-  var Kpi = sequelize.define(
-    "Kpi",
+  logger.debug(`${callerType} Task start definition`);
+  var Task = sequelize.define(
+    "Task",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -31,22 +31,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      level: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-      },
-      type: {
-        type: DataTypes.STRING,
-        allowNull: true
-      },
       status: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      // orgId: {
+      // projectId: {
       //   type: DataTypes.INTEGER,
       //   references: {
-      //     table: "Organizations",
+      //     table: "Projects",
+      //     key: "id"
+      //   }
+      // },
+      // assignedTo: {
+      //   type: DataTypes.INTEGER,
+      //   references: {
+      //     table: "Persons",
       //     key: "id"
       //   }
       // },
@@ -61,28 +60,26 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: "Kpis"
+      tableName: "Tasks"
     }
   );
-  logger.debug(`${callerType} Kpi end definition`);
+  logger.debug(`${callerType} Task end definition`);
 
-  Kpi.associate = models => {
-    logger.debug(`${callerType} Kpi belongsTo Organization`);
-    Kpi.belongsTo(models.Organization, {
-      as: "organization",
-      foreignKey: "orgId",
+  Task.associate = models => {
+    logger.debug(`${callerType} Task belongsTo Project`);
+    Task.belongsTo(models.Project, {
+      as: "project",
+      foreignKey: "projectId",
       onDelete: "cascade"
     });
 
-    logger.debug(`${callerType} Kpi belongsToMany Project`);
-    Kpi.belongsToMany(models.Project, {
-      through: "KpiProjects",
-      as: "projects",
-      foreignKey: "kpiId",
-      otherKey: "projectId",
+    logger.debug(`${callerType} Task belongsTo Person`);
+    Task.belongsTo(models.Person, {
+      as: "assignedTo",
+      foreignKey: "assignedTo",
       onDelete: "cascade"
     });
   };
 
-  return Kpi;
+  return Task;
 };

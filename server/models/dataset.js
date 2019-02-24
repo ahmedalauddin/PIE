@@ -1,10 +1,10 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /server/models/kpi.js
- * Created:  2019-01-27 13:44:17
- * Author:   Brad Kaufman
+ * File:     /server/models/dataset.js
+ * Created:  2019-02-21 11:03:04
+ * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-23 12:48:44
+ * Modified: 2019-02-21 23:01:50
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -13,9 +13,9 @@ const logger = require("../util/logger")(__filename);
 const callerType = "model";
 
 module.exports = (sequelize, DataTypes) => {
-  logger.debug(`${callerType} Kpi start definition`);
-  var Kpi = sequelize.define(
-    "Kpi",
+  logger.debug(`${callerType} DataSource start definition`);
+  var DataSet = sequelize.define(
+    "DataSet",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -31,22 +31,21 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      level: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-      },
-      type: {
+      sourceFile: {
         type: DataTypes.STRING,
         allowNull: true
       },
-      status: {
-        type: DataTypes.STRING,
-        allowNull: true
-      },
-      // orgId: {
+      // dataSourceId: {
       //   type: DataTypes.INTEGER,
       //   references: {
-      //     table: "Organizations",
+      //     table: "DataSources",
+      //     key: "id"
+      //   }
+      // },
+      // projectId: {
+      //   type: DataTypes.INTEGER,
+      //   references: {
+      //     table: "Projects",
       //     key: "id"
       //   }
       // },
@@ -61,28 +60,25 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: "Kpis"
+      tableName: "DataSets"
     }
   );
-  logger.debug(`${callerType} Kpi end definition`);
+  logger.debug(`${callerType} DataSet end definition`);
 
-  Kpi.associate = models => {
-    logger.debug(`${callerType} Kpi belongsTo Organization`);
-    Kpi.belongsTo(models.Organization, {
-      as: "organization",
-      foreignKey: "orgId",
+  DataSet.associate = models => {
+    logger.debug(`${callerType} DataSet belongsTo Project`);
+    DataSet.belongsTo(models.Project, {
+      as: "project",
+      foreignKey: "projectId",
       onDelete: "cascade"
     });
-
-    logger.debug(`${callerType} Kpi belongsToMany Project`);
-    Kpi.belongsToMany(models.Project, {
-      through: "KpiProjects",
-      as: "projects",
-      foreignKey: "kpiId",
-      otherKey: "projectId",
+    logger.debug(`${callerType} DataSet belongsTo DataSource`);
+    DataSet.belongsTo(models.DataSource, {
+      as: "dataSource",
+      foreignKey: "dataSourceId",
       onDelete: "cascade"
     });
   };
 
-  return Kpi;
+  return DataSet;
 };

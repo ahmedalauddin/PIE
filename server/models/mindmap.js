@@ -4,7 +4,7 @@
  * Created:  2019-01-27 13:44:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 09:42:29
+ * Modified: 2019-02-21 11:02:39
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
   Mindmap.associate = models => {
     logger.debug(`${callerType} Mindmap belongsTo Organization`);
     Mindmap.belongsTo(models.Organization, {
-      as: "Organization",
+      as: "organization",
       foreignKey: "orgId",
       onDelete: "cascade"
     });

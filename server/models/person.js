@@ -4,13 +4,26 @@
  * Created:  2019-01-30 11:33:14
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 04:05:45
+ * Modified: 2019-02-23 12:44:36
  * Editor:   Darrin Tisdale
  */
 "use strict";
 
 const logger = require("../util/logger")(__filename);
+const bCrypt = require("bcrypt");
 const callerType = "model";
+
+// password hashing function
+var hasSecurePassword = (user, options, callback) => {
+  if (user.password != user.password_confirmation) {
+    throw new Error("Password confirmation doesn't match password");
+  }
+  bCrypt.hash(user.get("password"), 10, function(err, hash) {
+    if (err) return callback(err);
+    user.set("pwdHash", hash);
+    return callback(null, options);
+  });
+};
 
 // export
 module.exports = (sequelize, DataTypes) => {
@@ -24,31 +37,53 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true
       },
       firstName: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.STRING(128),
+        allowNull: false,
+        validate: {
+          len: {
+            args: [1, 128],
+            msg: "The first name must between at 1 and 128 characters."
+          }
+        }
       },
       lastName: {
-        type: DataTypes.STRING,
-        allowNull: true
-      },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.STRING(128),
+        allowNull: false,
+        validate: {
+          len: {
+            args: [1, 128],
+            msg: "The last name must between at 1 and 128 characters."
+          }
+        }
       },
       email: {
-        type: DataTypes.STRING,
-        allowNull: true
-      },
-      orgId: {
-        type: DataTypes.INTEGER,
-        references: {
-          table: "Organizations",
-          key: "id"
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        validate: {
+          len: {
+            args: [5, 255],
+            msg: "The email must between at 5 and 255 characters."
+          },
+          isEmail: true
         }
       },
       pwdhash: {
         type: DataTypes.STRING,
-        allowNull: false
+        validate: {
+          notEmpty: true
+        }
+      },
+      password: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          len: [6, Infinity]
+        }
+      },
+      passwordConfirmation: {
+        type: DataTypes.VIRTUAL
       },
       lastLogin: {
         type: DataTypes.DATE,
@@ -56,26 +91,68 @@ module.exports = (sequelize, DataTypes) => {
       },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        defaultValue: sequelize.literal("CURRENT_TIMESTAMP()")
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: DataTypes.NOW
+        defaultValue: sequelize.literal(
+          "CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()"
+        )
       }
     },
     {
-      tableName: "Persons"
+      tableName: "Persons",
+      freezeTableName: true,
+      getterMethods: {
+        fullName() {
+          return this.firstName + " " + this.lastName;
+        }
+      },
+      setterMethods: {},
+      indexes: [{ unique: true, fields: ["email"] }],
+      instanceMethods: {
+        authenticate: value => {
+          if (bCrypt.compareSync(value, this.password_digest)) return this;
+          else return false;
+        }
+      },
+      hooks: {
+        beforeCreate: (user, options, callback) => {
+          user.email = user.email.toLowerCase();
+          if (user.password) return hasSecurePassword(user, options, callback);
+          else return callback(null, options);
+        },
+        beforeUpdate: (user, options, callback) => {
+          user.email = user.email.toLowerCase();
+          if (user.password) return hasSecurePassword(user, options, callback);
+          else return callback(null, options);
+        }
+      }
     }
   );
-  logger.debug(`${callerType} Person end definition`);
 
+  // now prepare the associations
   Person.associate = models => {
+    logger.debug(`${callerType} Person belongsTo Organization`);
     Person.belongsTo(models.Organization, {
+      as: "organization",
       foreignKey: "orgId",
       onDelete: "cascade"
     });
-    logger.debug(`${callerType} Person belongsTo Organization`);
+
+    logger.debug(`${callerType} Person hasMany Task`);
+    Person.hasMany(models.Task, {
+      as: "tasks",
+      foreignKey: "assignedTo"
+    });
+
+    logger.debug(`${callerType} Person belongsToMany Project`);
+    Person.belongsToMany(models.Project, {
+      through: "ProjectPersons",
+      as: "projects",
+      foreignKey: "personId",
+      otherKey: "projectId"
+    });
   };
 
   return Person;

@@ -1,6 +1,5 @@
 import React from "react";
 import Topbar from "./Topbar";
-import ReactDOM from "react-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -8,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { styles } from "./MaterialSense";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import validate from "./validate-spected";
 import getValidationSchema from "./getValidationSchema-spected";
 

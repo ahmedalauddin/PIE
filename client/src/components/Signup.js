@@ -1,8 +1,11 @@
 /**
- * ProjectCard - add and edit projects component
- *
- * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
- *
+ * Project:  valueinfinity-mvp
+ * File:     /server/controllers/organization.js
+ * Created:  2019-02-05 09:23:45
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-24
+ * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -213,7 +216,7 @@ class Signup extends React.Component {
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
 
-    fetch("/api/organizations/select")
+    fetch("/api/organizations/?format=select")
       .then(results => results.json())
       .then(organizations => {
         this.setState({ organizations });

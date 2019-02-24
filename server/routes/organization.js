@@ -20,7 +20,7 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/organizations`);
   router.get("/api/organizations", orgController.list);
 
-  // get organizations, but use an alternative format
+  // get organizations, but use an alternative format for populating select lists
   logger.debug(`${callerType} GET -> path: /api/organizations/?format=select`);
   router.get("/api/organizations/?format=select", orgController.selectList);
 

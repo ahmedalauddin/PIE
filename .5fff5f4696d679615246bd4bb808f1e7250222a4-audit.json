@@ -1,0 +1,19 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 5
+    },
+    "auditLog": ".5fff5f4696d679615246bd4bb808f1e7250222a4-audit.json",
+    "files": [
+        {
+            "date": 1550864452293,
+            "name": "valueinfinity-mvp.err.2019-02-22",
+            "hash": "f26ff0bda3c9ef329a491fb72f7cb147"
+        },
+        {
+            "date": 1551035853612,
+            "name": "valueinfinity-mvp.err.2019-02-24",
+            "hash": "91b7d7727cbc3170a5814ddb0a1458be"
+        }
+    ]
+}

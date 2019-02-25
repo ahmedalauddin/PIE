@@ -1,16 +1,18 @@
 /**
- * ProjectCard - add and edit projects component
- *
- * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
- *
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/ProjectCard.js
+ * Created:  2019-02-05 09:23:45
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-24
+ * Editor:   Brad Kaufman
+ * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
-import React, { Component } from "react";
+import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
-//import ButtonBar from './buttons/ButtonBar';
-//import Button from '@material-ui/core/Button';
 import { styles } from "./MaterialSense";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -36,6 +38,9 @@ import moment from "moment";
 import Log from "./Log";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
+//import ButtonBar from './buttons/ButtonBar';
+//import Button from '@material-ui/core/Button';
+
 const materialstyles = theme => ({
   card: {
     maxWidth: 400

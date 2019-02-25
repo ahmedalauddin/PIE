@@ -4,7 +4,7 @@
  * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  *
  */
-import React, { Component } from "react";
+import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -15,9 +15,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
-import Log from "./Log";
 import Button from "@material-ui/core/Button";
-import AuthHelper from "./AuthHelper";
 
 const buttonstyles = theme => ({
   primary: {

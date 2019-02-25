@@ -42,13 +42,13 @@ module.exports = (sequelize, DataTypes) => {
       //     key: "id"
       //   }
       // },
-      // assignedTo: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     table: "Persons",
-      //     key: "id"
-      //   }
-      // },
+      assignedTo: {
+        type: DataTypes.INTEGER,
+        references: {
+           table: "Persons",
+           key: "id"
+         }
+       },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: true
@@ -75,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
 
     logger.debug(`${callerType} Task belongsTo Person`);
     Task.belongsTo(models.Person, {
-      as: "assignedTo",
+      as: "assigned",
       foreignKey: "assignedTo",
       onDelete: "cascade"
     });

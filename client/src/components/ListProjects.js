@@ -42,11 +42,8 @@ class MyTableHead extends React.Component {
 
   render() {
     const {
-      onSelectAllClick,
       order,
-      orderBy,
-      numSelected,
-      rowCount
+      orderBy
     } = this.props;
 
     return (

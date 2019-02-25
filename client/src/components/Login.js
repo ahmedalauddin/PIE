@@ -8,6 +8,7 @@
  * Editor:   Darrin Tisdale
  */
 import React from "react";
+import { Redirect } from 'react-router-dom';
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -42,6 +43,7 @@ class Login extends React.Component {
     pwdhash: "",
     password: "",
     isEditing: false,
+    isLoggedIn: false,
     expanded: false,
     labelWidth: 0
   };
@@ -50,6 +52,7 @@ class Login extends React.Component {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
     // state values.
+    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -71,12 +74,10 @@ class Login extends React.Component {
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify(this.state),
           }).then(function (response) {
-              //alert('Response from post: ' + response.json());
-              //alert('Response from post: ' + response.statusMessage);
-              //alert('Response from post (message): ' + response.get('message'));
-              alert('Response from post: ' + response.json());
+            //alert('login succeeded');
+            this.setState({isLoggedIn: true});
           }).catch(function (err) {
-              alert('login failed');
+              alert('login failed or error');
           });
           //setSubmitting(false);
       }, 2000);
@@ -112,6 +113,10 @@ class Login extends React.Component {
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
+    /*
+    if (this.state.isLoggedIn) {
+      return <Redirect to="/users" />;
+    } */
 
     return (
       <React.Fragment>

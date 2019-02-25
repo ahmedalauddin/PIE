@@ -4,7 +4,7 @@
  * Created:  2019-01-27 13:44:17
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-23 12:48:44
+ * Modified: 2019-02-24 22:19:23
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -43,21 +43,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      // orgId: {
-      //   type: DataTypes.INTEGER,
-      //   references: {
-      //     table: "Organizations",
-      //     key: "id"
-      //   }
-      // },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        defaultValue: DataTypes.NOW
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: DataTypes.NOW
+        defaultValue: DataTypes.NOW,
+        onUpdate: DataTypes.NOW
       }
     },
     {

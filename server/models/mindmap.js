@@ -4,7 +4,7 @@
  * Created:  2019-01-27 13:44:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 11:02:39
+ * Modified: 2019-02-24 22:18:27
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -38,12 +38,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       createdAt: {
         type: DataTypes.DATE,
-        allowNull: true
+        defaultValue: DataTypes.NOW
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: DataTypes.NOW
+        defaultValue: DataTypes.NOW,
+        onUpdate: DataTypes.NOW
       }
     },
     {

@@ -118,7 +118,7 @@ module.exports = {
       include: [
         {
           model: Organization,
-          as: "Organization"
+          as: "organization"
         }
       ]
     })

@@ -164,7 +164,7 @@ class ListProjects extends Component {
                                         {project.description}
                                       </TableCell>
                                       <TableCell align="left">
-                                        {project.Organization.name}
+                                        {project.organization.name}
                                       </TableCell>
                                     </TableRow>
                                   );

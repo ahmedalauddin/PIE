@@ -113,6 +113,7 @@ class Signup extends React.Component {
     email: "",
     username: "",
     password: "",
+    confirm: "",
     org: "",
     orgId: 0,
     organizations: [],
@@ -253,9 +254,7 @@ class Signup extends React.Component {
                         color="secondary"
                         gutterBottom
                       >
-                        gutterBottom > gutterBottom > Signup
                       </Typography>
-
                       <Typography variant="h5" component="h2">
                         <TextField
                           required
@@ -300,13 +299,26 @@ class Signup extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField
-                          required
-                          id="password"
-                          label="Password"
-                          onChange={this.handleChange("password")}
-                          value={this.state.password}
-                          className={classes.textField}
-                          margin="normal"
+                            required
+                            id="password"
+                            label="Password"
+                            type="password"
+                            onChange={this.handleChange("password")}
+                            value={this.state.password}
+                            className={classes.textField}
+                            margin="normal"
+                        />
+                      </Typography>
+                      <Typography variant="h5" component="h2">
+                        <TextField
+                            required
+                            id="confirm"
+                            label="Confirm password"
+                            type="password"
+                            onChange={this.handleChange("confirm")}
+                            value={this.state.confirm}
+                            className={classes.textField}
+                            margin="normal"
                         />
                       </Typography>
                       <Typography variant="h5" component="h2">

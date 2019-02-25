@@ -31,6 +31,8 @@ function getHash(value) {
 
 module.exports = {
   create(req, res) {
+    logger.debug(`${callerType} create -> before hash, pass: ${req.body.password}`);
+    logger.debug(`${callerType} create -> before hash, username: ${req.body.username}`);
     let hashedValue = getHash(req.body.password);
     return models.Person.create({
       username: req.body.username,
@@ -38,6 +40,8 @@ module.exports = {
       lastName: req.body.lastName,
       orgId: req.body.orgId,
       email: req.body.email,
+      password: req.body.password,
+      passwordConfirmation: req.body.confirm,
       pwdhash: hashedValue
     })
       .then(p => {

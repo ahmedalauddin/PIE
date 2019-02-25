@@ -15,13 +15,16 @@ const callerType = "model";
 
 // password hashing function
 var hasSecurePassword = (user, options, callback) => {
-  if (user.password != user.password_confirmation) {
+  if (user.password != user.passwordConfirmation) {
+    logger.debug(`hasSecurePassword -> pass: ${user.password}, confirm: ${user.passwordConfirmation}`);
     throw new Error("Password confirmation doesn't match password");
   }
   bCrypt.hash(user.get("password"), 10, function(err, hash) {
     if (err) return callback(err);
     user.set("pwdHash", hash);
-    return callback(null, options);
+    logger.debug(`hasSecurePassword -> pwdHash: ${hash}`);
+    return "success";
+    // return callback(null, options);
   });
 };
 

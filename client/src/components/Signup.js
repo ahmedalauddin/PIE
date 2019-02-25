@@ -111,7 +111,6 @@ class Signup extends React.Component {
     firstName: "",
     lastName: "",
     email: "",
-    username: "",
     password: "",
     confirm: "",
     org: "",
@@ -206,8 +205,7 @@ class Signup extends React.Component {
             firstName: person.firstName,
             lastName: person.lastName,
             orgId: person.orgId,
-            pwdhash: person.pwdhash,
-            username: person.username
+            pwdhash: person.pwdhash
           });
           //alert('project.orgId = ' + this.state.orgId + ', title = ' + this.state.title + ', org = ' + this.state.org);
         });
@@ -282,17 +280,6 @@ class Signup extends React.Component {
                           label="Email Address"
                           onChange={this.handleChange("email")}
                           value={this.state.email}
-                          className={classes.textField}
-                          margin="normal"
-                        />
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="username"
-                          label="Username"
-                          onChange={this.handleChange("username")}
-                          value={this.state.username}
                           className={classes.textField}
                           margin="normal"
                         />

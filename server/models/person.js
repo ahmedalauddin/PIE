@@ -4,7 +4,7 @@
  * Created:  2019-01-30 11:33:14
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-24 22:19:32
+ * Modified: 2019-02-24 22:45:02
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -111,7 +111,7 @@ module.exports = (sequelize, DataTypes) => {
       indexes: [{ unique: true, fields: ["email"] }],
       instanceMethods: {
         authenticate: value => {
-          if (bCrypt.compareSync(value, this.password_digest)) return this;
+          if (bCrypt.compareSync(value, this.pwdhash)) return this;
           else return false;
         }
       },

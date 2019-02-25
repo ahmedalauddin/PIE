@@ -20,29 +20,25 @@ const callerType = "controller";
 // construct a hash
 /** eslint no-unused vars */
 function getHash(value) {
-  return bCrypt.hash(value, 12, (err, hashedValue) => {
-    if (err) {
-      logger.error(`${callerType} getHash -> error: ${err.stack}`);
-    } else {
-      logger.debug(`${callerType} getHash -> hash: ${hashedValue}`);
-    }
-  });
+  var hashedValue = bCrypt.hashSync(value, 12);
+  logger.debug(`${callerType} getHash -> hash: ${hashedValue}`);
+  return hashedValue;
 }
 
 module.exports = {
   create(req, res) {
     logger.debug(`${callerType} create -> before hash, pass: ${req.body.password}`);
-    logger.debug(`${callerType} create -> before hash, username: ${req.body.username}`);
     let hashedValue = getHash(req.body.password);
+    logger.debug(`${callerType} create -> after hash, hash: ${hashedValue}`);
     return models.Person.create({
       username: req.body.username,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       orgId: req.body.orgId,
+      pwdhash: hashedValue,
       email: req.body.email,
       password: req.body.password,
-      passwordConfirmation: req.body.confirm,
-      pwdhash: hashedValue
+      passwordConfirmation: req.body.confirm
     })
       .then(p => {
         logger.debug(`${callerType} create -> added person, id: ${p.id}`);

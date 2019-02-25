@@ -1,8 +1,11 @@
 /**
- * ProjectCard - add and edit projects component
- *
- * Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
- *
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/Login.js
+ * Created:  2019-02-04
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-02-21 10:00:20
+ * Editor:   Darrin Tisdale
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -36,7 +39,6 @@ class Login extends React.Component {
   state = {
     id: "",
     email: "",
-    username: "",
     pwdhash: "",
     password: "",
     isEditing: false,
@@ -57,34 +59,39 @@ class Login extends React.Component {
     });
   };
 
-  /*
-    handleSubmit(event) {
-        event.preventDefault();
-        //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
-        setTimeout(() => {
-            // Authenticate against the username
-            fetch('/api/authenticate/', {
-            //fetch('/api/person/username/' + this.state.username, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(this.state),
-            }).then(function (response) {
-                //alert('Response from post: ' + response.json());
-                //alert('Response from post: ' + response.statusMessage);
-                //alert('Response from post (message): ' + response.get('message'));
-                alert('Response from post: ' + response.json());
-            }).catch(function (err) {
-                //alert('login failed');
-            });
-            //setSubmitting(false);
-        }, 2000);
-    }
-*/
+
+  handleSubmit(event) {
+      event.preventDefault();
+      //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
+      setTimeout(() => {
+          // Authenticate against the username
+          fetch('/api/authenticate', {
+          //fetch('/api/person/username/' + this.state.username, {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(this.state),
+          }).then(function (response) {
+              //alert('Response from post: ' + response.json());
+              //alert('Response from post: ' + response.statusMessage);
+              //alert('Response from post (message): ' + response.get('message'));
+              alert('Response from post: ' + response.json());
+          }).catch(function (err) {
+              alert('login failed');
+          });
+          //setSubmitting(false);
+      }, 2000);
+  };
+
+
+/*
   handleSubmit = e => {
     e.preventDefault();
 
-    /* Here is where all the login logic will go. Upon clicking the login button, we would like to utilize a login method that will send our entered credentials over to the server for verification. Once verified, it should store your token and send you to the protected route. */
-    this.Auth.login(this.state.username, this.state.password)
+    /* Here is where all the login logic will go. Upon clicking the login button, we would like
+    to utilize a login method that will send our entered credentials over to the server for verification.
+    Once verified, it should store your token and send you to the protected route.
+
+    this.Auth.login(this.state.email, this.state.password)
       .then(res => {
         if (res === false) {
           return alert("Sorry those credentials don't exist!");
@@ -95,6 +102,8 @@ class Login extends React.Component {
         alert(err);
       });
   };
+*/
+
   componentDidMount() {}
 
   render() {
@@ -102,7 +111,7 @@ class Login extends React.Component {
     //const currentPath = this.props.location.pathname;
 
     /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
+    //const id = this.props.match.params.id;
 
     return (
       <React.Fragment>
@@ -118,8 +127,7 @@ class Login extends React.Component {
                 container
                 className={classes.grid}
               >
-                >
-                <Grid item xs={12}>
+                <Grid item xs={12} md={4}>
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
@@ -128,18 +136,6 @@ class Login extends React.Component {
                         color="secondary"
                         gutterBottom
                       >
-                        gutterBottom > gutterBottom > Login
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="username"
-                          label="Username"
-                          onChange={this.handleChange("username")}
-                          value={this.state.username}
-                          className={classes.textField}
-                          margin="normal"
-                        />
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField
@@ -157,6 +153,7 @@ class Login extends React.Component {
                           required
                           id="password"
                           label="Password"
+                          type="Password"
                           onChange={this.handleChange("password")}
                           value={this.state.password}
                           className={classes.textField}
@@ -165,6 +162,7 @@ class Login extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
+                          <br/>
                           <Button
                             variant="contained"
                             color="primary"

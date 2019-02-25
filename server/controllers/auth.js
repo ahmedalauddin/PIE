@@ -9,10 +9,10 @@ module.exports = {
   authenticate(req, res) {
     logger.debug(`${mvcType} authenticate -> start`);
     // Find a person by username.
-    logger.debug(`${mvcType} authenticate -> username: ${req.body.username}`);
+    logger.debug(`${mvcType} authenticate -> email: ${req.body.email}`);
     return models.Person.findOne({
       where: {
-        username: req.body.username
+        email: req.body.email
       }
     })
       .then(p => {

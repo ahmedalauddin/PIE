@@ -19,7 +19,7 @@ var hasSecurePassword = (user, options, callback) => {
     logger.debug(`hasSecurePassword -> pass: ${user.password}, confirm: ${user.passwordConfirmation}`);
     throw new Error("Password confirmation doesn't match password");
   }
-  bCrypt.hash(user.get("password"), 10, function(err, hash) {
+  bCrypt.hash(user.get("password"), 12, function(err, hash) {
     if (err) return callback(err);
     user.set("pwdHash", hash);
     logger.debug(`hasSecurePassword -> pwdHash: ${hash}`);

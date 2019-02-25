@@ -7,27 +7,27 @@
  * Modified: 2019-02-21 10:00:20
  * Editor:   Darrin Tisdale
  */
-import React from "react";
-import { Redirect } from 'react-router-dom';
-import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import React from 'react';
+import {Redirect} from 'react-router-dom';
+import withStyles from '@material-ui/core/styles/withStyles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Typography from '@material-ui/core/Typography';
+import Topbar from './Topbar';
+import {styles} from './MaterialSense';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
+import SectionHeader from './typo/SectionHeader';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const buttonstyles = theme => ({
   primary: {
     marginRight: theme.spacing.unit * 2
   },
   secondary: {
-    background: theme.palette.secondary["100"],
-    color: "white"
+    background: theme.palette.secondary['100'],
+    color: 'white'
   },
   spaceTop: {
     marginTop: 20
@@ -38,14 +38,16 @@ class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
-    id: "",
-    email: "",
-    pwdhash: "",
-    password: "",
+    id: '',
+    email: '',
+    pwdhash: '',
+    password: '',
     isEditing: false,
     isLoggedIn: false,
+    isFailedLogin: false,
     expanded: false,
-    labelWidth: 0
+    labelWidth: 0,
+    msgText: ''
   };
 
   constructor(props) {
@@ -64,64 +66,44 @@ class Login extends React.Component {
 
 
   handleSubmit(event) {
-      event.preventDefault();
-      //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
-      setTimeout(() => {
-          // Authenticate against the username
-          fetch('/api/authenticate', {
-          //fetch('/api/person/username/' + this.state.username, {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify(this.state),
-          }).then(function (response) {
-            //alert('login succeeded');
-            this.setState({isLoggedIn: true});
-          }).catch(function (err) {
-              alert('login failed or error');
-          });
-          //setSubmitting(false);
-      }, 2000);
+    event.preventDefault();
+    //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
+
+    // Authenticate against the username
+    fetch('/api/authenticate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(this.state),
+    }).then(response => {
+      this.setState({isLoggedIn: true});
+    }).catch(err => {
+      // TODO - set error login on form.
+      this.setState({isFailedLogin: true});
+      this.setState({msgText: "Login failed, please try again."});
+    });
+    //setSubmitting(false);
+
   };
 
 
-/*
-  handleSubmit = e => {
-    e.preventDefault();
-
-    /* Here is where all the login logic will go. Upon clicking the login button, we would like
-    to utilize a login method that will send our entered credentials over to the server for verification.
-    Once verified, it should store your token and send you to the protected route.
-
-    this.Auth.login(this.state.email, this.state.password)
-      .then(res => {
-        if (res === false) {
-          return alert("Sorry those credentials don't exist!");
-        }
-        this.props.history.replace("/");
-      })
-      .catch(err => {
-        alert(err);
-      });
-  };
-*/
-
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   render() {
-    const { classes } = this.props;
+    const {classes} = this.props;
     //const currentPath = this.props.location.pathname;
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
-    /*
+
     if (this.state.isLoggedIn) {
-      return <Redirect to="/users" />;
-    } */
+      return <Redirect to="/listprojects"/>;
+    }
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        <Topbar />
+        <CssBaseline/>
+        <Topbar/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -133,21 +115,22 @@ class Login extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12} md={4}>
-                  <SectionHeader title="" subtitle="" />
+                  <SectionHeader title="" subtitle=""/>
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
-                        style={{ textTransform: "uppercase" }}
+                        style={{textTransform: 'uppercase'}}
                         color="secondary"
                         gutterBottom
                       >
+                        {this.state.msgText}
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField
                           required
                           id="email"
                           label="Email"
-                          onChange={this.handleChange("email")}
+                          onChange={this.handleChange('email')}
                           value={this.state.email}
                           className={classes.textField}
                           margin="normal"
@@ -159,7 +142,7 @@ class Login extends React.Component {
                           id="password"
                           label="Password"
                           type="Password"
-                          onChange={this.handleChange("password")}
+                          onChange={this.handleChange('password')}
                           value={this.state.password}
                           className={classes.textField}
                           margin="normal"

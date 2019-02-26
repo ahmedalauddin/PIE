@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-21 05:11:51
+ * Modified: 2019-02-26 17:49:05
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -34,18 +34,4 @@ module.exports = router => {
   // get a person
   logger.debug(`${callerType} GET -> path: /api/persons/:id`);
   router.get("/api/persons/:id", personController.findById);
-
-  // get a person by email
-  logger.debug(`${callerType} GET -> path: /api/persons/email/:email`);
-  router.get(
-    "/api/persons/email/:email",
-    personController.findByEmail
-  );
-
-  // get a person by username
-  logger.debug(`${callerType} GET -> path: /api/persons/?username=:username`);
-  router.get(
-    "/api/persons/?username=:username",
-    personController.findByUsername
-  );
 };

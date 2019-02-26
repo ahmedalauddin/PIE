@@ -4,7 +4,7 @@
  * Created:  2019-02-01 12:39:21
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 09:46:35
+ * Modified: 2019-02-26 17:58:19
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -35,31 +35,4 @@ module.exports = router => {
   // delete a project with id
   logger.debug(`${callerType} DELETE -> path: /api/projects/:id`);
   router.delete("/api/projects/:id", projController.destroy);
-
-  // find all projects by mindmap
-  logger.debug(`${callerType} GET -> path: /api/projects/?mmid=:mmid`);
-  router.get("/api/projects/?mmid=:mmid", projController.findForMindMap);
-
-  // find project by mindmap and node id
-  logger.debug(`${callerType} GET -> path: /api/projects/?mmid=:mmid&nid=:nid`);
-  router.get(
-    "/api/projects/?mmid=:mmid&nid=:nid",
-    projController.findForMindMapNode
-  );
-
-  // Update a project with mindmap and node id
-  logger.debug(`${callerType} PUT -> 
-    path: /api/projects/?mmid=:mmid&nid=:nid`);
-  router.put(
-    "/api/projects/?mmid=:mmid&nid=:nid",
-    projController.updateByMindMapNode
-  );
-
-  // delete a project with mindmap and node id
-  logger.debug(`${callerType} DELETE -> 
-    path: /api/projects/?mmid=:mmid&nid=:nid`);
-  router.put(
-    "/api/projects/?mmid=:mmid&nid=:nid",
-    projController.destroyByMindMapNode
-  );
 };

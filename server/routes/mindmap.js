@@ -4,7 +4,7 @@
  * Created:  2019-01-27 17:59:36
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 15:13:01
+ * Modified: 2019-02-26 17:40:49
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -31,10 +31,6 @@ module.exports = router => {
   // update a mindmap
   logger.debug(`${callerType} PUT -> path: /api/mindmaps/:id`);
   router.put("/api/mindmaps/:id", mindmap.update);
-
-  // get a mindmap by the orgId
-  logger.debug(`${callerType} GET -> path: /api/mindmaps/?orgId=:orgId`);
-  router.get("/api/mindmaps/?orgId=:orgId", mindmap.findByOrgId);
 
   // delete a mindmap
   logger.debug(`${callerType} DELETE -> path: /api/mindmaps/:id`);

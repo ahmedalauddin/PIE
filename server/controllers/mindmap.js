@@ -86,41 +86,39 @@ module.exports = {
       });
   },
 
-  // Find by organization
-  findByOrgId(req, res) {
-    const orgId = req.params.orgId;
-    return models.Mindmap.findOne({
-      where: {
-        orgId: orgId
-      }
-    })
-      .then(map => {
-        logger.debug(`${callerType} findByOrgId -> id: ${map.id}`);
-        res.status(200).send(map);
-      })
-      .catch(error => {
-        logger.error(`${callerType} findByOrgId -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },
-
   // FInd all mindmaps
   list(req, res) {
-    return models.Mindmap.findAll({
-      include: [
-        {
-          model: models.Mindmap,
-          as: "Mindmap"
+    if (req.query.orgId) {
+      return models.Mindmap.findOne({
+        where: {
+          orgId: req.query.orgId
         }
-      ]
-    })
-      .then(maps => {
-        logger.debug(`${callerType} findById -> count: ${maps.length}`);
-        res.status(200).send(maps);
       })
-      .catch(error => {
-        logger.error(`${callerType} findById -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
+        .then(map => {
+          logger.debug(`${callerType} findByOrgId -> id: ${map.id}`);
+          res.status(200).send(map);
+        })
+        .catch(error => {
+          logger.error(`${callerType} findByOrgId -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+    } else {
+      return models.Mindmap.findAll({
+        include: [
+          {
+            model: models.Mindmap,
+            as: "Mindmap"
+          }
+        ]
+      })
+        .then(maps => {
+          logger.debug(`${callerType} findById -> count: ${maps.length}`);
+          res.status(200).send(maps);
+        })
+        .catch(error => {
+          logger.error(`${callerType} findById -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+    }
   }
 };

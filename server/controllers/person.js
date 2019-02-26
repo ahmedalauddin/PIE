@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 10:00:20
+ * Modified: 2019-02-26 17:48:47
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -27,7 +27,9 @@ function getHash(value) {
 
 module.exports = {
   create(req, res) {
-    logger.debug(`${callerType} create -> before hash, pass: ${req.body.password}`);
+    logger.debug(
+      `${callerType} create -> before hash, pass: ${req.body.password}`
+    );
     let hashedValue = getHash(req.body.password);
     logger.debug(`${callerType} create -> after hash, hash: ${hashedValue}`);
     return models.Person.create({
@@ -105,58 +107,42 @@ module.exports = {
       });
   },
 
-  // Find a person by Id
-  findByUsername(req, res) {
-    return models.Person.findOne({
-      where: {
-        username: req.params.username
-      }
-    })
-      .then(p => {
-        logger.debug(`${callerType} findByUsername -> id: ${p.id}`);
-        res.status(200).send(p);
-      })
-      .catch(error => {
-        logger.error(`${callerType} findByUsername -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },
-  // Find a person by Id
-  findByEmail(req, res) {
-    return models.Person.findOne({
-      where: {
-        email: req.params.email
-      }
-    })
-      .then(p => {
-        logger.debug(`${callerType} findByEmail -> id: ${p.id}`);
-        res.status(200).send(p);
-      })
-      .catch(error => {
-        logger.error(`${callerType} findByEmail -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },
-
   // List all persons
   list(req, res) {
-    logger.debug(`${callerType} list -> start`);
-    return models.Person.findAll({
-      include: [
-        {
-          model: models.Organization,
-          as: "organization"
+    if (req.query.email) {
+      logger.debug(`${callerType} findByEmail -> email: ${req.query.email}`);
+      return models.Person.findOne({
+        where: {
+          email: req.params.email
         }
-      ],
-      order: [["username", "ASC"]]
-    })
-      .then(people => {
-        logger.debug(`${callerType} list -> count: ${people.length}`);
-        res.status(200).send(people);
       })
-      .catch(error => {
-        logger.error(`${callerType} list -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
+        .then(p => {
+          logger.debug(`${callerType} findByEmail -> id: ${p.id}`);
+          res.status(200).send(p);
+        })
+        .catch(error => {
+          logger.error(`${callerType} findByEmail -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+    } else {
+      logger.debug(`${callerType} list -> start`);
+      return models.Person.findAll({
+        include: [
+          {
+            model: models.Organization,
+            as: "organization"
+          }
+        ],
+        order: [["username", "ASC"]]
+      })
+        .then(people => {
+          logger.debug(`${callerType} list -> count: ${people.length}`);
+          res.status(200).send(people);
+        })
+        .catch(error => {
+          logger.error(`${callerType} list -> error: ${error.stack}`);
+          res.status(400).send(error);
+        });
+    }
   }
 };

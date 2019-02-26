@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-21 09:58:52
+ * Modified: 2019-02-26 17:45:06
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -37,32 +37,63 @@ module.exports = {
 
   // select all organizations
   list(req, res) {
-    logger.debug(`${mvcType} list -> called`);
-    return models.Organization.findAll({
-      include: [
-        {
-          model: models.Person,
-          as: "persons"
-        },
-        {
-          model: models.Project,
-          as: "projects"
-        },
-        {
-          model: models.Kpi,
-          as: "kpis"
-        }
-      ],
-      order: [["name", "ASC"]]
-    })
-      .then(orgs => {
-        logger.info(`${mvcType} list -> ${orgs.length} orgs`);
-        res.status(200).send(orgs);
+    if (req.query.format === "select") {
+      logger.debug(`${mvcType} selectList -> called`);
+      return models.Organization.findAll({
+        attributes: ["id", "name"],
+        order: [["name", "ASC"]]
       })
-      .catch(error => {
-        logger.error(error.stack);
-        res.status(400).send(error);
-      });
+        .then(orgs => {
+          logger.info(`${mvcType} selectList -> ${orgs.length} orgs`);
+          res.status(200).send(orgs);
+        })
+        .catch(error => {
+          logger.error(error.stack);
+          res.status(400).send(error);
+        });
+    } else if (req.query.name) {
+      logger.debug(`${mvcType} findByName -> name = ${req.query.name}`);
+      return models.Organization.findOne({
+        where: {
+          name: req.query.name
+        }
+      })
+        .then(org => {
+          logger.info(`${mvcType} findByName -> id = ${org.id}`);
+          res.status(200).send(org);
+        })
+        .catch(error => {
+          logger.error(error.stack);
+          res.status(400).send(error);
+        });
+    } else {
+      logger.debug(`${mvcType} list -> called`);
+      return models.Organization.findAll({
+        include: [
+          {
+            model: models.Person,
+            as: "persons"
+          },
+          {
+            model: models.Project,
+            as: "projects"
+          },
+          {
+            model: models.Kpi,
+            as: "kpis"
+          }
+        ],
+        order: [["name", "ASC"]]
+      })
+        .then(orgs => {
+          logger.info(`${mvcType} list -> ${orgs.length} orgs`);
+          res.status(200).send(orgs);
+        })
+        .catch(error => {
+          logger.error(error.stack);
+          res.status(400).send(error);
+        });
+    }
   },
 
   // formal list for selects

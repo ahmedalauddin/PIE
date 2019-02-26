@@ -148,26 +148,6 @@ class Signup extends React.Component {
     event.preventDefault();
 
     setTimeout(() => {
-      /*
-            if (this.state.id > 0) {
-                // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
-                // We have a project id passed through the URL, do an
-                // update on the project.
-                let updatePath = '/api/person/' + this.state.email;
-                fetch(updatePath, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(this.state),
-                }).then(function (data) {
-                    //console.log(data);
-                }).catch(function (err) {
-                    //console.log(err);
-                });
-            } else {
-            */
-      // No person id, so we will do a create.  The difference
-      // is we do a POST instead of a PUT.
-
       // This uses the Person Create function.
       fetch("/api/persons", {
         method: "POST",
@@ -251,8 +231,7 @@ class Signup extends React.Component {
                         style={{ textTransform: "uppercase" }}
                         color="secondary"
                         gutterBottom
-                      >
-                      </Typography>
+                      />
                       <Typography variant="h5" component="h2">
                         <TextField
                           required
@@ -286,26 +265,26 @@ class Signup extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField
-                            required
-                            id="password"
-                            label="Password"
-                            type="password"
-                            onChange={this.handleChange("password")}
-                            value={this.state.password}
-                            className={classes.textField}
-                            margin="normal"
+                          required
+                          id="password"
+                          label="Password"
+                          type="password"
+                          onChange={this.handleChange("password")}
+                          value={this.state.password}
+                          className={classes.textField}
+                          margin="normal"
                         />
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField
-                            required
-                            id="confirm"
-                            label="Confirm password"
-                            type="password"
-                            onChange={this.handleChange("confirm")}
-                            value={this.state.confirm}
-                            className={classes.textField}
-                            margin="normal"
+                          required
+                          id="confirm"
+                          label="Confirm password"
+                          type="password"
+                          onChange={this.handleChange("confirm")}
+                          value={this.state.confirm}
+                          className={classes.textField}
+                          margin="normal"
                         />
                       </Typography>
                       <Typography variant="h5" component="h2">

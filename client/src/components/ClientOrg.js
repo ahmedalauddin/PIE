@@ -1,11 +1,12 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/Login.js
+ * File:     /client/src/components/ClientOrg.js
  * Created:  2019-02-04
  * Author:   Brad Kaufman
+ * Description: Select client organization for VI personnel.
  * -----
- * Modified: 2019-02-21 10:00:20
- * Editor:   Darrin Tisdale
+ * Modified:
+ * Editor:
  */
 import React from 'react';
 import {Redirect} from 'react-router-dom';
@@ -18,9 +19,11 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import SectionHeader from './typo/SectionHeader';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 const buttonstyles = theme => ({
   primary: {
     marginRight: theme.spacing.unit * 2
@@ -34,18 +37,15 @@ const buttonstyles = theme => ({
   }
 });
 
-class Login extends React.Component {
+class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
     id: '',
-    email: '',
-    pwdhash: '',
-    password: '',
-    isEditing: false,
-    isLoggedIn: false,
-    isFailedLogin: false,
+    organizations: [],
+    orgId: '',
     expanded: false,
+    isLoggedIn: false,
     labelWidth: 0,
     msgText: ''
   };
@@ -64,6 +64,14 @@ class Login extends React.Component {
     });
   };
 
+  handleSelectChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleExpandClick = () => {
+    this.setState(state => ({ expanded: !state.expanded }));
+  };
+
 
   handleSubmit(event) {
     event.preventDefault();
@@ -75,25 +83,20 @@ class Login extends React.Component {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(this.state),
     }).then(response => {
-      if (response.status === 200) {
-        // status code 200 is success.
-        this.setState({isLoggedIn: true});
-      }
-      else {
-        this.setState({isFailedLogin: true,
-          isLoggedIn: false});
-        this.setState({msgText: "Login failed, please try again."});
-      }
-
+      this.setState({isLoggedIn: true});
     }).catch(err => {
       // TODO - set error login on form.
-      this.setState({isFailedLogin: true});
-      this.setState({msgText: "Login failed, please try again."});
     });
+    //setSubmitting(false);
+
   };
 
-
   componentDidMount() {
+    fetch("/api/organizations/?format=select")
+      .then(results => results.json())
+      .then(organizations => {
+        this.setState({ organizations });
+      });
   }
 
   render() {
@@ -133,27 +136,30 @@ class Login extends React.Component {
                         {this.state.msgText}
                       </Typography>
                       <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="email"
-                          label="Email"
-                          onChange={this.handleChange('email')}
-                          value={this.state.email}
-                          className={classes.textField}
-                          margin="normal"
-                        />
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="password"
-                          label="Password"
-                          type="Password"
-                          onChange={this.handleChange('password')}
-                          value={this.state.password}
-                          className={classes.textField}
-                          margin="normal"
-                        />
+                        <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor="org-simple">
+                            Organization
+                          </InputLabel>
+                          <Select
+                            value={this.state.orgId}
+                            onChange={this.handleSelectChange}
+                            inputProps={{
+                              name: "orgId",
+                              id: "org-simple"
+                            }}
+                          >
+                            {this.state.organizations.map(org => {
+                              return (
+                                <MenuItem key={org.id} value={org.id}>
+                                  {org.name}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
+                        <br />
+                        <br />
+                        <br />
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
@@ -180,4 +186,4 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(styles)(Login);
+export default withStyles(styles)(ClientOrg);

@@ -15,6 +15,7 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
+import ClientOrg from "./components/ClientOrg";
 import ProjContainer from "./components/project/ProjContainer";
 import ProjectCard from "./components/ProjectCard";
 
@@ -28,6 +29,7 @@ export default props => (
         <Route exact path="/login" component={Login} />
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/signup" component={Signup} />
+        <Route exact path="/clientorg" component={ClientOrg} />
         <Route exact path="/projcontainer" component={ProjContainer} />
         <Route exact path="/projectcard" component={ProjectCard} />
         <Route exact path="/editkpi" component={EditKpi} />

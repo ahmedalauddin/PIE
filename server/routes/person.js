@@ -35,6 +35,13 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/persons/:id`);
   router.get("/api/persons/:id", personController.findById);
 
+  // get a person by email
+  logger.debug(`${callerType} GET -> path: /api/persons/email/:email`);
+  router.get(
+    "/api/persons/email/:email",
+    personController.findByEmail
+  );
+
   // get a person by username
   logger.debug(`${callerType} GET -> path: /api/persons/?username=:username`);
   router.get(

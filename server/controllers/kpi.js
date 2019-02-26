@@ -69,7 +69,7 @@ module.exports = {
       include: [
         {
           model: models.Organization,
-          as: "Organization"
+          as: "organization"
         }
       ]
     })
@@ -85,13 +85,30 @@ module.exports = {
       });
   },
 
-  // List all persons
+
+  // List all KPIs for a single project
+  listByProject(req, res) {
+    return models.Kpi.findAll({
+      where: { projectId: req.params.projid },
+      order: [["title", "DESC"]]
+    })
+      .then(_k => {
+        logger.debug(`${callerType} listByProject -> successful, count: ${_k.length}`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} listByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all KPIs
   list(req, res) {
     return models.Kpi.findAll({
       include: [
         {
           model: models.Organization,
-          as: "Organization"
+          as: "organization"
         }
       ]
     })
@@ -104,4 +121,5 @@ module.exports = {
         res.status(400).send(error);
       });
   }
+
 };

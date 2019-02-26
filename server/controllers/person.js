@@ -91,7 +91,7 @@ module.exports = {
       include: [
         {
           model: Organization,
-          as: "Organization"
+          as: "organization"
         }
       ]
     })
@@ -121,6 +121,22 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+  // Find a person by Id
+  findByEmail(req, res) {
+    return models.Person.findOne({
+      where: {
+        email: req.params.email
+      }
+    })
+      .then(p => {
+        logger.debug(`${callerType} findByEmail -> id: ${p.id}`);
+        res.status(200).send(p);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByEmail -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
 
   // List all persons
   list(req, res) {
@@ -129,7 +145,7 @@ module.exports = {
       include: [
         {
           model: models.Organization,
-          as: "Organization"
+          as: "organization"
         }
       ],
       order: [["username", "ASC"]]

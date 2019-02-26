@@ -8,36 +8,37 @@
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
-import React from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import IconButton from "@material-ui/core/IconButton";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import Collapse from "@material-ui/core/Collapse";
-import classnames from "classnames";
-import { red } from "@material-ui/core/colors";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import { getSorting, stableSort } from "./TableFunctions";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import moment from "moment";
-import Log from "./Log";
-import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
+import React from 'react';
+import withStyles from '@material-ui/core/styles/withStyles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Typography from '@material-ui/core/Typography';
+import Topbar from './Topbar';
+import {styles} from './MaterialSense';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Grid from '@material-ui/core/Grid';
+import SectionHeader from './typo/SectionHeader';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Collapse from '@material-ui/core/Collapse';
+import classnames from 'classnames';
+import {red} from '@material-ui/core/colors';
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import {getSorting, stableSort} from './TableFunctions';
+import Table from '@material-ui/core/Table';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import moment from 'moment';
+import Log from './Log';
+import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import {Redirect, Link} from 'react-router-dom';
 //import ButtonBar from './buttons/ButtonBar';
 //import Button from '@material-ui/core/Button';
 
@@ -47,27 +48,27 @@ const materialstyles = theme => ({
   },
   media: {
     height: 0,
-    paddingTop: "56.25%" // 16:9
+    paddingTop: '56.25%' // 16:9
   },
   actions: {
-    display: "flex"
+    display: 'flex'
   },
   expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
       duration: theme.transitions.duration.shortest
     })
   },
   expandOpen: {
-    transform: "rotate(180deg)"
+    transform: 'rotate(180deg)'
   },
   avatar: {
     backgroundColor: red[500]
   },
   container: {
-    display: "flex",
-    flexWrap: "wrap"
+    display: 'flex',
+    flexWrap: 'wrap'
   },
   textField: {
     marginLeft: theme.spacing.unit,
@@ -88,7 +89,7 @@ const ExpandingSectionGridItem = (classes, project) => {
     <div className={classes.inlineLeft}>
       <Typography
         variant="h6"
-        style={{ textTransform: "uppercase" }}
+        style={{textTransform: 'uppercase'}}
         color="secondary"
         gutterBottom
       >
@@ -99,46 +100,46 @@ const ExpandingSectionGridItem = (classes, project) => {
       </Typography>
       <Typography variant="h7" gutterBottom>
         Leading KPI
-        <br />
+        <br/>
         Project started 12 February 2018
-        <br />
+        <br/>
       </Typography>
       <Typography variant="h5" gutterBottom>
         Reduction in Unplanned Activities
       </Typography>
       <Typography variant="h7" gutterBottom>
         Leading KPI
-        <br />
+        <br/>
         Project started 14 March 2018
-        <br />
+        <br/>
       </Typography>
       <Typography variant="h5" gutterBottom>
         Increase in Local Source
       </Typography>
       <Typography variant="h7" gutterBottom>
         Leading KPI
-        <br />
+        <br/>
         Project started 14 March 2018
-        <br />
+        <br/>
       </Typography>
       <Typography variant="h5" gutterBottom>
         Improve Predictablity of Failure
       </Typography>
       <Typography variant="h7" gutterBottom>
         Leading KPI
-        <br />
+        <br/>
         Project in planning
-        <br />
+        <br/>
       </Typography>
       <Typography variant="h5" gutterBottom>
         First Time Right
       </Typography>
       <Typography variant="h7" gutterBottom>
         Leading KPI
-        <br />
+        <br/>
         Project in planning
-        <br />
-        <br />
+        <br/>
+        <br/>
       </Typography>
     </div>
   );
@@ -149,8 +150,8 @@ const buttonstyles = theme => ({
     marginRight: theme.spacing.unit * 2
   },
   secondary: {
-    background: theme.palette.secondary["100"],
-    color: "white"
+    background: theme.palette.secondary['100'],
+    color: 'white'
   },
   spaceTop: {
     marginTop: 20
@@ -158,43 +159,47 @@ const buttonstyles = theme => ({
 });
 
 class ProjectCard extends React.Component {
+  constructor(props) {
+    super(props);
+    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
+    // state values.
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
     project: {},
     organizations: [],
     projid: 0,
-    title: "",
-    businessGoal: "",
-    org: "",
-    orgId: "",
-    description: "",
-    startAt: "",
-    endAt: "",
+    title: '',
+    businessGoal: '',
+    org: '',
+    orgId: '',
+    description: '',
+    startAt: '',
+    endAt: '',
     progress: 0,
     isEditing: false,
+    redirect: false,
     isNew: false,
     expanded: false,
     labelWidth: 0
   };
 
-  constructor(props) {
-    super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+    this.setState({[name]: event.target.value});
   };
 
   handleSelectChange = event => {
-    this.setState({ orgId: event.target.value });
+    this.setState({orgId: event.target.value});
   };
 
   handleExpandClick = () => {
-    this.setState(state => ({ expanded: !state.expanded }));
+    this.setState(state => ({expanded: !state.expanded}));
   };
 
   //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
@@ -206,10 +211,10 @@ class ProjectCard extends React.Component {
         // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
         // We have a project id passed through the URL, do an
         // update on the project.
-        let updatePath = "/api/projects/" + this.state.id;
+        let updatePath = '/api/projects/' + this.state.id;
         fetch(updatePath, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
         })
           .then(data => {
@@ -221,9 +226,9 @@ class ProjectCard extends React.Component {
       } else {
         // No project id, so we will do a create.  The difference
         // is we do a POST instead of a PUT.
-        fetch("/api/projects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        fetch('/api/projects', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
         })
           .then(data => {
@@ -237,14 +242,15 @@ class ProjectCard extends React.Component {
     }, 2000);
   }
 
-  // Return boolean for whether the project exists.
-  projectExists() {
-    if (parseInt(this.props.match.params.id) > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  openKpis() {
+    alert("ready to redir");
+    //this.setState({redirect: true});
+
+    this.setState({ redirect: true }, () => {
+      this.props.history.push('/listprojects');
+    });
+  };
+
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
@@ -256,36 +262,36 @@ class ProjectCard extends React.Component {
             businessGoal: project.businessGoal,
             title: project.title,
             description: project.description,
-            org: project.Organization.name,
+            org: project.organization.name,
             orgId: project.orgId,
             progress: project.progress,
-            startAt: moment(project.startAt).format("YYYY-MM-DD"),
-            endAt: moment(project.endAt).format("YYYY-MM-DD")
+            startAt: moment(project.startAt).format('YYYY-MM-DD'),
+            endAt: moment(project.endAt).format('YYYY-MM-DD')
           });
-          //alert('project.orgId = ' + this.state.orgId + ', title = ' + this.state.title + ', org = ' + this.state.org);
         });
     } else {
-      this.setState({ isEditing: true });
+      this.setState({isEditing: true});
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
 
-    fetch("/api/organizations")
+    fetch('/api/organizations/?format=select')
       .then(results => results.json())
-      .then(organizations => this.setState({ organizations }));
+      .then(organizations => this.setState({organizations}));
   }
 
   render() {
-    const { classes } = this.props;
+    const {classes} = this.props;
     //const currentPath = this.props.location.pathname;
 
     /* react-router has injected the value of the attribute ID into the params */
     const id = this.props.match.params.id;
 
+
     return (
       <React.Fragment>
-        <CssBaseline />
-        <Topbar />
+        <CssBaseline/>
+        <Topbar/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -297,29 +303,28 @@ class ProjectCard extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12}>
-                  <SectionHeader title="" subtitle="" />
+                  <SectionHeader title="" subtitle=""/>
                   <Card className={classes.card}>
                     <CardContent>
                       <Table>
                         <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
+                          <TableCell style={{verticalAlign: 'top'}}>
                             <Typography
-                              style={{ textTransform: "uppercase" }}
+                              style={{textTransform: 'uppercase'}}
                               color="secondary"
                               gutterBottom
                             >
-                              > color="secondary" gutterBottom
                             </Typography>
                           </TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
+                          <TableCell style={{verticalAlign: 'top'}}>
                             <Typography variant="h5" component="h2">
                               <TextField
                                 required
                                 id="title-required"
                                 label="Title"
-                                onChange={this.handleChange("title")}
+                                onChange={this.handleChange('title')}
                                 value={this.state.title}
                                 className={classes.textField}
                                 margin="normal"
@@ -335,17 +340,14 @@ class ProjectCard extends React.Component {
                                   onChange={this.handleSelectChange}
                                   renderValue={value => this.state.orgId}
                                   inputProps={{
-                                    name: "org",
-                                    id: "orgId"
+                                    name: 'org',
+                                    id: 'orgId'
                                   }}
                                 >
-                                  {stableSort(
-                                    this.state.organizations,
-                                    getSorting("asc", "name")
-                                  ).map(organizations => {
+                                  {this.state.organizations.map(org => {
                                     return (
-                                      <MenuItem value="{organizations.id}">
-                                        {organizations.name}
+                                      <MenuItem key={org.id} value={org.id}>
+                                        {org.name}
                                       </MenuItem>
                                     );
                                   })}
@@ -354,7 +356,7 @@ class ProjectCard extends React.Component {
                             </Typography>
                           </TableCell>
                           <TableCell
-                            style={{ verticalAlign: "top", width: "55%" }}
+                            style={{verticalAlign: 'top', width: '55%'}}
                           >
                             <Typography component="p">
                               <TextField
@@ -363,7 +365,7 @@ class ProjectCard extends React.Component {
                                 multiline
                                 rowsMax="6"
                                 value={this.state.description}
-                                onChange={this.handleChange("description")}
+                                onChange={this.handleChange('description')}
                                 className={classes.textField}
                                 fullWidth
                                 margin="normal"
@@ -379,7 +381,7 @@ class ProjectCard extends React.Component {
                                 multiline
                                 rowsMax="4"
                                 value={this.state.businessGoal}
-                                onChange={this.handleChange("businessGoal")}
+                                onChange={this.handleChange('businessGoal')}
                                 className={classes.textField}
                                 fullWidth
                                 margin="normal"
@@ -390,7 +392,7 @@ class ProjectCard extends React.Component {
                             </Typography>
                           </TableCell>
                           <TableCell
-                            style={{ verticalAlign: "top", width: "25%" }}
+                            style={{verticalAlign: 'top', width: '25%'}}
                           >
                             <div className={classes.inlineRight}>
                               <Typography variant="h6" gutterBottom>
@@ -399,7 +401,7 @@ class ProjectCard extends React.Component {
                                   label="Start Date"
                                   type="date"
                                   value={this.state.startAt}
-                                  onChange={this.handleChange("startAt")}
+                                  onChange={this.handleChange('startAt')}
                                   className={classes.textField}
                                   InputLabelProps={{
                                     shrink: true
@@ -412,7 +414,7 @@ class ProjectCard extends React.Component {
                                   label="End Date"
                                   type="date"
                                   value={this.state.endAt}
-                                  onChange={this.handleChange("endAt")}
+                                  onChange={this.handleChange('endAt')}
                                   className={classes.textField}
                                   InputLabelProps={{
                                     shrink: true
@@ -424,7 +426,7 @@ class ProjectCard extends React.Component {
                                   <TextField
                                     id="standard-required"
                                     label="Progress"
-                                    onChange={this.handleChange("progress")}
+                                    onChange={this.handleChange('progress')}
                                     value={this.state.progress}
                                     className={classes.textField}
                                     InputProps={{
@@ -446,6 +448,11 @@ class ProjectCard extends React.Component {
                                 >
                                   Submit
                                 </Button>
+                              </div><br/>
+                              <div className={classes.spaceTop}>
+                                <Button component={Link} to="/listprojects">
+                                  List KPIs
+                                </Button>
                               </div>
                             </div>
                           </TableCell>
@@ -456,7 +463,6 @@ class ProjectCard extends React.Component {
                       className={classes.actions}
                       disableActionSpacing
                     >
-                      >
                       <IconButton
                         className={classnames(classes.expand, {
                           [classes.expandOpen]: this.state.expanded
@@ -465,7 +471,7 @@ class ProjectCard extends React.Component {
                         aria-expanded={this.state.expanded}
                         aria-label="Show more"
                       >
-                        <ExpandMoreIcon />
+                        <ExpandMoreIcon/>
                       </IconButton>
                     </CardActions>
                     <Collapse

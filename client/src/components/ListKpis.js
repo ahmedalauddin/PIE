@@ -1,5 +1,5 @@
-// List for editing persons, 1/22/19.
-// Will be removed eventually.  Essentially a test harness for EditPerson.
+// List for editing KPIs, 1/22/19.
+// Will be removed eventually.  Essentially a test harness for EditProject.
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
@@ -16,29 +16,17 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
-
-function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
-  { id: "title", numeric: false, disablePadding: true, label: "Title" },
+  { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
   {
     id: "description",
     numeric: false,
-    disablePadding: true,
+    disablePadding: false,
     label: "Description"
   },
-  { id: "status", numeric: false, disablePadding: true, label: "Status" },
-  { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  { id: "level", numeric: false, disablePadding: false, label: "Level" },
   {
     id: "organization",
     numeric: false,
@@ -47,31 +35,16 @@ const rows = [
   }
 ];
 
-function stableSort(array, cmp) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => desc(a, b, orderBy)
-    : (a, b) => -desc(a, b, orderBy);
-}
-
 class MyTableHead extends React.Component {
   createSortHandler = property => event => {
     this.props.onRequestSort(event, property);
   };
 
   render() {
-    const { order, orderBy } = this.props;
+    const {
+      order,
+      orderBy
+    } = this.props;
 
     return (
       <TableHead>
@@ -116,15 +89,21 @@ class ListKpis extends Component {
     order: "asc",
     orderBy: "",
     selected: [],
-    kpis: []
+    projects: [],
+    toProject: "false",
+    toProjectId: ""
   };
 
   componentDidMount() {
-    // Use fetch to get all the KPIs
-    fetch("/api/kpis")
+    fetch("/api/projects")
       .then(res => res.json())
-      .then(kpis => this.setState({ kpis }));
+      .then(projects => this.setState({ projects }));
   }
+
+  // Here I just want to use something like the construct in Topbar to navigate
+  // via client/routes.js.
+  // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
+  handleClick = (event, id) => {};
 
   render() {
     const { classes } = this.props;
@@ -142,10 +121,14 @@ class ListKpis extends Component {
               container
               className={classes.grid}
             >
-              >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
+                    <div className={classes.box}>
+                      <Typography color="secondary" gutterBottom>
+                        Full list of all ValueInfinity projects
+                      </Typography>
+                    </div>
                     <div>
                       <Typography variant="body1" gutterBottom>
                         <Paper className={classes.root}>
@@ -157,38 +140,31 @@ class ListKpis extends Component {
                               <MyTableHead />
                               <TableBody>
                                 {stableSort(
-                                  this.state.kpis,
+                                  this.state.projects,
                                   getSorting("asc", "title")
-                                ).map(kpi => {
+                                ).map(project => {
                                   return (
                                     <TableRow
                                       hover
-                                      onClick={event => {}}
+                                      onClick={event => {
+                                        this.handleClick(event, project.id);
+                                      }}
                                       tabIndex={-1}
-                                      key={kpi.id}
+                                      key={project.id}
                                     >
                                       <TableCell align="right">
-                                        {kpi.id}
+                                        {project.id}
                                       </TableCell>
                                       <TableCell align="left">
-                                        <Link to={`/editkpi/${kpi.id}`}>
-                                          {kpi.title}
+                                        <Link to={`/projectcard/${project.id}`}>
+                                          {project.title}
                                         </Link>
                                       </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.description}
+                                      <TableCell width="45%" align="left">
+                                        {project.description}
                                       </TableCell>
                                       <TableCell align="left">
-                                        {kpi.status}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.type}
-                                      </TableCell>
-                                      <TableCell align="right">
-                                        {kpi.level}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.Organization.name}
+                                        {project.organization.name}
                                       </TableCell>
                                     </TableRow>
                                   );

@@ -125,12 +125,16 @@ class Login extends React.Component {
                   <SectionHeader title="" subtitle=""/>
                   <Card className={classes.card}>
                     <CardContent>
-                      <Typography
+                      <Typography variant="h5" component="h2"
+                        color="secondary"
+                        gutterBottom
+                      >Please login
+                      </Typography>
+                      <Typography variant="h5" component="h2"
                         style={{textTransform: 'uppercase'}}
                         color="secondary"
                         gutterBottom
-                      >
-                        {this.state.msgText}
+                      >{this.state.msgText}
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <TextField

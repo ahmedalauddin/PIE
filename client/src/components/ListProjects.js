@@ -95,7 +95,7 @@ class ListProjects extends Component {
   };
 
   componentDidMount() {
-    fetch("/api/kpis")
+    fetch("/api/projects")
       .then(res => res.json())
       .then(projects => this.setState({ projects }));
   }

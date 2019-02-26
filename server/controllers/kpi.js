@@ -70,6 +70,10 @@ module.exports = {
         {
           model: models.Organization,
           as: "organization"
+        },
+        {
+          model: models.Project,
+          as: "projects"
         }
       ]
     })

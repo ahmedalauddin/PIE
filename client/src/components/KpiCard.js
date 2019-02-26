@@ -83,68 +83,6 @@ const materialstyles = theme => ({
   }
 });
 
-const ExpandingSectionGridItem = (classes, project) => {
-  // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
-  return (
-    <div className={classes.inlineLeft}>
-      <Typography
-        variant="h6"
-        style={{textTransform: 'uppercase'}}
-        color="secondary"
-        gutterBottom
-      >
-        > Other Prioritized KPIs
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Service BOM Accuracy
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 12 February 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Reduction in Unplanned Activities
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 14 March 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Increase in Local Source
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 14 March 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Improve Predictablity of Failure
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project in planning
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        First Time Right
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project in planning
-        <br/>
-        <br/>
-      </Typography>
-    </div>
-  );
-};
-
 const buttonstyles = theme => ({
   primary: {
     marginRight: theme.spacing.unit * 2
@@ -158,7 +96,7 @@ const buttonstyles = theme => ({
   }
 });
 
-class ProjectCard extends React.Component {
+class KpiCard extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
@@ -174,13 +112,13 @@ class ProjectCard extends React.Component {
     organizations: [],
     projid: 0,
     title: '',
-    businessGoal: '',
+    type: '',
+    level: '',
     org: '',
     orgId: '',
     description: '',
     startAt: '',
     endAt: '',
-    progress: 0,
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -244,19 +182,18 @@ class ProjectCard extends React.Component {
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/projects/${this.props.match.params.id}`)
+      fetch(`/api/kpis/${this.props.match.params.id}`)
         .then(res => res.json())
-        .then(project => {
+        .then(kpi => {
           this.setState({
             id: this.props.match.params.id,
-            businessGoal: project.businessGoal,
-            title: project.title,
-            description: project.description,
-            org: project.organization.name,
-            orgId: project.orgId,
-            progress: project.progress,
-            startAt: moment(project.startAt).format('YYYY-MM-DD'),
-            endAt: moment(project.endAt).format('YYYY-MM-DD')
+            title: kpi.title,
+            description: kpi.description,
+            level: kpi.level,
+            type: kpi.type,
+            projectid: kpi.projectId,
+            startAt: moment(kpi.startAt).format('YYYY-MM-DD'),
+            endAt: moment(kpi.endAt).format('YYYY-MM-DD')
           });
         });
     } else {
@@ -320,30 +257,6 @@ class ProjectCard extends React.Component {
                                 margin="normal"
                               />
                             </Typography>
-                            <Typography variant="h5" component="h2">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="organization-simple">
-                                  Organization
-                                </InputLabel>
-                                <Select
-                                  value={this.state.orgId}
-                                  onChange={this.handleSelectChange}
-                                  renderValue={value => this.state.orgId}
-                                  inputProps={{
-                                    name: 'org',
-                                    id: 'orgId'
-                                  }}
-                                >
-                                  {this.state.organizations.map(org => {
-                                    return (
-                                      <MenuItem key={org.id} value={org.id}>
-                                        {org.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                            </Typography>
                           </TableCell>
                           <TableCell
                             style={{verticalAlign: 'top', width: '55%'}}
@@ -366,12 +279,28 @@ class ProjectCard extends React.Component {
                             </Typography>
                             <Typography component="p">
                               <TextField
-                                id="businessGoal"
-                                label="Business Goal"
+                                id="level"
+                                label="Level"
                                 multiline
                                 rowsMax="4"
-                                value={this.state.businessGoal}
-                                onChange={this.handleChange('businessGoal')}
+                                value={this.state.level}
+                                onChange={this.handleChange('level')}
+                                className={classes.textField}
+                                fullWidth
+                                margin="normal"
+                                InputLabelProps={{
+                                  shrink: true
+                                }}
+                              />
+                            </Typography>
+                            <Typography component="p">
+                              <TextField
+                                id="type"
+                                label="Type"
+                                multiline
+                                rowsMax="4"
+                                value={this.state.type}
+                                onChange={this.handleChange('type')}
                                 className={classes.textField}
                                 fullWidth
                                 margin="normal"
@@ -411,24 +340,6 @@ class ProjectCard extends React.Component {
                                   }}
                                 />
                               </Typography>
-                              <Typography variant="h6" gutterBottom>
-                                <Typography variant="h5" component="h2">
-                                  <TextField
-                                    id="standard-required"
-                                    label="Progress"
-                                    onChange={this.handleChange('progress')}
-                                    value={this.state.progress}
-                                    className={classes.textField}
-                                    InputProps={{
-                                      endAdornment: (
-                                        <InputAdornment position="end">
-                                          %
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                  />
-                                </Typography>
-                              </Typography>
                               <div className={classes.spaceTop}>
                                 <Button
                                   variant="contained"
@@ -436,43 +347,14 @@ class ProjectCard extends React.Component {
                                   onClick={this.handleSubmit}
                                   className={classes.secondary}
                                 >
-                                  Submit
+                                  Update
                                 </Button>
                               </div><br/>
-                              <div className={classes.spaceTop}>
-                                <Button component={Link} to={`/listkpis/${this.props.match.params.id}`}>
-                                  List KPIs
-                                </Button>
-                              </div>
                             </div>
                           </TableCell>
                         </TableRow>
                       </Table>
                     </CardContent>
-                    <CardActions
-                      className={classes.actions}
-                      disableActionSpacing
-                    >
-                      <IconButton
-                        className={classnames(classes.expand, {
-                          [classes.expandOpen]: this.state.expanded
-                        })}
-                        onClick={this.handleExpandClick}
-                        aria-expanded={this.state.expanded}
-                        aria-label="Show more"
-                      >
-                        <ExpandMoreIcon/>
-                      </IconButton>
-                    </CardActions>
-                    <Collapse
-                      in={this.state.expanded}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <CardContent>
-                        {ExpandingSectionGridItem(classes, this.state.project)}
-                      </CardContent>
-                    </Collapse>
                   </Card>
                 </Grid>
               </Grid>
@@ -484,4 +366,4 @@ class ProjectCard extends React.Component {
   }
 }
 
-export default withStyles(styles)(ProjectCard);
+export default withStyles(styles)(KpiCard);

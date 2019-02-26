@@ -19,13 +19,18 @@ import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
-  { id: "id", numeric: true, disablePadding: false, label: "ID" },
-  { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
+  { id: "title", numeric: false, disablePadding: true, label: "KPI" },
   {
     id: "description",
     numeric: false,
     disablePadding: false,
     label: "Description"
+  },
+  {
+    id: "type",
+    numeric: false,
+    disablePadding: false,
+    label: "Type"
   },
   {
     id: "organization",
@@ -89,15 +94,18 @@ class ListKpis extends Component {
     order: "asc",
     orderBy: "",
     selected: [],
-    projects: [],
+    kpis: [],
     toProject: "false",
     toProjectId: ""
   };
 
   componentDidMount() {
-    fetch("/api/projects")
+    // ListKpis is expected to take a param of project ID, and fetch the KPIs
+    // associated only with that project.
+    alert('id: ' + this.props.match.params.id);
+    fetch(`/api/kpis/project/${this.props.match.params.id}`)
       .then(res => res.json())
-      .then(projects => this.setState({ projects }));
+      .then(kpis => this.setState({ kpis }));
   }
 
   // Here I just want to use something like the construct in Topbar to navigate
@@ -107,6 +115,9 @@ class ListKpis extends Component {
 
   render() {
     const { classes } = this.props;
+
+    /* react-router has injected the value of the attribute ID into the params */
+    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>
@@ -126,7 +137,7 @@ class ListKpis extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        Full list of all ValueInfinity projects
+                        List of KPIs
                       </Typography>
                     </div>
                     <div>
@@ -140,31 +151,31 @@ class ListKpis extends Component {
                               <MyTableHead />
                               <TableBody>
                                 {stableSort(
-                                  this.state.projects,
+                                  this.state.kpis,
                                   getSorting("asc", "title")
-                                ).map(project => {
+                                ).map(kpi => {
                                   return (
                                     <TableRow
                                       hover
                                       onClick={event => {
-                                        this.handleClick(event, project.id);
+                                        this.handleClick(event, kpi.id);
                                       }}
                                       tabIndex={-1}
-                                      key={project.id}
+                                      key={kpi.id}
                                     >
-                                      <TableCell align="right">
-                                        {project.id}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        <Link to={`/projectcard/${project.id}`}>
-                                          {project.title}
+                                      <TableCell width="25%" align="left">
+                                        <Link to={`/kpicard/${kpi.id}`}>
+                                          {kpi.title}
                                         </Link>
                                       </TableCell>
-                                      <TableCell width="45%" align="left">
-                                        {project.description}
+                                      <TableCell width="35%" align="left">
+                                        {kpi.description}
                                       </TableCell>
+                                      <TableCell width="15%" align="left">
+                                        {kpi.type}
+                                    </TableCell>
                                       <TableCell align="left">
-                                        {project.organization.name}
+                                        {kpi.organization.name}
                                       </TableCell>
                                     </TableRow>
                                   );

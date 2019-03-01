@@ -28,6 +28,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/projects/:id`);
   router.get("/api/projects/:id", projController.findById);
 
+  // Retrieve a list of projects for a selected organization
+  logger.debug(`${callerType} GET -> path: /api/projects/organization/:orgid`);
+  router.get("/api/projects/organization/:orgid", projController.findByOrganization);
+
   // Update a project with id
   logger.debug(`${callerType} PUT -> path: /api/projects/:id`);
   router.put("/api/projects/:id", projController.update);

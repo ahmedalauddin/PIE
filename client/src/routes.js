@@ -10,6 +10,7 @@ import EditKpi from "./components/EditKpi";
 import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListKpis from "./components/ListKpis";
+import ListOrgs from "./components/ListOrgs";
 import MindMapStatic from "./components/MindMapStatic";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
@@ -18,6 +19,8 @@ import Login from "./components/Login";
 import ClientOrg from "./components/ClientOrg";
 import ProjContainer from "./components/project/ProjContainer";
 import ProjectCard from "./components/ProjectCard";
+import OrganizationCard from "./components/OrganizationCard";
+import KpiCard from "./components/KpiCard";
 import withAuth from "./components/withAuth.jsx";
 
 export default props => (
@@ -35,12 +38,16 @@ export default props => (
         <Route exact path="/projectcard" component={ProjectCard} />
         <Route exact path="/editkpi" component={EditKpi} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
+        <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
+        <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
         <Route path="/editperson/:id" component={EditPerson} />
         <Route path="/editkpi/:id" component={EditKpi} />
-        <Route exact path="/mindmapstatic" component={withAuth(MindMapStatic)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
+        <Route exact path="/kpicard/:id" component={KpiCard} />
+        <Route exact path="/mindmapstatic" component={withAuth(MindMapStatic)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={ListKpis} />
+        <Route exact path="/listorgs" component={ListOrgs} />
         <Route exact path="/cards" component={Cards} />
       </Switch>
     </ScrollToTop>

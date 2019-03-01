@@ -95,9 +95,17 @@ class ListProjects extends Component {
   };
 
   componentDidMount() {
-    fetch("/api/projects")
-      .then(res => res.json())
-      .then(projects => this.setState({ projects }));
+    if (parseInt(this.props.match.params.id) > 0) {
+      // If there is an id passed in, it's for organization.
+      fetch(`/api/projects/organization/${this.props.match.params.id}`)
+        .then(res => res.json())
+        .then(projects => this.setState({projects}));
+    }
+    else {
+      fetch("/api/projects")
+        .then(res => res.json())
+        .then(projects => this.setState({projects}));
+    }
   }
 
   // Here I just want to use something like the construct in Topbar to navigate

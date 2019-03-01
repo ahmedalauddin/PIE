@@ -9,9 +9,6 @@
  */
 "use strict";
 
-// declarations
-//import withAuth from "../../client/src/components/withAuth.jsx";
-
 const auth = require("../controllers/auth");
 const logger = require("../util/logger")(__filename);
 

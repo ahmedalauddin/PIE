@@ -4,10 +4,6 @@ const Menu = [
     pathname: "/"
   },
   {
-    label: "Dashboard",
-    pathname: "/dashboard"
-  },
-  {
     label: "Login",
     pathname: "/login"
   },
@@ -28,8 +24,12 @@ const Menu = [
     pathname: "/listprojects"
   },
   {
-    label: "List Persons",
+    label: "List Users",
     pathname: "/listpersons"
+  },
+  {
+    label: "List Organizations",
+    pathname: "/listorgs"
   },
   {
     label: "List KPIs",

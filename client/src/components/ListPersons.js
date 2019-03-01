@@ -126,7 +126,7 @@ class ListPersons extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        Innovation Platform Person List
+                        Innovation Platform User List
                       </Typography>
                     </div>
                     <div>
@@ -141,7 +141,7 @@ class ListPersons extends Component {
                               <TableBody>
                                 {stableSort(
                                   this.state.persons,
-                                  getSorting("asc", "username")
+                                  getSorting("asc", "email")
                                 ).map(person => {
                                   return (
                                     <TableRow
@@ -154,21 +154,18 @@ class ListPersons extends Component {
                                         {person.id}
                                       </TableCell>
                                       <TableCell align="left">
-                                        <Link to={`/editperson/${person.id}`}>
-                                          {person.username}
-                                        </Link>
-                                      </TableCell>
-                                      <TableCell align="left">
                                         {person.firstName}
                                       </TableCell>
                                       <TableCell align="left">
                                         {person.lastName}
                                       </TableCell>
                                       <TableCell align="left">
-                                        {person.email}
+                                        <Link to={`/editperson/${person.id}`}>
+                                          {person.email}
+                                        </Link>
                                       </TableCell>
                                       <TableCell align="left">
-                                        {person.Organization.name}
+                                        {person.organization.name}
                                       </TableCell>
                                     </TableRow>
                                   );

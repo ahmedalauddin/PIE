@@ -1,5 +1,5 @@
-// List for editing KPIs, 1/22/19.
-// Will be removed eventually.  Essentially a test harness for EditProject.
+// List for editing organizations, 2/22/19.
+// Will be removed eventually.  Essentially a test harness for EditOrg.
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
@@ -17,22 +17,12 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
-const mvcType = "controller";
 
 const rows = [
-  { id: "title", numeric: false, disablePadding: true, label: "KPI" },
-  {
-    id: "description",
-    numeric: false,
+  { id: "id",
+    numeric: true,
     disablePadding: false,
-    label: "Description"
-  },
-  {
-    id: "type",
-    numeric: false,
-    disablePadding: false,
-    label: "Type"
-  },
+    label: "ID" },
   {
     id: "organization",
     numeric: false,
@@ -86,7 +76,7 @@ class MyTableHead extends React.Component {
   }
 }
 
-class ListKpis extends Component {
+class ListProjects extends Component {
   constructor() {
     super();
   }
@@ -95,26 +85,15 @@ class ListKpis extends Component {
     order: "asc",
     orderBy: "",
     selected: [],
-    kpis: [],
-    toProject: "false",
-    toProjectId: ""
+    organizations: [],
+    toOrganization: "false",
+    toOrganizationId: ""
   };
 
   componentDidMount() {
-    // ListKpis is expected to take a param of project ID, and fetch the KPIs
-    // associated only with that project.
-    //alert('id: ' + this.props.match.params.id);
-    if (this.props.match.params.id) {
-      // Fetch the KPIs only for a single project
-      fetch(`/api/kpis/project/${this.props.match.params.id}`)
-        .then(res => res.json())
-        .then(kpis => this.setState({kpis}));
-    }
-    else {
-      // Get all KPIs
-      fetch(`/api/kpis`)
-        .then(res => res.json())
-        .then(kpis => this.setState({kpis}));    }
+    fetch("/api/organizations")
+      .then(res => res.json())
+      .then(organizations => this.setState({ organizations }));
   }
 
   // Here I just want to use something like the construct in Topbar to navigate
@@ -124,9 +103,6 @@ class ListKpis extends Component {
 
   render() {
     const { classes } = this.props;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>
@@ -146,7 +122,7 @@ class ListKpis extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        List of KPIs
+                        Full list of all organizations
                       </Typography>
                     </div>
                     <div>
@@ -160,32 +136,27 @@ class ListKpis extends Component {
                               <MyTableHead />
                               <TableBody>
                                 {stableSort(
-                                  this.state.kpis,
+                                  this.state.organizations,
                                   getSorting("asc", "title")
-                                ).map(kpi => {
+                                ).map(organization => {
                                   return (
                                     <TableRow
                                       hover
                                       onClick={event => {
-                                        this.handleClick(event, kpi.id);
+                                        this.handleClick(event, organization.id);
                                       }}
                                       tabIndex={-1}
-                                      key={kpi.id}
+                                      key={organization.id}
                                     >
-                                      <TableCell width="25%" align="left">
-                                        <Link to={`/kpicard/${kpi.id}`}>
-                                          {kpi.title}
+                                      <TableCell align="right">
+                                        {organization.id}
+                                      </TableCell>
+                                      <TableCell align="left">
+                                        <Link to={`/organizationcard/${organization.id}`}>
+                                          {organization.name}
                                         </Link>
                                       </TableCell>
-                                      <TableCell width="35%" align="left">
-                                        {kpi.description}
-                                      </TableCell>
-                                      <TableCell width="15%" align="left">
-                                        {kpi.type}
-                                    </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.organization.name}
-                                      </TableCell>
+
                                     </TableRow>
                                   );
                                 })}
@@ -206,4 +177,4 @@ class ListKpis extends Component {
   }
 }
 
-export default withStyles(styles)(ListKpis);
+export default withStyles(styles)(ListProjects);

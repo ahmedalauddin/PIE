@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const logger = require("../util/logger")(__filename);
 const mvcType = "controller";
-//const secret = 'quid-pro-quo';
 
 module.exports = {
   authenticate(req, res) {

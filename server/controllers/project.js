@@ -166,6 +166,24 @@ module.exports = {
     }
   },
 
+
+  // Find an org by Id
+  findByOrganization(req, res) {
+    logger.debug(`${callerType} findByOrganization -> id = ${req.params.id}`);
+    return Project.findAll({
+      where: { orgId: req.params.orgid },
+      order: [["title", "DESC"]]
+    })
+      .then(org => {
+        logger.info(`${callerType} findByOrganization -> returned`);
+        res.status(200).send(org);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
   // find all projects
   list(req, res) {
     if (req.query.mmid && req.query.nid) {

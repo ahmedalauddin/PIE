@@ -1,10 +1,10 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/ProjectCard.js
- * Created:  2019-02-05 09:23:45
+ * File:     /client/src/components/OrganizationCard.js
+ * Created:  2019-03-01
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-24
+ * Modified: 2019-03-01
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -19,19 +19,29 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import SectionHeader from './typo/SectionHeader';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Collapse from '@material-ui/core/Collapse';
 import classnames from 'classnames';
 import {red} from '@material-ui/core/colors';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import {getSorting, stableSort} from './TableFunctions';
 import Table from '@material-ui/core/Table';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import moment from 'moment';
 import Log from './Log';
 import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import {Redirect, Link} from 'react-router-dom';
 //import ButtonBar from './buttons/ButtonBar';
 //import Button from '@material-ui/core/Button';
-const mvcType = "controller";
+
 const materialstyles = theme => ({
   card: {
     maxWidth: 400
@@ -72,6 +82,7 @@ const materialstyles = theme => ({
     width: 200
   }
 });
+
 const buttonstyles = theme => ({
   primary: {
     marginRight: theme.spacing.unit * 2
@@ -85,7 +96,43 @@ const buttonstyles = theme => ({
   }
 });
 
-class KpiCard extends React.Component {
+const ExpandingSectionGridItem = (classes, project) => {
+  // TODO - add the org's project list here.
+  // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
+  return (
+    <div className={classes.inlineLeft}>
+      <Typography
+        variant="h6"
+        style={{textTransform: 'uppercase'}}
+        color="secondary"
+        gutterBottom
+      >
+        This organization s projects
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        Project #1
+      </Typography>
+      <Typography variant="h7" gutterBottom>
+        Leading KPI
+        <br/>
+        Project started 12 February 2018
+        <br/>
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        Project #2
+      </Typography>
+      <Typography variant="h7" gutterBottom>
+        Leading KPI
+        <br/>
+        Project started 14 March 2018
+        <br/>
+      </Typography>
+
+    </div>
+  );
+};
+
+class OrganizationCard extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
@@ -99,23 +146,14 @@ class KpiCard extends React.Component {
   state = {
     project: {},
     organizations: [],
-    projid: 0,
-    title: '',
-    type: '',
-    level: '',
-    org: '',
-    orgId: '',
-    description: '',
-    startAt: '',
-    endAt: '',
+    orgname: '',
+    orgId: 0,
     isEditing: false,
     redirect: false,
     isNew: false,
     expanded: false,
     labelWidth: 0
   };
-
-
 
   handleChange = name => event => {
     this.setState({[name]: event.target.value});
@@ -138,7 +176,7 @@ class KpiCard extends React.Component {
         // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
         // We have a project id passed through the URL, do an
         // update on the project.
-        let updatePath = '/api/kpis/' + this.state.id;
+        let updatePath = '/api/organizations/' + this.state.id;
         fetch(updatePath, {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
@@ -153,7 +191,7 @@ class KpiCard extends React.Component {
       } else {
         // No project id, so we will do a create.  The difference
         // is we do a POST instead of a PUT.
-        fetch('/api/kpis', {
+        fetch('/api/organizations', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
@@ -171,18 +209,13 @@ class KpiCard extends React.Component {
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/kpis/${this.props.match.params.id}`)
+      fetch(`/api/organizations/${this.props.match.params.id}`)
         .then(res => res.json())
-        .then(kpi => {
+        .then(organization => {
           this.setState({
             id: this.props.match.params.id,
-            title: kpi.title,
-            description: kpi.description,
-            level: kpi.level,
-            type: kpi.type,
-            projectid: kpi.projectId,
-            startAt: moment(kpi.startAt).format('YYYY-MM-DD'),
-            endAt: moment(kpi.endAt).format('YYYY-MM-DD')
+            name: organization.name,
+            orgId: organization.orgId
           });
         });
     } else {
@@ -190,10 +223,10 @@ class KpiCard extends React.Component {
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
-
-    fetch('/api/organizations/?format=select')
+    // TODO - fetch projects for this org
+    fetch('/api/projects/')
       .then(results => results.json())
-      .then(organizations => this.setState({organizations}));
+      .then(projects => this.setState({projects}));
   }
 
   render() {
@@ -231,104 +264,18 @@ class KpiCard extends React.Component {
                               gutterBottom
                             >
                             </Typography>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell style={{verticalAlign: 'top'}}>
                             <Typography variant="h5" component="h2">
                               <TextField
                                 required
                                 id="title-required"
-                                label="Title"
-                                onChange={this.handleChange('title')}
-                                value={this.state.title}
+                                label="Name"
+                                onChange={this.handleChange('name')}
+                                value={this.state.name}
                                 className={classes.textField}
                                 margin="normal"
                               />
                             </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{verticalAlign: 'top', width: '55%'}}
-                          >
-                            <Typography component="p">
-                              <TextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.description}
-                                onChange={this.handleChange('description')}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="level"
-                                label="Level"
-                                multiline
-                                rowsMax="4"
-                                value={this.state.level}
-                                onChange={this.handleChange('level')}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="type"
-                                label="Type"
-                                multiline
-                                rowsMax="4"
-                                value={this.state.type}
-                                onChange={this.handleChange('type')}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{verticalAlign: 'top', width: '25%'}}
-                          >
-                            <div className={classes.inlineRight}>
-                              <Typography variant="h6" gutterBottom>
-                                <TextField
-                                  id="startAt"
-                                  label="Start Date"
-                                  type="date"
-                                  value={this.state.startAt}
-                                  onChange={this.handleChange('startAt')}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
-                              <Typography variant="h6" gutterBottom>
-                                <TextField
-                                  id="endAt"
-                                  label="End Date"
-                                  type="date"
-                                  value={this.state.endAt}
-                                  onChange={this.handleChange('endAt')}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
+                            <Typography variant="h5" component="h2">
                               <div className={classes.spaceTop}>
                                 <Button
                                   variant="contained"
@@ -336,14 +283,43 @@ class KpiCard extends React.Component {
                                   onClick={this.handleSubmit}
                                   className={classes.secondary}
                                 >
-                                  Update
+                                  Submit
                                 </Button>
                               </div><br/>
-                            </div>
+                              <div className={classes.spaceTop}>
+                                <Button component={Link} to={`/listprojects/${this.props.match.params.id}`}>
+                                  List Projects
+                                </Button>
+                              </div>
+                            </Typography>
                           </TableCell>
                         </TableRow>
                       </Table>
                     </CardContent>
+                    <CardActions
+                      className={classes.actions}
+                      disableActionSpacing
+                    >
+                      <IconButton
+                        className={classnames(classes.expand, {
+                          [classes.expandOpen]: this.state.expanded
+                        })}
+                        onClick={this.handleExpandClick}
+                        aria-expanded={this.state.expanded}
+                        aria-label="Show more"
+                      >
+                        <ExpandMoreIcon/>
+                      </IconButton>
+                    </CardActions>
+                    <Collapse
+                      in={this.state.expanded}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      <CardContent>
+                        {ExpandingSectionGridItem(classes, this.state.project)}
+                      </CardContent>
+                    </Collapse>
                   </Card>
                 </Grid>
               </Grid>
@@ -355,4 +331,4 @@ class KpiCard extends React.Component {
   }
 }
 
-export default withStyles(styles)(KpiCard);
+export default withStyles(styles)(OrganizationCard);

@@ -6,16 +6,6 @@
     "auditLog": ".1b07e1450b693bdbd13272b00ddc5bf5c628a517-audit.json",
     "files": [
         {
-            "date": 1550864452287,
-            "name": "valueinfinity-mvp.log.2019-02-22",
-            "hash": "85ad3148600203e2f9febd047b483ef0"
-        },
-        {
-            "date": 1551035853610,
-            "name": "valueinfinity-mvp.log.2019-02-24",
-            "hash": "94fae0f23e65894582a6bab1b84d524b"
-        },
-        {
             "date": 1551109999013,
             "name": "valueinfinity-mvp.log.2019-02-25",
             "hash": "0e24f13a3a6d053bcdbe3780dadb9af9"
@@ -24,6 +14,21 @@
             "date": 1551157222867,
             "name": "valueinfinity-mvp.log.2019-02-26",
             "hash": "5633f660f69abf1f7c3e8b45230efdd2"
+        },
+        {
+            "date": 1551299511506,
+            "name": "valueinfinity-mvp.log.2019-02-27",
+            "hash": "6341b9afa6634ff59406850182b8b984"
+        },
+        {
+            "date": 1551364681372,
+            "name": "valueinfinity-mvp.log.2019-02-28",
+            "hash": "548d3fcd7049b0f6c74613bc754e8d67"
+        },
+        {
+            "date": 1551416463169,
+            "name": "valueinfinity-mvp.log.2019-03-01",
+            "hash": "2864720a9c3a83573af5e94bd4c0588f"
         }
     ]
 }

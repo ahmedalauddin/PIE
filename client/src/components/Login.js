@@ -67,7 +67,6 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
 
     // Authenticate against the username
     fetch('/api/authenticate', {
@@ -104,7 +103,7 @@ class Login extends React.Component {
     //const id = this.props.match.params.id;
 
     if (this.state.isLoggedIn) {
-      return <Redirect to="/listprojects"/>;
+      return <Redirect to="/"/>;
     }
 
     return (

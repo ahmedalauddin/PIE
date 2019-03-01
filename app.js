@@ -14,7 +14,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 var expressWinston = require("express-winston");
-var cookieParser = require("cookie-parser")();
+var cookieParser = require("cookie-parser");
 var config = require("./server/config/config");
 const models = require("./server/models");
 const logger = require("./server/util/logger")(__filename);
@@ -32,7 +32,7 @@ var app = express();
 logger.debug(`adding parsers`);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser);
+app.use(cookieParser());
 
 // view engine setup
 // logger.debug(`adding views`);
@@ -82,7 +82,7 @@ models.sequelize
 
 // error handlers
 // catch 404 and forward to error handler
-//router.use(function(req, res, next) {
+// router.use(function(req, res, next) {
 //  next(createError(404));
 //});
 

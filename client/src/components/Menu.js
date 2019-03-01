@@ -34,6 +34,10 @@ const Menu = [
   {
     label: "List KPIs",
     pathname: "/listkpis"
+  },
+  {
+    label: "Logout",
+    pathname: "/logout"
   }
 ];
 

@@ -10,6 +10,8 @@
 "use strict";
 
 // declarations
+//import withAuth from "../../client/src/components/withAuth.jsx";
+
 const auth = require("../controllers/auth");
 const logger = require("../util/logger")(__filename);
 
@@ -20,20 +22,21 @@ module.exports = router => {
   logger.debug(`${callerClass} POST -> path: /api/authenticate`);
   router.post("/api/authenticate", auth.authenticate);
 
-  //app.get('/api/checktoken', middleware.checkToken);
 
-  //app.post('/api/signin', authController.signin);
+  // logout
+  logger.debug(`${callerClass} GET -> path: /api/logout`);
+  router.get("/api/logout", auth.logout);
 
-  //app.post('/api/signup', authController.signup);
+  // validateToken
+  logger.debug(`${callerClass} POST -> path: /validateToken`);
+  router.get("/validateToken", auth.validateToken);
 
-  //app.get('/dashboard',isLoggedIn, authController.dashboard);
 
-  //app.get('/api/logout', authController.logout);
-
-  //app.post('/api/signin', authController.signin);
+  // TODO: add logout route.
 
   // TODO need is logged check first on signup
-  /*
+
+  /* TODO check if we need this.
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
             return next();

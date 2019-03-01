@@ -50,9 +50,7 @@ class MyTableHead extends React.Component {
   render() {
     const {
       order,
-      orderBy,
-      numSelected,
-      rowCount
+      orderBy
     } = this.props;
 
     return (

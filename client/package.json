@@ -19,6 +19,7 @@
     "formik": "^1.4.2",
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
+    "mxgraph": "^3.9.12",
     "node-csv": "^0.1.2",
     "prettier": "^1.16.4",
     "prop-types": "^15.6.2",

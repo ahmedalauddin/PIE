@@ -3,6 +3,7 @@ const bCrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const logger = require("../util/logger")(__filename);
+const Organization = require("../models").Organization;
 const mvcType = "controller";
 
 module.exports = {
@@ -13,7 +14,13 @@ module.exports = {
     return models.Person.findOne({
       where: {
         email: req.body.email
-      }
+      },
+      include: [
+        {
+          model: Organization,
+          as: "organization"
+        }
+      ]
     })
       .then(p => {
         logger.debug(
@@ -26,7 +33,8 @@ module.exports = {
             // Logged in successfully.
             logger.debug(`${mvcType} authenticate -> successful`);
             let token = jwt.sign(
-              { username: p.username },
+              //{ email: p.email },
+              { email: p.email, organization: p.organization.name },
               config.get("security.jwtSecret"),
               {
                 expiresIn: "24h" // expires in 24 hours
@@ -74,8 +82,8 @@ module.exports = {
     const token =
       req.body.token ||
       req.params.token ||
-      req.headers["x-access-token"] ||
-      req.headers["authorization"] ||
+      req.headers["X-Access-Token"] ||
+      req.headers["Authorization"] ||
       req.cookies.token;
 
     //const token = req.headers["authorization"];
@@ -93,11 +101,12 @@ module.exports = {
             message: 'Failed to authenticate token.' });
         } else {
           // if everything is good, save to request for use in other routes
-          logger.debug(`${mvcType} validateToken -> success`);
+          logger.debug(`${mvcType} validateToken -> success, decoded: ${JSON.stringify(decoded)}`);
           req.decoded = decoded;
-          // TODO Check if we need next();
+          // TODO Check if we need next().  If we have as middleware, then we'll use this, calling
+          // the next element.
           //next();
-          return res.status(200);
+          return res.status(200).send(JSON.stringify(decoded));
         }
       });
     } else {

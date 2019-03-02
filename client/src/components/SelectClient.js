@@ -1,12 +1,14 @@
 /**
- * Project:  valueinfinity-mvp
- * File:     /client/src/components/Login.js
- * Created:  2019-02-04
- * Author:   Brad Kaufman
- * -----
- * Modified: 2019-02-21 10:00:20
- * Editor:   Darrin Tisdale
- */
+* Project:  valueinfinity-mvp
+* File:     /client/src/components/SelectClient.js
+* Created:  2019-03-01
+* Author:   Brad Kaufman
+* Descr:    After the login component, allow ValueInfinity users to select
+*           which organization they want to work with.
+* -----
+* Modified:
+* Editor:
+*/
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -16,10 +18,13 @@ import Topbar from './Topbar';
 import {styles} from './MaterialSense';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 import Grid from '@material-ui/core/Grid';
 import SectionHeader from './typo/SectionHeader';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 
 const buttonstyles = theme => ({
   primary: {
@@ -34,14 +39,14 @@ const buttonstyles = theme => ({
   }
 });
 
-class Login extends React.Component {
+class SelectClient extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
     id: '',
-    email: '',
-    pwdhash: '',
-    password: '',
+    organizations: [],
+    org: '',
+    orgId: 0,
     isEditing: false,
     isLoggedIn: false,
     isFailedLogin: false,
@@ -68,31 +73,13 @@ class Login extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    // Authenticate against the username
-    fetch('/api/authenticate', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state),
-    }).then(response => {
-      if (response.status === 200) {
-        // status code 200 is success.
-        this.setState({isLoggedIn: true});
-      }
-      else {
-        this.setState({isFailedLogin: true,
-          isLoggedIn: false});
-        this.setState({msgText: "Login failed, please try again."});
-      }
-
-    }).catch(err => {
-      // TODO - set error login on form.
-      this.setState({isFailedLogin: true});
-      this.setState({msgText: "Login failed, please try again."});
-    });
   };
 
 
   componentDidMount() {
+    fetch('/api/organizations/?format=select')
+      .then(results => results.json())
+      .then(organizations => this.setState({organizations}));
   }
 
   render() {
@@ -101,16 +88,9 @@ class Login extends React.Component {
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
-    let redirect = '';
+
     if (this.state.isLoggedIn) {
-      if (this.state.email.toLowerCase().includes('@valueinfinity.com') ||
-        this.state.email.toLowerCase().includes('@th.io')) {
-        redirect = "/SelectClient";
-      }
-      else {
-        redirect = "/";
-      }
-      return <Redirect to={redirect}/>;
+      return <Redirect to="/"/>;
     }
 
     return (
@@ -134,36 +114,31 @@ class Login extends React.Component {
                       <Typography variant="h5" component="h2"
                         color="secondary"
                         gutterBottom
-                      >Please login
-                      </Typography>
-                      <Typography variant="h5" component="h2"
-                        style={{textTransform: 'uppercase'}}
-                        color="secondary"
-                        gutterBottom
-                      >{this.state.msgText}
+                      >Select client
                       </Typography>
                       <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="email"
-                          label="Email"
-                          onChange={this.handleChange('email')}
-                          value={this.state.email}
-                          className={classes.textField}
-                          margin="normal"
-                        />
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="password"
-                          label="Password"
-                          type="Password"
-                          onChange={this.handleChange('password')}
-                          value={this.state.password}
-                          className={classes.textField}
-                          margin="normal"
-                        />
+                        <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor="organization-simple">
+                            Organization
+                          </InputLabel>
+                          <Select
+                            value={this.state.orgId}
+                            onChange={this.handleSelectChange}
+                            renderValue={value => this.state.orgId}
+                            inputProps={{
+                              name: 'org',
+                              id: 'orgId'
+                            }}
+                          >
+                            {this.state.organizations.map(org => {
+                              return (
+                                <MenuItem key={org.id} value={org.id}>
+                                  {org.name}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
@@ -190,4 +165,4 @@ class Login extends React.Component {
   }
 }
 
-export default withStyles(styles)(Login);
+export default withStyles(styles)(SelectClient);

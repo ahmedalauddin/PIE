@@ -22,6 +22,7 @@ import ProjectCard from "./components/ProjectCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import withAuth from "./components/withAuth.jsx";
+import SelectClient from './components/SelectClient';
 
 export default props => (
   <BrowserRouter>
@@ -34,6 +35,7 @@ export default props => (
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/clientorg" component={ClientOrg} />
+        <Route exact path="/selectclient" component={SelectClient} />
         <Route exact path="/projcontainer" component={ProjContainer} />
         <Route exact path="/projectcard" component={ProjectCard} />
         <Route exact path="/editkpi" component={EditKpi} />
@@ -41,13 +43,13 @@ export default props => (
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
         <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
         <Route path="/editperson/:id" component={EditPerson} />
-        <Route path="/editkpi/:id" component={EditKpi} />
+        <Route path="/listkpis/:id" component={ListKpis} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={KpiCard} />
         <Route exact path="/mindmapstatic" component={withAuth(MindMapStatic)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
-        <Route exact path="/listkpis" component={ListKpis} />
-        <Route exact path="/listorgs" component={ListOrgs} />
+        <Route exact path="/listkpis" component={withAuth(ListKpis)} />
+        <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
       </Switch>
     </ScrollToTop>

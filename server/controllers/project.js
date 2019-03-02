@@ -12,6 +12,7 @@
 // declarations
 const Organization = require("../models").Organization;
 const Project = require("../models").Project;
+const KPI = require("../models").KPI;
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";

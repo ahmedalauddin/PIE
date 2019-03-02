@@ -436,11 +436,11 @@ class ProjectCard extends React.Component {
                                   onClick={this.handleSubmit}
                                   className={classes.secondary}
                                 >
-                                  Submit
+                                  Update
                                 </Button>
                               </div><br/>
                               <div className={classes.spaceTop}>
-                                <Button component={Link} to={`/listkpis/${this.props.match.params.id}`}>
+                                <Button component={Link} variant="contained" color="gray" to={`/listkpis/${this.props.match.params.id}`}>
                                   List KPIs
                                 </Button>
                               </div>

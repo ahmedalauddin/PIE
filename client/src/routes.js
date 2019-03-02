@@ -28,7 +28,7 @@ export default props => (
   <BrowserRouter>
     <ScrollToTop>
       <Switch>
-        <Route exact path="/" component={withAuth(Main2)} />
+        <Route exact path="/" component={Main2} />
         <Route exact path="/dashboard" component={Dashboard} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
@@ -39,17 +39,17 @@ export default props => (
         <Route exact path="/projcontainer" component={ProjContainer} />
         <Route exact path="/projectcard" component={ProjectCard} />
         <Route exact path="/editkpi" component={EditKpi} />
-        <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
-        <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
-        <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
+        <Route path="/projectcard/:id" component={ProjectCard} />
+        <Route path="/listprojects/:id" component={ListProjects} />
+        <Route path="/organizationcard/:id" component={OrganizationCard} />
         <Route path="/editperson/:id" component={EditPerson} />
         <Route path="/listkpis/:id" component={ListKpis} />
-        <Route exact path="/listprojects" component={withAuth(ListProjects)} />
+        <Route exact path="/listprojects" component={ListProjects} />
         <Route exact path="/kpicard/:id" component={KpiCard} />
-        <Route exact path="/mindmapstatic" component={withAuth(MindMapStatic)} />
-        <Route exact path="/listpersons" component={withAuth(ListPersons)} />
-        <Route exact path="/listkpis" component={withAuth(ListKpis)} />
-        <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
+        <Route exact path="/mindmapstatic" component={MindMapStatic} />
+        <Route exact path="/listpersons" component={ListPersons} />
+        <Route exact path="/listkpis" component={ListKpis} />
+        <Route exact path="/listorgs" component={ListOrgs} />
         <Route exact path="/cards" component={Cards} />
       </Switch>
     </ScrollToTop>

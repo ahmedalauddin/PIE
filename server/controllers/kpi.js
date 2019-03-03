@@ -66,15 +66,12 @@ module.exports = {
 
   // Find a Kpi by Id
   findById(req, res) {
+    logger.error(`${callerType} KPI, findById `);
     return models.Kpi.findByPk(req.params.id, {
       include: [
         {
           model: models.Organization,
           as: "organization"
-        },
-        {
-          model: models.Project,
-          as: "projects"
         }
       ]
     })
@@ -103,7 +100,7 @@ module.exports = {
         },
         {
           model: models.Project,
-          as: "projects"
+          as: "project"
         }
       ]
     })

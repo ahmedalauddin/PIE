@@ -35,12 +35,10 @@ import Table from '@material-ui/core/Table';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import moment from 'moment';
-import Log from './Log';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import {Redirect, Link} from 'react-router-dom';
-//import ButtonBar from './buttons/ButtonBar';
-//import Button from '@material-ui/core/Button';
+import {Link} from 'react-router-dom';
+import ProjectKpis from './ProjectKpis.js';
 
 const materialstyles = theme => ({
   card: {
@@ -83,67 +81,6 @@ const materialstyles = theme => ({
   }
 });
 
-const ExpandingSectionGridItem = (classes, project) => {
-  // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
-  return (
-    <div className={classes.inlineLeft}>
-      <Typography
-        variant="h6"
-        style={{textTransform: 'uppercase'}}
-        color="secondary"
-        gutterBottom
-      >
-        > Other Prioritized KPIs
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Service BOM Accuracy
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 12 February 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Reduction in Unplanned Activities
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 14 March 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Increase in Local Source
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project started 14 March 2018
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Improve Predictablity of Failure
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project in planning
-        <br/>
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        First Time Right
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br/>
-        Project in planning
-        <br/>
-        <br/>
-      </Typography>
-    </div>
-  );
-};
 
 const buttonstyles = theme => ({
   primary: {
@@ -470,7 +407,7 @@ class ProjectCard extends React.Component {
                       unmountOnExit
                     >
                       <CardContent>
-                        {ExpandingSectionGridItem(classes, this.state.project)}
+                        <ProjectKpis classes={classes} projid={this.state.projid}/>
                       </CardContent>
                     </Collapse>
                   </Card>

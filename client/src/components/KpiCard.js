@@ -108,6 +108,7 @@ class KpiCard extends React.Component {
     description: '',
     startAt: '',
     endAt: '',
+    msg: '',
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -144,8 +145,11 @@ class KpiCard extends React.Component {
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(this.state)
         })
-          .then(data => {
-            //console.log(data);
+          .then(response => {
+            if(response.status.toString().localeCompare('201')) {
+              alert(response.status);
+              this.setState({msg: 'Updated'});
+            }
           })
           .catch(err => {
             //console.log(err);
@@ -179,10 +183,9 @@ class KpiCard extends React.Component {
             title: kpi.title,
             description: kpi.description,
             level: kpi.level,
+            orgId: kpi.orgId,
             type: kpi.type,
-            projectid: kpi.projectId,
-            startAt: moment(kpi.startAt).format('YYYY-MM-DD'),
-            endAt: moment(kpi.endAt).format('YYYY-MM-DD')
+            projectid: kpi.projectId
           });
         });
     } else {
@@ -230,8 +233,15 @@ class KpiCard extends React.Component {
                               color="secondary"
                               gutterBottom
                             >
+                              KPI Detail
                             </Typography>
                           </TableCell>
+                          <Typography
+                            color="secondary"
+                            gutterBottom
+                          >
+                            {this.state.msg}
+                          </Typography>
                         </TableRow>
                         <TableRow>
                           <TableCell style={{verticalAlign: 'top'}}>
@@ -246,10 +256,6 @@ class KpiCard extends React.Component {
                                 margin="normal"
                               />
                             </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{verticalAlign: 'top', width: '55%'}}
-                          >
                             <Typography component="p">
                               <TextField
                                 id="description"
@@ -266,80 +272,38 @@ class KpiCard extends React.Component {
                                 }}
                               />
                             </Typography>
-                            <Typography component="p">
+                            <Typography variant="h5" component="h2">
                               <TextField
                                 id="level"
                                 label="Level"
-                                multiline
-                                rowsMax="4"
-                                value={this.state.level}
                                 onChange={this.handleChange('level')}
+                                value={this.state.level}
                                 className={classes.textField}
-                                fullWidth
                                 margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
                               />
                             </Typography>
-                            <Typography component="p">
+                            <Typography variant="h5" component="h2">
                               <TextField
+                                required
                                 id="type"
                                 label="Type"
-                                multiline
-                                rowsMax="4"
-                                value={this.state.type}
                                 onChange={this.handleChange('type')}
+                                value={this.state.type}
                                 className={classes.textField}
-                                fullWidth
                                 margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
                               />
                             </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{verticalAlign: 'top', width: '25%'}}
-                          >
-                            <div className={classes.inlineRight}>
-                              <Typography variant="h6" gutterBottom>
-                                <TextField
-                                  id="startAt"
-                                  label="Start Date"
-                                  type="date"
-                                  value={this.state.startAt}
-                                  onChange={this.handleChange('startAt')}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
-                              <Typography variant="h6" gutterBottom>
-                                <TextField
-                                  id="endAt"
-                                  label="End Date"
-                                  type="date"
-                                  value={this.state.endAt}
-                                  onChange={this.handleChange('endAt')}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
-                              <div className={classes.spaceTop}>
-                                <Button
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={this.handleSubmit}
-                                  className={classes.secondary}
-                                >
-                                  Update
-                                </Button>
-                              </div><br/>
-                            </div>
+                            <div className={classes.spaceTop}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={this.handleSubmit}
+                                className={classes.secondary}
+                              >
+                                Update
+                              </Button>
+                            </div><br/>
+
                           </TableCell>
                         </TableRow>
                       </Table>

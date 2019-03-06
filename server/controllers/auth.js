@@ -4,7 +4,7 @@
  * Created:  2019-03-01 04:37:25
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-05 15:55:35
+ * Modified: 2019-03-06 15:29:25
  * Editor:   Darrin Tisdale
  */
 
@@ -13,7 +13,9 @@ const bCrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const logger = require("../util/logger")(__filename);
+const Organization = require("../models").Organization;
 const mvcType = "controller";
+const cookieName = "token";
 
 module.exports = {
   authenticate(req, res) {
@@ -23,7 +25,13 @@ module.exports = {
     return Person.findOne({
       where: {
         email: req.body.email
-      }
+      },
+      include: [
+        {
+          model: Organization,
+          as: "organization"
+        }
+      ]
     })
       .then(p => {
         logger.debug(
@@ -36,7 +44,7 @@ module.exports = {
             // Logged in successfully.
             logger.debug(`${mvcType} authenticate -> successful`);
             let token = jwt.sign(
-              { email: p.email, organization: p.organization.id },
+              { email: p.email, organization: p.organization },
               config.get("security.jwtSecret"),
               {
                 expiresIn: "24h" // expires in 24 hours
@@ -46,7 +54,7 @@ module.exports = {
             logger.debug(
               `${mvcType} authenticate -> returning token ${token} as cookie`
             );
-            res.cookie("token", token, { httpOnly: true }).sendStatus(200);
+            res.cookie(cookieName, token, { httpOnly: true }).sendStatus(200);
           } else {
             // Login failed
             let _m = "Username or password is incorrect";
@@ -72,8 +80,8 @@ module.exports = {
   },
 
   logout(req, res) {
-    logger.debug(`${mvcType} logout -> start`);
-    res.cookie("token", "", { httpOnly: true }).sendStatus(200);
+    logger.debug(`${mvcType} logout -> clearing cookie ${cookieName}`);
+    res.clearCookie(cookieName, { httpOnly: true }).sendStatus(200);
   },
 
   validateToken(req, res) {
@@ -81,14 +89,14 @@ module.exports = {
     logger.debug(`${mvcType} validateToken -> enter`);
 
     const token =
+      req.cookies.token ||
       req.body.token ||
       req.params.token ||
-      req.headers["x-access-token"] ||
-      req.headers["authorization"] ||
-      req.cookies.token;
+      req.headers["X-Access-Token"] ||
+      req.headers["Authorization"];
 
     //const token = req.headers["authorization"];
-    logger.debug(`${mvcType} validateToken -> set var token, token = ${token}`);
+    logger.debug(`${mvcType} validateToken -> token = ${token}`);
 
     var _code = 403;
     var _body = {};
@@ -102,8 +110,8 @@ module.exports = {
         decoded
       ) {
         if (err) {
-          logger.debug(
-            `${mvcType} validateToken -> err, Failed to authenticate token`
+          logger.error(
+            `${mvcType} validateToken -> error, failed to authenticate token`
           );
           _code = 200;
           _body = {

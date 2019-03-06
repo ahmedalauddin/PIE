@@ -86,7 +86,7 @@ class MyTableHead extends React.Component {
   }
 }
 
-class ListKpis extends Component {
+class ProjectKpis extends Component {
   constructor() {
     super();
   }
@@ -105,17 +105,6 @@ class ListKpis extends Component {
     // associated only with that project.
     let projectid = 0;
     projectid = this.props.projid;
-    /*
-    alert('id in props: ' + this.props.projid);
-    //alert('id in params: ' + this.props.match.params.id);
-    if (this.props.match.params.id) {
-
-      projectid = this.props.match.params.id;
-    } else if (this.props.projid > 0) {
-
-      projectid = this.props.projid;
-    }
-   */
 
     if (projectid) {
       // Fetch the KPIs only for a single project
@@ -143,80 +132,59 @@ class ListKpis extends Component {
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        <Topbar />
         <div className={classes.root}>
-          <Grid container justify="center">
-            <Grid
-              spacing={24}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid container item xs={12}>
-                <Grid item xs={12}>
-                  <Paper className={classes.paper}>
-                    <div className={classes.box}>
-                      <Typography color="secondary" gutterBottom>
-                        List of KPIs
-                      </Typography>
-                    </div>
-                    <div>
-                      <Typography variant="body1" gutterBottom>
-                        <Paper className={classes.root}>
-                          <div className={classes.tableWrapper}>
-                            <Table
-                              className={classes.table}
-                              aria-labelledby="tableTitle"
-                            >
-                              <MyTableHead />
-                              <TableBody>
-                                {stableSort(
-                                  this.state.kpis,
-                                  getSorting("asc", "title")
-                                ).map(kpi => {
-                                  return (
-                                    <TableRow
-                                      hover
-                                      onClick={event => {
-                                        this.handleClick(event, kpi.id);
-                                      }}
-                                      tabIndex={-1}
-                                      key={kpi.id}
-                                    >
-                                      <TableCell width="25%" align="left">
-                                        <Link to={`/kpicard/${kpi.id}`}>
-                                          {kpi.title}
-                                        </Link>
-                                      </TableCell>
-                                      <TableCell width="35%" align="left">
-                                        {kpi.description}
-                                      </TableCell>
-                                      <TableCell width="15%" align="left">
-                                        {kpi.type}
-                                    </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.organization.name}
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        </Paper>
-                      </Typography>
-                    </div>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+          <Typography color="secondary" gutterBottom>
+            Project KPIs
+          </Typography>
+
+          <Typography variant="body1" gutterBottom>
+            <Paper className={classes.root}>
+              <div className={classes.tableWrapper}>
+                <Table
+                  className={classes.table}
+                  aria-labelledby="tableTitle"
+                >
+                  <MyTableHead />
+                  <TableBody>
+                    {stableSort(
+                      this.state.kpis,
+                      getSorting("asc", "title")
+                    ).map(kpi => {
+                      return (
+                        <TableRow
+                          hover
+                          onClick={event => {
+                            this.handleClick(event, kpi.id);
+                          }}
+                          tabIndex={-1}
+                          key={kpi.id}
+                        >
+                          <TableCell width="25%" align="left">
+                            <Link to={`/kpicard/${kpi.id}`}>
+                              {kpi.title}
+                            </Link>
+                          </TableCell>
+                          <TableCell width="35%" align="left">
+                            {kpi.description}
+                          </TableCell>
+                          <TableCell width="15%" align="left">
+                            {kpi.type}
+                        </TableCell>
+                          <TableCell align="left">
+                            {kpi.organization.name}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </Paper>
+          </Typography>
         </div>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(ListKpis);
+export default withStyles(styles)(ProjectKpis);

@@ -23,9 +23,17 @@
     "mxgraph": "^3.9.12",
     "node-csv": "^0.1.2",
     "prettier": "^1.16.4",
+<<<<<<< HEAD
     "prop-types": "^15.7.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
+=======
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-bootstrap-dropdown-menu": "^1.1.15",
+    "react-dom": "^16.7.0",
+    "react-md": "^1.9.3",
+>>>>>>> d6bd1b0513e3e2fc9f0863c8b6734cfd4ec8d051
     "react-moment": "^0.8.4",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",

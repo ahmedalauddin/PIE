@@ -11,7 +11,7 @@
 
 // declarations
 const models = require("../models");
-//const Organization = require("../models").Organization;
+const Organization = require("../models").Organization;
 const bCrypt = require("bcrypt");
 const util = require("util");
 const logger = require("../util/logger")(__filename);

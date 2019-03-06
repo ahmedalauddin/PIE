@@ -12,6 +12,7 @@
 // declaractions
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
+const Organization = require("../models").Organization;
 const callerType = "controller";
 
 module.exports = {
@@ -65,15 +66,12 @@ module.exports = {
 
   // Find a Kpi by Id
   findById(req, res) {
+    logger.error(`${callerType} KPI, findById `);
     return models.Kpi.findByPk(req.params.id, {
       include: [
         {
           model: models.Organization,
           as: "organization"
-        },
-        {
-          model: models.Project,
-          as: "projects"
         }
       ]
     })
@@ -94,7 +92,17 @@ module.exports = {
   listByProject(req, res) {
     return models.Kpi.findAll({
       where: { projectId: req.params.projid },
-      order: [["title", "DESC"]]
+      order: [["title", "DESC"]],
+      include: [
+        {
+          model: Organization,
+          as: "organization"
+        },
+        {
+          model: models.Project,
+          as: "project"
+        }
+      ]
     })
       .then(_k => {
         logger.debug(`${callerType} listByProject -> successful, count: ${_k.length}`);

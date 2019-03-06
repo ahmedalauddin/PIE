@@ -1,8 +1,8 @@
-// List for editing organizations, 2/22/19.
-// Will be removed eventually.  Essentially a test harness for EditOrg.
+// List for editing projects, 1/22/19.
+// Will be removed eventually.  Essentially a test harness for EditProject.
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
+//import Topbar from "./Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
@@ -17,12 +17,17 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
+import MenuButtonBar from "./ReactMdMenubar";
 
 const rows = [
-  { id: "id",
-    numeric: true,
+  { id: "id", numeric: true, disablePadding: false, label: "ID" },
+  { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
+  {
+    id: "description",
+    numeric: false,
     disablePadding: false,
-    label: "ID" },
+    label: "Description"
+  },
   {
     id: "organization",
     numeric: false,
@@ -37,10 +42,7 @@ class MyTableHead extends React.Component {
   };
 
   render() {
-    const {
-      order,
-      orderBy
-    } = this.props;
+    const { order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -85,15 +87,58 @@ class ListProjects extends Component {
     order: "asc",
     orderBy: "",
     selected: [],
-    organizations: [],
-    toOrganization: "false",
-    toOrganizationId: ""
+    projects: [],
+    toProject: "false",
+    toProjectId: ""
   };
 
-  componentDidMount() {
-    fetch("/api/organizations")
-      .then(res => res.json())
-      .then(organizations => this.setState({ organizations }));
+  getTableBody = async () => {
+    return await Promise.all(
+      <TableBody>
+        {this.state.projects.map(project => this.getTableRows(project))}
+      </TableBody>
+    );
+  };
+
+
+  getTableRows = project => {
+    return (
+      <TableRow
+        hover
+        onClick={event => {
+          this.handleClick(event, project.id);
+        }}
+        tabIndex={-1}
+        key={project.id}
+      >
+        <TableCell align="right">{project.id}</TableCell>
+        <TableCell align="left">
+          <Link to={`/projectcard/${project.id}`}>{project.title}</Link>
+        </TableCell>
+        <TableCell width="45%" align="left">
+          {project.description}
+        </TableCell>
+        <TableCell align="left">{project.organization.name}</TableCell>
+      </TableRow>
+    );
+  }
+
+  async componentDidMount() {
+    if (parseInt(this.props.match.params.id) > 0) {
+      // If there is an id passed in, it's for organization.
+      await fetch(`/api/projects/organization/${this.props.match.params.id}`)
+        .then(async res => {
+          await res.json();
+        })
+        .then(projects => this.setState({ projects }));
+    } else {
+      await fetch("/api/projects")
+        .then(async res => {
+          //console.log("res: " + res.text());
+          await res.json();
+        })
+        .then(async projects => await this.setState({ projects }));
+    }
   }
 
   // Here I just want to use something like the construct in Topbar to navigate
@@ -106,10 +151,8 @@ class ListProjects extends Component {
 
     return (
       <React.Fragment>
-        <div>
-          <CssBaseline />
-          <Topbar />
-        </div>
+        <CssBaseline />
+        <MenuButtonBar />
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid
@@ -124,7 +167,7 @@ class ListProjects extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        Full list of all organizations
+                        UPDATED: Full list of all ValueInfinity projects
                       </Typography>
                     </div>
                     <div>
@@ -136,33 +179,7 @@ class ListProjects extends Component {
                               aria-labelledby="tableTitle"
                             >
                               <MyTableHead />
-                              <TableBody>
-                                {stableSort(
-                                  this.state.organizations,
-                                  getSorting("asc", "title")
-                                ).map(organization => {
-                                  return (
-                                    <TableRow
-                                      hover
-                                      onClick={event => {
-                                        this.handleClick(event, organization.id);
-                                      }}
-                                      tabIndex={-1}
-                                      key={organization.id}
-                                    >
-                                      <TableCell align="right">
-                                        {organization.id}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        <Link to={`/organizationcard/${organization.id}`}>
-                                          {organization.name}
-                                        </Link>
-                                      </TableCell>
-
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
+                              {this.getTableBody()}
                             </Table>
                           </div>
                         </Paper>

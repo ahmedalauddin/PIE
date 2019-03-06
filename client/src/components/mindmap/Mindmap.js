@@ -9,62 +9,113 @@ import Typography from "@material-ui/core/Typography";
 import { styles } from "../MaterialSense";
 import { jsMind } from "./jsmind";
 import "./mindmap.css";
+const gr = require("mxgraph-js");
 
-// TODO add hooks on mindmap object to call component functions exposed and passed in via extended options
-// TODO determine if we are going to use Flux to handle message routing because including the toolbar here is crap
-// TODO extend the rendition part of the node to include a link to the project if it's present
-
-class Mindmap extends Component {
+class MindMap extends Component {
   constructor(props) {
     super(props);
-
-    // props of interest
     this.state = {
-      orgId: 0,
-      mindmap: {}
+      graph: {},
+      layout: {},
+      json: "",
+      dragElt: null,
+      createVisile: false,
+      currentNode: null,
+      currentTask: ""
     };
-
-    // bind the event handlers
-    this.onCreateNode = this.onCreateNode.bind(this);
-    this.onDeleteNode = this.onDeleteNode.bind(this);
-    this.onUpdateNode = this.onUpdateNode.bind(this);
+    this.LoadGraph = this.LoadGraph.bind(this);
   }
 
   componentDidMount() {
-    // check to see if props includes the ID to the mindmap
-    if (this.props.mindMapId) {
-      // Use fetch to get all the KPIs
-      fetch(`/api/mindmaps/${this.props.mindMapId}`)
-        .then(res => res.json())
-        .then(mindmap => this.setState({ mindmap }));
+    this.LoadGraph();
+  }
+
+  LoadGraph = () => {
+    gr.mxGraph.prototype.getAllConnectionConstraints = function(
+      terminal,
+      source
+    ) {
+      if (terminal != null && terminal.shape != null) {
+        if (terminal.shape.stencil != null) {
+          if (terminal.shape.stencil != null) {
+            return terminal.shape.stencil.constraints;
+          }
+        } else if (terminal.shape.constraints != null) {
+          return terminal.shape.constraints;
+        }
+      }
+
+      return null;
+    };
+
+    // Defines the default constraints for all shapes
+    const mxConnectionConstraint = gr.mxConnectionConstraint;
+    const mxPoint = gr.mxPoint;
+    gr.mxShape.prototype.constraints = [
+      new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+      new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+      new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+      new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+      new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+      new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+      new mxConnectionConstraint(new mxPoint(1, 0.25), true),
+      new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+      new mxConnectionConstraint(new mxPoint(1, 0.75), true),
+      new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+      new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+      new mxConnectionConstraint(new mxPoint(0.75, 1), true)
+    ];
+
+    // Edges have no connection points
+    gr.mxPolyline.prototype.constraints = null;
+    if (!gr.mxClient.isBrowserSupported()) {
+      // Displays an error message if the browser is not supported.
+      gr.mxUtils.error("Browser is not supported!", 200, false);
     } else {
-      if (this.props.orgId) {
-        // Use fetch to get all the KPIs
-        fetch(`/api/mindmaps/?orgId=${this.props.orgId}`)
-          .then(res => res.json())
-          .then(mindmap => this.setState({ mindmap }));
+      // Disables the built-in context menu
+      const container = document.querySelector("#graphContainer");
+      gr.mxEvent.disableContextMenu(container);
+
+      // Creates the graph inside the given container
+      var graph = new gr.mxGraph(container);
+      graph.setConnectable(true);
+
+      // Enables connect preview for the default edge style
+      graph.connectionHandler.createEdgeState = function(me) {
+        var edge = graph.createEdge(null, null, null, null, null);
+
+        return new gr.mxCellState(
+          this.graph.view,
+          edge,
+          this.graph.getCellStyle(edge)
+        );
+      };
+
+      // Specifies the default edge style
+      graph.getStylesheet().getDefaultEdgeStyle()["edgeStyle"] =
+        "orthogonalEdgeStyle";
+
+      // Enables rubberband selection
+      new gr.mxRubberband(graph);
+
+      // Gets the default parent for inserting new cells. This
+      // is normally the first child of the root (ie. layer 0).
+      var parent = graph.getDefaultParent();
+
+      // Adds cells to the model in a single step
+      graph.getModel().beginUpdate();
+      try {
+        var v1 = graph.insertVertex(parent, null, "shape1,", 20, 20, 80, 30);
+        var v2 = graph.insertVertex(parent, null, "shape2", 200, 150, 80, 30);
+        var e1 = graph.insertEdge(parent, null, "edge", v1, v2);
+      } finally {
+        // Updates the display
+        graph.getModel().endUpdate();
       }
     }
-  }
-
-  componentDidUpdate() {
-    // set up the options
-    const options = {
-      container: "mindmap",
-      editable: true,
-      hooks: {
-        add_node_event_handler: { onCreateNode },
-        edit_node_event_handler: { onUpdateNode },
-        delete_node_event_handler: { onDeleteNode }
-      }
-    };
-    const jm = new jsMind(options);
-    jm.show(this.state.mindmapData);
-  }
+  };
 
   render() {
-    const { classes } = this.props.classes;
-
     return (
       <React.Fragment>
         <CssBaseline />
@@ -76,7 +127,8 @@ class Mindmap extends Component {
               alignItems="center"
               justify="center"
               container
-              className={classes.grid}>
+              className={classes.grid}
+            >
               >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
@@ -84,7 +136,7 @@ class Mindmap extends Component {
                     <div align="center">
                       <Typography variant="body1" gutterBottom>
                         <Paper className={classes.root}>
-                          <div id="mindmap" />
+                          <div id="graphContainer" />;
                         </Paper>
                       </Typography>
                     </div>
@@ -97,17 +149,6 @@ class Mindmap extends Component {
       </React.Fragment>
     );
   }
-
-  onCreateNode() {}
-
-  onDeleteNode(nodeId) {
-    // delete the project that shares this node
-    fetch(`/api/mindmaps/${nodeId}`)
-      .then(res => res.json())
-      .then(mindmap => this.setState({ mindmap }));
-  }
-
-  onUpdateNode() {}
 }
 
 export default withStyles(styles)(Mindmap);

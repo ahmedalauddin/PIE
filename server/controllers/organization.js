@@ -116,7 +116,22 @@ module.exports = {
   // Find an org by Id
   findById(req, res) {
     logger.debug(`${mvcType} findById -> id = ${req.params.id}`);
-    return models.Organization.findById(req.params.id)
+    return models.Organization.findById(req.params.id, {
+      include: [
+        {
+          model: models.Person,
+          as: "persons"
+        },
+        {
+          model: models.Project,
+          as: "projects"
+        },
+        {
+          model: models.Kpi,
+          as: "kpis"
+        }
+      ]
+    })
       .then(org => {
         logger.info(`${mvcType} findById -> org = ${org.name}`);
         res.status(200).send(org);

@@ -4,7 +4,7 @@
  * Created:  2019-02-17 16:20:48
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 10:33:35
+ * Modified: 2019-03-05 19:41:45
  * Editor:   Darrin Tisdale
  */
 /* eslint no-console: "off" */
@@ -127,6 +127,38 @@ const logger = winston.createLogger({
   transports: getTransports(),
   exitOnError: false
 });
+
+// create the class that we will use for wrapping the winston logger
+class LoggerPlus extends winston.Logger {
+  constructor(options, module) {
+    super(options);
+    // store the local variables used
+    this.winston = winston;
+    this.moduleFile = path.basename(module);
+    this.moduleFolder = path
+      .dirname(module)
+      .split(path.sep)
+      .pop();
+  }
+
+  generateMessage(level, message, source) {
+    // Set the prefix which will cause debug to enable the message
+    const namespace = `${BASE}:${level}`;
+    const createDebug = debug(namespace);
+
+    // Set the colour of the message based on the level
+    createDebug.color = COLORS[level];
+
+    if (source) {
+      createDebug(source, message);
+    } else {
+      createDebug(message);
+    }
+  }
+
+  // proxy the calls
+  debug: () => {};
+}
 
 // export the function to adjust the label
 module.exports = module => {

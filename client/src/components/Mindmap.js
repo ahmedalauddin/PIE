@@ -7,8 +7,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { styles } from "./MaterialSense";
-import { jsMind } from "./mindmap/jsmind";
-import "./mindmap/mindmap.css";
 
 // TODO add hooks on mindmap object to call component functions exposed and passed in via extended options
 // TODO determine if we are going to use Flux to handle message routing because including the toolbar here is crap

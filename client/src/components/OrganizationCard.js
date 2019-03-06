@@ -171,51 +171,52 @@ class OrganizationCard extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    setTimeout(() => {
-      if (this.state.id > 0) {
-        // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
-        // We have a project id passed through the URL, do an
-        // update on the project.
-        let updatePath = '/api/organizations/' + this.state.id;
-        fetch(updatePath, {
-          method: 'PUT',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state)
+    if (this.state.id > 0) {
+      // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
+      // We have a project id passed through the URL, do an
+      // update on the project.
+      let updatePath = '/api/organizations/' + this.state.id;
+      fetch(updatePath, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state)
+      })
+        .then(data => {
+          //console.log(data);
         })
-          .then(data => {
-            //console.log(data);
-          })
-          .catch(err => {
-            //console.log(err);
-          });
-      } else {
-        // No project id, so we will do a create.  The difference
-        // is we do a POST instead of a PUT.
-        fetch('/api/organizations', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state)
+        .catch(err => {
+          //console.log(err);
+        });
+    } else {
+      // No project id, so we will do a create.  The difference
+      // is we do a POST instead of a PUT.
+      fetch('/api/organizations', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(this.state)
+      })
+        .then(data => {
+          //console.log(data);
         })
-          .then(data => {
-            //console.log(data);
-          })
-          .catch(err => {
-            //console.log(err);
-          });
-      }
+        .catch(err => {
+          //console.log(err);
+        });
+    }
       //setSubmitting(false);
-    }, 2000);
+
   }
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/organizations/${this.props.match.params.id}`)
+      (`/api/organizations/${this.props.match.params.id}`)
         .then(res => res.json())
         .then(organization => {
           this.setState({
             id: this.props.match.params.id,
             name: organization.name,
-            orgId: organization.orgId
+            orgId: organization.orgId,
+            projects: organization.projects,
+            organization: organization
           });
         });
     } else {
@@ -223,7 +224,9 @@ class OrganizationCard extends React.Component {
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
-    // TODO - fetch projects for this org
+    // For this org, use the projects member variable, it already did
+    // the query for the projects related to this org
+    
     fetch('/api/projects/')
       .then(results => results.json())
       .then(projects => this.setState({projects}));

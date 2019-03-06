@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-20 22:33:50
+ * Modified: 2019-03-05 20:04:12
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -19,15 +19,13 @@ module.exports = router => {
   logger.debug(`${callerClass} POST -> path: /api/authenticate`);
   router.post("/api/authenticate", auth.authenticate);
 
-
   // logout
   logger.debug(`${callerClass} GET -> path: /api/logout`);
   router.get("/api/logout", auth.logout);
 
   // validateToken
-  logger.debug(`${callerClass} POST -> path: /validateToken`);
-  router.get("/validateToken", auth.validateToken);
-
+  logger.debug(`${callerClass} POST -> path: /api/validate`);
+  router.get("/api/validate", auth.validateToken);
 
   // TODO: add logout route.
 

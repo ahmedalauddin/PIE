@@ -1,7 +1,8 @@
 // withAuth.jsx
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-
+import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
+import { axios } from "axios";
+import { Log } from "../util/Log";
 
 export default function withAuth(ComponentToProtect) {
   return class extends Component {
@@ -9,14 +10,15 @@ export default function withAuth(ComponentToProtect) {
       super();
       this.state = {
         loading: true,
-        redirect: false,
+        redirect: false
       };
     }
     componentDidMount() {
-      fetch('/validateToken')
+      axios
+        .get("/api/validate")
         .then(res => {
           this.setState({ loading: false });
-          //alert(`returning from checkToken -> success, res.status: ${res.status}`);
+          Log.trace(`withAuth -> res.status: ${res.status}`);
           if (res.status === 200) {
             this.setState({ loading: false });
           } else {
@@ -31,24 +33,18 @@ export default function withAuth(ComponentToProtect) {
     }
     render() {
       const { loading, redirect } = this.state;
-      /*
-      TODO - Check if we need loading
 
-      if (loading) {
-        return null;
-      }
-      */
-
-      //alert(`returning from checkToken -> check redeirect`);
       if (redirect) {
+        Log.trace("redirecting to login");
         return <Redirect to="/login" />;
       }
-      //alert(`returning from checkToken -> will return React.Fragment`);
+
+      Log.trace("withAuth -> returning React.Fragment");
       return (
         <React.Fragment>
           <ComponentToProtect {...this.props} />
         </React.Fragment>
       );
     }
-  }
+  };
 }

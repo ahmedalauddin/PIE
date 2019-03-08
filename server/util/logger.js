@@ -4,7 +4,7 @@
  * Created:  2019-02-17 16:20:48
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-06 18:10:24
+ * Modified: 2019-03-08 10:10:23
  * Editor:   Darrin Tisdale
  */
 /* eslint no-console: "off" */
@@ -150,143 +150,43 @@ function getTransports(label = "") {
 }
 
 // create and configure master logger instance
-var _logger = winston.createLogger({
-  levels: {
-    error: 0,
-    warn: 1,
-    info: 2,
-    verbose: 3,
-    debug: 4
-  },
+const logger = winston.createLogger({
   level: config.get("log.level"),
   format: winston.format.json(), // overridden by each logger
   transports: getTransports(),
-  exitOnError: false,
-  rewriters: [
-    (level, msg, meta) => {
-      meta.app = "valueinfinity-mvp";
-      return meta;
-    }
-  ]
+  exitOnError: false
 });
-
-// create the class that we will use for wrapping the winston logger
-/* eslint no-unused-vars: "off" */
-/**
- * Wrapper class for winston logger, to keep
- * labels specific to the file in which they
- * where created
- *
- * @class LoggerPlus
- */
-class LoggerPlus {
-  /**
-   *Creates an instance of LoggerPlus.
-   * @param {string} module module's file path for documentation purposes
-   * @memberof LoggerPlus
-   */
-  constructor(module = "") {
-    // store the local variables used
-    if (module) {
-      this.moduleFile = path.basename(module);
-      this.moduleFolder = path
-        .dirname(module)
-        .split(path.sep)
-        .pop();
-    } else {
-      this.moduleFile = "*";
-      this.moduleFolder = "*";
-    }
-    const namespace = `${this.moduleFolder}::${this.moduleFile}`;
-    this.transports = getTransports(namespace);
-    this.logger = _logger;
-  }
-
-  /**
-   * Outputs a message to the log
-   *
-   * @param {string} level the level of the message
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  log(level, message, meta) {
-    // reconfigure the logger for the message we are going to send
-    this.logger.configure({ transports: this.transports });
-
-    // output the message
-    this.logger.log(level, message, meta);
-  }
-
-  /**
-   * outputs a log message at level of info
-   *
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  info(message, meta) {
-    //call the general function, setting the level
-    this.log("info", message, meta);
-  }
-
-  /**
-   * outputs a log message at level of error
-   *
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  error(message = "", meta = {}) {
-    //call the general function, setting the level
-    this.log("error", message, meta);
-  }
-
-  /**
-   * outputs a log message at level of warn
-   *
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  warn(message, meta) {
-    //call the general function, setting the level
-    this.log("warn", message, meta);
-  }
-
-  /**
-   * outputs a log message at level of verbose
-   *
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  verbose(message, meta) {
-    //call the general function, setting the level
-    this.log("verbose", message, meta);
-  }
-
-  /**
-   * outputs a log message at level of debug
-   *
-   * @param {string} message the message
-   * @param {*} meta metadata associated with the message
-   * @memberof LoggerPlus
-   */
-  debug(message, meta) {
-    //call the general function, setting the level
-    this.log("debug", message, meta);
-  }
-}
+logger.debug("winston logger default instance created");
 
 /**
- * defines the export of the module to be a
- * new instance of the LoggerPlus class
+ * defines the export of the module to be
+ * a category based on one defined for the file
  *
  * @param { string } module the file path of the module calling
- * @returns {LoggerPlus} instance of LoggerPlus class
+ * @returns {winston.logger} instance of the winston logger
  */
 module.exports = module => {
-  // construct a new instance of the class and return it
-  return new LoggerPlus(module);
+  // extract the information we want
+  var _file, _folder, _fo, _namespace;
+  if (module) {
+    _file = path.basename(module);
+    _fo = path
+      .dirname(module)
+      .split(path.sep)
+      .pop();
+    _folder = _fo === "valueinfinity-mvp" ? "(root)" : _fo;
+  } else {
+    _file = "*";
+    _folder = "*";
+  }
+  _namespace = `${_folder}::${_file}`;
+
+  // create a new category using the module
+  winston.loggers.add(module, {
+    // overridden by each logger
+    transports: getTransports(_namespace)
+  });
+
+  // return the instance to the caller
+  return winston.loggers.get(module);
 };

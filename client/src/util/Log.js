@@ -4,7 +4,7 @@
  * Created:  2019-03-05 14:53:32
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-05 16:16:24
+ * Modified: 2019-03-08 11:10:27
  * Editor:   Darrin Tisdale
  */
 
@@ -51,4 +51,4 @@ class Log {
   }
 }
 
-export default (Log = new Log());
+export default new Log();

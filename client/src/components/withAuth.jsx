@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { axios } from "axios";
-import { Log } from "../util/Log";
+import Log from "../util/Log";
 
 export default function withAuth(ComponentToProtect) {
   return class extends Component {
@@ -14,11 +14,8 @@ export default function withAuth(ComponentToProtect) {
       };
     }
     componentDidMount() {
-      axios
-        .get("/api/validate")
+      fetch("/api/validate")
         .then(res => {
-          this.setState({ loading: false });
-          Log.trace(`withAuth -> res.status: ${res.status}`);
           if (res.status === 200) {
             this.setState({ loading: false });
           } else {

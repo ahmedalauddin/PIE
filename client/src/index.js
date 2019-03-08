@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-05 15:08:02
+ * Modified: 2019-03-08 11:10:27
  * Editor:   Darrin Tisdale
  */
 
@@ -14,7 +14,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-import { Log } from "./util/Log";
+import Log from "./util/Log";
 
 // configure logging
 if (process.env.NODE_ENV !== "production") {

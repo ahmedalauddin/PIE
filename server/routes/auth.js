@@ -27,8 +27,6 @@ module.exports = router => {
   logger.debug(`${callerClass} POST -> path: /api/validate`);
   router.get("/api/validate", auth.validateToken);
 
-  // TODO: add logout route.
-
   // TODO need is logged check first on signup
 
   /* TODO check if we need this.

@@ -7,8 +7,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { styles } from "../MaterialSense";
-import { jsMind } from "./jsmind";
-import "./mindmap.css";
 const gr = require("mxgraph-js");
 
 class MindMap extends Component {
@@ -19,9 +17,10 @@ class MindMap extends Component {
       layout: {},
       json: "",
       dragElt: null,
-      createVisile: false,
+      createVisible: false,
       currentNode: null,
-      currentTask: ""
+      currentTask: "",
+      organization: {}
     };
     this.LoadGraph = this.LoadGraph.bind(this);
   }
@@ -70,7 +69,7 @@ class MindMap extends Component {
     gr.mxPolyline.prototype.constraints = null;
     if (!gr.mxClient.isBrowserSupported()) {
       // Displays an error message if the browser is not supported.
-      gr.mxUtils.error("Browser is not supported!", 200, false);
+      gr.mxUtils.error("Browser is not supported", 200, false);
     } else {
       // Disables the built-in context menu
       const container = document.querySelector("#graphContainer");
@@ -105,9 +104,9 @@ class MindMap extends Component {
       // Adds cells to the model in a single step
       graph.getModel().beginUpdate();
       try {
-        var v1 = graph.insertVertex(parent, null, "shape1,", 20, 20, 80, 30);
-        var v2 = graph.insertVertex(parent, null, "shape2", 200, 150, 80, 30);
-        var e1 = graph.insertEdge(parent, null, "edge", v1, v2);
+        // var v1 = graph.insertVertex(parent, null, "shape1,", 20, 20, 80, 30);
+        // var v2 = graph.insertVertex(parent, null, "shape2", 200, 150, 80, 30);
+        // var e1 = graph.insertEdge(parent, null, "edge", v1, v2);
       } finally {
         // Updates the display
         graph.getModel().endUpdate();

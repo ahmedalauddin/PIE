@@ -14,15 +14,14 @@ import { styles } from "./MaterialSense";
 
 class Mindmap extends Component {
   state = {
-    mindmapId: 0,
-    mindmapData: []
+    mindmap: {}
   };
 
   componentDidMount() {
     // check to see if props includes the ID to the mindmap
-    if (this.props.mindMapId) {
+    if (this.props.organization) {
       // Use fetch to get all the KPIs
-      fetch(`/api/mindmaps/${this.props.mindMapId}`)
+      fetch(`/api/mindmaps/?orgId=${this.props.organization.id}`)
         .then(res => res.json())
         .then(mindmap => this.setState({ mindmap }));
     }

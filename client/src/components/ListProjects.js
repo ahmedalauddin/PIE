@@ -41,10 +41,7 @@ class MyTableHead extends React.Component {
   };
 
   render() {
-    const {
-      order,
-      orderBy
-    } = this.props;
+    const { order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -99,12 +96,11 @@ class ListProjects extends Component {
       // If there is an id passed in, it's for organization.
       fetch(`/api/projects/organization/${this.props.match.params.id}`)
         .then(res => res.json())
-        .then(projects => this.setState({projects}));
-    }
-    else {
+        .then(projects => this.setState({ projects }));
+    } else {
       fetch("/api/projects")
         .then(res => res.json())
-        .then(projects => this.setState({projects}));
+        .then(projects => this.setState({ projects }));
     }
   }
 

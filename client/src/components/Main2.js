@@ -127,7 +127,8 @@ class Main2 extends Component {
               alignItems="center"
               justify="center"
               container
-              className={classes.grid} >
+              className={classes.grid}
+            >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>

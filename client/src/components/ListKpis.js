@@ -47,10 +47,7 @@ class MyTableHead extends React.Component {
   };
 
   render() {
-    const {
-      order,
-      orderBy
-    } = this.props;
+    const { order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -121,13 +118,13 @@ class ListKpis extends Component {
       // Fetch the KPIs only for a single project
       fetch(`/api/kpis/project/${projectid}`)
         .then(res => res.json())
-        .then(kpis => this.setState({kpis}));
-    }
-    else {
+        .then(kpis => this.setState({ kpis }));
+    } else {
       // Get all KPIs
-      fetch(`/api/kpis`)
+      fetch("/api/kpis")
         .then(res => res.json())
-        .then(kpis => this.setState({kpis}));    }
+        .then(kpis => this.setState({ kpis }));
+    }
   }
 
   // Here I just want to use something like the construct in Topbar to navigate
@@ -195,7 +192,7 @@ class ListKpis extends Component {
                                       </TableCell>
                                       <TableCell width="15%" align="left">
                                         {kpi.type}
-                                    </TableCell>
+                                      </TableCell>
                                       <TableCell align="left">
                                         {kpi.organization.name}
                                       </TableCell>

@@ -17,7 +17,7 @@
     "server:test": "jest",
     "server:basic": "./bin/www",
     "server:monitor": "pm2 -- npm run server:basic",
-    "server:lint": "eslint .",
+    "server:lint": "./node_modules/.bin/eslint .",
     "server:lint-fix": "npm run lint -- --fix",
     "start": "concurrently \"npm run client:start\" \"npm run server:start\"",
     "debug": "concurrently \"npm run client:debug\" \"npm run server:debug\"",

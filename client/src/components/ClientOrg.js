@@ -8,18 +8,18 @@
  * Modified:
  * Editor:
  */
-import React from 'react';
-import {Redirect} from 'react-router-dom';
-import withStyles from '@material-ui/core/styles/withStyles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Topbar from './Topbar';
-import {styles} from './MaterialSense';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import SectionHeader from './typo/SectionHeader';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import { Redirect } from "react-router-dom";
+import withStyles from "@material-ui/core/styles/withStyles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Typography from "@material-ui/core/Typography";
+import Topbar from "./Topbar";
+import { styles } from "./MaterialSense";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Grid from "@material-ui/core/Grid";
+import SectionHeader from "./typo/SectionHeader";
+import Button from "@material-ui/core/Button";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -29,8 +29,8 @@ const buttonstyles = theme => ({
     marginRight: theme.spacing.unit * 2
   },
   secondary: {
-    background: theme.palette.secondary['100'],
-    color: 'white'
+    background: theme.palette.secondary["100"],
+    color: "white"
   },
   spaceTop: {
     marginTop: 20
@@ -41,13 +41,13 @@ class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
-    id: '',
+    id: "",
     organizations: [],
-    orgId: '',
+    orgId: "",
     expanded: false,
     isLoggedIn: false,
     labelWidth: 0,
-    msgText: ''
+    msgText: ""
   };
 
   constructor(props) {
@@ -72,24 +72,24 @@ class ClientOrg extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-
   handleSubmit(event) {
     event.preventDefault();
     //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
 
     // Authenticate against the username
-    fetch('/api/authenticate', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state),
-    }).then(response => {
-      this.setState({isLoggedIn: true});
-    }).catch(err => {
-      // TODO - set error login on form.
-    });
+    fetch("/api/authenticate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => {
+        this.setState({ isLoggedIn: true });
+      })
+      .catch(err => {
+        // TODO - set error login on form.
+      });
     //setSubmitting(false);
-
-  };
+  }
 
   componentDidMount() {
     fetch("/api/organizations/?format=select")
@@ -100,20 +100,20 @@ class ClientOrg extends React.Component {
   }
 
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
     //const currentPath = this.props.location.pathname;
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
 
     if (this.state.isLoggedIn) {
-      return <Redirect to="/listprojects"/>;
+      return <Redirect to="/listprojects" />;
     }
 
     return (
       <React.Fragment>
-        <CssBaseline/>
-        <Topbar/>
+        <CssBaseline />
+        <Topbar />
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -125,11 +125,11 @@ class ClientOrg extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12} md={4}>
-                  <SectionHeader title="" subtitle=""/>
+                  <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
-                        style={{textTransform: 'uppercase'}}
+                        style={{ textTransform: "uppercase" }}
                         color="secondary"
                         gutterBottom
                       >
@@ -163,7 +163,7 @@ class ClientOrg extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
-                          <br/>
+                          <br />
                           <Button
                             variant="contained"
                             color="primary"

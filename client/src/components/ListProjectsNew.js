@@ -100,7 +100,6 @@ class ListProjects extends Component {
     );
   };
 
-
   getTableRows = project => {
     return (
       <TableRow
@@ -121,7 +120,7 @@ class ListProjects extends Component {
         <TableCell align="left">{project.organization.name}</TableCell>
       </TableRow>
     );
-  }
+  };
 
   async componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {

@@ -19,10 +19,7 @@ import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
-  { id: "id",
-    numeric: true,
-    disablePadding: false,
-    label: "ID" },
+  { id: "id", numeric: true, disablePadding: false, label: "ID" },
   {
     id: "organization",
     numeric: false,
@@ -37,10 +34,7 @@ class MyTableHead extends React.Component {
   };
 
   render() {
-    const {
-      order,
-      orderBy
-    } = this.props;
+    const { order, orderBy } = this.props;
 
     return (
       <TableHead>
@@ -145,7 +139,10 @@ class ListProjects extends Component {
                                     <TableRow
                                       hover
                                       onClick={event => {
-                                        this.handleClick(event, organization.id);
+                                        this.handleClick(
+                                          event,
+                                          organization.id
+                                        );
                                       }}
                                       tabIndex={-1}
                                       key={organization.id}
@@ -154,11 +151,14 @@ class ListProjects extends Component {
                                         {organization.id}
                                       </TableCell>
                                       <TableCell align="left">
-                                        <Link to={`/organizationcard/${organization.id}`}>
+                                        <Link
+                                          to={`/organizationcard/${
+                                            organization.id
+                                          }`}
+                                        >
                                           {organization.name}
                                         </Link>
                                       </TableCell>
-
                                     </TableRow>
                                   );
                                 })}

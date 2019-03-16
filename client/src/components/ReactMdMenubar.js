@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import { FontIcon, ListItem, MenuButton } from 'react-md';
-import Grid from './Topbar';
-import {withRouter} from 'react-router-dom';
-import withStyles from '@material-ui/core/styles/withStyles';
+import React, { Component } from "react";
+import { FontIcon, ListItem, MenuButton } from "react-md";
+import Grid from "./Topbar";
+import { withRouter } from "react-router-dom";
+import withStyles from "@material-ui/core/styles/withStyles";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 
@@ -61,7 +61,6 @@ const styles = theme => ({
 });
 
 class MenuButtonBar extends Component {
-
   render() {
     const { classes } = this.props;
 
@@ -75,12 +74,16 @@ class MenuButtonBar extends Component {
                   id="menu-button-1"
                   raised
                   secondary
-                  menuItems={['Item One', 'Item Two', 'Item Three', 'Item Four']}
+                  menuItems={[
+                    "Item One",
+                    "Item Two",
+                    "Item Three",
+                    "Item Four"
+                  ]}
                   iconChildren="chat"
                 >
                   Toggle the Menu
                 </MenuButton>
-
               </div>
             </Grid>
           </Grid>
@@ -91,7 +94,3 @@ class MenuButtonBar extends Component {
 }
 
 export default withRouter(withStyles(styles)(MenuButtonBar));
-
-
-
-

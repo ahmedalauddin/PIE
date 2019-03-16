@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell, { TableCellProps as row } from "@material-ui/core/TableCell";
+import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
@@ -21,7 +21,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-import { stableSort, desc, getSorting } from "./TableFunctions";
+import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },

@@ -78,9 +78,6 @@ class MyTableHead extends React.Component {
 }
 
 class ListProjects extends Component {
-  constructor() {
-    super();
-  }
 
   state = {
     order: "asc",

@@ -16,7 +16,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
-import { stableSort, desc, getSorting } from "./TableFunctions";
+import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -85,10 +85,6 @@ class MyTableHead extends React.Component {
 }
 
 class ListPersons extends Component {
-  constructor() {
-    super();
-  }
-
   state = {
     order: "asc",
     orderBy: "",

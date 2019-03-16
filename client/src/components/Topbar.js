@@ -9,14 +9,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
-import MenuList from "@material-ui/core/MenuList";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Menu from "./Menu";
-
-// const logo = require('../images/logo.svg');
 const logo = require("../images/ValueInfLogo.png");
 
 const styles = theme => ({
@@ -148,7 +141,7 @@ class Topbar extends Component {
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={24} alignItems="baseline">
-            <Grid item xs={12} alignItems="baseline" className={classes.flex}>
+            <Grid item xs={12} className={classes.flex}>
               <div className={classes.inline}>
                 <Typography variant="h6" color="inherit" noWrap>
                   <Link to="/" className={classes.link}>

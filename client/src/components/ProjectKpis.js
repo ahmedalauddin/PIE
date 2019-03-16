@@ -1,9 +1,6 @@
 // List for editing KPIs, 1/22/19.
 // Will be removed eventually.  Essentially a test harness for EditProject.
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
-import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -17,7 +14,6 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
-const mvcType = "controller";
 
 const rows = [
   { id: "title", numeric: false, disablePadding: true, label: "KPI" },
@@ -84,10 +80,6 @@ class MyTableHead extends React.Component {
 }
 
 class ProjectKpis extends Component {
-  constructor() {
-    super();
-  }
-
   state = {
     order: "asc",
     orderBy: "",

@@ -21,80 +21,15 @@ import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import IconButton from "@material-ui/core/IconButton";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Collapse from "@material-ui/core/Collapse";
 import classnames from "classnames";
-import { red } from "@material-ui/core/colors";
-import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import { getSorting, stableSort } from "./TableFunctions";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import moment from "moment";
-import Log from "./Log";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect, Link } from "react-router-dom";
-//import ButtonBar from './buttons/ButtonBar';
-//import Button from '@material-ui/core/Button';
-
-const materialstyles = theme => ({
-  card: {
-    maxWidth: 400
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
-  },
-  actions: {
-    display: "flex"
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 200
-  },
-  dense: {
-    marginTop: 19
-  },
-  menu: {
-    width: 200
-  }
-});
-
-const buttonstyles = theme => ({
-  primary: {
-    marginRight: theme.spacing.unit * 2
-  },
-  secondary: {
-    background: theme.palette.secondary["100"],
-    color: "white"
-  },
-  spaceTop: {
-    marginTop: 20
-  }
-});
 
 const ExpandingSectionGridItem = (classes, project) => {
   // TODO - add the org's project list here.
@@ -233,9 +168,6 @@ class OrganizationCard extends React.Component {
   render() {
     const { classes } = this.props;
     //const currentPath = this.props.location.pathname;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

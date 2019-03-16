@@ -4,11 +4,11 @@
  * Created:  2019-03-14 14:48:57
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-14 14:49:24
+ * Modified: 2019-03-16 15:06:44
  * Editor:   Darrin Tisdale
  */
 
-export class mxCellAttributeChange {
+export default class mxCellAttributeChange {
   // constructor
   constructor(cell, attribute, value) {
     this.cell = cell;

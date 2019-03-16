@@ -1,7 +1,7 @@
 // withAuth.jsx
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import { axios } from "axios";
+//import { axios } from "axios";
 import Log from "../util/Log";
 
 export default function withAuth(ComponentToProtect) {
@@ -34,8 +34,12 @@ export default function withAuth(ComponentToProtect) {
       const { loading, redirect } = this.state;
 
       if (redirect) {
-        Log.trace("redirecting to login");
+        Log.trace("withAuth -> redirecting to login");
         return <Redirect to="/login" />;
+      }
+
+      if (loading) {
+        Log.trace("withAuth -> loading...continuing to render");
       }
 
       Log.trace("withAuth -> returning React.Fragment");

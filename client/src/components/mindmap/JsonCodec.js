@@ -4,13 +4,13 @@
  * Created:  2019-03-14 14:37:28
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-14 14:39:59
+ * Modified: 2019-03-16 15:07:44
  * Editor:   Darrin Tisdale
  */
 
-import { mxUtils } from "mxgraph-js";
+import { mxObjectCodec, mxUtils } from "mxgraph-js";
 
-export class JsonCodec extends mxObjectCodec {
+export default class JsonCodec extends mxObjectCodec {
   constructor() {
     super(value => {});
   }

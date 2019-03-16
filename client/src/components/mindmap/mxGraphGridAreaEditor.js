@@ -4,7 +4,7 @@
  * Created:  2019-03-06 16:32:33
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-16 14:32:36
+ * Modified: 2019-03-16 15:58:26
  * Editor:   Darrin Tisdale
  */
 
@@ -13,38 +13,38 @@ import ReactDOM from "react-dom";
 import CreateTaskNode from "./CreateTaskNode";
 import JsonCodec from "./JsonCodec";
 import mxCellAttributeChange from "./mxCellAttributeChange";
-import "./resources/stylesheets/common.css";
-import "./resources/stylesheets/mxgraph.css";
+import "../../resources/stylesheets/common.css";
+import "../../resources/stylesheets/mxgraph.css";
 import {
   mxGraph,
-  mxParallelEdgeLayout,
+  //mxParallelEdgeLayout,
   mxConstants,
   mxEdgeStyle,
-  mxLayoutManager,
+  //mxLayoutManager,
   mxGraphHandler,
   mxGuide,
   mxEdgeHandler,
-  mxCell,
-  mxGeometry,
+  //mxCell,
+  //mxGeometry,
   mxRubberband,
   mxDragSource,
   mxKeyHandler,
-  mxCodec,
+  //mxCodec,
   mxClient,
   mxConnectionHandler,
   mxUtils,
-  mxToolbar,
+  //mxToolbar,
   mxEvent,
   mxImage,
   mxConstraintHandler,
-  mxFastOrganicLayout,
+  //mxFastOrganicLayout,
   mxUndoManager,
-  mxObjectCodec,
-  mxHierarchicalLayout,
+  //mxObjectCodec,
+  //mxHierarchicalLayout,
   mxConnectionConstraint,
   mxCellState,
   mxPoint,
-  mxGraphModel,
+  //mxGraphModel,
   mxPerimeter,
   mxCompactTreeLayout,
   mxCellOverlay
@@ -102,6 +102,7 @@ class mxGraphGridAreaEditor extends Component {
               );
             }
           }
+          return;
         });
     } finally {
       graph.getModel().endUpdate(); // Updates the display
@@ -121,7 +122,7 @@ class mxGraphGridAreaEditor extends Component {
       json,
       (key, value) => {
         if (
-          (key === "parent" || key == "source" || key == "target") &&
+          (key === "parent" || key === "source" || key === "target") &&
           value !== null
         ) {
           return value.id;
@@ -330,7 +331,7 @@ class mxGraphGridAreaEditor extends Component {
     graph.convertValueToString = function(cell) {
       if (
         mxUtils.isNode(cell.value) &&
-        cell.value.nodeName.toLowerCase() == "taskobject"
+        cell.value.nodeName.toLowerCase() === "taskobject"
       ) {
         // Returns a DOM for the label
         var div = document.createElement("div");
@@ -489,7 +490,8 @@ class mxGraphGridAreaEditor extends Component {
 
   initToolbar = () => {
     const that = this;
-    const { graph, layout } = this.state;
+    //const { graph, layout } = this.state;
+    const { graph } = this.state;
     var toolbar = ReactDOM.findDOMNode(this.refs.toolbar);
 
     toolbar.appendChild(
@@ -599,7 +601,7 @@ class mxGraphGridAreaEditor extends Component {
           this.initToolbar();
           this.settingConnection();
           this.createDragElement();
-          var parent = graph.getDefaultParent();
+          //var parent = graph.getDefaultParent();
 
           // Adds cells to the model in a single step
           graph.getModel().beginUpdate();
@@ -637,7 +639,7 @@ class mxGraphGridAreaEditor extends Component {
       graph
         .getSelectionModel()
         .addListener(mxEvent.CHANGE, this.selectionChange);
-      var parent = graph.getDefaultParent();
+      //var parent = graph.getDefaultParent();
     }
   }
   render() {

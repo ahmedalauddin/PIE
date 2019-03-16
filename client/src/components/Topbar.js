@@ -9,13 +9,12 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
-import MenuList from '@material-ui/core/MenuList';
+import MenuList from "@material-ui/core/MenuList";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Menu from "./Menu";
-
 
 // const logo = require('../images/logo.svg');
 const logo = require("../images/ValueInfLogo.png");
@@ -77,7 +76,7 @@ const styles = theme => ({
 class Topbar extends Component {
   state = {
     value: 0,
-    open:false,
+    open: false,
     menuDrawer: false
   };
 
@@ -122,7 +121,7 @@ class Topbar extends Component {
     if (this.props.currentPath === "/projcontainer") {
       return 3;
     }
-    if (this.props.currentPath === "/mindmapstatic") {
+    if (this.props.currentPath === "/mindmap") {
       return 4;
     }
     if (this.props.currentPath === "/projectcard") {
@@ -193,7 +192,6 @@ class Topbar extends Component {
                         />
                       ))}
                     </Tabs>
-
                   </div>
                 </React.Fragment>
               )}

@@ -115,6 +115,7 @@ class MindMap extends Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <React.Fragment>
         <CssBaseline />
@@ -128,14 +129,13 @@ class MindMap extends Component {
               container
               className={classes.grid}
             >
-              >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
                     <div align="center">
                       <Typography variant="body1" gutterBottom>
                         <Paper className={classes.root}>
-                          <div id="graphContainer" />;
+                          <div id="graphContainer" />
                         </Paper>
                       </Typography>
                     </div>
@@ -150,4 +150,4 @@ class MindMap extends Component {
   }
 }
 
-export default withStyles(styles)(Mindmap);
+export default withStyles(styles)(MindMap);

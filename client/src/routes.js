@@ -11,7 +11,7 @@ import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListKpis from "./components/ListKpis";
 import ListOrgs from "./components/ListOrgs";
-import MindMapStatic from "./components/MindMapStatic";
+import MindMap from "./components/mindmap/MindMap";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Logout from "./components/Logout";
@@ -22,7 +22,7 @@ import ProjectCard from "./components/ProjectCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import withAuth from "./components/withAuth.jsx";
-import SelectClient from './components/SelectClient';
+import SelectClient from "./components/SelectClient";
 
 export default props => (
   <BrowserRouter>
@@ -36,17 +36,24 @@ export default props => (
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/selectclient" component={withAuth(SelectClient)} />
-        <Route exact path="/projcontainer" component={withAuth(ProjContainer)} />
+        <Route
+          exact
+          path="/projcontainer"
+          component={withAuth(ProjContainer)}
+        />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
         <Route exact path="/editkpi" component={withAuth(EditKpi)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
-        <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
+        <Route
+          path="/organizationcard/:id"
+          component={withAuth(OrganizationCard)}
+        />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
-        <Route exact path="/mindmapstatic" component={MindMapStatic} />
+        <Route exact path="/mindmap" component={withAuth(MindMap)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />

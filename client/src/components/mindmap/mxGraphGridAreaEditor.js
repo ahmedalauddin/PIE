@@ -4,7 +4,7 @@
  * Created:  2019-03-06 16:32:33
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-14 15:23:13
+ * Modified: 2019-03-16 14:32:36
  * Editor:   Darrin Tisdale
  */
 
@@ -493,6 +493,14 @@ class mxGraphGridAreaEditor extends Component {
     var toolbar = ReactDOM.findDOMNode(this.refs.toolbar);
 
     toolbar.appendChild(
+      mxUtils.button("Save", function() {
+        window.alert(
+          "TEMP MESSAGE\n\nSaving mindmap...\n\nClick OK to continue."
+        );
+      })
+    );
+
+    toolbar.appendChild(
       mxUtils.button("(+)", function(evt) {
         graph.zoomIn();
       })
@@ -524,12 +532,6 @@ class mxGraphGridAreaEditor extends Component {
     toolbar.appendChild(
       mxUtils.button("Undo", function() {
         undoManager.undo();
-      })
-    );
-
-    toolbar.appendChild(
-      mxUtils.button("Redo", function() {
-        undoManager.redo();
       })
     );
 

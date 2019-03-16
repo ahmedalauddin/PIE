@@ -21,10 +21,11 @@
       "processId": "${command:PickProcess}"
     },
     {
-      "type": "node",
+      "type": "chrome",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}\\debug-server\""
+      "name": "Launch Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/client"
     }
   ]
 }

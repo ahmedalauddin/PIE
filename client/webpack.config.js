@@ -4,12 +4,12 @@
  * Created:  2019-02-19 21:44:32
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-16 17:04:15
+ * Modified: 2019-03-16 17:25:52
  * Editor:   Darrin Tisdale
  */
 /* eslint jsx-control-statements/jsx-jcs-no-undef: "off" */
 module.exports = {
-  entry: "./src/app.js",
+  entry: "./src/App.js",
   output: {
     path: __dirname + "/build/js",
     filename: "build.js"
@@ -26,6 +26,6 @@ module.exports = {
     emitError: true,
     emitWarning: true,
     failOnError: true,
-    failOnWarning: true
+    failOnWarning: false
   }
 };

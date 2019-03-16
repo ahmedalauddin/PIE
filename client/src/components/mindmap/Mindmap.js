@@ -1,14 +1,16 @@
 // mindmap component
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import Topbar from "../Topbar";
 import { styles } from "../MaterialSense";
-import { mxGraphGridAreaEditor } from "./mxGraphGridAreaEditor";
-const gr = require("mxgraph-js");
+import MapEditor from "./mxGraphGridAreaEditor";
+//const gr = require("mxgraph-js");
+
+// TODO this page should get the data for the control, then pass it in
 
 class MindMap extends Component {
   constructor(props) {
@@ -122,29 +124,7 @@ class MindMap extends Component {
         <CssBaseline />
         <Topbar />
         <div className={classes.root}>
-          <Grid container justify="center">
-            <Grid
-              spacing={24}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid container item xs={12}>
-                <Grid item xs={12}>
-                  <Paper className={classes.paper}>
-                    <div align="center">
-                      <Typography variant="body1" gutterBottom>
-                        <Paper className={classes.root}>
-                          <mxGraphGridAreaEditor />
-                        </Paper>
-                      </Typography>
-                    </div>
-                  </Paper>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
+          <MapEditor />
         </div>
       </React.Fragment>
     );

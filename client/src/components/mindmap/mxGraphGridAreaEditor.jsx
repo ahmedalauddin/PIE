@@ -4,7 +4,7 @@
  * Created:  2019-03-06 16:32:33
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-16 15:58:26
+ * Modified: 2019-03-16 18:10:21
  * Editor:   Darrin Tisdale
  */
 
@@ -13,8 +13,8 @@ import ReactDOM from "react-dom";
 import CreateTaskNode from "./CreateTaskNode";
 import JsonCodec from "./JsonCodec";
 import mxCellAttributeChange from "./mxCellAttributeChange";
-import "../../resources/stylesheets/common.css";
-import "../../resources/stylesheets/mxgraph.css";
+import "../../stylesheets/common.css";
+import "../../stylesheets/mxgraph.css";
 import {
   mxGraph,
   //mxParallelEdgeLayout,
@@ -50,7 +50,7 @@ import {
   mxCellOverlay
 } from "mxgraph-js";
 
-class mxGraphGridAreaEditor extends Component {
+export default class mxGraphGridAreaEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,6 +66,7 @@ class mxGraphGridAreaEditor extends Component {
   }
 
   componentDidMount() {
+    window.alert("mxGraphGridAreaEditor did mount");
     this.LoadGraph();
   }
 
@@ -676,5 +677,3 @@ class mxGraphGridAreaEditor extends Component {
     );
   }
 }
-
-export default mxGraphGridAreaEditor;

@@ -4,16 +4,16 @@
  * Created:  2019-02-16 23:32:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-20 11:19:43
+ * Modified: 2019-03-16 17:55:04
  * Editor:   Darrin Tisdale
  */
 
 import React, { Component } from "react";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import "./App.css";
+import "./stylesheets/App.css";
 import Routes from "./routes";
 import { blue, indigo } from "@material-ui/core/colors";
-import withAuth from "./components/withAuth";
+//import withAuth from "./components/withAuth";
 
 const theme = createMuiTheme({
   palette: {

@@ -4,23 +4,23 @@
  * Created:  2019-03-06 16:46:56
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-06 16:52:02
+ * Modified: 2019-03-16 18:35:07
  * Editor:   Darrin Tisdale
  */
 .container-wrapper {
-  overflow: visible;
   position: absolute;
+  overflow: visible;
   left: 120px;
-  top: 40px;
+  top: 140px;
   right: 0;
   bottom: 0;
   background: #ebebeb;
 }
 .container {
-  margin: 0 50px;
   position: absolute;
+  margin: 0 50px;
   left: 0;
-  top: 50px;
+  top: 140px;
   right: 0;
   bottom: 0;
   background-color: rgb(255, 255, 255);
@@ -46,15 +46,15 @@
   border-color: #8000ff;
 }
 .sidebar {
+  position: absolute;
   font-size: 12px;
   text-align: center;
   overflow: visible;
   margin: 0;
   padding: 0;
-  position: absolute;
   width: 120px;
   left: 0;
-  top: 0;
+  top: 140px;
   right: 0;
   bottom: 0;
   list-style: none;
@@ -82,7 +82,7 @@
   z-index: 100;
 }
 div.mxPopupMenu {
-  background: #fff url("./window.gif");
+  background: #fff url("../images/window.gif");
 }
 .taskTitle {
   display: inline-block;

@@ -43,7 +43,8 @@ class ClientOrg extends React.Component {
   state = {
     id: "",
     organizations: [],
-    orgId: "",
+    org: "",
+    orgId: 0,
     expanded: false,
     isLoggedIn: false,
     labelWidth: 0,

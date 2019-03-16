@@ -134,11 +134,8 @@ class Main2 extends Component {
                   <Paper className={classes.paper}>
                     <div>
                       <div className={classes.box}>
-                        <Typography color="secondary" gutterBottom>
-                          Full box
-                        </Typography>
                         <Typography variant="body1" gutterBottom>
-                          This is an example of a full-width box
+                          Welcome to the ValueInfinity Innovation Platform.
                         </Typography>
                       </div>
                       <div className={classes.alignRight}>

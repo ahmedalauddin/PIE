@@ -13,10 +13,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 
-const LogoutMessage = (
-  <h2>You have been logged out. Click here to login again.</h2>
-);
-
 class Logout extends Component {
   state = {
     order: "asc",

@@ -17,7 +17,6 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
-const mvcType = "controller";
 
 const rows = [
   { id: "title", numeric: false, disablePadding: true, label: "KPI" },
@@ -84,10 +83,6 @@ class MyTableHead extends React.Component {
 }
 
 class ListKpis extends Component {
-  constructor() {
-    super();
-  }
-
   state = {
     order: "asc",
     orderBy: "",

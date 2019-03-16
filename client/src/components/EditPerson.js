@@ -13,10 +13,6 @@ class EditProject extends React.Component {
     person: ""
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const url1 = "/api/persons/" + this.props.match.params.id;
     fetch(url1)
@@ -26,9 +22,6 @@ class EditProject extends React.Component {
 
   render() {
     const { classes } = this.props;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

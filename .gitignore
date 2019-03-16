@@ -40,3 +40,10 @@ client/src/components-save
 # Local log files
 valueinfinity-mvp.log.*.*
 valueinfinity-mvp.log.*
+
+### JSON Audit
+*-audit.json
+
+### Visual Studio Code files
+*.njsproj
+*.sln

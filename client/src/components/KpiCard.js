@@ -15,75 +15,14 @@ import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
 import { styles } from "./MaterialSense";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
-import classnames from "classnames";
-import { red } from "@material-ui/core/colors";
-import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import moment from "moment";
-import Log from "./Log";
 import Button from "@material-ui/core/Button";
-//import ButtonBar from './buttons/ButtonBar';
-//import Button from '@material-ui/core/Button';
-const mvcType = "controller";
-const materialstyles = theme => ({
-  card: {
-    maxWidth: 400
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
-  },
-  actions: {
-    display: "flex"
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 200
-  },
-  dense: {
-    marginTop: 19
-  },
-  menu: {
-    width: 200
-  }
-});
-const buttonstyles = theme => ({
-  primary: {
-    marginRight: theme.spacing.unit * 2
-  },
-  secondary: {
-    background: theme.palette.secondary["100"],
-    color: "white"
-  },
-  spaceTop: {
-    marginTop: 20
-  }
-});
 
 class KpiCard extends React.Component {
   constructor(props) {
@@ -200,9 +139,6 @@ class KpiCard extends React.Component {
   render() {
     const { classes } = this.props;
     //const currentPath = this.props.location.pathname;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

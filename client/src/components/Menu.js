@@ -1,7 +1,7 @@
 const Menu = [
   {
     label: "Home",
-    pathname: "/"
+    pathname: "/listprojects"
   },
   {
     label: "Login",
@@ -12,28 +12,24 @@ const Menu = [
     pathname: "/mindmapstatic"
   },
   {
-    label: "Signup",
-    pathname: "/signup"
-  },
-  {
-    label: "New Project",
-    pathname: "/projectcard"
-  },
-  {
-    label: "List Projects",
+    label: "Projects",
     pathname: "/listprojects"
   },
   {
-    label: "List Users",
+    label: "Users",
     pathname: "/listpersons"
   },
   {
-    label: "List Organizations",
+    label: "Organizations",
     pathname: "/listorgs"
   },
   {
-    label: "List KPIs",
+    label: "KPIs",
     pathname: "/listkpis"
+  },
+  {
+    label: "Signup",
+    pathname: "/signup"
   },
   {
     label: "Logout",

@@ -60,8 +60,13 @@ class SelectClient extends React.Component {
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
     // state values.
     this.handleChange = this.handleChange.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
+  handleSelectChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
 
   handleChange = name => event => {
     this.setState({
@@ -71,6 +76,27 @@ class SelectClient extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+
+    // Set the JWT token with the org ID>
+    fetch("/api/setClient", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => {
+        if (response.status === 200) {
+          // status code 200 is success.
+          this.setState({ isLoggedIn: true });
+        } else {
+          this.setState({ isFailedLogin: true, isLoggedIn: false });
+          this.setState({ msgText: "Setting token failed, please try again." });
+        }
+      })
+      .catch(err => {
+        // TODO - set error login on form.
+        this.setState({ isFailedLogin: true });
+        this.setState({ msgText: "Setting token failed, please try again." });
+      });
   }
 
   componentDidMount() {
@@ -82,9 +108,6 @@ class SelectClient extends React.Component {
   render() {
     const { classes } = this.props;
     //const currentPath = this.props.location.pathname;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    //const id = this.props.match.params.id;
 
     if (this.state.isLoggedIn) {
       return <Redirect to="/" />;
@@ -118,16 +141,15 @@ class SelectClient extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="organization-simple">
+                          <InputLabel htmlFor="org-simple">
                             Organization
                           </InputLabel>
                           <Select
                             value={this.state.orgId}
                             onChange={this.handleSelectChange}
-                            renderValue={value => this.state.orgId}
                             inputProps={{
-                              name: "org",
-                              id: "orgId"
+                              name: "orgId",
+                              id: "org-simple"
                             }}
                           >
                             {this.state.organizations.map(org => {
@@ -139,6 +161,8 @@ class SelectClient extends React.Component {
                             })}
                           </Select>
                         </FormControl>
+                        <br />
+                        <br />
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>

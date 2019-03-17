@@ -4,8 +4,8 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-05 20:04:12
- * Editor:   Darrin Tisdale
+ * Modified: 2019-03-16
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -18,6 +18,14 @@ module.exports = router => {
   // authenticate
   logger.debug(`${callerClass} POST -> path: /api/authenticate`);
   router.post("/api/authenticate", auth.authenticate);
+
+  // set client org for ValueInfinity users
+  logger.debug(`${callerClass} POST -> path: /api/setClient`);
+  router.post("/api/setClient", auth.setClient);
+
+  // get client org for ValueInfinity users
+  logger.debug(`${callerClass} POST -> path: /api/getTokenOrganizationId`);
+  router.get("/api/getTokenOrganizationId", auth.getTokenOrganizationId);
 
   // logout
   logger.debug(`${callerClass} GET -> path: /api/logout`);

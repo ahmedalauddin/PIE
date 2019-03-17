@@ -18,7 +18,6 @@
     "eslint-loader": "^2.1.2",
     "eslint-plugin-prettier": "^3.0.1",
     "formik": "^1.5.1",
-    "jwt-decode": "^2.2.0",
     "loglevel": "github:pimterry/loglevel",
     "moment": "^2.24.0",
     "mxgraph-js": "^1.0.1",

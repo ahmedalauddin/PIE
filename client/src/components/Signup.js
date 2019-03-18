@@ -124,10 +124,6 @@ class Signup extends React.Component {
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

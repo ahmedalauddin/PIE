@@ -17,6 +17,7 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
+import { UserConsumer } from "./UserContext";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -77,6 +78,12 @@ class MyTableHead extends React.Component {
   }
 }
 
+const orgName = () => (
+  <UserConsumer>
+    {(context) => context.user.organization.name}
+  </UserConsumer>
+);
+
 var msg = "";
 
 class ListProjects extends Component {
@@ -96,22 +103,20 @@ class ListProjects extends Component {
       // If there is an organization, select only the projects for that org.
       fetch(`/api/organizations/${this.state.orgId}`)
         .then(res => {
-          alert(res.json());
           return res.json();
         })
         .then(organization => {
-          alert(organization);
-          //this.setState({ organization: organization });
+          this.setState({ projects: organization.projects });
         });
 
-      msg = "List of projects for organization " + this.state.orgId;
+      msg = "List of projects for organization " + orgName();
     } else {
       // Else select all projects.
       fetch("/api/projects")
         .then(res => res.json())
         .then(projects => this.setState({ projects }));
+      msg = "List of projects for all organizations";
     }
-    msg = "List of projects for all organizations";
   }
 
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
@@ -176,7 +181,7 @@ class ListProjects extends Component {
                                         {project.description}
                                       </TableCell>
                                       <TableCell align="left">
-                                        {project.organization.name}
+
                                       </TableCell>
                                     </TableRow>
                                   );

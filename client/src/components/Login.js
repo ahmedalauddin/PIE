@@ -20,7 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-//import { UserContext } from "./UserContext";
+import { UserProvider } from "./UserContext";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -68,7 +68,7 @@ class Login extends React.Component {
 
           // TODO - call setUserOrg() here.
           let user = response.json();
-          // UserContext.setUserOrg(user, user);
+          UserProvider.setUserOrg(user, null);
         } else {
           this.setState({ isFailedLogin: true, isLoggedIn: false });
           this.setState({ msgText: "Login failed, please try again." });

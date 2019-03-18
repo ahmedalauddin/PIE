@@ -28,8 +28,7 @@ import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const ExpandingSectionGridItem = (classes, project) => {
   // TODO - add the org's project list here.

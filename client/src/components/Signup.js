@@ -17,7 +17,6 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
-import { red } from "@material-ui/core/colors";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -125,10 +124,6 @@ class Signup extends React.Component {
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
-
-    /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

@@ -22,7 +22,7 @@ class Logout extends Component {
 
   componentDidMount() {
     // Authenticate against the username
-    fetch("/api/logout")
+    fetch("/api/auth/logout")
       .then(response => {
         if (response.status === 200) {
           // status code 200 is success.

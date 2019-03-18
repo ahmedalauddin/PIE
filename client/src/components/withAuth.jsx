@@ -1,7 +1,15 @@
-// withAuth.jsx
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/withAuth.jsx
+ * Created:  2019-02-01
+ * Author:   Brad Kaufman
+ * Descr:    Authorization component wrapping ComponentToProtect.
+ * -----
+ * Modified: 2019-03-17
+ * Editor:   Brad Kaufman
+ */
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-//import { axios } from "axios";
 import Log from "../util/Log";
 
 export default function withAuth(ComponentToProtect) {
@@ -15,7 +23,7 @@ export default function withAuth(ComponentToProtect) {
     }
 
     componentDidMount() {
-      fetch("/api/validate")
+      fetch("/api/auth/validate")
         .then(res => {
           if (res.status === 200) {
             this.setState({ loading: false });

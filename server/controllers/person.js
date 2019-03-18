@@ -4,14 +4,15 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-26 17:48:47
- * Editor:   Darrin Tisdale
+ * Modified: 2019-03-17
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
 // declarations
 const models = require("../models");
 const Organization = require("../models").Organization;
+const Project = require("../models").Project;
 const bCrypt = require("bcrypt");
 const util = require("util");
 const logger = require("../util/logger")(__filename);
@@ -107,21 +108,46 @@ module.exports = {
       });
   },
 
+  // Find a person by Id
+  findByEmail(req, res) {
+    return models.Person.findOne(req.params.email, {
+      include: [
+        {
+          model: Organization,
+          as: "organization"
+        },
+        {
+          model: Project,
+          as: "project"
+        }
+      ]
+    })
+      .then(p => {
+        logger.debug(`${callerType} findByEmail -> username: ${p.username}`);
+        res.status(200).send(p);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByEmail -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+
   // List all persons
   list(req, res) {
     if (req.query.email) {
-      logger.debug(`${callerType} findByEmail -> email: ${req.query.email}`);
+      logger.debug(`${callerType} list -> email: ${req.query.email}`);
       return models.Person.findOne({
         where: {
           email: req.params.email
         }
       })
         .then(p => {
-          logger.debug(`${callerType} findByEmail -> id: ${p.id}`);
+          logger.debug(`${callerType} list -> id: ${p.id}`);
           res.status(200).send(p);
         })
         .catch(error => {
-          logger.error(`${callerType} findByEmail -> error: ${error.stack}`);
+          logger.error(`${callerType} list -> error: ${error.stack}`);
           res.status(400).send(error);
         });
     } else {

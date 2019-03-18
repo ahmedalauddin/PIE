@@ -4,22 +4,23 @@
  * Created:  2019-03-01 04:37:25
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-06 15:29:25
- * Editor:   Darrin Tisdale
+ * Modified: 2019-03-17
+ * Editor:   Brad Kaufman
  */
-
 const Person = require("../models").Person;
 const bCrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const logger = require("../util/logger")(__filename);
 const Organization = require("../models").Organization;
+const Project = require("../models").Project;
+const Task = require("../models").Task;
 const mvcType = "controller";
 const cookieName = "token";
 
-function writeJwt(email, organization, client) {
+function writeJwt(email, organization) {
   let token = jwt.sign(
-    { email: email, organization: organization, clientId: client },
+    { email: email, organization: organization},
     config.get("security.jwtSecret"),
     {
       expiresIn: "24h" // expires in 24 hours
@@ -31,7 +32,7 @@ function writeJwt(email, organization, client) {
 module.exports = {
   authenticate(req, res) {
     logger.debug(`${mvcType} authenticate -> start`);
-    // Find a person by username.
+    // Find a person by email.
     logger.debug(`${mvcType} authenticate -> email: ${req.body.email}`);
     return Person.findOne({
       where: {
@@ -41,6 +42,14 @@ module.exports = {
         {
           model: Organization,
           as: "organization"
+        },
+        {
+          model: Project,
+          as: "projects"
+        },
+        {
+          model: Task,
+          as: "tasks"
         }
       ]
     })
@@ -54,13 +63,13 @@ module.exports = {
           if (result === true) {
             // Logged in successfully.
             logger.debug(`${mvcType} authenticate -> successful`);
-            let token = writeJwt(p.email, p.organization, null);
+            let token = writeJwt(p.email, p.organization);
 
             // return the JWT token for the future API calls
             logger.debug(
               `${mvcType} authenticate -> returning token ${token} as cookie`
             );
-            res.cookie(cookieName, token, { httpOnly: true }).sendStatus(200);
+            res.cookie(cookieName, token, { httpOnly: true }).status(200).json(p);
           } else {
             // Login failed
             let _m = "Username or password is incorrect";
@@ -85,6 +94,7 @@ module.exports = {
       });
   },
 
+  /*
   // For ValueInfinity users, set the client being used in the JWT token.  At this
   // point the user should already be logged in.
   setClient(req, res) {
@@ -147,6 +157,7 @@ module.exports = {
       };
     }
   },
+  */
 
   logout(req, res) {
     logger.debug(`${mvcType} logout -> clearing cookie ${cookieName}`);
@@ -155,9 +166,6 @@ module.exports = {
 
   // Get the organization ID for the user from the JSON Web Token.
   getTokenOrganizationId(req) {
-    // check header or url parameters or post parameters for token
-    logger.debug(`${mvcType} validateToken -> enter`);
-
     const token =
       req.cookies.token ||
       req.body.token ||
@@ -177,12 +185,14 @@ module.exports = {
       ) {
         if (!err) {
           logger.debug(`${mvcType} getTokenOrganizationId -> organization ID is: ${decoded.clientId}`);
-          decoded.clientId = clientId;
+          clientId = decoded.clientId;
         }
       });
     }
 
     // send the result
+    // check header or url parameters or post parameters for token
+    logger.debug(`${mvcType} getTokenOrganizationId -> clientId: ${clientId}`);
     return clientId;
   },
 

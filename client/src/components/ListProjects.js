@@ -77,11 +77,14 @@ class MyTableHead extends React.Component {
   }
 }
 
-class ListProjects extends Component {
+var msg = "";
 
+class ListProjects extends Component {
   state = {
     order: "asc",
     orderBy: "",
+    orgId: 2,
+    organization: {},
     selected: [],
     projects: [],
     toProject: "false",
@@ -89,20 +92,28 @@ class ListProjects extends Component {
   };
 
   componentDidMount() {
-    if (parseInt(this.props.match.params.id) > 0) {
-      // If there is an id passed in, it's for organization.
-      fetch(`/api/projects/organization/${this.props.match.params.id}`)
-        .then(res => res.json())
-        .then(projects => this.setState({ projects }));
+    if (parseInt(this.state.orgId) > 0) {
+      // If there is an organization, select only the projects for that org.
+      fetch(`/api/organizations/${this.state.orgId}`)
+        .then(res => {
+          alert(res.json());
+          return res.json();
+        })
+        .then(organization => {
+          alert(organization);
+          //this.setState({ organization: organization });
+        });
+
+      msg = "List of projects for organization " + this.state.orgId;
     } else {
+      // Else select all projects.
       fetch("/api/projects")
         .then(res => res.json())
         .then(projects => this.setState({ projects }));
     }
+    msg = "List of projects for all organizations";
   }
 
-  // Here I just want to use something like the construct in Topbar to navigate
-  // via client/routes.js.
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
   handleClick = (event, id) => {};
 
@@ -127,7 +138,7 @@ class ListProjects extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        Full list of all ValueInfinity projects
+                        {msg}
                       </Typography>
                     </div>
                     <div>

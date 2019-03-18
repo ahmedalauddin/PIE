@@ -31,7 +31,11 @@ module.exports = router => {
 
   // TODO add DELETE /api/persons/:id for deleting a person
 
-  // get a person
+  // Find a person by ID
   logger.debug(`${callerType} GET -> path: /api/persons/:id`);
   router.get("/api/persons/:id", personController.findById);
+
+  // Find a person by email
+  logger.debug(`${callerType} GET -> path: /api/persons/email/:email`);
+  router.get("/api/persons/email/:email", personController.findByEmail);
 };

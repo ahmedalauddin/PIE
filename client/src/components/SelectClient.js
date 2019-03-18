@@ -78,7 +78,7 @@ class SelectClient extends React.Component {
     event.preventDefault();
 
     // Set the JWT token with the org ID>
-    fetch("/api/setClient", {
+    fetch("/api/auth/validate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(this.state)

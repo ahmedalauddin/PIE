@@ -9,7 +9,7 @@ const Menu = [
   },
   {
     label: "Mind Map",
-    pathname: "/mindmapstatic"
+    pathname: "/mindmap"
   },
   {
     label: "Projects",

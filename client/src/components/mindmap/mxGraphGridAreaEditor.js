@@ -4,16 +4,17 @@
  * Created:  2019-03-06 16:32:33
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-16 18:10:21
+ * Modified: 2019-03-17 17:59:33
  * Editor:   Darrin Tisdale
  */
 
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import uuid from "uuid/v4";
 import CreateTaskNode from "./CreateTaskNode";
 import JsonCodec from "./JsonCodec";
 import mxCellAttributeChange from "./mxCellAttributeChange";
-import "../../stylesheets/common.css";
+import { MindMapToolbarButtons } from "./MindMapToolbarButtons";
 import "../../stylesheets/mxgraph.css";
 import {
   mxGraph,
@@ -39,7 +40,6 @@ import {
   mxConstraintHandler,
   //mxFastOrganicLayout,
   mxUndoManager,
-  //mxObjectCodec,
   //mxHierarchicalLayout,
   mxConnectionConstraint,
   mxCellState,
@@ -50,38 +50,95 @@ import {
   mxCellOverlay
 } from "mxgraph-js";
 
+/**
+ * React-based wrapper foer the mxgraph JS library
+ * tailored for ValueInfinity
+ *
+ * @export
+ * @class mxGraphGridAreaEditor
+ * @extends {Component}
+ */
 export default class mxGraphGridAreaEditor extends Component {
+  /**
+   * Creates an instance of mxGraphGridAreaEditor.
+   * @param {*} props
+   * @memberof mxGraphGridAreaEditor
+   */
   constructor(props) {
     super(props);
     this.state = {
       graph: {},
       layout: {},
+      undo: { manager: {}, listener: {} },
       json: "",
       dragElt: null,
       createVisible: false,
       currentNode: null,
-      currentTask: ""
+      currentTask: "",
+      callbacks: {}
     };
+
+    // bind the functions to this instance
     this.LoadGraph = this.LoadGraph.bind(this);
+    this.handleSave = this.handleSave.bind(this);
+    this.handleZoomIn = this.handleZoomIn.bind(this);
+    this.handleZoomOut = this.handleZoomOut.bind(this);
+    this.handleZoomRestore = this.handleZoomRestore.bind(this);
+    this.handleUndo = this.handleUndo.bind(this);
+    this.handleRedo = this.handleRedo.bind(this);
+    this.handleDumpJSON = this.handleDumpJSON.bind(this);
+
+    // create the callbacks state variable
+    this.callbacks = {
+      handleSave: this.handleSave,
+      handleZoomIn: this.handleZoomIn,
+      handleZoomOut: this.handleZoomOut,
+      handleZoomRestore: this.handleZoomRestore,
+      handleUndo: this.handleUndo,
+      handleRedo: this.handleRedo,
+      handleDumpJSON: this.handleDumpJSON
+    };
   }
 
+  /**
+   * after mounting, perform this function
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   componentDidMount() {
-    window.alert("mxGraphGridAreaEditor did mount");
+    // load the graph, now that it's set up
     this.LoadGraph();
   }
 
-  // given JSON, instance a model
+  /**
+   * taking in appropriate JSON data,
+   * render it to the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   renderJSON = (dataModel, graph) => {
     const jsonEncoder = new JsonCodec();
     let vertices = {};
     const parent = graph.getDefaultParent();
-    graph.getModel().beginUpdate(); // Adds cells to the model in a single step
+
+    // create update transaction
+    graph.getModel().beginUpdate();
+
+    // catch any exceptions, so that we can finish
+    // the transaction if required
     try {
-      dataModel &&
+      // is a dataModel present
+      if (dataModel) {
+        // for each element on the dataModel's graph
         dataModel.graph.map(node => {
+          // if there's a node, check that it has a value
           if (node.value) {
+            // is the value equal to "object"?
             if (typeof node.value === "object") {
+              // create the xml representation of the node
               const xmlNode = jsonEncoder.encode(node.value);
+
+              // add it to the array
               vertices[node.id] = graph.insertVertex(
                 parent,
                 null,
@@ -92,7 +149,9 @@ export default class mxGraphGridAreaEditor extends Component {
                 node.geometry.height,
                 node.style
               );
+              // is the node value equal to "edge"?
             } else if (node.value === "Edge") {
+              // insert an edge into the graph
               graph.insertEdge(
                 parent,
                 null,
@@ -103,13 +162,20 @@ export default class mxGraphGridAreaEditor extends Component {
               );
             }
           }
-          return;
         });
+      }
     } finally {
-      graph.getModel().endUpdate(); // Updates the display
+      // finish the rendition of the graph, even if there
+      // a failure
+      graph.getModel().endUpdate();
     }
   };
 
+  /**
+   * extract the json representation of the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   getJsonModel = graph => {
     const encoder = new JsonCodec();
     const jsonModel = encoder.decode(graph.getModel());
@@ -118,6 +184,12 @@ export default class mxGraphGridAreaEditor extends Component {
     };
   };
 
+  /**
+   * Utility function to stringify JSON without
+   * containing circular references
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   stringifyWithoutCircular = json => {
     return JSON.stringify(
       json,
@@ -137,23 +209,27 @@ export default class mxGraphGridAreaEditor extends Component {
         }
         return value;
       },
-      4
+      2
     );
   };
 
+  /**
+   * add overlays to nodes
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   addOverlays = (graph, cell) => {
     var overlay = new mxCellOverlay(
-      new mxImage("./resources/images/add.png", 16, 16),
+      new mxImage("../../images/add.png", 16, 16),
       "load more"
     );
-    console.log("overlay");
     overlay.cursor = "hand";
     overlay.align = mxConstants.ALIGN_CENTER;
     overlay.offset = new mxPoint(0, 10);
     overlay.addListener(
       mxEvent.CLICK,
       mxUtils.bind(this, function(sender, evt) {
-        console.log("load more");
+        // add a child of the same type
         // addChild(graph, cell);
       })
     );
@@ -161,36 +237,57 @@ export default class mxGraphGridAreaEditor extends Component {
     graph.addCellOverlay(cell, overlay);
   };
 
-  handleCancel = () => {
-    this.setState({ createVisible: false });
-    this.state.graph.removeCells([this.state.currentNode]);
-  };
-
-  handleConfirm = fields => {
-    const { graph } = this.state;
-    const cell = graph.getSelectionCell();
-    this.applyHandler(graph, cell, "text", fields.taskName);
-    this.applyHandler(graph, cell, "desc", fields.taskDesc);
-    cell.setId(fields.id || 100);
-    this.setState({ createVisible: false });
-  };
-
+  /**
+   * Handle updates to the cell
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   applyHandler = (graph, cell, name, newValue) => {
     graph.getModel().beginUpdate();
     try {
       const edit = new mxCellAttributeChange(cell, name, newValue);
-      // console.log(edit)
       graph.getModel().execute(edit);
-      // graph.updateCellSize(cell);
     } finally {
       graph.getModel().endUpdate();
     }
   };
 
-  graphF = evt => {
+  /**
+   * handle cancelling a new node
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleCancelNewNode = () => {
+    this.state.graph.removeCells([this.state.currentNode]);
+    this.setState({ createVisible: false });
+  };
+
+  /**
+   * handle confirming creation of new node
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleConfirmNewNode = fields => {
     const { graph } = this.state;
-    var x = mxEvent.getClientX(evt);
-    var y = mxEvent.getClientY(evt);
+    const cell = graph.getSelectionCell();
+
+    // check the id of the cell
+    let id = fields.id || uuid();
+    this.applyHandler(graph, cell, "text", fields.taskName);
+    this.applyHandler(graph, cell, "desc", fields.taskDesc);
+    cell.setId(id);
+    this.setState({ createVisible: false });
+  };
+
+  /**
+   * determine if the event affects the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  graphF = e => {
+    const { graph } = this.state;
+    var x = mxEvent.getClientX(e);
+    var y = mxEvent.getClientY(e);
     var elt = document.elementFromPoint(x, y);
     if (mxUtils.isAncestorNode(graph.container, elt)) {
       return graph;
@@ -198,22 +295,35 @@ export default class mxGraphGridAreaEditor extends Component {
     return null;
   };
 
+  /**
+   * Specifies graph settings for moving elements, etc.
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   loadGlobalSetting = () => {
-    // Enable alignment lines to help locate
+    // enable guides
     mxGraphHandler.prototype.guidesEnabled = true;
-    // Alt disables guides
-    mxGuide.prototype.isEnabledForEvent = function(evt) {
-      return !mxEvent.isAltDown(evt);
+
+    // disable the guides if the alt key is held down
+    mxGuide.prototype.isEnabledForEvent = function(e) {
+      return !mxEvent.isAltDown(e);
     };
-    // Specifies if way points should snap to the routing centers of terminals
+
+    // way points should snap to the routing centers of terminals
     mxEdgeHandler.prototype.snapToTerminals = true;
     mxConstraintHandler.prototype.pointImage = new mxImage(
-      "./resources/images/point.gif",
+      "../../images/point.gif",
       5,
       5
     );
   };
 
+  /**
+   * Construct a DIV and format it to provide UI
+   * during the dragging event
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   getEditPreview = () => {
     var dragElt = document.createElement("div");
     dragElt.style.border = "dashed black 1px";
@@ -222,6 +332,11 @@ export default class mxGraphGridAreaEditor extends Component {
     return dragElt;
   };
 
+  /**
+   * create the drag element on the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   createDragElement = () => {
     const { graph } = this.state;
     const tasksDrag = ReactDOM.findDOMNode(
@@ -247,8 +362,23 @@ export default class mxGraphGridAreaEditor extends Component {
     });
   };
 
+  /**
+   * handle the selection change event
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  selectionChange = (sender, evt) => {
+    // console.log(sender)
+  };
+
+  /**
+   * handle the selection changed evewt
+   * indicating that we are done with
+   * changing the selection
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   selectionChanged = (graph, value) => {
-    console.log("visible");
     this.setState({
       createVisible: true,
       currentNode: graph.getSelectionCell(),
@@ -256,10 +386,15 @@ export default class mxGraphGridAreaEditor extends Component {
     });
   };
 
+  /**
+   * create a popup menu on the graph, when requested
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   createPopupMenu = (graph, menu, cell, evt) => {
     if (cell) {
       if (cell.edge === true) {
-        menu.addItem("Delete Connection", null, function() {
+        menu.addItem("Delete Link", null, function() {
           graph.removeCells([cell]);
           mxEvent.consume(evt);
         });
@@ -268,7 +403,7 @@ export default class mxGraphGridAreaEditor extends Component {
         // mxUtils.alert('Edit child node: ');
         // selectionChanged(graph)
         //});
-        menu.addItem("Delete Task", null, function() {
+        menu.addItem("Delete Item", null, function() {
           graph.removeCells([cell]);
           mxEvent.consume(evt);
         });
@@ -276,6 +411,11 @@ export default class mxGraphGridAreaEditor extends Component {
     }
   };
 
+  /**
+   * Set default setting for graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   setGraphSetting = () => {
     const { graph } = this.state;
     const that = this;
@@ -289,6 +429,7 @@ export default class mxGraphGridAreaEditor extends Component {
     graph.centerZoom = true;
     graph.autoSizeCellsOnAdd = true;
 
+    // set up the keyhandler to attach to the graph
     const keyHandler = new mxKeyHandler(graph);
     keyHandler.bindKey(46, function(evt) {
       if (graph.isEnabled()) {
@@ -301,10 +442,16 @@ export default class mxGraphGridAreaEditor extends Component {
     keyHandler.bindKey(37, function() {
       //console.log(37);
     });
+
+    // define a rubber band
     new mxRubberband(graph);
+
+    // set the tooltip function for a cell
     graph.getTooltipForCell = function(cell) {
       return cell.getAttribute("desc");
     };
+
+    // define the default vertex style
     var style = [];
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RECTANGLE;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.RectanglePerimeter;
@@ -312,9 +459,11 @@ export default class mxGraphGridAreaEditor extends Component {
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
     style[mxConstants.STYLE_FILLCOLOR] = "#C3D9FF";
     style[mxConstants.STYLE_STROKECOLOR] = "#6482B9";
-    style[mxConstants.STYLE_FONTCOLOR] = "#774400";
+    style[mxConstants.STYLE_FONTCOLOR] = "#222222";
     style[mxConstants.HANDLE_FILLCOLOR] = "#80c6ee";
     graph.getStylesheet().putDefaultVertexStyle(style);
+
+    // define the default edge style
     style = [];
     style[mxConstants.STYLE_STROKECOLOR] = "#f90";
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
@@ -324,42 +473,52 @@ export default class mxGraphGridAreaEditor extends Component {
     style[mxConstants.STYLE_ENDARROW] = mxConstants.ARROW_CLASSIC;
     style[mxConstants.STYLE_FONTSIZE] = "10";
     style[mxConstants.VALID_COLOR] = "#27bf81";
-
     graph.getStylesheet().putDefaultEdgeStyle(style);
+
+    // define the handle for the popup menu
     graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
       return that.createPopupMenu(graph, menu, cell, evt);
     };
+
     graph.convertValueToString = function(cell) {
+      // Returns a DOM for the label
+      var div = document.createElement("div");
       if (
         mxUtils.isNode(cell.value) &&
         cell.value.nodeName.toLowerCase() === "taskobject"
       ) {
+        // extract from the cell some values
+        let _t = cell.getAttribute("text", "");
+        let _l = cell.getAttribute("label");
+        let _p = cell.getAttribute("projid", "");
+
         // Returns a DOM for the label
         var div = document.createElement("div");
         div.setAttribute("class", "taskWrapper");
-        div.innerHTML = `<span class='taskTitle'>${cell.getAttribute(
-          "text",
-          ""
-        )}</span>`;
+        div.innerHTML = `<span class='taskTitle'>${_t}</span>`;
         mxUtils.br(div);
 
         var p = document.createElement("p");
         p.setAttribute("class", "taskName");
-        p.innerHTML = cell.getAttribute("label");
+        p.innerHTML = _l;
         div.appendChild(p);
-
-        return div;
       }
-      return "";
+      return div;
     };
   };
 
+  /**
+   * create the xml data element for a new node
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   funct = (graph, evt, target, x, y, value) => {
     var doc = mxUtils.createXmlDocument();
     var obj = doc.createElement("TaskObject");
     obj.setAttribute("label", value);
     obj.setAttribute("text", "");
     obj.setAttribute("desc", "");
+    obj.setAtrribute("projid", "");
 
     var parent = graph.getDefaultParent();
     let cell = graph.insertVertex(
@@ -382,6 +541,11 @@ export default class mxGraphGridAreaEditor extends Component {
     // }
   };
 
+  /**
+   * define the base layout
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   setLayoutSetting = layout => {
     layout.parallelEdgeSpacing = 10;
     layout.useBoundingBox = false;
@@ -397,10 +561,11 @@ export default class mxGraphGridAreaEditor extends Component {
     };
   };
 
-  selectionChange = (sender, evt) => {
-    // console.log(sender)
-  };
-
+  /**
+   * set the connection between items
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
   settingConnection = () => {
     const { graph } = this.state;
     mxConstraintHandler.prototype.intersects = function(
@@ -489,93 +654,105 @@ export default class mxGraphGridAreaEditor extends Component {
     };
   };
 
-  initToolbar = () => {
-    const that = this;
-    //const { graph, layout } = this.state;
+  /**
+   * handle the save call from the toolbar
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleSave = e => {
+    window.alert("TEMP MESSAGE\n\nSaving mindmap...\n\nClick OK to continue.");
+  };
+
+  /**
+   * zoom in the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleZoomIn = e => {
     const { graph } = this.state;
-    var toolbar = ReactDOM.findDOMNode(this.refs.toolbar);
+    graph.zoomIn();
+  };
 
-    toolbar.appendChild(
-      mxUtils.button("Save", function() {
-        window.alert(
-          "TEMP MESSAGE\n\nSaving mindmap...\n\nClick OK to continue."
-        );
-      })
-    );
+  /**
+   * zoom out the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleZoomOut = e => {
+    const { graph } = this.state;
+    graph.zoomOut();
+  };
 
-    toolbar.appendChild(
-      mxUtils.button("(+)", function(evt) {
-        graph.zoomIn();
-      })
-    );
+  /**
+   * zoom in the graph
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleZoomRestore = e => {
+    const { graph } = this.state;
+    graph.zoomActual();
+    const zoom = { zoomFactor: 1 };
+    this.setState({
+      graph: { ...graph, ...zoom }
+    });
+  };
 
-    toolbar.appendChild(
-      mxUtils.button("(-)", function(evt) {
-        graph.zoomOut();
-      })
-    );
+  /**
+   * handle an undo request
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleUndo = e => {
+    const { manager } = this.state.undo;
+    manager.undo();
+  };
 
-    toolbar.appendChild(
-      mxUtils.button("(100%)", function(evt) {
-        graph.zoomActual();
-        const zoom = { zoomFactor: 1 };
-        that.setState({
-          graph: { ...graph, ...zoom }
-        });
-      })
-    );
+  /**
+   * handle a redo request
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleRedo = e => {
+    const { manager } = this.state.undo;
+    manager.redo();
+  };
 
-    var undoManager = new mxUndoManager();
-    var listener = function(sender, evt) {
-      undoManager.undoableEditHappened(evt.getProperty("edit"));
+  /**
+   * handle the request to dump JSON for debugging
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  handleDumpJSON = e => {
+    const { graph } = this.state;
+    const jsonNodes = this.getJsonModel(graph);
+    let jsonStr = this.stringifyWithoutCircular(jsonNodes);
+    this.setState({
+      json: jsonStr
+    });
+    console.log(jsonStr);
+  };
+
+  /**
+   * create the undo manager
+   *
+   * @memberof mxGraphGridAreaEditor
+   */
+  initUndoManager = () => {
+    // get the graph
+    const { graph, undo } = this.state;
+    const { manager, listener } = undo;
+
+    // define the undo manager
+    manager = new mxUndoManager();
+
+    // define the function
+    listener = function(sender, evt) {
+      manager.undoableEditHappened(evt.getProperty("edit"));
     };
+
+    // set the links to the view and model
     graph.getModel().addListener(mxEvent.UNDO, listener);
     graph.getView().addListener(mxEvent.UNDO, listener);
-
-    toolbar.appendChild(
-      mxUtils.button("Undo", function() {
-        undoManager.undo();
-      })
-    );
-
-    // toolbar.appendChild(
-    //   mxUtils.button("Automatic layout", function () {
-    //     graph.getModel().beginUpdate();
-    //     try {
-    //       that.state.layout.execute(graph.getDefaultParent());
-    //     } catch (e) {
-    //       throw e;
-    //     } finally {
-    //       graph.getModel().endUpdate();
-    //     }
-    //   })
-    // );
-
-    // toolbar.appendChild(
-    //   mxUtils.button("view XML", function () {
-    //     var encoder = new mxCodec();
-    //     var node = encoder.encode(graph.getModel());
-    //     mxUtils.popup(mxUtils.getXml(node), true);
-    //   })
-    // );
-
-    toolbar.appendChild(
-      mxUtils.button("Dump JSON", function() {
-        const jsonNodes = that.getJsonModel(graph);
-        let jsonStr = that.stringifyWithoutCircular(jsonNodes);
-        //localStorage.setItem("json", jsonStr);
-        that.setState({
-          json: jsonStr
-        });
-        console.log(jsonStr);
-      })
-    );
-
-    // toolbar.appendChild(
-    //   mxUtils.button("Render JSON", function() {
-    //     that.renderJSON(JSON.parse(that.state.json), graph);
-    //   })
-    // );
   };
 
   LoadGraph(data) {
@@ -592,13 +769,13 @@ export default class mxGraphGridAreaEditor extends Component {
           dragElt: this.getEditPreview()
         },
         () => {
-          console.log(this);
           // layout
           const layout = new mxCompactTreeLayout(graph, false);
           this.setState({ layout });
           this.setLayoutSetting(layout);
           this.loadGlobalSetting();
           this.setGraphSetting();
+          this.initUndoManager();
           this.initToolbar();
           this.settingConnection();
           this.createDragElement();
@@ -643,9 +820,11 @@ export default class mxGraphGridAreaEditor extends Component {
       //var parent = graph.getDefaultParent();
     }
   }
+
   render() {
+    const { classes } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <ul className="sidebar" ref="mxSidebar">
           <li className="title" data-title="Task node" data-value="Task node">
             <em>Drag Onto The Graph</em>
@@ -660,7 +839,12 @@ export default class mxGraphGridAreaEditor extends Component {
             Project
           </li>
         </ul>
-        <div className="toolbar" ref="toolbar" />
+        <div className="toolbar" ref="toolbar">
+          <MindMapToolbarButtons
+            callbacks={this.state.callbacks}
+            classes={classes}
+          />
+        </div>
         <div className="container-wrapper">
           <div className="container" ref="divGraph" />
         </div>
@@ -673,7 +857,7 @@ export default class mxGraphGridAreaEditor extends Component {
             handleConfirm={this.handleConfirm}
           />
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }

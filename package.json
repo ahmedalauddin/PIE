@@ -16,7 +16,7 @@
     "server:debug": "nodemon --inspect ./bin/www",
     "server:test": "jest",
     "server:basic": "./bin/www",
-    "server:monitor": "pm2 -- npm run server:basic",
+    "server:monitor": "pm2 start",
     "server:lint": "./node_modules/.bin/eslint .",
     "server:lint-fix": "npm run lint -- --fix",
     "start": "concurrently \"npm run client:start\" \"npm run server:start\"",

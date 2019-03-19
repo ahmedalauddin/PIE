@@ -12,8 +12,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import UndoIcon from "@material-ui/core/Undo";
-import RedoIcon from "@material-ui/core/Redo";
+import UndoIcon from "@material-ui/icons/Undo";
+import RedoIcon from "@material-ui/icons/Redo";
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 import YoutubeSearchedForIcon from "@material-ui/icons/YoutubeSearchedFor";
@@ -35,7 +35,7 @@ const styles = theme => ({
   }
 });
 
-class MindMapToolbarButtons extends React.Component {
+export class MindMapToolbarButtons extends React.Component {
   constructor(props) {
     super(props);
 

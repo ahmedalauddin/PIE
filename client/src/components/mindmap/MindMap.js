@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { styles } from "../MaterialSense";
-//import { MapEditor } from "./mxGraphGridAreaEditor";
+import { MapEditor } from "./mxGraphGridAreaEditor";
 //const gr = require("mxgraph-js");
 
 // TODO this page should get the data for the control, then pass it in
@@ -33,7 +33,7 @@ class MindMap extends Component {
         <Topbar />
         <div className={classes.root}>
           <Paper>
-
+            <MapEditor />
           </Paper>
         </div>
       </React.Fragment>

@@ -5,7 +5,7 @@
  * Author:   Brad Kaufman
  * Descr:    User Context using React's Context API.
  * -----
- * Modified: 2019-03-17 21:32:28
+ * Modified: 2019-03-19 12:25:24
  * Editor:   Darrin Tisdale
  */
 import React, { Component } from "react";
@@ -14,7 +14,18 @@ import React, { Component } from "react";
  * *UserContext*
  * the context that stores information
  */
-const UserContext = React.createContext();
+export const UserContext = React.createContext({
+  user: {},
+  organization: {},
+  setUser: user => {},
+  setOrg: organization => {}
+});
+
+/**
+ * *UserConsumer*
+ * the consumer for the context
+ */
+export const UserConsumer = UserContext.Consumer;
 
 /**
  * *UserProvider*
@@ -40,11 +51,12 @@ export class UserProvider extends Component {
       // since we are in the state, we can create
       // a member function here and not require
       // a bind as used in other times
-      setUserOrg: (user, organization) => {
-        this.setState({
-          user: user,
-          organization: organization
-        });
+      // NOTE: this approach ensures all other elements remain the same
+      setUser: u => {
+        this.setState({ ...this.state, user: u });
+      },
+      setOrg: o => {
+        this.setState({ ...this.state, organization: o });
       }
     };
   }
@@ -63,9 +75,3 @@ export class UserProvider extends Component {
     );
   }
 }
-
-/**
- * *UserConsumer*
- * the consumer for the context
- */
-export const UserConsumer = UserContext.Consumer;

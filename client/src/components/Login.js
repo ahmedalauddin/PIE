@@ -4,8 +4,8 @@
  * Created:  2019-02-04
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-17
- * Editor:   Brad Kaufman
+ * Modified: 2019-03-19 12:27:02
+ * Editor:   Darrin Tisdale
  */
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -20,7 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { UserProvider } from "./UserContext";
+import { UserContext } from "./UserContext";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -94,7 +94,7 @@ class Login extends React.Component {
         if (!response.ok) {
           // here, we get out of the then handlers and
           // over to the catch handler
-          throw new Error('Network response was not ok.');
+          throw new Error("Network response was not ok.");
         } else {
           // status code 200 is success.
           console.log("Login.js, logged in. Status = 200");
@@ -105,7 +105,12 @@ class Login extends React.Component {
       .then(data => {
         // Call setUserOrg() here.
         console.log("Login.js, user:" + JSON.stringify(data));
-        UserProvider.setUserOrg(data, null);
+
+        // grab the context via the context api
+        const _c = useContext(UserContext);
+
+        // now access the member of the object we want
+        _c.setUser(data);
       })
       .catch(err => {
         // TODO - set error login on form.

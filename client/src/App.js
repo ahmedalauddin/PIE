@@ -4,11 +4,12 @@
  * Created:  2019-02-16 23:32:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-16 17:55:04
+ * Modified: 2019-03-19 12:30:42
  * Editor:   Darrin Tisdale
  */
 
 import React, { Component } from "react";
+import { UserProvider } from "./components/UserContext";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import "./stylesheets/App.css";
 import Routes from "./routes";
@@ -35,7 +36,9 @@ class App extends Component {
     return (
       <div>
         <MuiThemeProvider theme={theme}>
-          <Routes />
+          <UserProvider>
+            <Routes />
+          </UserProvider>
         </MuiThemeProvider>
       </div>
     );

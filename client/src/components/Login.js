@@ -52,6 +52,7 @@ class Login extends React.Component {
     });
   };
 
+  /*
   handleSubmit(event) {
     event.preventDefault();
 
@@ -64,15 +65,13 @@ class Login extends React.Component {
       .then(response => {
         if (response.status === 200) {
           // status code 200 is success.
+          console.log("Login.js, logged in. Status = 200");
           this.setState({ isLoggedIn: true });
-
-          // TODO - call setUserOrg() here.
-          let user = response.json();
-          UserProvider.setUserOrg(user, null);
         } else {
           this.setState({ isFailedLogin: true, isLoggedIn: false });
           this.setState({ msgText: "Login failed, please try again." });
         }
+        return("success");
       })
       .catch(err => {
         // TODO - set error login on form.
@@ -80,6 +79,59 @@ class Login extends React.Component {
         this.setState({ msgText: "Login failed, please try again." });
       });
   }
+  */
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    // Authenticate against the username
+    fetch("/api/auth/authenticate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => {
+        if (!response.ok) {
+          // here, we get out of the then handlers and
+          // over to the catch handler
+          throw new Error('Network response was not ok.');
+        } else {
+          // status code 200 is success.
+          console.log("Login.js, logged in. Status = 200");
+          this.setState({ isLoggedIn: true });
+          return response.json();
+        }
+      })
+      .then(data => {
+        // Call setUserOrg() here.
+        console.log("Login.js, user:" + JSON.stringify(data));
+        UserProvider.setUserOrg(data, null);
+      })
+      .catch(err => {
+        // TODO - set error login on form.
+        this.setState({ isFailedLogin: true });
+        this.setState({ msgText: "Login failed, please try again." });
+      });
+  }
+
+  /*
+  handleAuthResponse(response) {
+    return response.text().then(text => {
+      const data = text && JSON.parse(text);
+      UserProvider.setUserOrg(text, null);
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.setState({ isFailedLogin: true, isLoggedIn: false });
+          this.setState({ msgText: "Login failed, please try again." });
+        }
+        const error = (data && data.message) || response.statusText;
+        return Promise.reject(error);
+      }
+
+      return data;
+    });
+  }
+  */
 
   componentDidMount() {}
 

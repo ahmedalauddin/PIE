@@ -1,5 +1,12 @@
-// List for editing projects, 1/22/19.
-// Will be removed eventually.  Essentially a test harness for EditProject.
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/ListProjects.js
+ * Created:  2019-01-16
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-03-18
+ * Editor:   Brad Kaufman
+ */
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
@@ -18,6 +25,7 @@ import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import { UserConsumer } from "./UserContext";
+import Button from "@material-ui/core/Button";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -80,7 +88,10 @@ class MyTableHead extends React.Component {
 
 const orgName = () => (
   <UserConsumer>
-    {(context) => context.user.organization.name}
+    {(context) => {
+      console.log("user: " + context.user.toString());
+      return context.state.user.organization.name;
+    }}
   </UserConsumer>
 );
 
@@ -140,59 +151,71 @@ class ListProjects extends Component {
             >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
-                  <Paper className={classes.paper}>
-                    <div className={classes.box}>
-                      <Typography color="secondary" gutterBottom>
-                        {msg}
-                      </Typography>
-                    </div>
-                    <div>
-                      <Typography variant="body1" gutterBottom>
-                        <Paper className={classes.root}>
-                          <div className={classes.tableWrapper}>
-                            <Table
-                              className={classes.table}
-                              aria-labelledby="tableTitle"
+                  <div className={classes.box}>
+                    <Table>
+                      <TableRow>
+                        <TableCell>
+                          <Typography color="secondary" gutterBottom>
+                            Projects listed for ${orgName}.
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <div className={classes.spaceTop}>
+                            <Button
+                              component={Link}
+                              variant="contained"
+                              color="primary"
+                              to={`/ProjectCard`}
                             >
-                              <MyTableHead />
-                              <TableBody>
-                                {stableSort(
-                                  this.state.projects,
-                                  getSorting("asc", "title")
-                                ).map(project => {
-                                  return (
-                                    <TableRow
-                                      hover
-                                      onClick={event => {
-                                        this.handleClick(event, project.id);
-                                      }}
-                                      tabIndex={-1}
-                                      key={project.id}
-                                    >
-                                      <TableCell align="right">
-                                        {project.id}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        <Link to={`/projectcard/${project.id}`}>
-                                          {project.title}
-                                        </Link>
-                                      </TableCell>
-                                      <TableCell width="45%" align="left">
-                                        {project.description}
-                                      </TableCell>
-                                      <TableCell align="left">
-
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
+                              New Project
+                            </Button>
                           </div>
-                        </Paper>
-                      </Typography>
-                    </div>
-                  </Paper>
+                        </TableCell>
+                      </TableRow>
+                    </Table>
+                  </div>
+                  <div className={classes.tableWrapper}>
+                    <Typography variant="body1" gutterBottom>
+                      <Table
+                        className={classes.table}
+                        aria-labelledby="tableTitle"
+                      >
+                        <MyTableHead />
+                        <TableBody>
+                          {stableSort(
+                            this.state.projects,
+                            getSorting("asc", "title")
+                          ).map(project => {
+                            return (
+                              <TableRow
+                                hover
+                                onClick={event => {
+                                  this.handleClick(event, project.id);
+                                }}
+                                tabIndex={-1}
+                                key={project.id}
+                              >
+                                <TableCell align="right">
+                                  {project.id}
+                                </TableCell>
+                                <TableCell align="left">
+                                  <Link to={`/projectcard/${project.id}`}>
+                                    {project.title}
+                                  </Link>
+                                </TableCell>
+                                <TableCell width="45%" align="left">
+                                  {project.description}
+                                </TableCell>
+                                <TableCell align="left">
+
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </Typography>
+                  </div>
                 </Grid>
               </Grid>
             </Grid>

@@ -24,18 +24,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-const buttonstyles = theme => ({
-  primary: {
-    marginRight: theme.spacing.unit * 2
-  },
-  secondary: {
-    background: theme.palette.secondary["100"],
-    color: "white"
-  },
-  spaceTop: {
-    marginTop: 20
-  }
-});
 
 class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various

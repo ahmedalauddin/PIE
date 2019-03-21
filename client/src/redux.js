@@ -69,6 +69,7 @@ export function configureStore(initialState = {}) {
   return store;
 };
 
+// selectors
 export function getUser() {
   console.log("Redux.js, getUser:" + store.getState().reds.user);
   return(store.getState().reds.user);

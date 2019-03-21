@@ -56,15 +56,24 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch) => {
+  return {
+    setUserAction: (userData) => dispatch(setUserAction(userData)),
+    setOrgAction: (orgData) => dispatch(setOrgAction(orgData))
+  };
+}
+
+/*
+const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({}, dispatch);
 };
+*/
 
-const AppContainer = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(App);
 
-export default connect(mapStateToProps, mapDispatchToProps);
+//export default connect(mapStateToProps, mapDispatchToProps);
 
 
 

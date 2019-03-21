@@ -1,4 +1,4 @@
-import {combineReducers, createStore} from "redux";
+import { combineReducers, createStore } from "redux";
 
 // actions.js
 export const setUserAction = (userData) => ({
@@ -17,7 +17,20 @@ let defaultState = {
   organization: ""
 };
 
-export const reds = (state = defaultState, action) => {
+
+export const reds = (state = {}, action) => {
+  switch (action.type) {
+    case "USER":
+      return updateUser(state, action);
+    case "ORGANIZATION":
+      return updateOrg(state, action);
+    default:
+      return state;
+  }
+};
+
+/*
+export const reds = (state = {}, action) => {
   switch (action.type) {
     case "USER":
       return {
@@ -33,6 +46,17 @@ export const reds = (state = defaultState, action) => {
       return state;
   }
 };
+*/
+
+function updateUser(state, action) {
+  state.user = action.payload;
+  return state;
+}
+
+function updateOrg(state, action) {
+  state.organization = action.payload;
+  return state;
+}
 
 
 export const reducers = combineReducers({
@@ -46,6 +70,7 @@ export function configureStore(initialState = {}) {
 };
 
 export function getUser() {
+  console.log("Redux.js, getUser:" + store.getState().reds.user);
   return(store.getState().reds.user);
 };
 

@@ -21,7 +21,7 @@ import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { store, reds, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
+import { store, reducers, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -79,14 +79,16 @@ class Login extends React.Component {
       })
       .then(data => {
         this.setState({
-          isLoggedIn: true,
-          readyToRedirect: true
+          isLoggedIn: true
         });
         setUserAction(JSON.stringify(data));
         console.log("Login.js, user:" + JSON.stringify(data));
       })
       .then(() => {
         console.log("Ready to redirect");
+        this.setState({
+          readyToRedirect: true
+        });
       })
       .catch(err => {
         // TODO - set error login on form.

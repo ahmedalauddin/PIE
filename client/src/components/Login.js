@@ -34,6 +34,7 @@ class Login extends React.Component {
     isEditing: false,
     isLoggedIn: false,
     isFailedLogin: false,
+    readyToRedirect: false,
     userData: "",
     storeUser: "",
     expanded: false,
@@ -79,13 +80,14 @@ class Login extends React.Component {
       .then(data => {
         this.setState({
           isLoggedIn: true,
-          userData: data
+          readyToRedirect: true
         });
+        setUserAction(JSON.stringify(data));
+        console.log("Login.js, user:" + JSON.stringify(data));
       })
-      /*
       .then(() => {
-        console.log("Login.js, user:" + JSON.stringify(this.state.userData));
-      }) */
+        console.log("Ready to redirect");
+      })
       .catch(err => {
         // TODO - set error login on form.
         this.setState({
@@ -103,20 +105,12 @@ class Login extends React.Component {
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
-    let redirect = "";
-    let x;
     let theuser = getUser();
 
-    /*
-    if (this.state.isLoggedIn || this.state.userData === "") {
-      x =
-        <React.Fragment>
-          <div>
-            <h1>User is: {theuser}</h1>
-          </div>
-        </React.Fragment>;
-    } else {
-      x =  */
+    if (this.state.readyToRedirect) {
+      return <Redirect to="/ListProjects" />;
+    }
+
     return(
       <React.Fragment>
         <CssBaseline/>

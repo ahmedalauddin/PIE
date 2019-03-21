@@ -24,8 +24,8 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
-import { UserConsumer } from "./UserContext";
 import Button from "@material-ui/core/Button";
+import { getUser, getOrg } from "../redux";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -86,14 +86,7 @@ class MyTableHead extends React.Component {
   }
 }
 
-const orgName = () => (
-  <UserConsumer>
-    {(context) => {
-      console.log("user: " + context.user.toString());
-      return context.state.user.organization.name;
-    }}
-  </UserConsumer>
-);
+let userName = getUser();
 
 var msg = "";
 
@@ -120,7 +113,7 @@ class ListProjects extends Component {
           this.setState({ projects: organization.projects });
         });
 
-      msg = "List of projects for organization " + orgName();
+      msg = "List of projects for organization " + userName;
     } else {
       // Else select all projects.
       fetch("/api/projects")
@@ -156,7 +149,7 @@ class ListProjects extends Component {
                       <TableRow>
                         <TableCell>
                           <Typography color="secondary" gutterBottom>
-                            Projects listed for ${orgName}.
+                            Projects listed for ${userName}.
                           </Typography>
                         </TableCell>
                         <TableCell>

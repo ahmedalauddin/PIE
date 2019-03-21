@@ -11,10 +11,12 @@
 import React from "react";
 import * as ReactDOM from "react-dom";
 import "./stylesheets/index.css";
-import App from "./App";
+import { App } from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import Log from "./util/Log";
+import { Provider } from "react-redux";
+import { store } from "./redux";
 
 // configure logging
 if (process.env.NODE_ENV !== "production") {
@@ -25,7 +27,9 @@ if (process.env.NODE_ENV !== "production") {
 // setup the DOM rendition
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root")
 );

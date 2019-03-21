@@ -7,14 +7,15 @@
  * Modified: 2019-03-19 12:30:42
  * Editor:   Darrin Tisdale
  */
-
 import React, { Component } from "react";
-import { UserProvider } from "./components/UserContext";
+//import { UserContext } from "./components/UserContext";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import "./stylesheets/App.css";
 import Routes from "./routes";
 import { blue, indigo } from "@material-ui/core/colors";
-//import withAuth from "./components/withAuth";
+import { bindActionCreators } from "redux";
+import { setUserAction, setOrgAction, getUser, getOrg } from "./redux";
+import { connect } from "react-redux";
 
 const theme = createMuiTheme({
   palette: {
@@ -31,19 +32,39 @@ const theme = createMuiTheme({
   }
 });
 
-class App extends Component {
+export class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    };
+  }
   render() {
     return (
       <div>
         <MuiThemeProvider theme={theme}>
-          <UserProvider>
-            <Routes />
-          </UserProvider>
+          <Routes/>
         </MuiThemeProvider>
       </div>
     );
   }
 }
 
-//export default withAuth(App);
-export default App;
+const mapStateToProps = state => ({
+  user: state.user,
+  organization: state.organization,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({}, dispatch);
+};
+
+const AppContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
+
+export default connect(mapStateToProps, mapDispatchToProps);
+
+
+

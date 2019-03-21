@@ -14,12 +14,7 @@ import React, { Component } from "react";
  * *UserContext*
  * the context that stores information
  */
-export const UserContext = React.createContext({
-  user: {},
-  organization: {},
-  setUser: user => {},
-  setOrg: organization => {}
-});
+export const UserContext = React.createContext();
 
 /**
  * *UserConsumer*
@@ -27,51 +22,30 @@ export const UserContext = React.createContext({
  */
 export const UserConsumer = UserContext.Consumer;
 
-/**
- * *UserProvider*
- * a provider for the UserContext
- *
- * @export
- * @class UserProvider
- * @extends {Component}
- */
-export class UserProvider extends Component {
-  /**
-   * Creates an instance of UserProvider
-   * @param {*} props
-   * @memberof UserProvider
-   */
-  constructor(props) {
-    super(props);
-
-    // defines the state of the component
-    this.state = {
-      user: {},
-      organization: {},
-      // since we are in the state, we can create
-      // a member function here and not require
-      // a bind as used in other times
-      // NOTE: this approach ensures all other elements remain the same
-      setUser: u => {
-        this.setState({ ...this.state, user: u });
-      },
-      setOrg: o => {
-        this.setState({ ...this.state, organization: o });
-      }
-    };
+let reducer = (state, action) => {
+  let s;
+  switch(action.type) {
+  case "setUser":
+    s = {...this.state, user: action.payload};
+    break;
+  case "setOrg":
+    s = {...this.state, organization: action.payload};
+    break;
+  default:
+    s = initialState;
   }
+  return s;
+};
 
-  /**
-   * Renders the UserContext provider
-   *
-   * @returns an instance of the provider for UserContext
-   * @memberof UserProvider
-   */
-  render() {
-    return (
-      <UserContext.Provider value={this.state}>
-        {this.props.children}
-      </UserContext.Provider>
-    );
-  }
+let initialState = {
+  user: {},
+  organization: {}
+};
+
+export function UserProvider (props) {
+  let [state, dispatch] = React.useReducer(reducer, initialState);
+  let value = {state, dispatch};
+  return(<UserContext.Provider value={value}>
+    {props.children}
+  </UserContext.Provider>);
 }

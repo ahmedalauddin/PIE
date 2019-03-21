@@ -7,7 +7,7 @@
  * Modified: 2019-03-19 12:27:02
  * Editor:   Darrin Tisdale
  */
-import React from "react";
+import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,7 +20,8 @@ import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { UserContext } from "./UserContext";
+import { connect } from "react-redux";
+import { store, reds, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -33,6 +34,8 @@ class Login extends React.Component {
     isEditing: false,
     isLoggedIn: false,
     isFailedLogin: false,
+    userData: "",
+    storeUser: "",
     expanded: false,
     labelWidth: 0,
     msgText: ""
@@ -52,34 +55,6 @@ class Login extends React.Component {
     });
   };
 
-  /*
-  handleSubmit(event) {
-    event.preventDefault();
-
-    // Authenticate against the username
-    fetch("/api/auth/authenticate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => {
-        if (response.status === 200) {
-          // status code 200 is success.
-          console.log("Login.js, logged in. Status = 200");
-          this.setState({ isLoggedIn: true });
-        } else {
-          this.setState({ isFailedLogin: true, isLoggedIn: false });
-          this.setState({ msgText: "Login failed, please try again." });
-        }
-        return("success");
-      })
-      .catch(err => {
-        // TODO - set error login on form.
-        this.setState({ isFailedLogin: true });
-        this.setState({ msgText: "Login failed, please try again." });
-      });
-  }
-  */
 
   handleSubmit(event) {
     event.preventDefault();
@@ -98,73 +73,57 @@ class Login extends React.Component {
         } else {
           // status code 200 is success.
           console.log("Login.js, logged in. Status = 200");
-          this.setState({ isLoggedIn: true });
           return response.json();
         }
       })
       .then(data => {
-        // Call setUserOrg() here.
-        console.log("Login.js, user:" + JSON.stringify(data));
-
-        // grab the context via the context api
-        const _c = useContext(UserContext);
-
-        // now access the member of the object we want
-        _c.setUser(data);
+        this.setState({
+          isLoggedIn: true,
+          userData: data
+        });
       })
+      /*
+      .then(() => {
+        console.log("Login.js, user:" + JSON.stringify(this.state.userData));
+      }) */
       .catch(err => {
         // TODO - set error login on form.
-        this.setState({ isFailedLogin: true });
-        this.setState({ msgText: "Login failed, please try again." });
+        this.setState({
+          isFailedLogin: true,
+          msgText: "Login failed, please try again." });
       });
   }
 
-  /*
-  handleAuthResponse(response) {
-    return response.text().then(text => {
-      const data = text && JSON.parse(text);
-      UserProvider.setUserOrg(text, null);
-      if (!response.ok) {
-        if (response.status === 401) {
-          this.setState({ isFailedLogin: true, isLoggedIn: false });
-          this.setState({ msgText: "Login failed, please try again." });
-        }
-        const error = (data && data.message) || response.statusText;
-        return Promise.reject(error);
-      }
+  componentDidMount() {
 
-      return data;
-    });
   }
-  */
-
-  componentDidMount() {}
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
     let redirect = "";
-    if (this.state.isLoggedIn) {
-      if (
-        this.state.email.toLowerCase().includes("@valueinfinity.com") ||
-        this.state.email.toLowerCase().includes("@th.io")
-      ) {
-        redirect = "/ListProjects";
-      } else {
-        redirect = "/";
-      }
-      return <Redirect to={redirect} />;
-    }
+    let x;
+    let theuser = getUser();
 
-    return (
+    /*
+    if (this.state.isLoggedIn || this.state.userData === "") {
+      x =
+        <React.Fragment>
+          <div>
+            <h1>User is: {theuser}</h1>
+          </div>
+        </React.Fragment>;
+    } else {
+      x =  */
+    return(
       <React.Fragment>
-        <CssBaseline />
-        <Topbar />
+        <CssBaseline/>
+        <Topbar/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
+            <h1>{theuser || 'Hello World!'}</h1>
             <Grid container justify="center">
               <Grid
                 spacing={24}
@@ -174,7 +133,7 @@ class Login extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12} md={4}>
-                  <SectionHeader title="" subtitle="" />
+                  <SectionHeader title="" subtitle=""/>
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
@@ -219,7 +178,7 @@ class Login extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
-                          <br />
+                          <br/>
                           <Button
                             variant="contained"
                             color="primary"
@@ -239,6 +198,8 @@ class Login extends React.Component {
         </form>
       </React.Fragment>
     );
+    //}
+    //return x;
   }
 }
 

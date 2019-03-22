@@ -86,7 +86,7 @@ class MyTableHead extends React.Component {
   }
 }
 
-let userName = getUser();
+//let userName = getUser();
 
 var msg = "";
 
@@ -113,7 +113,7 @@ class ListProjects extends Component {
           this.setState({ projects: organization.projects });
         });
 
-      msg = "List of projects for organization " + userName;
+      msg = "List of projects for organization ";
     } else {
       // Else select all projects.
       fetch("/api/projects")
@@ -149,7 +149,7 @@ class ListProjects extends Component {
                       <TableRow>
                         <TableCell>
                           <Typography color="secondary" gutterBottom>
-                            Projects listed for ${userName}.
+                            Projects listed for ${}.
                           </Typography>
                         </TableCell>
                         <TableCell>

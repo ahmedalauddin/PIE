@@ -1,9 +1,10 @@
+import React, { Component } from "react";
 import { combineReducers, createStore } from "redux";
 
 // actions.js
 export const setUserAction = (userData) => ({
-  type: "USER",
-  payload: userData
+    type: "USER",
+    payload: userData
 });
 
 export const setOrgAction = (orgData) => ({
@@ -13,21 +14,64 @@ export const setOrgAction = (orgData) => ({
 
 // reducers.js
 let defaultState = {
-  user: "Brad",
+  user: "user1",
   organization: ""
 };
 
-
-export const reds = (state = {}, action) => {
+export const reducers = (state = defaultState, action) => {
   switch (action.type) {
     case "USER":
-      return updateUser(state, action);
+      return {
+        ...state,
+        user: action.payload
+      }
     case "ORGANIZATION":
-      return updateOrg(state, action);
+      return {
+        ...state,
+        organization: action.payload
+      }
     default:
       return state;
   }
 };
+
+/*
+function updateUser(state, action) {
+  state.user = action.payload;
+  return state;
+}
+
+function updateOrg(state, action) {
+  state.organization = action.payload;
+  return state;
+}
+*/
+
+// store.js
+// store is going to represent our global state.
+export const store = createStore(
+  combineReducers({
+    state: reducers,
+  })
+);
+
+/*
+export function configureStore(initialState = {}) {
+  const store = createStore(reducers, initialState);
+  return store;
+};
+*/
+
+// selectors
+export function getUser() {
+  return(store.getState().reducers.user);
+};
+
+export function getOrg() {
+  return(store.getState().reducers.organization);
+};
+
+
 
 /*
 export const reds = (state = {}, action) => {
@@ -47,37 +91,3 @@ export const reds = (state = {}, action) => {
   }
 };
 */
-
-function updateUser(state, action) {
-  state.user = action.payload;
-  return state;
-}
-
-function updateOrg(state, action) {
-  state.organization = action.payload;
-  return state;
-}
-
-
-export const reducers = combineReducers({
-  reds,
-});
-
-// store.js
-export function configureStore(initialState = {}) {
-  const store = createStore(reducers, initialState);
-  return store;
-};
-
-// selectors
-export function getUser() {
-  console.log("Redux.js, getUser:" + store.getState().reds.user);
-  return(store.getState().reds.user);
-};
-
-export function getOrg() {
-  return(store.getState().reds.organization);
-};
-
-
-export const store = configureStore();

@@ -14,7 +14,7 @@ import "./stylesheets/App.css";
 import Routes from "./routes";
 import { blue, indigo } from "@material-ui/core/colors";
 import { bindActionCreators } from "redux";
-import { setUserAction, setOrgAction, getUser, getOrg } from "./redux";
+import { setUserAction, setOrgAction } from "./redux";
 import { connect } from "react-redux";
 
 const theme = createMuiTheme({
@@ -55,25 +55,19 @@ const mapStateToProps = state => ({
   organization: state.organization,
 });
 
+/*
 const mapDispatchToProps = (dispatch) => {
   return {
     setUserAction: (userData) => dispatch(setUserAction(userData)),
     setOrgAction: (orgData) => dispatch(setOrgAction(orgData))
   };
-}
+} */
 
-/*
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({setUserAction, setOrgAction}, dispatch);
 };
-*/
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
-
-//export default connect(mapStateToProps, mapDispatchToProps);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 
 

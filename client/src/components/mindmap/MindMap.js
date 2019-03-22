@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { styles } from "../MaterialSense";
 import mxGraphGridAreaEditor from "./mxGraphGridAreaEditor";
-const gr = require("mxgraph-js");
+//const gr = require("mxgraph-js");
 
 // TODO this page should get the data for the control, then pass it in
 
@@ -16,14 +16,14 @@ class MindMap extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.LoadGraph = this.LoadGraph.bind(this);
+    //this.LoadGraph = this.LoadGraph.bind(this);
   }
 
   componentDidMount() {
     this.LoadGraph();
   }
 
-  LoadGraph = () => {};
+  //LoadGraph = () => {};
 
   render() {
     const { classes } = this.props;

@@ -22,6 +22,8 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { store, reducers, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
+import {bindActionCreators} from 'redux';
+
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -78,15 +80,13 @@ class Login extends React.Component {
         }
       })
       .then(data => {
-        this.setState({
-          isLoggedIn: true
-        });
-        setUserAction(JSON.stringify(data));
+        store.dispatch(setUserAction(JSON.stringify(data)));
         console.log("Login.js, user:" + JSON.stringify(data));
       })
       .then(() => {
         console.log("Ready to redirect");
         this.setState({
+          isLoggedIn: true,
           readyToRedirect: true
         });
       })
@@ -107,7 +107,7 @@ class Login extends React.Component {
 
     /* react-router has injected the value of the attribute ID into the params */
     //const id = this.props.match.params.id;
-    let theuser = getUser();
+    //let theuser = getUser();
 
     if (this.state.readyToRedirect) {
       return <Redirect to="/ListProjects" />;
@@ -119,7 +119,7 @@ class Login extends React.Component {
         <Topbar/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
-            <h1>{theuser || 'Hello World!'}</h1>
+            <h1>{"" || 'Hello World!'}</h1>
             <Grid container justify="center">
               <Grid
                 spacing={24}
@@ -198,5 +198,5 @@ class Login extends React.Component {
     //return x;
   }
 }
-
-export default withStyles(styles)(Login);
+//
+export default  withStyles(styles)(Login);

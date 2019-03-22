@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import { combineReducers, createStore } from "redux";
 
 // actions.js
-export const setUserAction = (userData) => ({
-    type: "USER",
-    payload: userData
+export const setUserAction = userData => ({
+  type: "USER",
+  payload: userData
 });
 
-export const setOrgAction = (orgData) => ({
+export const setOrgAction = orgData => ({
   type: "ORGANIZATION",
   payload: orgData
 });
@@ -24,12 +24,12 @@ export const reducers = (state = defaultState, action) => {
       return {
         ...state,
         user: action.payload
-      }
+      };
     case "ORGANIZATION":
       return {
         ...state,
         organization: action.payload
-      }
+      };
     default:
       return state;
   }
@@ -39,17 +39,16 @@ export const reducers = (state = defaultState, action) => {
 // store is going to represent our global state.
 export const store = createStore(
   combineReducers({
-    state: reducers,
+    state: reducers
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
 // selectors
 export function getUser() {
-  return(store.getState().user);
-};
+  return store.getState().state.user;
+}
 
 export function getOrg() {
-  return(store.getState().organization);
-};
-
+  return store.getState().state.organization;
+}

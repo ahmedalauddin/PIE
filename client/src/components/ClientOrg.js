@@ -3,10 +3,11 @@
  * File:     /client/src/components/ClientOrg.js
  * Created:  2019-02-04
  * Author:   Brad Kaufman
- * Description: Select client organization for VI personnel.
+ * Description: Filter client organization for VI personnel.  Sets the Redux store
+ *              for organization.
  * -----
- * Modified:
- * Editor:
+ * Modified: Brad Kaufman
+ * Editor:   3/22/19
  */
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -24,6 +25,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
+import { setOrgAction, store } from "../redux";
 
 class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -34,7 +36,7 @@ class ClientOrg extends React.Component {
     org: "",
     orgId: 0,
     expanded: false,
-    isLoggedIn: false,
+    readyToRedirect: false,
     labelWidth: 0,
     msgText: ""
   };
@@ -63,21 +65,31 @@ class ClientOrg extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    //alert('In HandleSubmit, state is: ' + JSON.stringify(this.state));
-
-    // Authenticate against the username
-    fetch("/api/authenticate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state)
-    })
+    console.log("ClientOrg.js, org selected is:" + this.state.orgId);
+    let orgId = this.state.orgId;
+    // Fetch the organization selected.
+    fetch("/api/organizations/" + orgId)
       .then(response => {
-        this.setState({ isLoggedIn: true });
+        if (!response.ok) {
+          // here, we get out of the then handlers and
+          // over to the catch handler
+          throw new Error("Network response was not ok.");
+        } else {
+          // status code 200 is success.
+          console.log("ClientOrg.js, org selected. Status = 200");
+          return response.json();
+        }
+      })
+      .then(data => {
+        store.dispatch(setOrgAction(JSON.stringify(data)));
+        console.log("ClientOrg.js, organization:" + JSON.stringify(data));
+      })
+      .then(response => {
+        this.setState({ readyToRedirect: true });
       })
       .catch(err => {
         // TODO - set error login on form.
       });
-    //setSubmitting(false);
   }
 
   componentDidMount() {
@@ -90,12 +102,8 @@ class ClientOrg extends React.Component {
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
 
-    /* react-router has injected the value of the attribute ID into the params */
-    //const id = this.props.match.params.id;
-
-    if (this.state.isLoggedIn) {
+    if (this.state.readyToRedirect) {
       return <Redirect to="/listprojects" />;
     }
 

@@ -92,8 +92,9 @@ class ListProjects extends Component {
   state = {
     order: "asc",
     orderBy: "",
-    orgId: 2,
-    organization: {},
+    orgId: "",
+    organization:"",
+    orgName: "",
     selected: [],
     projects: [],
     user: "",
@@ -102,9 +103,18 @@ class ListProjects extends Component {
   };
 
   componentDidMount() {
+    // Get the organization for the filter.
+    let storeOrganization = getOrg();
+    console.log("ListProjects, org from store: " + storeOrganization);
+
+    this.setState({
+      orgId: JSON.parse(storeOrganization).id,
+      orgName: JSON.parse(storeOrganization).name
+    });
+
     if (parseInt(this.state.orgId) > 0) {
       // If there is an organization, select only the projects for that org.
-      fetch(`/api/organizations/${this.state.orgId}`)
+      fetch(`/api/organizations/{this.state.orgId}`)
         .then(res => {
           return res.json();
         })
@@ -119,9 +129,6 @@ class ListProjects extends Component {
         .then(projects => this.setState({ projects }));
       msg = "List of projects for all organizations";
     }
-    this.setState({
-      user: getUser()
-    });
   }
 
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
@@ -150,7 +157,7 @@ class ListProjects extends Component {
                       <TableRow>
                         <TableCell>
                           <Typography color="secondary" gutterBottom>
-                            Projects listed for ${}.
+                            Projects listed for ${this.state.orgName}.
                           </Typography>
                         </TableCell>
                         <TableCell>

@@ -12,7 +12,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -25,7 +24,9 @@ import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
-import { getUser, getOrg } from "../redux";
+import { connect } from "react-redux";
+import { store, reducers, getUser, getOrg } from "../redux";
+import {bindActionCreators} from 'redux';
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -85,9 +86,6 @@ class MyTableHead extends React.Component {
     );
   }
 }
-
-//let userName = getUser();
-
 var msg = "";
 
 class ListProjects extends Component {
@@ -98,6 +96,7 @@ class ListProjects extends Component {
     organization: {},
     selected: [],
     projects: [],
+    user: "",
     toProject: "false",
     toProjectId: ""
   };
@@ -111,8 +110,7 @@ class ListProjects extends Component {
         })
         .then(organization => {
           this.setState({ projects: organization.projects });
-        });
-
+        })
       msg = "List of projects for organization ";
     } else {
       // Else select all projects.
@@ -121,6 +119,9 @@ class ListProjects extends Component {
         .then(projects => this.setState({ projects }));
       msg = "List of projects for all organizations";
     }
+    this.setState({
+      user: getUser()
+    });
   }
 
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.

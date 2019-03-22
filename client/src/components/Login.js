@@ -105,10 +105,6 @@ class Login extends React.Component {
   render() {
     const { classes } = this.props;
 
-    /* react-router has injected the value of the attribute ID into the params */
-    //const id = this.props.match.params.id;
-    //let theuser = getUser();
-
     if (this.state.readyToRedirect) {
       return <Redirect to="/ListProjects" />;
     }

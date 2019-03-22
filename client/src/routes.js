@@ -16,6 +16,7 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
+import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectCard from "./components/ProjectCard";
 import OrganizationCard from "./components/OrganizationCard";
@@ -33,6 +34,7 @@ export default props => (
         <Route exact path="/login" component={Login} />
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/signup" component={Signup} />
+        <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/selectclient" component={withAuth(SelectClient)} />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />

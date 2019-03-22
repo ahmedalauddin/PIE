@@ -24,9 +24,9 @@ import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 import { store, reducers, getUser, getOrg } from "../redux";
-import {bindActionCreators} from 'redux';
+// import {bindActionCreators} from 'redux';
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },

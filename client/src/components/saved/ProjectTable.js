@@ -21,7 +21,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-import { stableSort, getSorting } from "./TableFunctions";
+import { stableSort, getSorting } from "../TableFunctions";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },

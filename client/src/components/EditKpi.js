@@ -102,7 +102,7 @@ class EditKpi extends React.Component {
     const { classes } = this.props;
 
     /* react-router has injected the value of the attribute ID into the params */
-    const id = this.props.match.params.id;
+    // const id = this.props.match.params.id;
 
     return (
       <React.Fragment>

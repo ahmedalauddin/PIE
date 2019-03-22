@@ -28,6 +28,10 @@ const Menu = [
     pathname: "/listkpis"
   },
   {
+    label: "Client Filter",
+    pathname: "/clientorg"
+  },
+  {
     label: "Signup",
     pathname: "/signup"
   },

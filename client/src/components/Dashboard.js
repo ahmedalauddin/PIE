@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import InstructionDialog from "./dialogs/InstructionDialog";
 import SwipeDialog from "./dialogs/SwipeDialog";
 import Topbar from "./Topbar";
-import ProjectTable from "./ProjectTable";
+import ProjectTable from "./saved/ProjectTable";
 import { styles } from "./MaterialSense";
 
 class Dashboard extends Component {

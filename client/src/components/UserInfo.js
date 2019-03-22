@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { getUser } from "../redux";
-import React, { Component } from "react";
+import React from "react";
 
 function mapStateToProps(state) {
   return {

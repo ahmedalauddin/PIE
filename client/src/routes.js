@@ -20,6 +20,7 @@ import Login from "./components/Login";
 import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectCard from "./components/ProjectCard";
+import ActionCard from "./components/ActionCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import withAuth from "./components/withAuth.jsx";
@@ -48,6 +49,7 @@ export default props => (
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
+        <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />

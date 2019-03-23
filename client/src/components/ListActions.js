@@ -111,10 +111,10 @@ class ListActions extends Component {
 
     if (projectid) {
       // Fetch the tasks only for a single project
-      fetch(`/api/projects/${projectid}`)
+      fetch(`/api/tasks/project/${projectid}`)
         .then(res => res.json())
-        .then(project => {
-          this.setState({ tasks: project.tasks });
+        .then(tasks => {
+          this.setState({ tasks: tasks });
         });
     }
     // TODO - figure out how to gracefully handle condition where projectid is not provided.
@@ -184,7 +184,7 @@ class ListActions extends Component {
                                         {task.status}
                                       </TableCell>
                                       <TableCell align="left">
-
+                                        {task.assigned.fullName}
                                       </TableCell>
                                     </TableRow>
                                   );

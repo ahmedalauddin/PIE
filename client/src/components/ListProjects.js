@@ -25,7 +25,7 @@ import { Link, Redirect } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
-import { store, reducers, getUser, getOrg, getOrgId, getOrgName } from "../redux";
+import { getOrgId, getOrgName } from "../redux";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -35,12 +35,6 @@ const rows = [
     numeric: false,
     disablePadding: false,
     label: "Description"
-  },
-  {
-    id: "organization",
-    numeric: false,
-    disablePadding: false,
-    label: "Organization"
   }
 ];
 
@@ -114,7 +108,10 @@ class ListProjects extends Component {
           return res.json();
         })
         .then(organization => {
-          this.setState({ projects: organization.projects });
+          this.setState({
+            projects: organization.projects,
+            orgName: orgName
+          });
         });
       //msg = "List of projects for organization ";
     } else {
@@ -152,9 +149,30 @@ class ListProjects extends Component {
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
-                      <Typography color="secondary" gutterBottom>
-                        {msg}
-                      </Typography>
+
+                      <Table>
+                        <TableRow>
+                          <TableCell>
+                            <Typography color="secondary" gutterBottom>
+                              Projects listed for {this.state.orgName}.
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <div className={classes.spaceTop}>
+                              <Button
+                                component={Link}
+                                variant="contained"
+                                color="primary"
+                                to={`/ProjectCard`}
+                              >
+                                New Project
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </Table>
+
+
                     </div>
                     <div>
                       <Typography variant="body1" gutterBottom>
@@ -189,9 +207,6 @@ class ListProjects extends Component {
                                       </TableCell>
                                       <TableCell width="45%" align="left">
                                         {project.description}
-                                      </TableCell>
-                                      <TableCell align="left">
-
                                       </TableCell>
                                     </TableRow>
                                   );

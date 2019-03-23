@@ -11,9 +11,9 @@
 
 // declarations
 const models = require("../models");
-const Task = require("../models").Task;
+const db = require("../models/index").db;
 const Person = require("../models").Person;
-const Project = require("../models").Project;
+const Task = require("../models").Task;
 const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
@@ -74,16 +74,58 @@ module.exports = {
       include: [
         {
           model: Person,
-          as: "person"
+          as: "assigned"
         }
       ]
     })
       .then(t => {
         logger.debug(`${callerType} findById -> id: ${t.id}`);
-        res.status(200).send(p);
+        res.status(200).send(t);
       })
       .catch(error => {
         logger.error(`${callerType} findById -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all tasks for a single project
+  listByProject(req, res) {
+    return models.Task.findAll({
+      where: { projectId: req.params.projid },
+      order: [["title", "DESC"]],
+      include: [
+        {
+          model: models.Person,
+          as: "assigned"
+        }
+      ]
+    })
+      .then(tasks => {
+        logger.debug(`${callerType} listByProject -> successful, count: ${tasks.length}`);
+        res.status(201).send(tasks);
+      })
+      .catch(error => {
+        logger.error(`${callerType} listByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+
+  // List all tasks with the person assigned
+  listWithAssigned(req, res) {
+    logger.debug(`${callerType} list tasks -> start`);
+    return models.sequelize.query("select T.projectId, T.status, T.id, T.title, T.description, " +
+      "Concat(P.firstName, ' ', P.lastName) as fullName from Tasks T, Persons P where T.assignedTo = P.id",
+      {
+        type: models.sequelize.QueryTypes.SELECT,
+        order: [["title", "ASC"]]
+    })
+      .then(tasks => {
+        logger.debug(`${callerType} list -> count: ${tasks.length}`);
+        res.status(200).send(tasks);
+      })
+      .catch(error => {
+        logger.error(`${callerType} list -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -95,7 +137,7 @@ module.exports = {
       include: [
         {
           model: models.Person,
-          as: "person"
+          as: "assigned"
         }
       ],
       order: [["title", "ASC"]]

@@ -1,10 +1,10 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/ListProjects.js
- * Created:  2019-01-16
+ * File:     /client/src/components/ListActions.js
+ * Created:  2019-03-22
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-18
+ * Modified: 2019-03-22
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -12,24 +12,25 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
-import Button from "@material-ui/core/Button";
-import { store, reducers, getUser, getOrg, getOrgId, getOrgName } from "../redux";
 
 const rows = [
-  { id: "id", numeric: true, disablePadding: false, label: "ID" },
-  { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
+  { id: "title",
+    numeric: false,
+    disablePadding: true,
+    label: "Action"
+  },
   {
     id: "description",
     numeric: false,
@@ -37,10 +38,16 @@ const rows = [
     label: "Description"
   },
   {
-    id: "organization",
+    id: "status",
     numeric: false,
     disablePadding: false,
-    label: "Organization"
+    label: "Status"
+  },
+  {
+    id: "assigned",
+    numeric: false,
+    disablePadding: false,
+    label: "Assigned To"
   }
 ];
 
@@ -85,55 +92,41 @@ class MyTableHead extends React.Component {
     );
   }
 }
-var msg = "";
 
-class ListProjects extends Component {
+class ListActions extends Component {
   state = {
     order: "asc",
     orderBy: "",
-    orgId: "",
-    organization:"",
-    orgName: "",
     selected: [],
-    projects: [],
-    readyToRedirect: false,
-    user: "",
+    tasks: [],
     toProject: "false",
     toProjectId: ""
   };
 
   componentDidMount() {
-    // Get the organization for the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
+    // ListActions is expected to take a param of project ID, and fetch the tasks
+    // associated only with that project.
+    let projectid = 0;
+    projectid = this.props.match.params.id;
 
-    if (parseInt(orgId) > 0) {
-      // If there is an organization, select only the projects for that org.
-      fetch("/api/organizations/" + orgId)
-        .then(res => {
-          return res.json();
-        })
-        .then(organization => {
-          this.setState({ projects: organization.projects });
-        });
-      //msg = "List of projects for organization ";
-    } else {
-      //this.setState({readyToRedirect: true});
-
-      // Else select all projects.
-      fetch("/api/projects")
+    if (projectid) {
+      // Fetch the tasks only for a single project
+      fetch(`/api/projects/${projectid}`)
         .then(res => res.json())
-        .then(projects => this.setState({ projects }));
-      msg = "List of projects for all organizations";
+        .then(project => {
+          this.setState({ tasks: project.tasks });
+        });
     }
+    // TODO - figure out how to gracefully handle condition where projectid is not provided.
   }
 
-  // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
   handleClick = (event, id) => {};
 
   render() {
     const { classes } = this.props;
 
+    /* react-router has injected the value of the attribute ID into the params */
+    //const projectId = this.props.match.params.id;
 
     return (
       <React.Fragment>
@@ -153,7 +146,7 @@ class ListProjects extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        {msg}
+                        List of Actions
                       </Typography>
                     </div>
                     <div>
@@ -167,28 +160,28 @@ class ListProjects extends Component {
                               <MyTableHead />
                               <TableBody>
                                 {stableSort(
-                                  this.state.projects,
+                                  this.state.tasks,
                                   getSorting("asc", "title")
-                                ).map(project => {
+                                ).map(task => {
                                   return (
                                     <TableRow
                                       hover
                                       onClick={event => {
-                                        this.handleClick(event, project.id);
+                                        this.handleClick(event, task.id);
                                       }}
                                       tabIndex={-1}
-                                      key={project.id}
+                                      key={task.id}
                                     >
-                                      <TableCell align="right">
-                                        {project.id}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        <Link to={`/projectcard/${project.id}`}>
-                                          {project.title}
+                                      <TableCell width="25%" align="left">
+                                        <Link to={`/actioncard/${task.id}`}>
+                                          {task.title}
                                         </Link>
                                       </TableCell>
-                                      <TableCell width="45%" align="left">
-                                        {project.description}
+                                      <TableCell width="35%" align="left">
+                                        {task.description}
+                                      </TableCell>
+                                      <TableCell width="15%" align="left">
+                                        {task.status}
                                       </TableCell>
                                       <TableCell align="left">
 
@@ -213,30 +206,4 @@ class ListProjects extends Component {
   }
 }
 
-export default withStyles(styles)(ListProjects);
-
-/*
-                    <div className={classes.box}>
-                      <Table>
-                        <TableRow>
-                          <TableCell>
-                            <Typography color="secondary" gutterBottom>
-                              TTTTTTTTTTT Projects listed for {this.state.orgName}.
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <div className={classes.spaceTop}>
-                              <Button
-                                component={Link}
-                                variant="contained"
-                                color="primary"
-                                to={`/ProjectCard`}
-                              >
-                                New Project
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      </Table>
-                    </div>
- */
+export default withStyles(styles)(ListActions);

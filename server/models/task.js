@@ -35,6 +35,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      assignedTo: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

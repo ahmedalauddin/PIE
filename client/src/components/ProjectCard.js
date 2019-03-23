@@ -37,7 +37,6 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { Link } from "react-router-dom";
 import ProjectKpis from "./ProjectKpis.js";
 
-
 class ProjectCard extends React.Component {
   constructor(props) {
     super(props);
@@ -321,6 +320,17 @@ class ProjectCard extends React.Component {
                                   to={`/listkpis/${this.props.match.params.id}`}
                                 >
                                   List KPIs
+                                </Button>
+                              </div>
+                              <br />
+                              <div className={classes.spaceTop}>
+                                <Button
+                                  component={Link}
+                                  variant="contained"
+                                  color="gray"
+                                  to={`/listactions/${this.props.match.params.id}`}
+                                >
+                                  List Actions
                                 </Button>
                               </div>
                             </div>

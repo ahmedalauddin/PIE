@@ -9,6 +9,7 @@ import EditPerson from "./components/EditPerson";
 import EditKpi from "./components/EditKpi";
 import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
+import ListActions from "./components/ListActions";
 import ListKpis from "./components/ListKpis";
 import ListOrgs from "./components/ListOrgs";
 import MindMap from "./components/mindmap/MindMap";
@@ -44,6 +45,7 @@ export default props => (
         <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
+        <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />

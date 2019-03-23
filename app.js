@@ -74,6 +74,7 @@ models.sequelize
     require("./server/routes/project")(router);
     require("./server/routes/kpi")(router);
     require("./server/routes/mindmap")(router);
+    require("./server/routes/task")(router);
     require("./server/routes/auth")(router);
   })
   .catch(error => {

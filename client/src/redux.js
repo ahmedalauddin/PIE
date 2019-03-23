@@ -57,3 +57,7 @@ export function getOrgId() {
   return JSON.parse(store.getState().state.organization).id;
 }
 
+export function getOrgName() {
+  return JSON.parse(store.getState().state.organization).name;
+}
+

@@ -16,8 +16,8 @@ const Menu = [
     pathname: "/listprojects"
   },
   {
-    label: "Users",
-    pathname: "/listpersons"
+    label: "Actions",
+    pathname: "/listactions"
   },
   {
     label: "Organizations",
@@ -26,6 +26,10 @@ const Menu = [
   {
     label: "KPIs",
     pathname: "/listkpis"
+  },
+  {
+    label: "Users",
+    pathname: "/listpersons"
   },
   {
     label: "Client Filter",

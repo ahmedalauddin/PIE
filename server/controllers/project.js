@@ -3,6 +3,7 @@
  * File:     /server/controllers/project.js
  * Created:  2019-02-01 12:39:20
  * Author:   Darrin Tisdale
+ * Descr:    Sequelize controller for projects.
  * -----
  * Modified: 2019-02-26 17:57:47
  * Editor:   Darrin Tisdale
@@ -13,6 +14,8 @@
 const Organization = require("../models").Organization;
 const Project = require("../models").Project;
 const KPI = require("../models").KPI;
+const KpiProject = require("../models").KpiProject;
+const Task = require("../models").Task;
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";
@@ -108,11 +111,15 @@ module.exports = {
   findById(req, res) {
     let _obj = util.inspect(req.body, { showHidden: false, depth: null });
     logger.debug(`${callerType} findById -> request: ${_obj}`);
-    return Project.findById(req.params.id, {
+    return Project.findByPk(req.params.id, {
       include: [
         {
           model: Organization,
           as: "organization"
+        },
+        {
+          model: Task,
+          as: "tasks"
         }
       ]
     })

@@ -3,6 +3,7 @@
  * File:     /server/models/project.js
  * Created:  2019-01-30 11:33:14
  * Author:   Brad Kaufman
+ * Descr:    Sequelize model for projects.
  * -----
  * Modified: 2019-02-24 22:21:54
  * Editor:   Darrin Tisdale
@@ -86,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     logger.debug(`${callerType} Kpi belongsToMany Project`);
-    Project.belongsToMany(models.Project, {
+    Project.belongsToMany(models.Kpi, {
       through: "KpiProjects",
       as: "kpis",
       foreignKey: "projectId",

@@ -1,5 +1,13 @@
-// List for editing KPIs, 1/22/19.
-// Will be removed eventually.  Essentially a test harness for EditProject.
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/ProjectKpis.js
+ * Created:  2019-01-05
+ * Author:   Brad Kaufman
+ * Descr:    List of KPIs for the project selected.
+ * -----s
+ * Modified: 2019-03-22
+ * Editor:   Brad Kaufman
+ */
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";

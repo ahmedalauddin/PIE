@@ -20,13 +20,12 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { styles } from "./MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
-// import { connect } from "react-redux";
-import { store, reducers, getUser, getOrg } from "../redux";
-// import {bindActionCreators} from 'redux';
+import { store, reducers, getUser, getOrg, getOrgId, getOrgName } from "../redux";
+import Paper from "./ListPersons";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
@@ -97,6 +96,7 @@ class ListProjects extends Component {
     orgName: "",
     selected: [],
     projects: [],
+    readyToRedirect: false,
     user: "",
     toProject: "false",
     toProjectId: ""
@@ -104,25 +104,22 @@ class ListProjects extends Component {
 
   componentDidMount() {
     // Get the organization for the filter.
-    let storeOrganization = getOrg();
-    console.log("ListProjects, org from store: " + storeOrganization);
+    let orgName = getOrgName();
+    let orgId = getOrgId();
 
-    this.setState({
-      orgId: JSON.parse(storeOrganization).id,
-      orgName: JSON.parse(storeOrganization).name
-    });
-
-    if (parseInt(this.state.orgId) > 0) {
+    if (parseInt(orgId) > 0) {
       // If there is an organization, select only the projects for that org.
-      fetch(`/api/organizations/{this.state.orgId}`)
+      fetch("/api/organizations/" + orgId)
         .then(res => {
           return res.json();
         })
         .then(organization => {
           this.setState({ projects: organization.projects });
-        })
-      msg = "List of projects for organization ";
+        });
+      //msg = "List of projects for organization ";
     } else {
+      //this.setState({readyToRedirect: true});
+
       // Else select all projects.
       fetch("/api/projects")
         .then(res => res.json())
@@ -136,6 +133,7 @@ class ListProjects extends Component {
 
   render() {
     const { classes } = this.props;
+
 
     return (
       <React.Fragment>
@@ -152,71 +150,59 @@ class ListProjects extends Component {
             >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
-                  <div className={classes.box}>
-                    <Table>
-                      <TableRow>
-                        <TableCell>
-                          <Typography color="secondary" gutterBottom>
-                            Projects listed for ${this.state.orgName}.
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <div className={classes.spaceTop}>
-                            <Button
-                              component={Link}
-                              variant="contained"
-                              color="primary"
-                              to={`/ProjectCard`}
+                  <Paper className={classes.paper}>
+                    <div className={classes.box}>
+                      <Typography color="secondary" gutterBottom>
+                        {msg}
+                      </Typography>
+                    </div>
+                    <div>
+                      <Typography variant="body1" gutterBottom>
+                        <Paper className={classes.root}>
+                          <div className={classes.tableWrapper}>
+                            <Table
+                              className={classes.table}
+                              aria-labelledby="tableTitle"
                             >
-                              New Project
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    </Table>
-                  </div>
-                  <div className={classes.tableWrapper}>
-                    <Typography variant="body1" gutterBottom>
-                      <Table
-                        className={classes.table}
-                        aria-labelledby="tableTitle"
-                      >
-                        <MyTableHead />
-                        <TableBody>
-                          {stableSort(
-                            this.state.projects,
-                            getSorting("asc", "title")
-                          ).map(project => {
-                            return (
-                              <TableRow
-                                hover
-                                onClick={event => {
-                                  this.handleClick(event, project.id);
-                                }}
-                                tabIndex={-1}
-                                key={project.id}
-                              >
-                                <TableCell align="right">
-                                  {project.id}
-                                </TableCell>
-                                <TableCell align="left">
-                                  <Link to={`/projectcard/${project.id}`}>
-                                    {project.title}
-                                  </Link>
-                                </TableCell>
-                                <TableCell width="45%" align="left">
-                                  {project.description}
-                                </TableCell>
-                                <TableCell align="left">
+                              <MyTableHead />
+                              <TableBody>
+                                {stableSort(
+                                  this.state.projects,
+                                  getSorting("asc", "title")
+                                ).map(project => {
+                                  return (
+                                    <TableRow
+                                      hover
+                                      onClick={event => {
+                                        this.handleClick(event, project.id);
+                                      }}
+                                      tabIndex={-1}
+                                      key={project.id}
+                                    >
+                                      <TableCell align="right">
+                                        {project.id}
+                                      </TableCell>
+                                      <TableCell align="left">
+                                        <Link to={`/projectcard/${project.id}`}>
+                                          {project.title}
+                                        </Link>
+                                      </TableCell>
+                                      <TableCell width="45%" align="left">
+                                        {project.description}
+                                      </TableCell>
+                                      <TableCell align="left">
 
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </Typography>
-                  </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </Paper>
+                      </Typography>
+                    </div>
+                  </Paper>
                 </Grid>
               </Grid>
             </Grid>
@@ -228,3 +214,29 @@ class ListProjects extends Component {
 }
 
 export default withStyles(styles)(ListProjects);
+
+/*
+                    <div className={classes.box}>
+                      <Table>
+                        <TableRow>
+                          <TableCell>
+                            <Typography color="secondary" gutterBottom>
+                              TTTTTTTTTTT Projects listed for {this.state.orgName}.
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <div className={classes.spaceTop}>
+                              <Button
+                                component={Link}
+                                variant="contained"
+                                color="primary"
+                                to={`/ProjectCard`}
+                              >
+                                New Project
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </Table>
+                    </div>
+ */

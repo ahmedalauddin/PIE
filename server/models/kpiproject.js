@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
   var KpiProject = sequelize.define(
     "KpiProject",
     {
+      projectId: {
+        type: DataTypes.INTEGER,
+      },
+      kpiId: {
+        type: DataTypes.INTEGER,
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

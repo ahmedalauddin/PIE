@@ -41,10 +41,7 @@ export default props => (
         <Route exact path="/editkpi" component={withAuth(EditKpi)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
-        <Route
-          path="/organizationcard/:id"
-          component={withAuth(OrganizationCard)}
-        />
+        <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />

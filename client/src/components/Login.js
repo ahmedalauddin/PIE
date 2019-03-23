@@ -106,7 +106,7 @@ class Login extends React.Component {
     const { classes } = this.props;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/ListProjects" />;
+      return <Redirect to="/ClientOrg" />;
     }
 
     return(
@@ -115,7 +115,6 @@ class Login extends React.Component {
         <Topbar/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
-            <h1>{"" || 'Hello World!'}</h1>
             <Grid container justify="center">
               <Grid
                 spacing={24}

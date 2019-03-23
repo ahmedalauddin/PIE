@@ -24,7 +24,6 @@ import { connect } from "react-redux";
 import { store, reducers, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
 import {bindActionCreators} from 'redux';
 
-
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.

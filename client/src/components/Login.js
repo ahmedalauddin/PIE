@@ -4,7 +4,7 @@
  * Created:  2019-02-04
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-19 12:27:02
+ * Modified: 2019-03-23 15:10:29
  * Editor:   Darrin Tisdale
  */
 import React, { useContext } from "react";
@@ -21,8 +21,8 @@ import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { store, reducers, setUserAction, setOrgAction, getUser, getOrg } from "../redux";
-import {bindActionCreators} from 'redux';
+import { store, reducers, setUser, setOrg, getUser, getOrg } from "../redux";
+import { bindActionCreators } from "redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -57,7 +57,6 @@ class Login extends React.Component {
     });
   };
 
-
   handleSubmit(event) {
     event.preventDefault();
 
@@ -79,7 +78,7 @@ class Login extends React.Component {
         }
       })
       .then(data => {
-        store.dispatch(setUserAction(JSON.stringify(data)));
+        store.dispatch(setUser(JSON.stringify(data)));
         console.log("Login.js, user:" + JSON.stringify(data));
       })
       .then(() => {
@@ -93,13 +92,12 @@ class Login extends React.Component {
         // TODO - set error login on form.
         this.setState({
           isFailedLogin: true,
-          msgText: "Login failed, please try again." });
+          msgText: "Login failed, please try again."
+        });
       });
   }
 
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   render() {
     const { classes } = this.props;
@@ -108,10 +106,10 @@ class Login extends React.Component {
       return <Redirect to="/ClientOrg" />;
     }
 
-    return(
+    return (
       <React.Fragment>
-        <CssBaseline/>
-        <Topbar/>
+        <CssBaseline />
+        <Topbar />
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -123,7 +121,7 @@ class Login extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12} md={4}>
-                  <SectionHeader title="" subtitle=""/>
+                  <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
@@ -168,7 +166,7 @@ class Login extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <div className={classes.spaceTop}>
-                          <br/>
+                          <br />
                           <Button
                             variant="contained"
                             color="primary"
@@ -193,4 +191,4 @@ class Login extends React.Component {
   }
 }
 //
-export default  withStyles(styles)(Login);
+export default withStyles(styles)(Login);

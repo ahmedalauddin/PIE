@@ -6,8 +6,8 @@
  * Description: Filter client organization for VI personnel.  Sets the Redux store
  *              for organization.
  * -----
- * Modified: Brad Kaufman
- * Editor:   3/22/19
+ * Modified: 2019-03-23 15:10:01
+ * Editor:   Darrin Tisdale
  */
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -25,7 +25,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { setOrgAction, store } from "../redux";
+import { setOrg, store } from "../redux";
 
 class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -81,7 +81,7 @@ class ClientOrg extends React.Component {
         }
       })
       .then(data => {
-        store.dispatch(setOrgAction(JSON.stringify(data)));
+        store.dispatch(setOrg(JSON.stringify(data)));
         console.log("ClientOrg.js, organization:" + JSON.stringify(data));
       })
       .then(response => {

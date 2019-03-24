@@ -28,6 +28,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/projects/:id`);
   router.get("/api/projects/:id", projController.findById);
 
+  // list most recently updated projects
+  logger.debug(`${callerType} GET -> path: /api/projects/dashboard`);
+  router.get("/api/projects/dashboard", projController.getMostRecent);
+
   // Retrieve a list of projects for a selected organization
   logger.debug(`${callerType} GET -> path: /api/projects/organization/:orgid`);
   router.get("/api/projects/organization/:orgid", projController.findByOrganization);

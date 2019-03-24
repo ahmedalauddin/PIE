@@ -13,6 +13,7 @@
 const models = require("../models");
 const Organization = require("../models").Organization;
 const Project = require("../models").Project;
+const Task = require("../models").Task;
 const bCrypt = require("bcrypt");
 const util = require("util");
 const logger = require("../util/logger")(__filename);
@@ -95,6 +96,14 @@ module.exports = {
         {
           model: Organization,
           as: "organization"
+        },
+        {
+          model: Project,
+          as: "projects"
+        },
+        {
+          model: Task,
+          as: "tasks"
         }
       ]
     })

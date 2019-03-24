@@ -8,7 +8,7 @@
  * Editor:   Darrin Tisdale
  */
 import React, { useContext } from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -101,6 +101,7 @@ class Login extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
       return <Redirect to="/ClientOrg" />;
@@ -109,7 +110,7 @@ class Login extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath}/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -186,8 +187,6 @@ class Login extends React.Component {
         </form>
       </React.Fragment>
     );
-    //}
-    //return x;
   }
 }
 //

@@ -149,7 +149,6 @@ class ListProjects extends Component {
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
-
                       <Table>
                         <TableRow>
                           <TableCell>
@@ -229,29 +228,3 @@ class ListProjects extends Component {
 }
 
 export default withStyles(styles)(ListProjects);
-
-/*
-                    <div className={classes.box}>
-                      <Table>
-                        <TableRow>
-                          <TableCell>
-                            <Typography color="secondary" gutterBottom>
-                              TTTTTTTTTTT Projects listed for {this.state.orgName}.
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <div className={classes.spaceTop}>
-                              <Button
-                                component={Link}
-                                variant="contained"
-                                color="primary"
-                                to={`/ProjectCard`}
-                              >
-                                New Project
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      </Table>
-                    </div>
- */

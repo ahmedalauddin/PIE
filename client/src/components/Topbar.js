@@ -102,46 +102,35 @@ class Topbar extends Component {
   }
 
   current = () => {
-    if (this.props.currentPath === "/home") {
+    if (this.props.currentPath === "/dashboard") {
       return 0;
     }
-    if (this.props.currentPath === "/dashboard") {
+    if (this.props.currentPath === "/login") {
       return 1;
     }
-    if (this.props.currentPath === "/login") {
+    if (this.props.currentPath === "/mindmap") {
       return 2;
     }
-    if (this.props.currentPath === "/projcontainer") {
+    if (this.props.currentPath === "/listprojects") {
       return 3;
     }
-    if (this.props.currentPath === "/mindmap") {
+    if (this.props.currentPath === "/listorgs") {
       return 4;
     }
-    if (this.props.currentPath === "/projectcard") {
-      return 7;
-    }
-    if (this.props.currentPath === "/listprojects") {
-      return 8;
-    }
     if (this.props.currentPath === "/listpersons") {
-      return 9;
-    }
-    if (this.props.currentPath === "/listactions") {
-      return 10;
+      return 5;
     }
     if (this.props.currentPath === "/clientorg") {
-      return 11;
-    }
-    if (this.props.currentPath === "/listkpis") {
-      return 12;
+      return 6;
     }
     if (this.props.currentPath === "/logout") {
-      return 13;
+      return 8;
     }
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, location } = this.props;
+    const currentPath = location ? location.pathname : "/";
 
     return (
       <AppBar position="absolute" color="default" className={classes.appBar}>
@@ -179,16 +168,7 @@ class Topbar extends Component {
                       onChange={this.handleChange}
                     >
                       {Menu.map((item, index) => (
-                        <Tab
-                          key={index}
-                          component={Link}
-                          to={{
-                            pathname: item.pathname,
-                            search: this.props.location.search
-                          }}
-                          classes={{ root: classes.tabItem }}
-                          label={item.label}
-                        />
+                        <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                       ))}
                     </Tabs>
                   </div>

@@ -16,9 +16,11 @@ const Project = require("../models").Project;
 const KPI = require("../models").KPI;
 const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
+const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";
+
 
 module.exports = {
   // creates a project
@@ -174,7 +176,6 @@ module.exports = {
     }
   },
 
-
   // Find an org by Id
   findByOrganization(req, res) {
     logger.debug(`${callerType} findByOrganization -> id = ${req.params.id}`);
@@ -185,6 +186,34 @@ module.exports = {
       .then(org => {
         logger.info(`${callerType} findByOrganization -> returned`);
         res.status(200).send(org);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
+  // List most recent projects
+  getMostRecent(req, res) {
+    // SQL for most recent projects.
+    return models.sequelize.query("select id, title, ProjectUpdated, " +
+      "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
+      "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
+      "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
+      " (select  P.id as id, P.title , P.updatedAt as ProjectUpdated , " +
+      "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
+      "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
+      "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+      "      and P.id = KP.projectId) as KUdate, " +
+      "   (select max(K.createdAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+      "      and P.id = KP.projectId) as KCdate " +
+      "   from Projects P) as Proj ",
+      {
+        type: models.sequelize.QueryTypes.SELECT,
+        order: [["MostRecent", "DESC"]]
+      })
+      .then(projects => {
+        res.status(200).send(projects);
       })
       .catch(error => {
         logger.error(error.stack);

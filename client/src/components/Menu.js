@@ -1,7 +1,7 @@
 const Menu = [
   {
-    label: "Home",
-    pathname: "/listprojects"
+    label: "Dashboard",
+    pathname: "/dashboard"
   },
   {
     label: "Login",
@@ -16,16 +16,8 @@ const Menu = [
     pathname: "/listprojects"
   },
   {
-    label: "Actions",
-    pathname: "/listactions"
-  },
-  {
     label: "Organizations",
     pathname: "/listorgs"
-  },
-  {
-    label: "KPIs",
-    pathname: "/listkpis"
   },
   {
     label: "Users",

@@ -35,7 +35,8 @@ import moment from "moment";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Link } from "react-router-dom";
-import ProjectKpis from "./ProjectKpis.js";
+import ProjectKpis from "./ProjectKpis";
+import CardToolbar from "./navigation/CardToolbar";
 
 class ProjectCard extends React.Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class ProjectCard extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.showToolbar = this.showToolbar.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -60,6 +62,7 @@ class ProjectCard extends React.Component {
     startAt: "",
     endAt: "",
     progress: 0,
+    buttonText: "Create",
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -133,7 +136,8 @@ class ProjectCard extends React.Component {
             orgId: project.orgId,
             progress: project.progress,
             startAt: moment(project.startAt).format("YYYY-MM-DD"),
-            endAt: moment(project.endAt).format("YYYY-MM-DD")
+            endAt: moment(project.endAt).format("YYYY-MM-DD"),
+            buttonText: "Update"
           });
         });
     } else {
@@ -147,9 +151,17 @@ class ProjectCard extends React.Component {
       .then(organizations => this.setState({ organizations }));
   }
 
+  showToolbar() {
+    // If we have a project ID, show the toolbar.
+    let toolbarText = "";
+    if (parseInt(this.state.id) > 0) {
+      toolbarText = <CardToolbar projid={this.state.id}/>;
+    }
+    return toolbarText;
+  }
+
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
 
     return (
       <React.Fragment>
@@ -169,16 +181,8 @@ class ProjectCard extends React.Component {
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
+                      {this.showToolbar()}
                       <Table>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography
-                              style={{ textTransform: "uppercase" }}
-                              color="secondary"
-                              gutterBottom
-                            />
-                          </TableCell>
-                        </TableRow>
                         <TableRow>
                           <TableCell style={{ verticalAlign: "top" }}>
                             <Typography variant="h5" component="h2">
@@ -308,31 +312,10 @@ class ProjectCard extends React.Component {
                                   onClick={this.handleSubmit}
                                   className={classes.secondary}
                                 >
-                                  Update
+                                  {this.state.buttonText}
                                 </Button>
                               </div>
                               <br />
-                              <div className={classes.spaceTop}>
-                                <Button
-                                  component={Link}
-                                  variant="contained"
-                                  color="gray"
-                                  to={`/listkpis/${this.props.match.params.id}`}
-                                >
-                                  List KPIs
-                                </Button>
-                              </div>
-                              <br />
-                              <div className={classes.spaceTop}>
-                                <Button
-                                  component={Link}
-                                  variant="contained"
-                                  color="gray"
-                                  to={`/listactions/${this.props.match.params.id}`}
-                                >
-                                  List Actions
-                                </Button>
-                              </div>
                             </div>
                           </TableCell>
                         </TableRow>

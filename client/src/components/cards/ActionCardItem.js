@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import DescriptionIcon from "@material-ui/icons/Description";
+import moment from "moment";
 
 const styles = theme => ({
   paper: {
@@ -34,7 +35,7 @@ const styles = theme => ({
   },
   baseline: {
     alignSelf: "baseline",
-    marginLeft: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit * 2,
     [theme.breakpoints.down("sm")]: {
       display: "flex",
       flexDirection: "column",
@@ -48,7 +49,7 @@ const styles = theme => ({
   },
   inline: {
     display: "inline-block",
-    marginLeft: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit * 2,
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0
     }
@@ -88,13 +89,16 @@ class ActionCardItem extends Component {
                 Action Item
               </Typography>
               <Typography variant="h6" gutterBottom>
-                Action title goes here
+                {this.props.title}
               </Typography>
               <Typography variant="h7" gutterBottom>
-                Action description goes here
+                {this.props.description}
               </Typography>
-              <Typography variant="h7" gutterBottom>
-                Action status goes here
+              <Typography variant="h8" gutterBottom>
+                Status: {this.props.status}
+              </Typography>
+              <Typography variant="h8" gutterBottom>
+                Updated: {moment(this.props.updated).format("YYYY-MM-DD")}
               </Typography>
             </div>
             <div className={classes.avatarContainer}>

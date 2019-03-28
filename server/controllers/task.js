@@ -110,7 +110,6 @@ module.exports = {
       });
   },
 
-
   // List all tasks with the person assigned
   listWithAssigned(req, res) {
     logger.debug(`${callerType} list tasks -> start`);
@@ -119,7 +118,25 @@ module.exports = {
       {
         type: models.sequelize.QueryTypes.SELECT,
         order: [["title", "ASC"]]
-    })
+      })
+      .then(tasks => {
+        logger.debug(`${callerType} list -> count: ${tasks.length}`);
+        res.status(200).send(tasks);
+      })
+      .catch(error => {
+        logger.error(`${callerType} list -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all tasks with the person assigned
+  listMostRecent(req, res) {
+    logger.debug(`${callerType} list tasks -> start`);
+    return models.sequelize.query("select id, projectId, assignedTo, title, status, description, updatedAt from Tasks " +
+          "order by updatedAt desc limit 6",
+      {
+        type: models.sequelize.QueryTypes.SELECT
+      })
       .then(tasks => {
         logger.debug(`${callerType} list -> count: ${tasks.length}`);
         res.status(200).send(tasks);

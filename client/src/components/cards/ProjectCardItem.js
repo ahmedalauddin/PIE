@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import DescriptionIcon from "@material-ui/icons/Description";
+import moment from "moment";
 //import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
@@ -20,7 +21,7 @@ const styles = theme => ({
   avatarContainer: {
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0,
-      marginBottom: theme.spacing.unit * 4
+      marginBottom: theme.spacing.unit * 2
     }
   },
   itemContainer: {
@@ -35,7 +36,7 @@ const styles = theme => ({
   },
   baseline: {
     alignSelf: "baseline",
-    marginLeft: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit * 2,
     [theme.breakpoints.down("sm")]: {
       display: "flex",
       flexDirection: "column",
@@ -49,7 +50,7 @@ const styles = theme => ({
   },
   inline: {
     display: "inline-block",
-    marginLeft: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit * 2,
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0
     }
@@ -93,13 +94,13 @@ class ProjectCardItem extends Component {
                 Project
               </Typography>
               <Typography variant="h6" gutterBottom>
-                Project title goes here
+                {this.props.title}
               </Typography>
               <Typography variant="h7" gutterBottom>
-                Project description goes here
+                {this.props.description}
               </Typography>
               <Typography variant="h7" gutterBottom>
-                Project status goes here
+                Start date: {moment(this.props.started).format("YYYY-MM-DD")}
               </Typography>
             </div>
           </div>

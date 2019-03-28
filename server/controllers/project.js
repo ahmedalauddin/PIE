@@ -196,11 +196,11 @@ module.exports = {
   // List most recent projects
   getMostRecent(req, res) {
     // SQL for most recent projects.
-    return models.sequelize.query("select id, title, ProjectUpdated, " +
+    return models.sequelize.query("select id, title, description, startAt, ProjectUpdated, " +
       "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
       "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
       "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
-      " (select  P.id as id, P.title , P.updatedAt as ProjectUpdated , " +
+      " (select  P.id as id, P.title, P.description, P.startAt, P.updatedAt as ProjectUpdated , " +
       "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
       "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
       "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
@@ -210,6 +210,7 @@ module.exports = {
       "   from Projects P) as Proj ",
       {
         type: models.sequelize.QueryTypes.SELECT,
+        limit: 3,
         order: [["MostRecent", "DESC"]]
       })
       .then(projects => {

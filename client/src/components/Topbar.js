@@ -7,8 +7,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import MenuIcon from "@material-ui/icons/Menu";
-import IconButton from "@material-ui/core/IconButton";
 import Menu from "./Menu";
 const logo = require("../images/ValueInfLogo.png");
 
@@ -69,8 +67,7 @@ const styles = theme => ({
 class Topbar extends Component {
   state = {
     value: 0,
-    open: false,
-    menuDrawer: false
+    open: false
   };
 
   handleChange = (event, value) => {
@@ -83,18 +80,6 @@ class Topbar extends Component {
     }
 
     this.setState({ open: false });
-  };
-
-  mobileMenuOpen = event => {
-    this.setState({ menuDrawer: true });
-  };
-
-  handleToggle = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
-
-  mobileMenuClose = event => {
-    this.setState({ menuDrawer: false });
   };
 
   componentDidMount() {
@@ -144,36 +129,23 @@ class Topbar extends Component {
                   </Link>
                 </Typography>
               </div>
-              {!this.props.noTabs && (
-                <React.Fragment>
-                  <div className={classes.productLogo}>
-                    <Typography>Innovation Platform</Typography>
-                  </div>
-                  <div className={classes.iconContainer}>
-                    <IconButton
-                      onClick={this.mobileMenuOpen}
-                      className={classes.iconButton}
-                      color="inherit"
-                      aria-label="Menu"
-                    >
-                      >
-                      <MenuIcon />
-                    </IconButton>
-                  </div>
-                  <div className={classes.tabContainer}>
-                    <Tabs
-                      value={this.current() || this.state.value}
-                      indicatorColor="primary"
-                      textColor="primary"
-                      onChange={this.handleChange}
-                    >
-                      {Menu.map((item, index) => (
-                        <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
-                      ))}
-                    </Tabs>
-                  </div>
-                </React.Fragment>
-              )}
+              <React.Fragment>
+                <div className={classes.productLogo}>
+                  <Typography>Innovation Platform</Typography>
+                </div>
+                <div className={classes.tabContainer}>
+                  <Tabs
+                    value={this.current() || this.state.value}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    onChange={this.handleChange}
+                  >
+                    {Menu.map((item, index) => (
+                      <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
+                    ))}
+                  </Tabs>
+                </div>
+              </React.Fragment>
             </Grid>
           </Grid>
         </Toolbar>

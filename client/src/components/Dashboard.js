@@ -11,6 +11,7 @@ import Topbar from "./Topbar";
 import SectionHeader from './typo/SectionHeader';
 import ProjectCardItem from "./cards/ProjectCardItem";
 import ActionCardItem from "./cards/ActionCardItem";
+import { getSorting } from "./TableFunctions";
 
 const styles = theme => ({
   root: {
@@ -101,10 +102,19 @@ const styles = theme => ({
 class Dashboard extends Component {
   state = {
     learnMoreDialog: false,
-    getStartedDialog: false
+    getStartedDialog: false,
+    projects: [],
+    actions: []
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    fetch("/api/project-dashboard")
+      .then(res => res.json())
+      .then(projects => this.setState({ projects }));
+    fetch("/api/tasks/mostrecent")
+      .then(res => res.json())
+      .then(actions => this.setState({ actions }));
+  }
 
   openDialog = event => {
     this.setState({ learnMoreDialog: true });
@@ -125,6 +135,8 @@ class Dashboard extends Component {
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
+    let i = 1;
+    let j = 1;
 
     return (
       <React.Fragment>
@@ -138,42 +150,51 @@ class Dashboard extends Component {
                   <div className={classes.block}>
                     <Typography variant="h6" gutterBottom>Projects</Typography>
                     <Typography variant="body2">
-                      Active projects listed here.
+                      Active projects listed by last update.
                     </Typography>
                   </div>
                 </div>
               </Grid>
               <Grid container spacing={24} xs={12} justify="center">
-                <Grid item xs={12} md={4}>
-                  <ProjectCardItem />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <ProjectCardItem />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <ProjectCardItem />
-                </Grid>
+                {this.state.projects.map(Project => {
+                  if (i <= 3) {
+                    i++;
+                    return (
+                      <Grid item xs={12} md={4}>
+                        <ProjectCardItem title={Project.title} description={Project.description}
+                          started={Project.startAt}/>
+                      </Grid>
+                    );
+                  } else {
+                    return "";
+                  }
+                })
+                }
               </Grid>
               <Grid item xs={12}>
                 <div className={classes.topBar}>
                   <div className={classes.block}>
                     <Typography variant="h6" gutterBottom>Actions</Typography>
                     <Typography variant="body2">
-                      Active action items listed here.
+                      Active action items listed by last update.
                     </Typography>
                   </div>
                 </div>
               </Grid>
               <Grid container spacing={24} xs={12} justify="center">
-                <Grid item xs={12} md={4}>
-                  <ActionCardItem id={2}/>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <ActionCardItem />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <ActionCardItem />
-                </Grid>
+                {this.state.actions.map(Action => {
+                  if (j <= 6) {
+                    j++;
+                    return (
+                      <Grid item xs={12} md={4}>
+                        <ActionCardItem title={Action.title} description={Action.description}
+                          status={Action.status} updated={Action.updatedAt}/>
+                      </Grid>
+                    );
+                  } else {
+                    return "";
+                  }
+                })}
               </Grid>
             </Grid>
           </Grid>

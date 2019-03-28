@@ -1,5 +1,4 @@
-//export const backgroundShape = require('../images/shape.svg');
-
+// Material Sense styles
 import { red } from "@material-ui/core/colors";
 
 export const styles = theme => ({

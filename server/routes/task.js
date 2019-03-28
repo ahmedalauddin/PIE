@@ -29,6 +29,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/tasks/assigned`);
   router.get("/api/tasks/assigned", taskController.listWithAssigned);
 
+  // get all tasks with assigned name
+  logger.debug(`${callerType} GET -> path: /api/tasks/mostrecent`);
+  router.get("/api/tasks/mostrecent", taskController.listMostRecent);
+
   // create a task
   logger.debug(`${callerType} POST -> path: /api/tasks`);
   router.post("/api/tasks", taskController.create);

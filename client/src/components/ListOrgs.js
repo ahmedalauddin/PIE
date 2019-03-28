@@ -15,7 +15,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
@@ -93,13 +93,12 @@ class ListProjects extends Component {
 
   render() {
     const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
 
     return (
       <React.Fragment>
-        <div>
-          <CssBaseline />
-          <Topbar />
-        </div>
+        <CssBaseline />
+        <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid

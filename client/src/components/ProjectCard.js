@@ -13,7 +13,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -34,7 +34,7 @@ import TableCell from "@material-ui/core/TableCell";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import ProjectKpis from "./ProjectKpis";
 import CardToolbar from "./navigation/CardToolbar";
 
@@ -158,6 +158,10 @@ class ProjectCard extends React.Component {
       toolbarText = <CardToolbar projid={this.state.id}/>;
     }
     return toolbarText;
+  }
+
+  componentDidCatch() {
+    return <Redirect to="/Login" />;
   }
 
   render() {

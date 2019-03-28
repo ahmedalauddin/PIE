@@ -14,64 +14,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import MenuIcon from "@material-ui/icons/Menu";
-import Menu from "../Menu";
 import { Link } from "react-router-dom";
-import TableCell from "../ProjectKpis";
-
-const styles = theme => ({
-  appBar: {
-    position: "relative",
-    boxShadow: "none",
-    borderBottom: `1px solid ${theme.palette.grey["100"]}`,
-    backgroundColor: "white"
-  },
-  inline: {
-    display: "inline"
-  },
-  flex: {
-    display: "flex",
-    [theme.breakpoints.down("sm")]: {
-      display: "flex",
-      justifyContent: "space-evenly",
-      alignItems: "center"
-    }
-  },
-  link: {
-    textDecoration: "none",
-    color: "inherit"
-  },
-  productLogo: {
-    display: "inline-block",
-    borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
-    marginLeft: 32,
-    paddingLeft: 24
-  },
-  tagline: {
-    display: "inline-block",
-    marginLeft: 10
-  },
-  iconContainer: {
-    display: "none",
-    [theme.breakpoints.down("sm")]: {
-      display: "block"
-    }
-  },
-  iconButton: {
-    float: "right"
-  },
-  tabContainer: {
-    marginLeft: 32,
-    [theme.breakpoints.down("sm")]: {
-      display: "none"
-    }
-  },
-  tabItem: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    minWidth: "auto"
-  }
-});
+import styles from "../styles/ToolbarStyles";
 
 class CardToolbar extends Component {
   constructor(props) {

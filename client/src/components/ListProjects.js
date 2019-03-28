@@ -22,7 +22,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
 import { getOrgId, getOrgName } from "../redux";
@@ -125,17 +125,21 @@ class ListProjects extends Component {
     }
   }
 
+  componentDidCatch() {
+    return <Redirect to="/Login" />;
+  }
+
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
   handleClick = (event, id) => {};
 
   render() {
     const { classes } = this.props;
-
+    const currentPath = this.props.location.pathname;
 
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid

@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import ButtonBar from '../buttons/ButtonBar';
-import { styles } from '../MaterialSense';
+import { styles } from '../styles/MaterialSense';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';

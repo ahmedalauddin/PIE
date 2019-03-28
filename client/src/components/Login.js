@@ -3,26 +3,25 @@
  * File:     /client/src/components/Login.js
  * Created:  2019-02-04
  * Author:   Brad Kaufman
+ * Descr:    Login and authentication for the app.
  * -----
- * Modified: 2019-03-23 15:10:29
- * Editor:   Darrin Tisdale
+ * Modified: 2019-03-28
+ * Editor:   Brad Kaufman
  */
-import React, { useContext } from "react";
+import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { connect } from "react-redux";
 import { store, reducers, setUser, setOrg, getUser, getOrg } from "../redux";
-import { bindActionCreators } from "redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -104,7 +103,7 @@ class Login extends React.Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/ClientOrg" />;
+      return <Redirect to="/clientorg" />;
     }
 
     return (

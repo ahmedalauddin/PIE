@@ -6,7 +6,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
-import { styles } from "../MaterialSense";
+import { styles } from "../styles/MaterialSense";
 import mxGraphGridAreaEditor from "./mxGraphGridAreaEditor";
 //const gr = require("mxgraph-js");
 

@@ -15,7 +15,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
@@ -102,6 +102,7 @@ class ClientOrg extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
       return <Redirect to="/listprojects" />;
@@ -110,7 +111,7 @@ class ClientOrg extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath}/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">

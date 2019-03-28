@@ -15,7 +15,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import { styles } from "./MaterialSense";
+import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
@@ -88,6 +88,7 @@ class ListKpis extends Component {
     orderBy: "",
     selected: [],
     kpis: [],
+    projectTitle: "",
     toProject: "false",
     toProjectId: ""
   };
@@ -97,28 +98,21 @@ class ListKpis extends Component {
     // associated only with that project.
     let projectid = 0;
     projectid = this.props.projid;
-    /*
-    alert('id in props: ' + this.props.projid);
-    //alert('id in params: ' + this.props.match.params.id);
-    if (this.props.match.params.id) {
-
-      projectid = this.props.match.params.id;
-    } else if (this.props.projid > 0) {
-
-      projectid = this.props.projid;
-    }
-   */
 
     if (projectid) {
       // Fetch the KPIs only for a single project
       fetch(`/api/kpis/project/${projectid}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ kpis }));
+        .then(kpis => this.setState({ kpis: kpis }));
+      // Use this temporarily to get the project name
+      fetch(`/api/projects/${projectid}`)
+        .then(res => res.json())
+        .then(project => this.setState({ projectTitle: project.title }));
     } else {
       // Get all KPIs
       fetch("/api/kpis")
         .then(res => res.json())
-        .then(kpis => this.setState({ kpis }));
+        .then(kpis => this.setState({ kpis: kpis }));
     }
   }
 
@@ -151,7 +145,7 @@ class ListKpis extends Component {
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
                       <Typography color="secondary" gutterBottom>
-                        List of KPIs
+                        KPIs for project {this.state.projectTitle}
                       </Typography>
                     </div>
                     <div>

@@ -36,9 +36,7 @@ export default props => (
         <Route exact path="/signup" component={Signup} />
         <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
-        <Route exact path="/selectclient" component={withAuth(SelectClient)} />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
-        <Route exact path="/editkpi" component={withAuth(EditKpi)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
         <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
@@ -47,7 +45,9 @@ export default props => (
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
+        <Route exact path="/kpicard" component={withAuth(KpiCard)} />
         <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />
+        <Route exact path="/actioncard" component={withAuth(ActionCard)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />

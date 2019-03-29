@@ -14,6 +14,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import ActionCard from "../ActionCard";
+import KpiCard from "../KpiCard";
 import { Link } from "react-router-dom";
 import styles from "../styles/ToolbarStyles";
 
@@ -47,10 +49,10 @@ class CardToolbar extends Component {
             variant="scrollable"
             scrollButtons="auto"
           >
-            <Tab label="KPIs" component={Link} to={`../listkpis/${this.props.projid}`} />
-            <Tab label="New KPI" component={Link} to="../kpicard"/>
-            <Tab label="Action Items" component={Link} to={`../listactions/${this.props.projid}`} />
-            <Tab label="New Action Item" component={Link} to="../actioncard"/>
+            <Tab label="KPIs" component={Link} to={`/listkpis/${this.props.projid}`} />
+            <Tab label="New KPI" component={Link} to={{ pathname: '/kpicard', state: { projid: this.props.projid} }}/>
+            <Tab label="Action Items" component={Link} to={`/listactions/${this.props.projid}`}/>
+            <Tab label="New Action Item" component={Link} to={{ pathname: '/actioncard', state: { projid: this.props.projid} }}/>
           </Tabs>
         </div>
       </div>

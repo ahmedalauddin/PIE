@@ -24,6 +24,7 @@ module.exports = {
       title: req.body.title,
       description: req.body.description,
       status: req.body.status,
+      assignedTo: req.body.assigned,
       projectId: parseInt(req.body.projectId)
     })
       .then(t => {

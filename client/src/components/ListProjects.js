@@ -97,7 +97,7 @@ class ListProjects extends Component {
   };
 
   componentDidMount() {
-    // Get the organization for the filter.
+    // Get the organization from the filter.
     let orgName = getOrgName();
     let orgId = getOrgId();
 

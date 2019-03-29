@@ -23,6 +23,11 @@ import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import { getOrgId, getOrgName } from "../redux";
 
 class KpiCard extends React.Component {
   constructor(props) {
@@ -31,23 +36,27 @@ class KpiCard extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
     project: {},
-    organizations: [],
-    projid: 0,
+    projectId: 0,
     title: "",
     type: "",
     level: "",
     org: "",
     orgId: "",
+    orgName: "",
     description: "",
     startAt: "",
     endAt: "",
     msg: "",
+    kpitype: "",
+    buttonText: "Create",
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -59,12 +68,12 @@ class KpiCard extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
-  handleSelectChange = event => {
-    this.setState({ orgId: event.target.value });
-  };
-
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
+  };
+
+  handleSelectChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
@@ -73,9 +82,6 @@ class KpiCard extends React.Component {
 
     setTimeout(() => {
       if (this.state.id > 0) {
-        // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
-        // We have a project id passed through the URL, do an
-        // update on the project.
         let updatePath = "/api/kpis/" + this.state.id;
         fetch(updatePath, {
           method: "PUT",
@@ -84,8 +90,7 @@ class KpiCard extends React.Component {
         })
           .then(response => {
             if (response.status.toString().localeCompare("201")) {
-              alert(response.status);
-              this.setState({ msg: "Updated" });
+              this.setState({ msg: "KPI updated" });
             }
           })
           .catch(err => {
@@ -99,8 +104,10 @@ class KpiCard extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(data => {
-            //console.log(data);
+          .then(response => {
+            if (response.status.toString().localeCompare("201")) {
+              this.setState({ msg: "KPI created" });
+            }
           })
           .catch(err => {
             //console.log(err);
@@ -108,9 +115,26 @@ class KpiCard extends React.Component {
       }
       //setSubmitting(false);
     }, 2000);
-  }
+  };
+
+  setOrganizationInfo = () => {
+    // Get the organization from the filter.
+    let orgName = getOrgName();
+    let orgId = getOrgId();
+
+    this.setState({
+      orgName: orgName,
+      orgId: orgId
+    });
+  };
 
   componentDidMount() {
+    this.setOrganizationInfo();
+    const projid = this.props.location.state;
+    this.setState({
+      projectId: projid
+    });
+
     if (parseInt(this.props.match.params.id) > 0) {
       fetch(`/api/kpis/${this.props.match.params.id}`)
         .then(res => res.json())
@@ -122,11 +146,16 @@ class KpiCard extends React.Component {
             level: kpi.level,
             orgId: kpi.orgId,
             type: kpi.type,
-            projectid: kpi.projectId
+            kpitype: kpi.type,
+            projectid: kpi.projectId,
+            buttonText: "Update"
           });
         });
     } else {
-      this.setState({ isEditing: true });
+      this.setState({
+        isEditing: true,
+        buttonText: "Create"
+      });
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
@@ -138,14 +167,13 @@ class KpiCard extends React.Component {
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar />
         <form onSubmit={this.handleSubmit} noValidate>
-          <div className={classes.root}>
+          <Typography className={classes.root}>
             <Grid container justify="center">
               <Grid
                 spacing={24}
@@ -202,7 +230,19 @@ class KpiCard extends React.Component {
                                 }}
                               />
                             </Typography>
-                            <Typography variant="h5" component="h2">
+                            <Typography component="p">
+                              <TextField
+                                id="organization"
+                                label="Organization"
+                                defaultValue={this.state.orgName}
+                                className={classes.textField}
+                                margin="normal"
+                                InputProps={{
+                                  readOnly: true,
+                                }}
+                              />
+                            </Typography>
+                            <Typography component="p">
                               <TextField
                                 id="level"
                                 label="Level"
@@ -212,27 +252,34 @@ class KpiCard extends React.Component {
                                 margin="normal"
                               />
                             </Typography>
-                            <Typography variant="h5" component="h2">
-                              <TextField
-                                required
-                                id="type"
-                                label="Type"
-                                onChange={this.handleChange("type")}
-                                value={this.state.type}
-                                className={classes.textField}
-                                margin="normal"
-                              />
+                            <Typography component="p">
+                              <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
+                              <FormControl className={classes.formControl}>
+                                <Select
+                                  value={this.state.type}
+                                  onChange={this.handleSelectChange}
+                                  inputProps={{
+                                    name: 'type',
+                                    id: 'kpi-type-simple',
+                                  }}
+                                >
+                                  <MenuItem value="">None</MenuItem>
+                                  <MenuItem value="lagging">Lagging</MenuItem>
+                                  <MenuItem value="leading">Leading</MenuItem>
+                                </Select>
+                              </FormControl>
+                              <br/><br/><br/>
                             </Typography>
-                            <div className={classes.spaceTop}>
+                            <Typography component="p">
                               <Button
                                 variant="contained"
                                 color="primary"
                                 onClick={this.handleSubmit}
                                 className={classes.secondary}
                               >
-                                Update
+                                {this.state.buttonText}
                               </Button>
-                            </div>
+                            </Typography>
                             <br />
                           </TableCell>
                         </TableRow>
@@ -242,7 +289,7 @@ class KpiCard extends React.Component {
                 </Grid>
               </Grid>
             </Grid>
-          </div>
+          </Typography>
         </form>
       </React.Fragment>
     );

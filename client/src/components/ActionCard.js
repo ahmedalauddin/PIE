@@ -23,6 +23,12 @@ import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
+import { getOrgId, getOrgName } from "../redux";
+import moment from "moment";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
 
 class ActionCard extends React.Component {
   constructor(props) {
@@ -31,20 +37,25 @@ class ActionCard extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
+    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
     task: {},
-    projid: 0,
+    projectId: 0,
     title: "",
     type: "",
     org: "",
     orgId: "",
-    assigned: "",
+    orgName: "",
+    assigned: 0,
+    assignedList: [],
     description: "",
     msg: "",
+    buttonText: "",
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -52,12 +63,23 @@ class ActionCard extends React.Component {
     labelWidth: 0
   };
 
+  setOrganizationInfo = () => {
+    // Get the organization from the filter.
+    let orgName = getOrgName();
+    let orgId = getOrgId();
+
+    this.setState({
+      orgName: orgName,
+      orgId: orgId
+    });
+  };
+
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
   };
 
   handleSelectChange = event => {
-    this.setState({ orgId: event.target.value });
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   handleExpandClick = () => {
@@ -70,7 +92,6 @@ class ActionCard extends React.Component {
 
     setTimeout(() => {
       if (this.state.id > 0) {
-        // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
         let updatePath = "/api/tasks/" + this.state.id;
         fetch(updatePath, {
           method: "PUT",
@@ -79,8 +100,7 @@ class ActionCard extends React.Component {
         })
           .then(response => {
             if (response.status.toString().localeCompare("201")) {
-              alert(response.status);
-              this.setState({ msg: "Updated" });
+              this.setState({ msg: "Action item updated" });
             }
           })
           .catch(err => {
@@ -89,13 +109,13 @@ class ActionCard extends React.Component {
       } else {
         // No project id, so we will do a create.  The difference
         // is we do a POST instead of a PUT.
-        fetch("/api/kpis", {
+        fetch("/api/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
           .then(data => {
-            //console.log(data);
+            this.setState({ msg: "Action item created" });
           })
           .catch(err => {
             //console.log(err);
@@ -106,6 +126,23 @@ class ActionCard extends React.Component {
   }
 
   componentDidMount() {
+    this.setOrganizationInfo();
+    const projid = this.props.location.state.projid;
+    this.setState({
+      projectId: projid
+    });
+
+    // Use the project to get the assigned to list.
+    if (parseInt(projid) > 0) {
+      fetch(`/api/projects/${projid}`)
+        .then(res => res.json())
+        .then(project => {
+          this.setState({
+            assignedList: project.team
+          });
+        });
+    }
+
     if (parseInt(this.props.match.params.id) > 0) {
       fetch(`/api/tasks/${this.props.match.params.id}`)
         .then(res => res.json())
@@ -116,11 +153,15 @@ class ActionCard extends React.Component {
             description: task.description,
             assigned: task.assigned.fullName,
             orgId: task.orgId,
-            projectid: task.projectId
+            projectid: task.projectId,
+            buttonText: "Update"
           });
         });
     } else {
-      this.setState({ isEditing: true });
+      this.setState({
+        isEditing: true,
+        buttonText: "Create"
+      });
     }
   }
 
@@ -188,16 +229,43 @@ class ActionCard extends React.Component {
                                 }}
                               />
                             </Typography>
-                            <Typography variant="h5" component="h2">
+                            <Typography component="p">
                               <TextField
-                                required
-                                id="assigned"
-                                label="Assigned"
-                                onChange={this.handleChange("type")}
-                                value={this.state.assigned}
+                                id="organization"
+                                label="Organization"
+                                defaultValue={this.state.orgName}
                                 className={classes.textField}
                                 margin="normal"
+                                InputProps={{
+                                  readOnly: true,
+                                }}
                               />
+                            </Typography>
+                            <Typography variant="h5" component="h2">
+                              <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="assigned-simple">
+                                  Assigned To
+                                </InputLabel>
+                                <Select
+                                  value={this.state.assigned}
+                                  onChange={this.handleSelectChange}
+                                  inputProps={{
+                                    name: "assigned",
+                                    id: "assigned-simple"
+                                  }}
+                                >
+                                  {this.state.assignedList.map(person => {
+                                    return (
+                                      <MenuItem key={person.id} value={person.id}>
+                                        {person.fullName}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Select>
+                              </FormControl>
+                              <br />
+                              <br />
+                              <br />
                             </Typography>
                             <div className={classes.spaceTop}>
                               <Button
@@ -206,7 +274,7 @@ class ActionCard extends React.Component {
                                 onClick={this.handleSubmit}
                                 className={classes.secondary}
                               >
-                                Update
+                                {this.state.buttonText}
                               </Button>
                             </div>
                             <br />

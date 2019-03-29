@@ -37,6 +37,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { Link, Redirect } from "react-router-dom";
 import ProjectKpis from "./ProjectKpis";
 import CardToolbar from "./navigation/CardToolbar";
+import { getOrgId, getOrgName } from "../redux";
 
 class ProjectCard extends React.Component {
   constructor(props) {
@@ -46,6 +47,7 @@ class ProjectCard extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.showToolbar = this.showToolbar.bind(this);
+    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -58,16 +60,29 @@ class ProjectCard extends React.Component {
     businessGoal: "",
     org: "",
     orgId: "",
+    orgName: "",
     description: "",
     startAt: "",
     endAt: "",
     progress: 0,
+    msg: "",
     buttonText: "Create",
     isEditing: false,
     redirect: false,
     isNew: false,
     expanded: false,
     labelWidth: 0
+  };
+
+  setOrganizationInfo = () => {
+    // Get the organization from the filter.
+    let orgName = getOrgName();
+    let orgId = getOrgId();
+
+    this.setState({
+      orgName: orgName,
+      orgId: orgId
+    });
   };
 
   handleChange = name => event => {
@@ -98,10 +113,10 @@ class ProjectCard extends React.Component {
           body: JSON.stringify(this.state)
         })
           .then(data => {
-            //console.log(data);
+            this.setState({ msg: "Project updated." });
           })
           .catch(err => {
-            //console.log(err);
+            this.setState({ msg: "Error occurred." });
           });
       } else {
         // No project id, so we will do a create.  The difference
@@ -115,7 +130,7 @@ class ProjectCard extends React.Component {
             //console.log(data);
           })
           .catch(err => {
-            //console.log(err);
+            this.setState({ msg: "Error occurred." });
           });
       }
       //setSubmitting(false);
@@ -123,6 +138,8 @@ class ProjectCard extends React.Component {
   }
 
   componentDidMount() {
+    this.setOrganizationInfo();
+
     if (parseInt(this.props.match.params.id) > 0) {
       fetch(`/api/projects/${this.props.match.params.id}`)
         .then(res => res.json())
@@ -141,7 +158,10 @@ class ProjectCard extends React.Component {
           });
         });
     } else {
-      this.setState({ isEditing: true });
+      this.setState({
+        isEditing: true,
+        buttonText: "Create"
+      });
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
@@ -189,6 +209,9 @@ class ProjectCard extends React.Component {
                       <Table>
                         <TableRow>
                           <TableCell style={{ verticalAlign: "top" }}>
+                            <Typography color="secondary" gutterBottom>
+                              {this.state.msg}
+                            </Typography>
                             <Typography variant="h5" component="h2">
                               <TextField
                                 required
@@ -200,34 +223,18 @@ class ProjectCard extends React.Component {
                                 margin="normal"
                               />
                             </Typography>
-                            <Typography variant="h5" component="h2">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="organization-simple">
-                                  Organization
-                                </InputLabel>
-                                <Select
-                                  value={this.state.orgId}
-                                  onChange={this.handleSelectChange}
-                                  renderValue={value => this.state.orgId}
-                                  inputProps={{
-                                    name: "org",
-                                    id: "orgId"
-                                  }}
-                                >
-                                  {this.state.organizations.map(org => {
-                                    return (
-                                      <MenuItem key={org.id} value={org.id}>
-                                        {org.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
+                            <Typography component="p">
+                              <TextField
+                                id="organization"
+                                label="Organization"
+                                defaultValue={this.state.orgName}
+                                className={classes.textField}
+                                margin="normal"
+                                InputProps={{
+                                  readOnly: true,
+                                }}
+                              />
                             </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{ verticalAlign: "top", width: "55%" }}
-                          >
                             <Typography component="p">
                               <TextField
                                 id="description"
@@ -265,7 +272,7 @@ class ProjectCard extends React.Component {
                             style={{ verticalAlign: "top", width: "25%" }}
                           >
                             <div className={classes.inlineRight}>
-                              <Typography variant="h6" gutterBottom>
+                              <Typography component="p">
                                 <TextField
                                   id="startAt"
                                   label="Start Date"
@@ -278,7 +285,7 @@ class ProjectCard extends React.Component {
                                   }}
                                 />
                               </Typography>
-                              <Typography variant="h6" gutterBottom>
+                              <Typography component="p">
                                 <TextField
                                   id="endAt"
                                   label="End Date"

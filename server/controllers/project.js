@@ -16,6 +16,7 @@ const Project = require("../models").Project;
 const KPI = require("../models").KPI;
 const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
+const Person = require("../models").Person;
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
@@ -122,6 +123,10 @@ module.exports = {
         {
           model: Task,
           as: "tasks"
+        },
+        {
+          model: Person,
+          as: "team"
         }
       ]
     })

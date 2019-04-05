@@ -90,7 +90,7 @@ const styles = theme => ({
   }
 });
 
-class Main2 extends Component {
+class Main extends Component {
   state = {
     learnMoredialog: false,
     getStartedDialog: false
@@ -167,4 +167,4 @@ class Main2 extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(Main2));
+export default withRouter(withStyles(styles)(Main));

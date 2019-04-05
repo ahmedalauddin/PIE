@@ -107,7 +107,13 @@ export function getOrg() {
  * @returns number for organization ID
  */
 export function getOrgId() {
-  return JSON.parse(store.getState().state.organization).id;
+  let value = "";
+  try {
+    value = JSON.parse(store.getState().state.organization).id;
+  } catch (error) {
+    console.log("error: " + error);
+  }
+  return value;
 }
 
 /**
@@ -118,5 +124,22 @@ export function getOrgId() {
  * @returns string with the orgabnization name
  */
 export function getOrgName() {
-  return JSON.parse(store.getState().state.organization).name;
+  let value = "";
+  try {
+    value = JSON.parse(store.getState().state.organization).name;
+  } catch (error) {
+    console.log("error: " + error);
+  }
+  return value;
+}
+
+/**
+ * *getUserOrgName*
+ * Retrieve the name of the user's organization from redux
+ *
+ * @export
+ * @returns string with the organization name
+ */
+export function getUserOrgName() {
+  return JSON.parse(store.getState().state.user).organization.name;
 }

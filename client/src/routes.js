@@ -3,16 +3,15 @@ import React from "react";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import Cards from "./components/Cards";
-import Main2 from "./components/Main2";
 import ScrollToTop from "./components/ScrollTop";
 import EditPerson from "./components/EditPerson";
-import EditKpi from "./components/EditKpi";
 import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListActions from "./components/ListActions";
 import ListKpis from "./components/ListKpis";
 import ListOrgs from "./components/ListOrgs";
 import MindMap from "./components/mindmap/MindMap";
+import Main from "./components/Main";
 import Signup from "./components/Signup";
 import Logout from "./components/Logout";
 import Login from "./components/Login";
@@ -22,20 +21,21 @@ import ProjectCard from "./components/ProjectCard";
 import ActionCard from "./components/ActionCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
+import Analytics from "./components/Analytics";
 import withAuth from "./components/withAuth.jsx";
-import SelectClient from "./components/SelectClient";
 
 export default props => (
   <BrowserRouter>
     <ScrollToTop>
       <Switch>
-        <Route exact path="/" component={Main2} />
         <Route exact path="/dashboard" component={withAuth(Dashboard)} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
+        <Route exact path="/" component={Main} />
         <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
+        <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />

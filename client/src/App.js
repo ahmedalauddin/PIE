@@ -4,11 +4,10 @@
  * Created:  2019-02-16 23:32:17
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-19 12:30:42
- * Editor:   Darrin Tisdale
+ * Modified: 2019-04-04
+ * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
-//import { UserContext } from "./components/UserContext";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import "./stylesheets/App.css";
 import Routes from "./routes";
@@ -54,14 +53,6 @@ const mapStateToProps = state => ({
   user: state.user,
   organization: state.organization,
 });
-
-/*
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setUser: (userData) => dispatch(setUser(userData)),
-    setOrg: (orgData) => dispatch(setOrg(orgData))
-  };
-} */
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({setUser, setOrg}, dispatch);

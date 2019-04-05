@@ -24,6 +24,10 @@ const Menu = [
     pathname: "/listpersons"
   },
   {
+    label: "Analytics",
+    pathname: "/analytics"
+  },
+  {
     label: "Client Filter",
     pathname: "/clientorg"
   },

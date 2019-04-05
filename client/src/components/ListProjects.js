@@ -92,8 +92,15 @@ class ListProjects extends Component {
     projects: [],
     readyToRedirect: false,
     user: "",
-    toProject: "false",
-    toProjectId: ""
+    toProject: false,
+    toProjectId: "",
+    hasError: false
+  };
+
+  componentDidCatch(error, info) {
+    console.log("error: " + error + ", info: " + info);
+    this.setState({hasError: true});
+    return <Redirect to="/Login" />;
   };
 
   componentDidMount() {
@@ -123,11 +130,7 @@ class ListProjects extends Component {
         .then(projects => this.setState({ projects }));
       msg = "List of projects for all organizations";
     }
-  }
-
-  componentDidCatch() {
-    return <Redirect to="/Login" />;
-  }
+  };
 
   // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
   handleClick = (event, id) => {};
@@ -135,6 +138,9 @@ class ListProjects extends Component {
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
+    if (this.state.hasError) {
+      return <h1>An error occurred.</h1>;
+    }
 
     return (
       <React.Fragment>

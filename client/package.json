@@ -49,8 +49,7 @@
     "typescript": "^3.3.3333",
     "uuid": "^3.3.2",
     "webpack": "^4.29.6",
-    "yup": "^0.26.10",
-    "zoid": "^9.0.22"
+    "yup": "^0.26.10"
   },
   "scripts": {
     "start": "react-scripts start",

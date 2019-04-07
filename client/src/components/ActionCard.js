@@ -24,7 +24,6 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
 import { getOrgId, getOrgName } from "../redux";
-import moment from "moment";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";

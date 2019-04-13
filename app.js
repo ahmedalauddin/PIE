@@ -71,6 +71,7 @@ models.sequelize
     require("./server/routes/index")(router);
     require("./server/routes/organization")(router);
     require("./server/routes/person")(router);
+    require("./server/routes/department")(router);
     require("./server/routes/project")(router);
     require("./server/routes/kpi")(router);
     require("./server/routes/mindmap")(router);

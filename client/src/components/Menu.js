@@ -38,6 +38,10 @@ const Menu = [
   {
     label: "Logout",
     pathname: "/logout"
+  },
+  {
+    label: "About",
+    pathname: "/about"
   }
 ];
 

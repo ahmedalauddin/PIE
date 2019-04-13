@@ -29,6 +29,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
+import OrgToolbar from "./navigation/OrgToolbar";
 
 const ExpandingSectionGridItem = (classes, project) => {
   // TODO - add the org's project list here.
@@ -72,6 +73,7 @@ class OrganizationCard extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.showToolbar = this.showToolbar.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -100,7 +102,15 @@ class OrganizationCard extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
+  showToolbar() {
+    // If we have a project ID, show the toolbar.
+    let toolbarText = "";
+    if (parseInt(this.state.id) > 0) {
+      toolbarText = <OrgToolbar orgid={this.state.id}/>;
+    }
+    return toolbarText;
+  }
+
   handleSubmit(event) {
     event.preventDefault();
 
@@ -140,7 +150,7 @@ class OrganizationCard extends React.Component {
 
   componentDidMount() {
     if (parseInt(this.props.match.params.id) > 0) {
-      `/api/organizations/${this.props.match.params.id}`
+      fetch(`/api/organizations/${this.props.match.params.id}`)
         .then(res => res.json())
         .then(organization => {
           this.setState({
@@ -186,6 +196,7 @@ class OrganizationCard extends React.Component {
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
+                      {this.showToolbar()}
                       <Table>
                         <TableRow>
                           <TableCell style={{ verticalAlign: "top" }}>

@@ -64,6 +64,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "orgId",
       as: "kpis"
     });
+    logger.debug(`${callerType} Organization hasMany Department`);
+    Organization.hasMany(models.Department, {
+      foreignKey: "orgId",
+      as: "departments"
+    });
     logger.debug(`${callerType} Organization hasOne Mindmap`);
     Organization.hasOne(models.Mindmap, {
       foreignKey: "orgId",

@@ -30,7 +30,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import { getOrgId, getOrgName } from "../redux";
 import { Redirect } from "react-router-dom";
 
-class KpiCard extends React.Component {
+class DepartmentCard extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
@@ -44,8 +44,7 @@ class KpiCard extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
-    project: {},
-    projectId: 0,
+    deptId: 0,
     title: "",
     type: "",
     level: "",
@@ -137,25 +136,19 @@ class KpiCard extends React.Component {
   };
 
   componentDidMount() {
-    this.setOrganizationInfo();
-    const projid = this.props.location.state;
+    //this.setOrganizationInfo();
+    const deptid = this.props.match.params.id;
     this.setState({
-      projectId: projid
+      deptId: deptid
     });
 
-    if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/kpis/${this.props.match.params.id}`)
+    if (parseInt(this.state.deptId) > 0) {
+      fetch(`/api/departments/${this.state.deptId}`)
         .then(res => res.json())
-        .then(kpi => {
+        .then(department => {
           this.setState({
-            id: this.props.match.params.id,
-            title: kpi.title,
-            description: kpi.description,
-            level: kpi.level,
-            orgId: kpi.orgId,
-            type: kpi.type,
-            kpitype: kpi.type,
-            projectid: kpi.projectId,
+            name: department.name,
+            description: department.description,
             buttonText: "Update"
           });
         });
@@ -165,12 +158,6 @@ class KpiCard extends React.Component {
         buttonText: "Create"
       });
     }
-    // Have to set the state of the individual fields for the handleChange function for the TextFields.
-    // Do this using the project state.
-
-    fetch("/api/organizations/?format=select")
-      .then(results => results.json())
-      .then(organizations => this.setState({ organizations }));
   }
 
   render() {
@@ -206,7 +193,7 @@ class KpiCard extends React.Component {
                               color="secondary"
                               gutterBottom
                             >
-                              KPI Detail
+                              Department Detail
                             </Typography>
                           </TableCell>
                           <Typography color="secondary" gutterBottom>
@@ -218,10 +205,10 @@ class KpiCard extends React.Component {
                             <Typography variant="h5" component="h2">
                               <TextField
                                 required
-                                id="title-required"
-                                label="Title"
-                                onChange={this.handleChange("title")}
-                                value={this.state.title}
+                                id="name-required"
+                                label="Department Name"
+                                onChange={this.handleChange("name")}
+                                value={this.state.name}
                                 className={classes.textField}
                                 margin="normal"
                               />
@@ -241,59 +228,6 @@ class KpiCard extends React.Component {
                                   shrink: true
                                 }}
                               />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="formula"
-                                label="Formula Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.formula}
-                                onChange={this.handleChange("formula")}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="department"
-                                label="Department"
-                                defaultValue={this.state.orgName}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="level"
-                                label="Level"
-                                onChange={this.handleChange("level")}
-                                value={this.state.level}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
-                              <FormControl className={classes.formControl}>
-                                <Select
-                                  value={this.state.type}
-                                  onChange={this.handleSelectChange}
-                                  inputProps={{
-                                    name: 'type',
-                                    id: 'kpi-type-simple',
-                                  }}
-                                >
-                                  <MenuItem value="">None</MenuItem>
-                                  <MenuItem value="lagging">Lagging</MenuItem>
-                                  <MenuItem value="leading">Leading</MenuItem>
-                                </Select>
-                              </FormControl>
-                              <br/><br/><br/>
                             </Typography>
                             <Typography component="p">
                               <Button
@@ -321,4 +255,4 @@ class KpiCard extends React.Component {
   }
 }
 
-export default withStyles(styles)(KpiCard);
+export default withStyles(styles)(DepartmentCard);

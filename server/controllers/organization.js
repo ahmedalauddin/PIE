@@ -79,6 +79,10 @@ module.exports = {
             as: "projects"
           },
           {
+            model: models.Department,
+            as: "departments"
+          },
+          {
             model: models.Kpi,
             as: "kpis"
           }
@@ -125,6 +129,10 @@ module.exports = {
         {
           model: models.Project,
           as: "projects"
+        },
+        {
+          model: models.Department,
+          as: "departments"
         },
         {
           model: models.Kpi,

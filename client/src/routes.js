@@ -10,6 +10,7 @@ import ListPersons from "./components/ListPersons";
 import ListActions from "./components/ListActions";
 import ListKpis from "./components/ListKpis";
 import ListOrgs from "./components/ListOrgs";
+import ListDepts from "./components/ListDepts";
 import MindMap from "./components/mindmap/MindMap";
 import Main from "./components/Main";
 import Signup from "./components/Signup";
@@ -19,6 +20,8 @@ import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectCard from "./components/ProjectCard";
 import ActionCard from "./components/ActionCard";
+import About from "./components/About";
+import DepartmentCard from "./components/DepartmentCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import Analytics from "./components/Analytics";
@@ -32,16 +35,19 @@ export default props => (
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
+        <Route exact path="/about" component={About} />
         <Route exact path="/" component={Main} />
         <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
+        <Route path="/departmentcard/:id" component={withAuth(DepartmentCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
         <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
+        <Route path="/listdepts/:id" component={withAuth(ListDepts)} />
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />

@@ -50,6 +50,7 @@ class CardToolbar extends Component {
             <Tab label="New KPI" component={Link} to={{ pathname: '/kpicard', state: { projid: this.props.projid} }}/>
             <Tab label="Action Items" component={Link} to={`/listactions/${this.props.projid}`}/>
             <Tab label="New Action Item" component={Link} to={{ pathname: '/actioncard', state: { projid: this.props.projid} }}/>
+            <Tab label="People" component={Link} to={{ pathname: `/projectpersons/${this.props.projid}` }}/>
           </Tabs>
         </div>
       </div>

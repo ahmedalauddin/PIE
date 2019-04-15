@@ -25,12 +25,15 @@ import Collapse from "@material-ui/core/Collapse";
 import classnames from "classnames";
 import TextField from "@material-ui/core/TextField";
 import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import OrgToolbar from "./navigation/OrgToolbar";
 
+/*
 const ExpandingSectionGridItem = (classes, project) => {
   // TODO - add the org's project list here.
   // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
@@ -65,6 +68,7 @@ const ExpandingSectionGridItem = (classes, project) => {
     </div>
   );
 };
+*/
 
 class OrganizationCard extends React.Component {
   constructor(props) {
@@ -80,7 +84,7 @@ class OrganizationCard extends React.Component {
   // fields.
   state = {
     project: {},
-    organizations: [],
+    persons: [],
     orgname: "",
     orgId: 0,
     isEditing: false,
@@ -158,6 +162,7 @@ class OrganizationCard extends React.Component {
             name: organization.name,
             orgId: organization.orgId,
             projects: organization.projects,
+            persons: organization.persons,
             organization: organization
           });
         });
@@ -215,7 +220,7 @@ class OrganizationCard extends React.Component {
                                 className={classes.textField}
                                 margin="normal"
                               />
-                            </Typography>
+                            </Typography><br/><br/>
                             <Typography variant="h5" component="h2">
                               <div className={classes.spaceTop}>
                                 <Button
@@ -228,45 +233,29 @@ class OrganizationCard extends React.Component {
                                 </Button>
                               </div>
                               <br />
-                              <div className={classes.spaceTop}>
-                                <Button
-                                  component={Link}
-                                  to={`/listprojects/${
-                                    this.props.match.params.id
-                                  }`}
-                                >
-                                  List Projects
-                                </Button>
-                              </div>
                             </Typography>
                           </TableCell>
                         </TableRow>
                       </Table>
+                      <Table className={classes.table}>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell align="left">Email</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {this.state.persons.map(p => (
+                            <TableRow>
+                              <TableCell component="th" scope="row">
+                                {p.firstName + " " + p.lastName}
+                              </TableCell>
+                              <TableCell align="left">{p.email}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
                     </CardContent>
-                    <CardActions
-                      className={classes.actions}
-                      disableActionSpacing
-                    >
-                      <IconButton
-                        className={classnames(classes.expand, {
-                          [classes.expandOpen]: this.state.expanded
-                        })}
-                        onClick={this.handleExpandClick}
-                        aria-expanded={this.state.expanded}
-                        aria-label="Show more"
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </CardActions>
-                    <Collapse
-                      in={this.state.expanded}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <CardContent>
-                        {ExpandingSectionGridItem(classes, this.state.project)}
-                      </CardContent>
-                    </Collapse>
                   </Card>
                 </Grid>
               </Grid>

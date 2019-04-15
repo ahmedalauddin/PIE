@@ -18,6 +18,7 @@ import Logout from "./components/Logout";
 import Login from "./components/Login";
 import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
+import ProjectPersons from "./components/ProjectPersons";
 import ProjectCard from "./components/ProjectCard";
 import ActionCard from "./components/ActionCard";
 import About from "./components/About";
@@ -42,6 +43,7 @@ export default props => (
         <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
         <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
+        <Route path="/projectpersons/:id" component={withAuth(ProjectPersons)} />
         <Route path="/departmentcard/:id" component={withAuth(DepartmentCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
         <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />

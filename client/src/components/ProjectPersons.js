@@ -155,7 +155,7 @@ class ProjectPersons extends Component {
                       >
                         <MyTableHead />
                         <TableBody>
-                          {this.state.orgPersons.map(person => {
+                          {this.state.orgPersons.map(function(person, i){
                             return (
                               <TableRow
                                 hover
@@ -165,9 +165,9 @@ class ProjectPersons extends Component {
                               >
                                 <TableCell align="left">
                                   <Checkbox
-                                    checked=""
-                                    onChange={this.handleChange(`checked${person.id}`)}
-                                    value={`checked${person.id}`}
+                                    checked={this.state.checked[i]}
+                                    onChange=""
+                                    value={this.state.checked[i]}
                                     color="primary"
                                   />
                                 </TableCell>

@@ -79,8 +79,9 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: Introducing departments on the organization card.  Departments will also be listed
-                          from a dropdown menu on the KPI card.  Also adding a placeholder for a description of formula for a KPI.
+                          Notes: Introducing departments on the organization card and persons associated with a project from the project
+                          card.  Departments will also be listed from a dropdown menu on the KPI card.  Also adding a placeholder
+                          for a description of formula for a KPI.
                         </Typography>
                       </div>
                     </CardContent>

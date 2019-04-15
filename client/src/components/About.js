@@ -18,6 +18,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
+import Package from "../../package.json";
 
 class About extends React.Component {
   constructor(props) {
@@ -68,12 +69,12 @@ class About extends React.Component {
                       </Typography>
                       <div>
                         <Typography variant="body2">
-                          Version: 0.6.11
+                          Version: {Package.version}
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: April 12, 2019<br/><br/>
+                          Build date: April 14, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>

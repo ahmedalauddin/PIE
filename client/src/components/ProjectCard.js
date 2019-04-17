@@ -33,7 +33,12 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect } from "react-router-dom";
 import ProjectKpis from "./ProjectKpis";
 import CardToolbar from "./navigation/CardToolbar";
-import { getOrgId, getOrgName } from "../redux";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
+
 
 class ProjectCard extends React.Component {
   constructor(props) {
@@ -51,6 +56,7 @@ class ProjectCard extends React.Component {
   state = {
     project: {},
     organizations: [],
+    departments: [],
     projid: 0,
     title: "",
     businessGoal: "",
@@ -58,6 +64,7 @@ class ProjectCard extends React.Component {
     orgId: "",
     orgName: "",
     description: "",
+    departmentId: 0,
     startAt: "",
     endAt: "",
     progress: 0,
@@ -74,10 +81,12 @@ class ProjectCard extends React.Component {
     // Get the organization from the filter.
     let orgName = getOrgName();
     let orgId = getOrgId();
+    let departments = getOrgDepartments();
 
     this.setState({
       orgName: orgName,
-      orgId: orgId
+      orgId: orgId,
+      departments: departments
     });
   };
 
@@ -86,7 +95,7 @@ class ProjectCard extends React.Component {
   };
 
   handleSelectChange = event => {
-    this.setState({ orgId: event.target.value });
+    this.setState({ departmentId: event.target.value });
   };
 
   handleExpandClick = () => {
@@ -161,10 +170,6 @@ class ProjectCard extends React.Component {
     }
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
-
-    fetch("/api/organizations/?format=select")
-      .then(results => results.json())
-      .then(organizations => this.setState({ organizations }));
   }
 
   showToolbar() {
@@ -220,16 +225,29 @@ class ProjectCard extends React.Component {
                               />
                             </Typography>
                             <Typography component="p">
-                              <TextField
-                                id="organization"
-                                label="Organization"
-                                defaultValue={this.state.orgName}
-                                className={classes.textField}
-                                margin="normal"
-                                InputProps={{
-                                  readOnly: true,
-                                }}
-                              />
+                              <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="dept-simple">
+                                  Department
+                                </InputLabel>
+                                <Select
+                                  value={this.state.departmentId}
+                                  onChange={this.handleSelectChange}
+                                  inputProps={{
+                                    name: "deptId",
+                                    id: "deptId"
+                                  }}
+                                >
+                                  {this.state.departments.map(dept => {
+                                    return (
+                                      <MenuItem key={dept.id} value={dept.id}>
+                                        {dept.name}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Select>
+                              </FormControl>
+                              <br />
+                              <br />
                             </Typography>
                             <Typography component="p">
                               <TextField

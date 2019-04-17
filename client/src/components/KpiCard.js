@@ -1,10 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /client/src/components/ProjectCard.js
+ * Descr:    Project component.  Allows create and upadte.
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-24
+ * Modified: 2019-04-17
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -27,7 +28,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName } from "../redux";
+import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
 import { Redirect } from "react-router-dom";
 
 class KpiCard extends React.Component {
@@ -50,9 +51,12 @@ class KpiCard extends React.Component {
     type: "",
     level: "",
     org: "",
-    orgId: "",
+    orgId: 0,
     orgName: "",
+    departments: [],
+    deptId: 0,
     description: "",
+    formula: "",
     startAt: "",
     endAt: "",
     msg: "",
@@ -129,10 +133,12 @@ class KpiCard extends React.Component {
     // Get the organization from the filter.
     let orgName = getOrgName();
     let orgId = getOrgId();
+    let departments = getOrgDepartments();
 
     this.setState({
       orgName: orgName,
-      orgId: orgId
+      orgId: orgId,
+      departments: departments
     });
   };
 
@@ -152,7 +158,9 @@ class KpiCard extends React.Component {
             title: kpi.title,
             description: kpi.description,
             level: kpi.level,
+            formula: kpi.formulaDescription,
             orgId: kpi.orgId,
+            deptId: kpi.deptId,
             type: kpi.type,
             kpitype: kpi.type,
             projectid: kpi.projectId,
@@ -259,13 +267,29 @@ class KpiCard extends React.Component {
                               />
                             </Typography>
                             <Typography component="p">
-                              <TextField
-                                id="department"
-                                label="Department"
-                                defaultValue={this.state.orgName}
-                                className={classes.textField}
-                                margin="normal"
-                              />
+                              <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="dept-simple">
+                                  Department
+                                </InputLabel>
+                                <Select
+                                  value={this.state.deptId}
+                                  onChange={this.handleSelectChange}
+                                  inputProps={{
+                                    name: "deptId",
+                                    id: "deptId"
+                                  }}
+                                >
+                                  {this.state.departments.map(dept => {
+                                    return (
+                                      <MenuItem key={dept.id} value={dept.id}>
+                                        {dept.name}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Select>
+                              </FormControl>
+                              <br />
+                              <br />
                             </Typography>
                             <Typography component="p">
                               <TextField

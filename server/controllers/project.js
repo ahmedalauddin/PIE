@@ -32,6 +32,7 @@ module.exports = {
       title: req.body.title,
       description: req.body.description,
       orgId: parseInt(req.body.orgId),
+      deptId: parseInt(req.body.deptId),
       businessGoal: req.body.businessGoal,
       mindmapId: req.body.mindmapId,
       nodeId: req.body.nodeId,
@@ -59,6 +60,7 @@ module.exports = {
           title: req.body.title,
           description: req.body.description,
           businessGoal: req.body.businessGoal,
+          deptId: req.body.deptId,
           progress: req.body.progress,
           startAt: req.body.startAt,
           endAt: req.body.endAt

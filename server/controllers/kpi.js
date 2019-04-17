@@ -20,6 +20,7 @@ module.exports = {
     return models.Kpi.create({
       title: req.body.title,
       description: req.body.description,
+      formulaDescription: req.body.formula,
       type: req.body.type,
       level: req.body.level,
       status: req.body.status,
@@ -42,6 +43,7 @@ module.exports = {
       {
         title: req.body.title,
         description: req.body.description,
+        formulaDescription: req.body.formula,
         type: req.body.type,
         level: req.body.level,
         status: req.body.status,
@@ -72,6 +74,10 @@ module.exports = {
         {
           model: models.Organization,
           as: "organization"
+        },
+        {
+          model: models.Department,
+          as: "department"
         }
       ]
     })
@@ -101,6 +107,10 @@ module.exports = {
         {
           model: models.Project,
           as: "project"
+        },
+        {
+          model: models.Department,
+          as: "department"
         }
       ]
     })

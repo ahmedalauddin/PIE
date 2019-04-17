@@ -21,12 +21,9 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Checkbox from "@material-ui/core/Checkbox";
 import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { styles } from "./styles/MaterialSense";
-import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
   { id: "select", numeric: false, disablePadding: false, label: "Selected" },

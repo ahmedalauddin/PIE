@@ -121,7 +121,7 @@ export function getOrgId() {
  * retrieve the name of the organization from redux
  *
  * @export
- * @returns string with the orgabnization name
+ * @returns string with the organization name
  */
 export function getOrgName() {
   let value = "";
@@ -142,4 +142,16 @@ export function getOrgName() {
  */
 export function getUserOrgName() {
   return JSON.parse(store.getState().state.user).organization.name;
+}
+
+/**
+ * *getOrgDepartments*
+ * Retrieve the name of the user's organization from redux
+ *
+ * @export
+ * @returns JSON with the list of departments for the organization/client
+ * specified when the user sets the client filter.
+ */
+export function getOrgDepartments() {
+  return JSON.parse(store.getState().state.organization).departments;
 }

@@ -1,15 +1,16 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /client/src/components/Login.js
+ * Descr:    Login component, authenticates the user into the app.
  * Created:  2019-02-04
  * Author:   Brad Kaufman
  * Descr:    Login and authentication for the app.
  * -----
- * Modified: 2019-03-28
+ * Modified: 2019-04-17
  * Editor:   Brad Kaufman
  */
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -21,7 +22,7 @@ import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { store, reducers, setUser, setOrg, getUser, getOrg } from "../redux";
+import { store, setUser } from "../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various

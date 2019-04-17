@@ -26,7 +26,6 @@ import { Link, Redirect } from "react-router-dom";
 import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
-import { getOrgId, getOrgName } from "../redux";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },

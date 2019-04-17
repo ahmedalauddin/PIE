@@ -27,7 +27,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      orgId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      deptId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       description: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      formulaDescription: {
         type: DataTypes.STRING,
         allowNull: true
       },
@@ -64,6 +76,13 @@ module.exports = (sequelize, DataTypes) => {
     Kpi.belongsTo(models.Organization, {
       as: "organization",
       foreignKey: "orgId",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} Kpi belongsTo Department`);
+    Kpi.belongsTo(models.Department, {
+      as: "department",
+      foreignKey: "deptId",
       onDelete: "cascade"
     });
 

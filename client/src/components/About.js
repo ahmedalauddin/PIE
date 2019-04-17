@@ -74,14 +74,12 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: April 14, 2019<br/><br/>
+                          Build date: April 16, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: Introducing departments on the organization card and persons associated with a project from the project
-                          card.  Departments will also be listed from a dropdown menu on the KPI card.  Also adding a placeholder
-                          for a description of formula for a KPI.
+                          Notes: Adding dropdowns for selecting departments.
                         </Typography>
                       </div>
                     </CardContent>

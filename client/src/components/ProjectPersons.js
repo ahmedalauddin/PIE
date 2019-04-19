@@ -24,6 +24,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { styles } from "./styles/MaterialSense";
+import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
 
 const rows = [
   { id: "select", numeric: false, disablePadding: false, label: "Selected" },
@@ -62,10 +63,26 @@ class MyTableHead extends React.Component {
   }
 }
 
+var getProjectData = (projectId) => {
+  let fetchUrl = "/api/projects/" + projectId;
+  fetch(fetchUrl).then(function(response) {
+    return response.json();
+  });
+}
+
+var getOrganizationData = (orgId) => {
+  let fetchUrl = "/api/organizations/" + orgId;
+  fetch(fetchUrl).then(function(response) {
+    return response.json();
+  });
+}
+
 class ProjectPersons extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    //this.getProjectData = this.getProjectData.bind(this);
+    //this.getOrganizationData = this.getOrganizationData.bind(this);
   }
 
   state = {
@@ -92,14 +109,31 @@ class ProjectPersons extends Component {
     return <Redirect to="/Login" />;
   };
 
+
+
   componentDidMount() {
     let projectId = this.props.match.params.id;
-    let orgId = 0;
-    let team = [];
-    let projName = "";
+    let orgId = getOrgId();
 
     if (parseInt(projectId) > 0) {
-      // First use the api/projects to get the team assoicated with the project
+      Promise.all([getProjectData(projectId), getOrganizationData(orgId)])
+        .then(values => {
+          let projectData = values[0];
+          let orgData = values[1];
+          this.setState({
+            orgPersons: orgData.persons,
+            orgId: orgId,
+            projId: projectId,
+            projectName: projectData.name,
+            team: projectData.team
+          });
+        })
+        .catch(err => {
+          this.setState({hasError: true});
+        });
+    }
+/*
+      // First use the api/projects to get the team associated with the project
       fetch("/api/projects/" + projectId)
         .then(res => res.json())
         .then(project => {
@@ -127,7 +161,7 @@ class ProjectPersons extends Component {
         .catch(err => {
           this.setState({hasError: true});
         });
-    }
+    }*/
   }
 
   render() {

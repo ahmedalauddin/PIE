@@ -74,12 +74,12 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: April 16, 2019<br/><br/>
+                          Build date: April 19, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: Adding dropdowns for selecting departments.
+                          Notes: Interim build for projects and adding main KPI.  Adding dropdowns for selecting departments.
                         </Typography>
                       </div>
                     </CardContent>

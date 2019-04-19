@@ -60,7 +60,6 @@ class ProjectCard extends React.Component {
     orgId: "",
     orgName: "",
     description: "",
-    departmentId: 0,
     mainKpiId: 0,
     hasError: "",
     kpis: [],
@@ -156,7 +155,6 @@ class ProjectCard extends React.Component {
             businessGoal: project.businessGoal,
             title: project.title,
             description: project.description,
-            //departmentId: project.deptId,
             org: project.organization.name,
             orgId: project.orgId,
             mainKpiId: project.mainKpiId,
@@ -232,31 +230,6 @@ class ProjectCard extends React.Component {
                                 className={classes.textField}
                                 margin="normal"
                               />
-                            </Typography>
-                            <Typography component="p">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="dept-simple">
-                                  Department
-                                </InputLabel>
-                                <Select
-                                  value={this.state.departmentId}
-                                  onChange={this.handleSelectChange}
-                                  inputProps={{
-                                    name: "deptId",
-                                    id: "deptId"
-                                  }}
-                                >
-                                  {this.state.departments.map(dept => {
-                                    return (
-                                      <MenuItem key={dept.id} value={dept.id}>
-                                        {dept.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                              <br />
-                              <br />
                             </Typography>
                             <Typography component="p">
                               <TextField

@@ -198,7 +198,7 @@ module.exports = {
       .query(
         "select P.id, P.title, P.description, K.title as mainKpi " +
           "from Projects P left outer join Kpis K " +
-          "on P.mainKpiId = K.id " +
+          "on P.mainKpiId = K.id where P.orgId = " + req.params.orgid + " " +
           "order by P.title ",
         {
           type: models.sequelize.QueryTypes.SELECT

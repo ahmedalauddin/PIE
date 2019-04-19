@@ -69,6 +69,6 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.0",
-    "jss": "^10.0.0-alpha.12"
+    "jss": "^9.7.0"
   }
 }

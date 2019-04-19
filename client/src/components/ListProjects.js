@@ -28,7 +28,6 @@ import Button from "@material-ui/core/Button";
 import { getOrgId, getOrgName } from "../redux";
 
 const rows = [
-  { id: "id", numeric: true, disablePadding: false, label: "ID" },
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "mainKpi", numeric: false, disablePadding: true, label: "Main KPI" }
@@ -173,27 +172,17 @@ class ListProjects extends Component {
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
                     <div className={classes.box}>
-                      <Table>
-                        <TableRow>
-                          <TableCell>
-                            <Typography color="secondary" gutterBottom>
-                              Projects listed for {this.state.orgName}.
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <div className={classes.spaceTop}>
-                              <Button
-                                component={Link}
-                                variant="contained"
-                                color="primary"
-                                to={`/ProjectCard`}
-                              >
-                                New Project
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      </Table>
+                      <Typography color="secondary" gutterBottom>
+                        Projects listed for {this.state.orgName}.
+                      </Typography>
+                        <Button
+                          component={Link}
+                          variant="contained"
+                          color="primary"
+                          to={`/ProjectCard`}
+                        >
+                          New Project
+                        </Button>
                     </div>
                     <div>
                       <Typography variant="body1" gutterBottom>
@@ -217,18 +206,15 @@ class ListProjects extends Component {
                                     tabIndex={-1}
                                     key={project.id}
                                   >
-                                    <TableCell align="right">
-                                      {project.id}
-                                    </TableCell>
                                     <TableCell align="left">
                                       <Link to={`/projectcard/${project.id}`}>
                                         {project.title}
                                       </Link>
                                     </TableCell>
-                                    <TableCell width="40%" align="left">
+                                    <TableCell width="50%" align="left">
                                       {project.description}
                                     </TableCell>
-                                    <TableCell width="15%" align="left">
+                                    <TableCell width="25%" align="left">
                                       {project.mainKpi}
                                     </TableCell>
                                   </TableRow>

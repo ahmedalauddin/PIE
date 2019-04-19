@@ -4,7 +4,7 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-03-17
+ * Modified: 2019-04-19
  * Editor:   Brad Kaufman
  */
 "use strict";
@@ -39,6 +39,8 @@ module.exports = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       orgId: req.body.orgId,
+      role: req.body.role,
+      deptId: req.body.deptId,
       pwdhash: hashedValue,
       email: req.body.email,
       password: req.body.password,
@@ -69,6 +71,8 @@ module.exports = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
+        role: req.body.role,
+        deptId: req.body.deptId,
         pwdhash: req.body.pwdhash,
         orgId: req.body.orgId
       },

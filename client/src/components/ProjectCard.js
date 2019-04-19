@@ -42,7 +42,6 @@ class ProjectCard extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleKpiSelectChange = this.handleKpiSelectChange.bind(this);
-    this.handleSelectChange = this.handleSelectChange.bind(this);
     this.showToolbar = this.showToolbar.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
@@ -90,10 +89,6 @@ class ProjectCard extends React.Component {
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
-  };
-
-  handleSelectChange = event => {
-    this.setState({ departmentId: event.target.value });
   };
 
   handleKpiSelectChange = event => {

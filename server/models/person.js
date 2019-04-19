@@ -59,6 +59,18 @@ module.exports = (sequelize, DataTypes) => {
           }
         }
       },
+      orgId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      deptId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       email: {
         type: DataTypes.STRING(255),
         allowNull: false,

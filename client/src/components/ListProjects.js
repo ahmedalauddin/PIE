@@ -30,12 +30,8 @@ import { getOrgId, getOrgName } from "../redux";
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
-  {
-    id: "description",
-    numeric: false,
-    disablePadding: false,
-    label: "Description"
-  }
+  { id: "description", numeric: false, disablePadding: false, label: "Description" },
+  { id: "mainKpi", numeric: false, disablePadding: true, label: "Main KPI" }
 ];
 
 class MyTableHead extends React.Component {
@@ -82,6 +78,11 @@ class MyTableHead extends React.Component {
 var msg = "";
 
 class ListProjects extends Component {
+  constructor(props) {
+    super(props);
+    this.handleNull = this.handleNull.bind(this);
+  };
+
   state = {
     order: "asc",
     orderBy: "",
@@ -103,6 +104,18 @@ class ListProjects extends Component {
     return <Redirect to="/Login" />;
   };
 
+  handleNull(refToParse) {
+    try {
+      if (refToParse != null) {
+        return refToParse;
+      } else {
+        return "";
+      }
+    } catch (e) {
+      return "";
+    }
+  }
+
   componentDidMount() {
     // Get the organization from the filter.
     let orgName = getOrgName();
@@ -110,13 +123,13 @@ class ListProjects extends Component {
 
     if (parseInt(orgId) > 0) {
       // If there is an organization, select only the projects for that org.
-      fetch("/api/organizations/" + orgId)
+      fetch("/api/projects/organization/" + orgId)
         .then(res => {
           return res.json();
         })
-        .then(organization => {
+        .then(projects => {
           this.setState({
-            projects: organization.projects,
+            projects: projects,
             orgName: orgName
           });
         });
@@ -181,50 +194,49 @@ class ListProjects extends Component {
                           </TableCell>
                         </TableRow>
                       </Table>
-
-
                     </div>
                     <div>
                       <Typography variant="body1" gutterBottom>
-                        <Paper className={classes.root}>
-                          <div className={classes.tableWrapper}>
-                            <Table
-                              className={classes.table}
-                              aria-labelledby="tableTitle"
-                            >
-                              <MyTableHead />
-                              <TableBody>
-                                {stableSort(
-                                  this.state.projects,
-                                  getSorting("asc", "title")
-                                ).map(project => {
-                                  return (
-                                    <TableRow
-                                      hover
-                                      onClick={event => {
-                                        this.handleClick(event, project.id);
-                                      }}
-                                      tabIndex={-1}
-                                      key={project.id}
-                                    >
-                                      <TableCell align="right">
-                                        {project.id}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        <Link to={`/projectcard/${project.id}`}>
-                                          {project.title}
-                                        </Link>
-                                      </TableCell>
-                                      <TableCell width="45%" align="left">
-                                        {project.description}
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        </Paper>
+                        <div className={classes.tableWrapper}>
+                          <Table
+                            className={classes.table}
+                            aria-labelledby="tableTitle"
+                          >
+                            <MyTableHead />
+                            <TableBody>
+                              {stableSort(
+                                this.state.projects,
+                                getSorting("asc", "title")
+                              ).map(project => {
+                                return (
+                                  <TableRow
+                                    hover
+                                    onClick={event => {
+                                      this.handleClick(event, project.id);
+                                    }}
+                                    tabIndex={-1}
+                                    key={project.id}
+                                  >
+                                    <TableCell align="right">
+                                      {project.id}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      <Link to={`/projectcard/${project.id}`}>
+                                        {project.title}
+                                      </Link>
+                                    </TableCell>
+                                    <TableCell width="40%" align="left">
+                                      {project.description}
+                                    </TableCell>
+                                    <TableCell width="15%" align="left">
+                                      {project.mainKpi}
+                                    </TableCell>
+                                  </TableRow>
+                                );
+                              })}
+                            </TableBody>
+                          </Table>
+                        </div>
                       </Typography>
                     </div>
                   </Paper>

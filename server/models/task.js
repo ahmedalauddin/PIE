@@ -4,8 +4,8 @@
  * Created:  2019-02-21 11:03:04
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-24 22:22:45
- * Editor:   Darrin Tisdale
+ * Modified: 2019-04-18
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -31,11 +31,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      status: {
-        type: DataTypes.STRING,
+      projectId: {
+        type: DataTypes.INTEGER,
         allowNull: true
       },
-      projectId: {
+      statusId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      priorityId: {
         type: DataTypes.INTEGER,
         allowNull: true
       },
@@ -71,6 +75,20 @@ module.exports = (sequelize, DataTypes) => {
     Task.belongsTo(models.Person, {
       as: "assigned",
       foreignKey: "assignedTo",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} Task belongsTo TaskPriority`);
+    Task.belongsTo(models.TaskPriority, {
+      as: "priority",
+      foreignKey: "priorityId",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} Task belongsTo TaskStatus`);
+    Task.belongsTo(models.TaskStatus, {
+      as: "status",
+      foreignKey: "statusId",
       onDelete: "cascade"
     });
   };

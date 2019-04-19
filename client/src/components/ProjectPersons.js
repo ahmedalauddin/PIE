@@ -99,30 +99,44 @@ class ProjectPersons extends Component {
     let projName = "";
 
     if (parseInt(projectId) > 0) {
-      this.setState({ projId: projectId });
+      // First use the api/projects to get the team assoicated with the project
       fetch("/api/projects/" + projectId)
         .then(res => res.json())
         .then(project => {
           orgId = project.organization.id;
           team = project.team;
           projName = project.name;
-          return (fetch("/api/organizations/" + orgId));
         })
+        .catch(err => {
+          this.setState({hasError: true});
+        });
+
+      // Now use the organizations api to get the list of all people associated
+      // with the client organization.
+      fetch("/api/organizations/" + orgId)
         .then(res => res.json())
         .then(organization => {
           this.setState({
             orgPersons: organization.persons,
             orgId: orgId,
+            projId: projectId,
             projectName: projName,
             team: team
           });
-          let i = orgId;
+        })
+        .catch(err => {
+          this.setState({hasError: true});
         });
     }
   }
 
   render() {
     const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
+
+    if (this.state.hasError) {
+      return <h1>An error occurred.</h1>;
+    }
 
     return (
       <React.Fragment>

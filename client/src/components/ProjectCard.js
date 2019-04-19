@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-24
+ * Modified: 2019-04-19
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -15,14 +15,9 @@ import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
 import { styles } from "./styles/MaterialSense";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
-import IconButton from "@material-ui/core/IconButton";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Collapse from "@material-ui/core/Collapse";
-import classnames from "classnames";
 import TextField from "@material-ui/core/TextField";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
@@ -31,7 +26,6 @@ import moment from "moment";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect } from "react-router-dom";
-import ProjectKpis from "./ProjectKpis";
 import CardToolbar from "./navigation/CardToolbar";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
@@ -47,6 +41,8 @@ class ProjectCard extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKpiSelectChange = this.handleKpiSelectChange.bind(this);
+    this.handleSelectChange = this.handleSelectChange.bind(this);
     this.showToolbar = this.showToolbar.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
@@ -65,6 +61,9 @@ class ProjectCard extends React.Component {
     orgName: "",
     description: "",
     departmentId: 0,
+    mainKpiId: 0,
+    hasError: "",
+    kpis: [],
     startAt: "",
     endAt: "",
     progress: 0,
@@ -98,11 +97,14 @@ class ProjectCard extends React.Component {
     this.setState({ departmentId: event.target.value });
   };
 
+  handleKpiSelectChange = event => {
+    this.setState({ mainKpiId: event.target.value });
+  };
+
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
   handleSubmit(event) {
     event.preventDefault();
 
@@ -154,8 +156,11 @@ class ProjectCard extends React.Component {
             businessGoal: project.businessGoal,
             title: project.title,
             description: project.description,
+            //departmentId: project.deptId,
             org: project.organization.name,
             orgId: project.orgId,
+            mainKpiId: project.mainKpiId,
+            kpis: project.kpis,
             progress: project.progress,
             startAt: moment(project.startAt).format("YYYY-MM-DD"),
             endAt: moment(project.endAt).format("YYYY-MM-DD"),
@@ -187,7 +192,11 @@ class ProjectCard extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const currentPath = this.props.location.pathname;
 
+    if (this.state.hasError) {
+      return <h1>An error occurred.</h1>;
+    }
     return (
       <React.Fragment>
         <CssBaseline />
@@ -281,6 +290,31 @@ class ProjectCard extends React.Component {
                                 }}
                               />
                             </Typography>
+                            <Typography component="p">
+                              <FormControl className={classes.formControl}>
+                                <InputLabel htmlFor="kpi-simple">
+                                  Main KPI
+                                </InputLabel>
+                                <Select
+                                  value={this.state.mainKpiId}
+                                  onChange={this.handleKpiSelectChange}
+                                  inputProps={{
+                                    name: "mainKpiId",
+                                    id: "mainKpiId"
+                                  }}
+                                >
+                                  {this.state.kpis.map(kpi => {
+                                    return (
+                                      <MenuItem key={kpi.id} value={kpi.id}>
+                                        {kpi.title}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </Select>
+                              </FormControl>
+                              <br />
+                              <br />
+                            </Typography>
                           </TableCell>
                           <TableCell
                             style={{ verticalAlign: "top", width: "25%" }}
@@ -346,33 +380,6 @@ class ProjectCard extends React.Component {
                         </TableRow>
                       </Table>
                     </CardContent>
-                    <CardActions
-                      className={classes.actions}
-                      disableActionSpacing
-                    >
-                      <IconButton
-                        className={classnames(classes.expand, {
-                          [classes.expandOpen]: this.state.expanded
-                        })}
-                        onClick={this.handleExpandClick}
-                        aria-expanded={this.state.expanded}
-                        aria-label="Show more"
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </CardActions>
-                    <Collapse
-                      in={this.state.expanded}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <CardContent>
-                        <ProjectKpis
-                          classes={classes}
-                          projid={this.state.projid}
-                        />
-                      </CardContent>
-                    </Collapse>
                   </Card>
                 </Grid>
               </Grid>

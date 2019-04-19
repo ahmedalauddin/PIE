@@ -13,7 +13,7 @@
 // declarations
 const Organization = require("../models").Organization;
 const Project = require("../models").Project;
-const KPI = require("../models").KPI;
+const KPI = require("../models").Kpi;
 const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
 const Person = require("../models").Person;
@@ -21,7 +21,6 @@ const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
 const callerType = "controller";
-
 
 module.exports = {
   // creates a project
@@ -32,7 +31,7 @@ module.exports = {
       title: req.body.title,
       description: req.body.description,
       orgId: parseInt(req.body.orgId),
-      deptId: parseInt(req.body.deptId),
+      mainKpiId: req.body.mainKpiId,
       businessGoal: req.body.businessGoal,
       mindmapId: req.body.mindmapId,
       nodeId: req.body.nodeId,
@@ -60,7 +59,7 @@ module.exports = {
           title: req.body.title,
           description: req.body.description,
           businessGoal: req.body.businessGoal,
-          deptId: req.body.deptId,
+          mainKpiId: req.body.mainKpiId,
           progress: req.body.progress,
           startAt: req.body.startAt,
           endAt: req.body.endAt
@@ -92,6 +91,7 @@ module.exports = {
           title: req.body.title,
           description: req.body.description,
           businessGoal: req.body.businessGoal,
+          mainKpiId: req.body.mainKpiId,
           progress: req.body.progress,
           startAt: req.body.startAt,
           endAt: req.body.endAt
@@ -125,6 +125,14 @@ module.exports = {
         {
           model: Task,
           as: "tasks"
+        },
+        {
+          model: KPI,
+          as: "mainKpi"
+        },
+        {
+          model: KPI,
+          as: "kpis"
         },
         {
           model: Person,
@@ -186,10 +194,16 @@ module.exports = {
   // Find an org by Id
   findByOrganization(req, res) {
     logger.debug(`${callerType} findByOrganization -> id = ${req.params.id}`);
-    return Project.findAll({
-      where: { orgId: req.params.orgid },
-      order: [["title", "DESC"]]
-    })
+    return models.sequelize
+      .query(
+        "select P.id, P.title, P.description, K.title as mainKpi " +
+          "from Projects P left outer join Kpis K " +
+          "on P.mainKpiId = K.id " +
+          "order by P.title ",
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
       .then(org => {
         logger.info(`${callerType} findByOrganization -> returned`);
         res.status(200).send(org);
@@ -203,23 +217,26 @@ module.exports = {
   // List most recent projects
   getMostRecent(req, res) {
     // SQL for most recent projects.
-    return models.sequelize.query("select id, title, description, startAt, ProjectUpdated, " +
-      "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
-      "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
-      "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
-      " (select  P.id as id, P.title, P.description, P.startAt, P.updatedAt as ProjectUpdated , " +
-      "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
-      "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
-      "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
-      "      and P.id = KP.projectId) as KUdate, " +
-      "   (select max(K.createdAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
-      "      and P.id = KP.projectId) as KCdate " +
-      "   from Projects P) as Proj ",
-      {
-        type: models.sequelize.QueryTypes.SELECT,
-        limit: 3,
-        order: [["MostRecent", "DESC"]]
-      })
+    return models.sequelize
+      .query(
+        "select id, title, description, startAt, ProjectUpdated, " +
+          "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
+          "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
+          "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
+          " (select  P.id as id, P.title, P.description, P.startAt, P.updatedAt as ProjectUpdated , " +
+          "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
+          "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
+          "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+          "      and P.id = KP.projectId) as KUdate, " +
+          "   (select max(K.createdAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+          "      and P.id = KP.projectId) as KCdate " +
+          "   from Projects P) as Proj ",
+        {
+          type: models.sequelize.QueryTypes.SELECT,
+          limit: 3,
+          order: [["MostRecent", "DESC"]]
+        }
+      )
       .then(projects => {
         res.status(200).send(projects);
       })

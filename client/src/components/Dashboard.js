@@ -101,7 +101,7 @@ class Dashboard extends Component {
                     return (
                       <Grid item xs={12} md={4}>
                         <ActionCardItem title={Action.title} actionid={Action.id} description={Action.description}
-                          status={Action.status} updated={Action.updatedAt}/>
+                                        status={Action.taskstatus} updated={Action.updatedAt}/>
                       </Grid>
                     );
                   } else {

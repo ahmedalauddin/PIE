@@ -38,7 +38,7 @@ const rows = [
     label: "Description"
   },
   {
-    id: "status",
+    id: "taskstatus.js",
     numeric: false,
     disablePadding: false,
     label: "Status"
@@ -181,7 +181,7 @@ class ListActions extends Component {
                                         {task.description}
                                       </TableCell>
                                       <TableCell width="15%" align="left">
-                                        {task.status}
+                                        {task.taskstatus}
                                       </TableCell>
                                       <TableCell align="left">
                                         {task.assigned.fullName}

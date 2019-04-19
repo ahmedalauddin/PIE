@@ -11,9 +11,10 @@
 
 // declarations
 const models = require("../models");
-const db = require("../models/index").db;
 const Person = require("../models").Person;
-const Task = require("../models").Task;
+const Project = require("../models").Project;
+const TaskPriority = require("../models").TaskPriority;
+const TaskStatus = require("../models").TaskStatus;
 const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
@@ -23,7 +24,7 @@ module.exports = {
     return models.Task.create({
       title: req.body.title,
       description: req.body.description,
-      status: req.body.status,
+      status: req.body.taskstatus,
       assignedTo: req.body.assigned,
       projectId: parseInt(req.body.projectId)
     })
@@ -50,7 +51,7 @@ module.exports = {
       {
         title: req.body.title,
         description: req.body.description,
-        status: req.body.status
+        status: req.body.taskstatus
       },
       {
         returning: true,
@@ -74,8 +75,20 @@ module.exports = {
     return models.Task.findById(req.params.id, {
       include: [
         {
+          model: Project,
+          as: "project"
+        },
+        {
           model: Person,
           as: "assigned"
+        },
+        {
+          model: TaskStatus,
+          as: "status"
+        },
+        {
+          model: TaskPriority,
+          as: "priority"
         }
       ]
     })

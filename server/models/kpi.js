@@ -86,6 +86,13 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade"
     });
 
+    logger.debug(`${callerType} Kpi hasMany Project`);
+    Kpi.hasMany(models.Project, {
+      as: "mainKpis",
+      foreignKey: "mainKpiId",
+      onDelete: "cascade"
+    });
+
     logger.debug(`${callerType} Kpi belongsToMany Project`);
     Kpi.belongsToMany(models.Project, {
       through: "KpiProjects",

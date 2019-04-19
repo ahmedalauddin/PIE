@@ -36,7 +36,7 @@ class ActionCardItem extends Component {
             {this.props.description}
           </Typography>
           <Typography variant="h8" gutterBottom>
-            Status: {this.props.status}
+            Status: {this.props.taskstatus}
           </Typography>
           <Typography variant="h8" gutterBottom>
             Updated: {moment(this.props.updated).format("YYYY-MM-DD")}

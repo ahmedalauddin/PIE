@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      mainKpiId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       progress: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -86,6 +90,13 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade"
     });
 
+    logger.debug(`${callerType} Project belongsTo KPI`);
+    Project.belongsTo(models.Kpi, {
+      as: "mainKpi",
+      foreignKey: "mainKpiId",
+      onDelete: "cascade"
+    });
+
     logger.debug(`${callerType} Kpi belongsToMany Project`);
     Project.belongsToMany(models.Kpi, {
       through: "KpiProjects",
@@ -100,20 +111,6 @@ module.exports = (sequelize, DataTypes) => {
       as: "tasks",
       foreignKey: "projectId"
     });
-
-    logger.debug(`${callerType} Project hasMany Kpi`);
-    Project.hasMany(models.Kpi, {
-      as: "orgkpis",
-      foreignKey: "projectId"
-    });
-
-    /*
-    logger.debug(`${callerType} Project hasMany Task`);
-    Project.hasMany(models.Task, {
-      as: "tasks",
-      foreignKey: "projectId"
-    });
-    */
 
     logger.debug(`${callerType} Project belongsToMany Person`);
     Project.belongsToMany(models.Person, {

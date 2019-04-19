@@ -13,6 +13,8 @@ const Person = require("./person");
 const Project = require("./project");
 const Auth = require("./auth");
 const Department = require("./department");
+const TaskStatus = require("./taskstatus");
+const TaskPriority = require("./taskpriority");
 const Kpi = require("./kpi");
 const Mindmap = require("./mindmap");
 const Task = require("./task");
@@ -23,6 +25,8 @@ module.exports = {
   Project,
   Auth,
   Department,
+  TaskStatus,
+  TaskPriority,
   Kpi,
   Mindmap,
   Task

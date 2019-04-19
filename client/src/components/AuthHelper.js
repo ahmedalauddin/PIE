@@ -150,7 +150,7 @@ export default class AuthHelper {
    */
   _checkStatus = response => {
     // raises an error in case response status is not a success
-    if (response.status >= 200 && response.status < 300) {
+    if (response.taskstatus >= 200 && response.taskstatus < 300) {
       // Success status lies between 200 to 300
       return response;
     } else {

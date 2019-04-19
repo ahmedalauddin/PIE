@@ -23,7 +23,7 @@ module.exports = {
       formulaDescription: req.body.formula,
       type: req.body.type,
       level: req.body.level,
-      status: req.body.status,
+      status: req.body.taskstatus,
       orgId: req.body.orgId
     })
       .then(_k => {
@@ -46,7 +46,7 @@ module.exports = {
         formulaDescription: req.body.formula,
         type: req.body.type,
         level: req.body.level,
-        status: req.body.status,
+        status: req.body.taskstatus,
         orgId: req.body.orgId
       },
       {

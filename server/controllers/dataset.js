@@ -63,11 +63,11 @@ module.exports = {
         {
           model: models.Project,
           as: "project"
-        }
+        },
         {
           model: models.DataSource,
           as: "datasource"
-        }=
+        }
       ]
     })
       .then(_d => {

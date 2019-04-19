@@ -161,7 +161,7 @@ class EditKpi extends React.Component {
                           id="status"
                           name="status"
                           type="text"
-                          value={this.state.kpi.status}
+                          value={this.state.kpi.taskstatus}
                         />
                       </Typography>
 

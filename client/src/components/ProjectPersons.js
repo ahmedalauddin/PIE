@@ -6,7 +6,7 @@
  * Created:  2019-04-13
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-18
+ * Modified: 2019-04-20
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -24,10 +24,11 @@ import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { styles } from "./styles/MaterialSense";
-import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
+import { getOrgId } from "../redux";
 
 const rows = [
-  { id: "select", numeric: false, disablePadding: false, label: "Selected" },
+  { id: "assigned", numeric: false, disablePadding: false, label: "Assigned" },
+  { id: "owner", numeric: false, disablePadding: false, label: "Owner" },
   { id: "firstName", numeric: false, disablePadding: true, label: "First name" },
   { id: "lastName", numeric: false, disablePadding: true, label: "Last name" },
   { id: "email", numeric: false, disablePadding: false, label: "Email address" }
@@ -63,26 +64,11 @@ class MyTableHead extends React.Component {
   }
 }
 
-var getProjectData = (projectId) => {
-  let fetchUrl = "/api/projects/" + projectId;
-  fetch(fetchUrl).then(function(response) {
-    return response.json();
-  });
-}
-
-var getOrganizationData = (orgId) => {
-  let fetchUrl = "/api/organizations/" + orgId;
-  fetch(fetchUrl).then(function(response) {
-    return response.json();
-  });
-}
-
-class ProjectPersons extends Component {
+class ProjectPersons extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    //this.getProjectData = this.getProjectData.bind(this);
-    //this.getOrganizationData = this.getOrganizationData.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   state = {
@@ -91,7 +77,6 @@ class ProjectPersons extends Component {
     orgId: 0,
     checked: [],
     orgPersons: [],
-    team: [],
     projectPersons: [],
     projectName: "",
     hasError: "",
@@ -100,8 +85,20 @@ class ProjectPersons extends Component {
   };
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.checked });
+    /*this.setState({
+    [name.checkname]: event.target.checked,
+    [name.inProject]: !name.inProject
+     }); */
+
+    //[name].inProject = ![name].inProject;
+    this.setState({
+      [name.checkname.checked]: true,
+      [name.inProject]: true
+    });
+
+    //this.name.checkname.checked = !name.checkname.checked;
   };
+
 
   componentDidCatch(error, info) {
     console.log("error: " + error + ", info: " + info);
@@ -109,59 +106,33 @@ class ProjectPersons extends Component {
     return <Redirect to="/Login" />;
   };
 
-
+  handleClick = (person) => {
+    /*
+    const { id } = e.target;
+    const {orgPersons} = this.state;
+    orgPersons[id].inProject = !this.state.orgPersons[id].inProject;
+    this.setState({ orgPersons }); */
+    console.log(person);
+  }
 
   componentDidMount() {
     let projectId = this.props.match.params.id;
     let orgId = getOrgId();
 
     if (parseInt(projectId) > 0) {
-      Promise.all([getProjectData(projectId), getOrganizationData(orgId)])
-        .then(values => {
-          let projectData = values[0];
-          let orgData = values[1];
+      // First use the api/persons/project to get the team associated with the project
+      // and all people who are part of the organization.
+      fetch("/api/project-persons/" + projectId)
+        .then(res => res.json())
+        .then(persons => {
           this.setState({
-            orgPersons: orgData.persons,
-            orgId: orgId,
-            projId: projectId,
-            projectName: projectData.name,
-            team: projectData.team
+            orgPersons: persons
           });
         })
         .catch(err => {
-          this.setState({hasError: true});
+          this.setState({ hasError: true });
         });
     }
-/*
-      // First use the api/projects to get the team associated with the project
-      fetch("/api/projects/" + projectId)
-        .then(res => res.json())
-        .then(project => {
-          orgId = project.organization.id;
-          team = project.team;
-          projName = project.name;
-        })
-        .catch(err => {
-          this.setState({hasError: true});
-        });
-
-      // Now use the organizations api to get the list of all people associated
-      // with the client organization.
-      fetch("/api/organizations/" + orgId)
-        .then(res => res.json())
-        .then(organization => {
-          this.setState({
-            orgPersons: organization.persons,
-            orgId: orgId,
-            projId: projectId,
-            projectName: projName,
-            team: team
-          });
-        })
-        .catch(err => {
-          this.setState({hasError: true});
-        });
-    }*/
   }
 
   render() {
@@ -200,7 +171,7 @@ class ProjectPersons extends Component {
                       >
                         <MyTableHead />
                         <TableBody>
-                          {this.state.orgPersons.map(function(person, i){
+                          {this.state.orgPersons.map((person, i) => {
                             return (
                               <TableRow
                                 hover
@@ -210,12 +181,19 @@ class ProjectPersons extends Component {
                               >
                                 <TableCell align="left">
                                   <Checkbox
-                                    checked={this.state.checked[i]}
-                                    onChange=""
-                                    value={this.state.checked[i]}
+                                    checked={!!+person.inProject}
+                                    value={person.checkName}
+                                    onChange={this.handleChange(person)}
                                     color="primary"
                                   />
                                 </TableCell>
+                                <TableCell align="left">
+                                  <Checkbox
+                                    checked={!!+person.owner}
+                                    value={"owner-" + i}
+                                    color="primary"
+                                  />
+                              </TableCell>
                                 <TableCell align="left">
                                   {person.firstName}
                                 </TableCell>

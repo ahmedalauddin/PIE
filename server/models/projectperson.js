@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     "ProjectPersons",
     {
       owner: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT,
         defaultValue: false,
         allowNull: false
       },

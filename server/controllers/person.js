@@ -121,6 +121,40 @@ module.exports = {
       });
   },
 
+  // Find a list of persons by project, including those with the organization bu not assigned
+  // to the project.
+  findByProject(req, res) {
+    return models.sequelize
+      .query(
+        "select O.id, O.name, Pr.id,  P.id as projectId, P.title, PP.owner, Pr.firstName, Pr.lastName, Pr.email, " +
+          "case " +
+          "when PP.personId > 0 then 1 " +
+          "end as inProject, " +
+          "case " +
+          "when PP.owner > 0 then 1 " +
+          "else 0 " +
+          "end as owner, " +
+          "concat('assigned-', Pr.id) as checkname " +
+          "from Persons Pr inner join Organizations O " +
+          "on O.id = Pr.orgId and O.id = 2 " +
+          "inner join Projects P on O.id = P.orgId and P.id = " + req.params.projectId + " " +
+          "left outer join ProjectPersons PP " +
+          "on PP.personId = Pr.id and PP.projectId = P.id " +
+          "order by Pr.lastName, Pr.firstName;",
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(p => {
+        logger.debug(`${callerType} findByProject -> ProjectId: ${req.params.projectId}`);
+        res.status(200).send(p);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // Find a person by Id
   findByEmail(req, res) {
     return models.Person.findOne(req.params.email, {
@@ -144,7 +178,6 @@ module.exports = {
         res.status(400).send(error);
       });
   },
-
 
   // List all persons
   list(req, res) {

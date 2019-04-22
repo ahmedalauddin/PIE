@@ -19,7 +19,7 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import Checkbox from "@material-ui/core/Checkbox";
+import {Checkbox} from 'primereact/checkbox';
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
@@ -69,6 +69,7 @@ class ProjectPersons extends React.Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.onAssignedChange = this.onAssignedChange.bind(this);
   }
 
   state = {
@@ -113,6 +114,16 @@ class ProjectPersons extends React.Component {
     orgPersons[id].inProject = !this.state.orgPersons[id].inProject;
     this.setState({ orgPersons }); */
     console.log(person);
+  }
+
+  onAssignedChange(e) {
+    let selectedPersons = [...this.state.orgPersons];
+    if(e.checked)
+      selectedPersons.push(e.value);
+    else
+      selectedPersons.splice(selectedPersons.indexOf(e.value), 1);
+
+    this.setState({cities: selectedPersons});
   }
 
   componentDidMount() {
@@ -183,7 +194,7 @@ class ProjectPersons extends React.Component {
                                   <Checkbox
                                     checked={!!+person.inProject}
                                     value={person.checkName}
-                                    onChange={this.handleChange(person)}
+                                    onChange={this.onAssignedChange()}
                                     color="primary"
                                   />
                                 </TableCell>

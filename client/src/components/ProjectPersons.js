@@ -29,6 +29,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { Link, Redirect } from "react-router-dom";
 import { styles } from "./styles/MaterialSense";
 import { getOrgId } from "../redux";
+import Button from "@material-ui/core/Button";
 
 const rows = [
   { id: "assigned", numeric: false, disablePadding: false, label: "Assigned" },
@@ -69,6 +70,9 @@ class MyTableHead extends React.Component {
 class ProjectPersons extends React.Component {
   constructor(props) {
     super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleOwnerToggle = this.handleOwnerToggle.bind(this);
   }
 
   state = {
@@ -93,7 +97,7 @@ class ProjectPersons extends React.Component {
   handleToggle = value => () => {
     const { orgPersons } = this.state;
     const idArray = orgPersons.map(p=>{return(p.id);});
-    const currentIndex = idArray.indexOf(value);
+    const currentIndex = idArray.indexOf(parseInt(value));
     orgPersons[currentIndex].inProject = !orgPersons[currentIndex].inProject;
 
     this.setState({
@@ -104,13 +108,37 @@ class ProjectPersons extends React.Component {
   handleOwnerToggle = value => () => {
     const { orgPersons } = this.state;
     const idArray = orgPersons.map(p=>{return(p.id);});
-    const currentIndex = idArray.indexOf(value);
+    // get the ID from the name of the checkbox, which is something like "own23".
+    const personId = value.substring(3);
+    const currentIndex = idArray.indexOf(parseInt(personId));
     orgPersons[currentIndex].owner = !orgPersons[currentIndex].owner;
 
     this.setState({
       orgPersons: orgPersons,
     });
   };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    let projectId = this.props.match.params.id;
+
+    setTimeout(() => {
+      if (projectId > 0) {
+        let updatePath = "/api/projectpersons/" + projectId;
+        fetch(updatePath, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.state)
+        })
+          .then(data => {
+            this.setState({ msg: "Project updated." });
+          })
+          .catch(err => {
+            this.setState({ msg: "Error occurred." });
+          });
+      }
+    }, 2000);
+  }
 
   componentDidMount() {
     let projectId = this.props.match.params.id;
@@ -206,6 +234,17 @@ class ProjectPersons extends React.Component {
                         </div>
                       </Typography>
                     </div>
+                    <div className={classes.spaceTop}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleSubmit}
+                        className={classes.secondary}
+                      >
+                        Update
+                      </Button>
+                    </div>
+                    <br />
                   </Paper>
                 </Grid>
               </Grid>

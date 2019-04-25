@@ -4,8 +4,8 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 10:11:16
- * Editor:   Darrin Tisdale
+ * Modified: 2019-04-24
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -50,16 +50,17 @@ app.use(express.static(serverPath));
 var router = express.Router();
 
 // set the home path
-// logger.debug(`router GET -> path: /*`);
-// router.get("/*", (req, res) => {
-//   if (isHosted()) {
-//     res.sendFile(join(serverPath, "/index.html"));
-//   } else {
-//     res.status(200).send({
-//       message: "Welcome to the Value Infinity MVP API"
-//     });
-//   }
-// });
+/* logger.debug(`router GET -> path: /*`);
+ router.get("/*", (req, res) => {
+   if (isHosted()) {
+     res.sendFile(join(serverPath, "/index.html"));
+   } else {
+     res.status(200).send({
+       message: "Welcome to the Value Infinity MVP API"
+     });
+   }
+ });
+ */
 
 // priot to adding the routes, let's add the models
 // connect
@@ -74,6 +75,7 @@ models.sequelize
     require("./server/routes/department")(router);
     require("./server/routes/project")(router);
     require("./server/routes/kpi")(router);
+    require("./server/routes/projectperson")(router);
     require("./server/routes/mindmap")(router);
     require("./server/routes/task")(router);
     require("./server/routes/auth")(router);
@@ -81,12 +83,6 @@ models.sequelize
   .catch(error => {
     logger.error(`db/routing error: ${error.stack}`);
   });
-
-// error handlers
-// catch 404 and forward to error handler
-// router.use(function(req, res, next) {
-//  next(createError(404));
-//});
 
 // error handler
 router.use(function(err, req, res, next) {

@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Projects"
     }
   );
-  logger.debug(`${callerType} Person end definition`);
+  logger.debug(`${callerType} Project end definition`);
 
   Project.associate = models => {
     logger.debug(`${callerType} Project belongsTo Organization`);

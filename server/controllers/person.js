@@ -124,28 +124,23 @@ module.exports = {
   // Find a list of persons by project, including those with the organization bu not assigned
   // to the project.
   findByProject(req, res) {
+    let sql = "select O.id, O.name, Pr.id,  P.id as projectId, P.title, PP.inProject, PP.owner, Pr.firstName, Pr.lastName, Pr.email, " +
+      "concat('assigned-', Pr.id) as checkname " +
+      "from Persons Pr inner join Organizations O " +
+      "on O.id = Pr.orgId and O.id = 2 " +
+      "inner join Projects P on O.id = P.orgId and P.id = " + req.params.projectId + " " +
+      "left outer join ProjectPersons PP " +
+      "on PP.personId = Pr.id and PP.projectId = P.id " +
+      "order by Pr.lastName, Pr.firstName;";
     return models.sequelize
       .query(
-        "select O.id, O.name, Pr.id,  P.id as projectId, P.title, PP.owner, Pr.firstName, Pr.lastName, Pr.email, " +
-          "case " +
-          "when PP.personId > 0 then 1 " +
-          "end as inProject, " +
-          "case " +
-          "when PP.owner > 0 then 1 " +
-          "else 0 " +
-          "end as owner, " +
-          "concat('assigned-', Pr.id) as checkname " +
-          "from Persons Pr inner join Organizations O " +
-          "on O.id = Pr.orgId and O.id = 2 " +
-          "inner join Projects P on O.id = P.orgId and P.id = " + req.params.projectId + " " +
-          "left outer join ProjectPersons PP " +
-          "on PP.personId = Pr.id and PP.projectId = P.id " +
-          "order by Pr.lastName, Pr.firstName;",
+        sql,
         {
           type: models.sequelize.QueryTypes.SELECT
         }
       )
       .then(p => {
+        logger.debug(`${callerType} findByProject -> sql: ${req.params.projectId}`);
         logger.debug(`${callerType} findByProject -> ProjectId: ${req.params.projectId}`);
         res.status(200).send(p);
       })

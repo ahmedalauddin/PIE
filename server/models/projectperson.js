@@ -1,11 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /server/models/kpiproject.js
- * Created:  2019-02-21 11:03:04
- * Author:   Darrin Tisdale
+ * File:     /server/models/projectperson.js
+ * Created:  2019-04-23
+ * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-24 22:21:44
- * Editor:   Darrin Tisdale
+ * Modified:
+ * Editor:
  */
 "use strict";
 
@@ -13,14 +13,27 @@ const logger = require("../util/logger")(__filename);
 const callerType = "model";
 
 module.exports = (sequelize, DataTypes) => {
-  logger.debug(`${callerType} PersonProjects start definition`);
-  var ProjectPersons = sequelize.define(
-    "ProjectPersons",
+  logger.debug(`${callerType} ProjectPerson start definition`);
+  var ProjectPerson = sequelize.define(
+    "ProjectPerson",
     {
+      projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      personId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      inProject: {
+        type: DataTypes.TINYINT,
+        defaultValue: true,
+        allowNull: true
+      },
       owner: {
         type: DataTypes.TINYINT,
-        defaultValue: false,
-        allowNull: false
+        defaultValue: true,
+        allowNull: true
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -33,11 +46,27 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: "ProjectPersons",
-      freezeTableName: true
+      tableName: "ProjectPersons"
     }
   );
-  logger.debug(`${callerType} ProjectPersons end definition`);
+  logger.debug(`${callerType} ProjectPerson end definition`);
 
-  return ProjectPersons;
+  // now prepare the associations
+  ProjectPerson.associate = models => {
+    logger.debug(`${callerType} ProjectPerson belongsTo Project`);
+    ProjectPerson.belongsTo(models.Project, {
+      as: "project",
+      foreignKey: "projectId",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} ProjectPerson belongsTo Person`);
+    ProjectPerson.belongsTo(models.Person, {
+      as: "person",
+      foreignKey: "personId",
+      onDelete: "cascade"
+    });
+  };
+
+  return ProjectPerson;
 };

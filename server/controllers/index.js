@@ -18,6 +18,7 @@ const TaskPriority = require("./taskpriority");
 const Kpi = require("./kpi");
 const Mindmap = require("./mindmap");
 const Task = require("./task");
+const ProjectPerson = require("./projectperson");
 
 module.exports = {
   Organization,
@@ -29,5 +30,6 @@ module.exports = {
   TaskPriority,
   Kpi,
   Mindmap,
-  Task
+  Task,
+  ProjectPerson
 };

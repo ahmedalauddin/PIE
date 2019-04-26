@@ -34,7 +34,7 @@ const rows = [
   { id: "owners", numeric: false, disablePadding: true, label: "Owners" },
   { id: "audience", numeric: false, disablePadding: true, label: "Audience" },
   { id: "mainKpi", numeric: false, disablePadding: true, label: "Targeted KPI" },
-  { id: "progress", numeric: true, disablePadding: true, label: "Progress" },
+  { id: "progress", numeric: true, disablePadding: false, label: "Progress" },
   { id: "start", numeric: false, disablePadding: true, label: "Start Date" },
   { id: "end", numeric: false, disablePadding: true, label: "End Date" }
 ];
@@ -223,7 +223,7 @@ class ProjectDashboard extends Component {
                                     <TableCell align="left" padding="none">
                                       {project.mainKpi}
                                     </TableCell>
-                                    <TableCell align="right" padding="none">
+                                    <TableCell align="right">
                                       {project.progress}%
                                     </TableCell>
                                     <TableCell align="left" padding="none">

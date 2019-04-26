@@ -79,7 +79,8 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: Interim build for projects and adding main KPI.  Adding dropdowns for selecting departments.
+                          Notes: New dashboard component listing projects with relevant information.  Also have
+                          added the ProjectPerson component which allows you to assin people and owners to a project.
                         </Typography>
                       </div>
                     </CardContent>

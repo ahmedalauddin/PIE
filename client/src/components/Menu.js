@@ -4,6 +4,10 @@ const Menu = [
     pathname: "/dashboard"
   },
   {
+    label: "Recent",
+    pathname: "/highlight"
+  },
+  {
     label: "Login",
     pathname: "/login"
   },

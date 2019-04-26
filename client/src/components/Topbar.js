@@ -9,7 +9,6 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Menu from "./Menu";
 const logo = require("../images/ValueInfLogo.png");
-
 const styles = theme => ({
   appBar: {
     position: "relative",
@@ -90,35 +89,38 @@ class Topbar extends Component {
     if (this.props.currentPath === "/dashboard") {
       return 0;
     }
-    if (this.props.currentPath === "/login") {
+    if (this.props.currentPath === "/highlight") {
       return 1;
     }
-    if (this.props.currentPath === "/mindmap") {
+    if (this.props.currentPath === "/login") {
       return 2;
     }
-    if (this.props.currentPath === "/listprojects") {
+    if (this.props.currentPath === "/mindmap") {
       return 3;
     }
-    if (this.props.currentPath === "/listorgs") {
+    if (this.props.currentPath === "/listprojects") {
       return 4;
     }
-    if (this.props.currentPath === "/listpersons") {
+    if (this.props.currentPath === "/listorgs") {
       return 5;
     }
-    if (this.props.currentPath === "/analytics") {
+    if (this.props.currentPath === "/listpersons") {
       return 6;
     }
-    if (this.props.currentPath === "/clientorg") {
+    if (this.props.currentPath === "/analytics") {
       return 7;
     }
-    if (this.props.currentPath === "/signup") {
+    if (this.props.currentPath === "/clientorg") {
       return 8;
     }
-    if (this.props.currentPath === "/logout") {
+    if (this.props.currentPath === "/signup") {
       return 9;
     }
-    if (this.props.currentPath === "/about") {
+    if (this.props.currentPath === "/logout") {
       return 10;
+    }
+    if (this.props.currentPath === "/about") {
+      return 11;
     }
   };
 

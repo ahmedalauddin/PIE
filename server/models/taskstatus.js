@@ -49,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "tasks",
       foreignKey: "statusId"
     });
+
   };
 
   return TaskStatus;

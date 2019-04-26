@@ -1,7 +1,7 @@
 // Main routes component for react Router.
 import React from "react";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import HighlightDashboard from "./components/HighlightDashboard";
 import Cards from "./components/Cards";
 import ScrollToTop from "./components/ScrollTop";
 import EditPerson from "./components/EditPerson";
@@ -21,6 +21,7 @@ import ClientOrg from "./components/ClientOrg";
 import ProjectPersons from "./components/ProjectPersons";
 import ProjectCard from "./components/ProjectCard";
 import ActionCard from "./components/ActionCard";
+import ProjectDashboard from "./components/ProjectDashboard";
 import About from "./components/About";
 import DepartmentCard from "./components/DepartmentCard";
 import OrganizationCard from "./components/OrganizationCard";
@@ -32,7 +33,8 @@ export default props => (
   <BrowserRouter>
     <ScrollToTop>
       <Switch>
-        <Route exact path="/dashboard" component={withAuth(Dashboard)} />
+        <Route exact path="/dashboard" component={withAuth(ProjectDashboard)} />
+        <Route exact path="/highlight" component={withAuth(HighlightDashboard)} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />

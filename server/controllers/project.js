@@ -215,6 +215,33 @@ module.exports = {
   },
 
   // List most recent projects
+  getProjectDashboard(req, res) {
+    // TODO - need to pass in org id
+    return models.sequelize
+      .query(
+        "select P.id, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`, P.progress, " +
+          "P.startAt, P.endAt, T.title as taskName, " +
+          "(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per where P.id = PP.projectId " +
+          "and Per.id = PP.personId and PP.owner = '1') as owners " +
+          "from Projects P, TaskStatuses TS, Kpis K, Tasks T " +
+          "where P.statusId = TS.id and P.mainKpiId = K.id and P.currentTaskId = T.id " +
+          "and P.orgId = " + req.params.orgId + " " +
+          "order by P.title",
+        {
+          type: models.sequelize.QueryTypes.SELECT,
+          limit: 15
+        }
+      )
+      .then(projects => {
+        res.status(200).send(projects);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
+  // List most recent projects
   getMostRecent(req, res) {
     // SQL for most recent projects.
     return models.sequelize

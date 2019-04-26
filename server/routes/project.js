@@ -29,8 +29,12 @@ module.exports = router => {
   router.get("/api/projects/:id", projController.findById);
 
   // list most recently updated projects
-  logger.debug(`${callerType} GET -> path: /api/project-dashboard`);
-  router.get("/api/project-dashboard", projController.getMostRecent);
+  logger.debug(`${callerType} GET -> path: /api/projects-recent`);
+  router.get("/api/projects-recent", projController.getMostRecent);
+
+  // list most recently updated projects
+  logger.debug(`${callerType} GET -> path: /api/projects-dashboard/:orgId`);
+  router.get("/api/projects-dashboard/:orgId", projController.getProjectDashboard);
 
   // Retrieve a list of projects for a selected organization
   logger.debug(`${callerType} GET -> path: /api/projects/organization/:orgid`);

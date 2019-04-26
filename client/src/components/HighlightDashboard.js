@@ -12,7 +12,7 @@ import ProjectCardItem from "./cards/ProjectCardItem";
 import ActionCardItem from "./cards/ActionCardItem";
 import styles from "./styles/DashboardStyles";
 
-class Dashboard extends Component {
+class HighlightDashboard extends Component {
   state = {
     learnMoreDialog: false,
     getStartedDialog: false,
@@ -21,7 +21,7 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    fetch("/api/project-dashboard")
+    fetch("/api/projects-recent")
       .then(res => res.json())
       .then(projects => this.setState({ projects }));
     fetch("/api/tasks/mostrecent")
@@ -125,4 +125,4 @@ class Dashboard extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(Dashboard));
+export default withRouter(withStyles(styles)(HighlightDashboard));

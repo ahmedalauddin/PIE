@@ -54,6 +54,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
+      statusId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      currentTaskId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       progress: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -96,6 +104,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "mainKpiId",
       onDelete: "cascade"
     });
+
+    logger.debug(`${callerType} Project hasOne TaskStatus`);
+    Project.hasOne(models.TaskStatus);
 
     logger.debug(`${callerType} Kpi belongsToMany Project`);
     Project.belongsToMany(models.Kpi, {

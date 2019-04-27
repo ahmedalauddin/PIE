@@ -141,9 +141,6 @@ class Topbar extends Component {
                 </Typography>
               </div>
               <React.Fragment>
-                <div className={classes.productLogo}>
-                  <Typography>Innovation Platform</Typography>
-                </div>
                 <div className={classes.tabContainer}>
                   <Tabs
                     value={this.current() || this.state.value}

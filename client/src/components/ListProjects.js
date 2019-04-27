@@ -171,18 +171,20 @@ class ListProjects extends Component {
               <Grid container item xs={12}>
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
-                    <div className={classes.box}>
+                    <div className={classes.column}>
                       <Typography color="secondary" gutterBottom>
                         Projects listed for {this.state.orgName}.
                       </Typography>
-                        <Button
-                          component={Link}
-                          variant="contained"
-                          color="primary"
-                          to={`/ProjectCard`}
-                        >
-                          New Project
-                        </Button>
+                    </div>
+                    <div className={classes.column}>
+                      <Button
+                        component={Link}
+                        variant="contained"
+                        color="primary"
+                        to={`/ProjectCard`}
+                      >
+                        New Project
+                      </Button>
                     </div>
                     <div>
                       <Typography variant="body1" gutterBottom>

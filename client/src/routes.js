@@ -22,6 +22,7 @@ import ProjectPersons from "./components/ProjectPersons";
 import ProjectCard from "./components/ProjectCard";
 import ActionCard from "./components/ActionCard";
 import ProjectDashboard from "./components/ProjectDashboard";
+import PanelDashboard from "./components/PanelDashboard";
 import About from "./components/About";
 import DepartmentCard from "./components/DepartmentCard";
 import OrganizationCard from "./components/OrganizationCard";
@@ -34,6 +35,7 @@ export default props => (
     <ScrollToTop>
       <Switch>
         <Route exact path="/dashboard" component={withAuth(ProjectDashboard)} />
+        <Route exact path="/paneldashboard" component={withAuth(PanelDashboard)} />
         <Route exact path="/highlight" component={withAuth(HighlightDashboard)} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />

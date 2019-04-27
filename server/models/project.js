@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      summary: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       mindmapId: {
         type: DataTypes.INTEGER,
         allowNull: true

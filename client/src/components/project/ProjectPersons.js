@@ -155,7 +155,6 @@ class ProjectPersons extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const currentPath = this.props.location.pathname;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;

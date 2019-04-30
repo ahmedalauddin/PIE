@@ -112,9 +112,6 @@ class ProjectKpis extends Component {
   render() {
     const { classes } = this.props;
 
-    /* react-router has injected the value of the attribute ID into the params */
-    //const projectId = this.props.match.params.id;
-
     return (
       <div>
         <Typography color="secondary" gutterBottom>

@@ -238,12 +238,15 @@ class ProjectCard extends React.Component {
                   <Tab label="Actions" />
                   <Tab label="People" />
                 </Tabs>
-                {value === 0 && <TabContainer>KPIs</TabContainer>}
+                {value === 0 && <TabContainer>KPIs
                   <ProjectKpis projectId={projId}/>
-                {value === 1 && <TabContainer>Actions</TabContainer>}
+                </TabContainer>}
+                {value === 1 && <TabContainer>Actions
                   <ProjectActions projectId={projId}/>
-                {value === 2 && <TabContainer>People</TabContainer>}
+                </TabContainer>}
+                {value === 2 && <TabContainer>People
                   <ProjectPersons projectId={projId}/>
+                </TabContainer>}
               </Grid>
             </Grid>
           </Grid>

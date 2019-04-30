@@ -19,7 +19,7 @@ import Login from "./components/Login";
 import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectPersons from "./components/ProjectPersons";
-import ProjectCard from "./components/ProjectCard";
+import ProjectCard from "./components/project/ProjectCard";
 import ActionCard from "./components/ActionCard";
 import ProjectDashboard from "./components/ProjectDashboard";
 import PanelDashboard from "./components/PanelDashboard";

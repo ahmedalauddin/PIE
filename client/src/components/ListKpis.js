@@ -19,6 +19,7 @@ import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 
 const rows = [
+  { id: "id", numeric: true, disablePadding: true, label: "ID" },
   { id: "title", numeric: false, disablePadding: true, label: "KPI" },
   {
     id: "description",
@@ -31,12 +32,6 @@ const rows = [
     numeric: false,
     disablePadding: false,
     label: "Type"
-  },
-  {
-    id: "organization",
-    numeric: false,
-    disablePadding: false,
-    label: "Organization"
   }
 ];
 
@@ -97,7 +92,7 @@ class ListKpis extends Component {
     // ListKpis is expected to take a param of project ID, and fetch the KPIs
     // associated only with that project.
     let projectid = 0;
-    projectid = this.props.projid;
+    projectid = this.props.projectId;
 
     if (projectid) {
       // Fetch the KPIs only for a single project
@@ -171,6 +166,9 @@ class ListKpis extends Component {
                                       tabIndex={-1}
                                       key={kpi.id}
                                     >
+                                      <TableCell width="10%" align="left">
+                                        {kpi.id}
+                                      </TableCell>
                                       <TableCell width="25%" align="left">
                                         <Link to={`/kpicard/${kpi.id}`}>
                                           {kpi.title}
@@ -181,9 +179,6 @@ class ListKpis extends Component {
                                       </TableCell>
                                       <TableCell width="15%" align="left">
                                         {kpi.type}
-                                      </TableCell>
-                                      <TableCell align="left">
-                                        {kpi.organization.name}
                                       </TableCell>
                                     </TableRow>
                                   );

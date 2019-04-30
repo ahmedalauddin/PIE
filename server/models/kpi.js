@@ -86,7 +86,6 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade"
     });
 
-
     logger.debug(`${callerType} Kpi hasMany Project`);
     Kpi.hasMany(models.Project, {
       as: "mainKpis",

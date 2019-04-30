@@ -75,12 +75,9 @@ export const styles = theme => ({
     position: "absolute",
     top: "40%",
     left: "40%"
-  }
-});
-
-const materialstyles = theme => ({
+  },
   card: {
-    maxWidth: 400
+    maxWidth: 600
   },
   media: {
     height: 0,

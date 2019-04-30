@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography/index";
+import Paper from "@material-ui/core/Paper/index";
+import Button from "@material-ui/core/Button/index";
+import Avatar from "@material-ui/core/Avatar/index";
 import DescriptionIcon from "@material-ui/icons/Description";
 import ButtonBar from "../buttons/ButtonBar";
 import CssBaseline from "./ProjectContainer";

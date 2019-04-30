@@ -227,83 +227,80 @@ class PanelDashboard extends Component {
             >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
-
-                        <div className={classes.root}>
-                          <ExpansionPanel expanded={false}>
-                            <ExpansionPanelSummary>
-                              <div className={classes.column}>
-                                <Typography className={classes.heading}>
-                                  Project title
-                                </Typography>
-                              </div>
-                              <div className={classes.column}>
-                                <Typography className={classes.secondaryHeading}>
-                                  Status
-                                </Typography>
-                              </div>
-                              <div className={classes.column}>
-                                <Typography className={classes.secondaryHeading}>
-                                  Targeted KPI
-                                </Typography>
-                              </div>
-                              <div className={classes.column}>
-                                <Typography className={classes.secondaryHeading}>
-                                  Start date
-                                </Typography>
-                              </div>
-                              <div className={classes.column}>
-                                <Typography className={classes.secondaryHeading}>
-                                  End date
-                                </Typography>
-                              </div>
-                            </ExpansionPanelSummary>
-                          </ExpansionPanel>
-                          {this.state.projects.map(project => {
-                            return (
-                              <ExpansionPanel key={project.id}>
-                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                  <div className={classes.column}>
-                                    <Typography className={classes.heading}>
-                                      <Link to={`/projectcard/${project.id}`}>
-                                        {project.projectTitle}
-                                      </Link>
-                                    </Typography>
-                                  </div>
-                                  <div className={classes.column}>
-                                    <Typography className={classes.secondaryHeading}>
-                                      {project.status}
-                                    </Typography>
-                                  </div>
-                                  <div className={classes.column}>
-                                    <Typography className={classes.secondaryHeading}>
-                                      {project.mainKpi}
-                                    </Typography>
-                                  </div>
-                                  <div className={classes.column}>
-                                    <Typography className={classes.secondaryHeading}>
-                                      {this.formatDate(project.startAt)}
-                                    </Typography>
-                                  </div>
-                                  <div className={classes.column}>
-                                    <Typography className={classes.secondaryHeading}>
-                                      {this.formatDate(project.endAt)}
-                                    </Typography>
-                                  </div>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails className={classes.details}>
-                                  <div>
-                                    <Typography className={classes.secondaryHeading}>
-                                      Owners: {project.owners}<br/>
-                                      Tasks: {project.tasks}
-                                    </Typography>
-                                  </div>
-                                </ExpansionPanelDetails>
-                              </ExpansionPanel>
-                              );
-                            })}
-
-                    </div>
-
+                  <div className={classes.root}>
+                    <ExpansionPanel expanded={false}>
+                      <ExpansionPanelSummary>
+                        <div className={classes.column}>
+                          <Typography className={classes.heading}>
+                            Project title
+                          </Typography>
+                        </div>
+                        <div className={classes.column}>
+                          <Typography className={classes.secondaryHeading}>
+                            Status
+                          </Typography>
+                        </div>
+                        <div className={classes.column}>
+                          <Typography className={classes.secondaryHeading}>
+                            Targeted KPI
+                          </Typography>
+                        </div>
+                        <div className={classes.column}>
+                          <Typography className={classes.secondaryHeading}>
+                            Start date
+                          </Typography>
+                        </div>
+                        <div className={classes.column}>
+                          <Typography className={classes.secondaryHeading}>
+                            End date
+                          </Typography>
+                        </div>
+                      </ExpansionPanelSummary>
+                    </ExpansionPanel>
+                    {this.state.projects.map(project => {
+                      return (
+                        <ExpansionPanel key={project.id}>
+                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                            <div className={classes.column}>
+                              <Typography className={classes.heading}>
+                                <Link to={`/projectcard/${project.id}`}>
+                                  {project.projectTitle}
+                                </Link>
+                              </Typography>
+                            </div>
+                            <div className={classes.column}>
+                              <Typography className={classes.secondaryHeading}>
+                                {project.status}
+                              </Typography>
+                            </div>
+                            <div className={classes.column}>
+                              <Typography className={classes.secondaryHeading}>
+                                {project.mainKpi}
+                              </Typography>
+                            </div>
+                            <div className={classes.column}>
+                              <Typography className={classes.secondaryHeading}>
+                                {this.formatDate(project.startAt)}
+                              </Typography>
+                            </div>
+                            <div className={classes.column}>
+                              <Typography className={classes.secondaryHeading}>
+                                {this.formatDate(project.endAt)}
+                              </Typography>
+                            </div>
+                          </ExpansionPanelSummary>
+                          <ExpansionPanelDetails className={classes.details}>
+                            <div>
+                              <Typography className={classes.secondaryHeading}>
+                                Owners: {project.owners}<br/>
+                                Tasks: {project.tasks}
+                              </Typography>
+                            </div>
+                          </ExpansionPanelDetails>
+                        </ExpansionPanel>
+                      );
+                    })}
+                  </div>
                 </Grid>
               </Grid>
             </Grid>

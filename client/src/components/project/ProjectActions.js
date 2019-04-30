@@ -1,16 +1,18 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/project/ProjectKpis.js
- * Descr:    List of KPIs to be displayed on the project card.
- * Created:  2019-01-22
+ * File:     /client/src/components/project/ProjectActions.js
+ * Descr:    List of tasks to be displayed on the project card.
+ * Created:  2019-03-22
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-4-29
+ * Modified: 2019-03-22
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -24,8 +26,11 @@ import { styles } from "../styles/MaterialSense";
 import { stableSort, getSorting } from "../TableFunctions";
 
 const rows = [
-  { id: "id", numeric: true, disablePadding: true, label: "ID" },
-  { id: "title", numeric: false, disablePadding: true, label: "KPI" },
+  { id: "title",
+    numeric: false,
+    disablePadding: true,
+    label: "Action"
+  },
   {
     id: "description",
     numeric: false,
@@ -33,10 +38,16 @@ const rows = [
     label: "Description"
   },
   {
-    id: "type",
+    id: "taskstatus.js",
     numeric: false,
     disablePadding: false,
-    label: "Type"
+    label: "Status"
+  },
+  {
+    id: "assigned",
+    numeric: false,
+    disablePadding: false,
+    label: "Assigned To"
   }
 ];
 
@@ -82,28 +93,29 @@ class MyTableHead extends React.Component {
   }
 }
 
-class ProjectKpis extends Component {
+class ProjectActions extends Component {
   state = {
     order: "asc",
     orderBy: "",
     selected: [],
-    kpis: [],
-    projectTitle: "",
+    tasks: [],
     toProject: "false",
     toProjectId: ""
   };
 
   componentDidMount() {
-    // ListKpis is expected to take a param of project ID, and fetch the KPIs
+    // ListActions is expected to take a param of project ID, and fetch the tasks
     // associated only with that project.
     let projectid = 0;
     projectid = this.props.projectId;
 
     if (projectid) {
-      // Fetch the KPIs only for a single project
-      fetch(`/api/kpis-project/${projectid}`)
+      // Fetch the tasks only for a single project
+      fetch(`/api/tasks/project/${projectid}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ kpis: kpis }));
+        .then(tasks => {
+          this.setState({ tasks: tasks });
+        });
     }
   }
 
@@ -112,54 +124,49 @@ class ProjectKpis extends Component {
   render() {
     const { classes } = this.props;
 
-    /* react-router has injected the value of the attribute ID into the params */
-    //const projectId = this.props.match.params.id;
-
     return (
       <div>
-        <Typography color="secondary" gutterBottom>
-          KPIs
-        </Typography>
-        <div className={classes.tableWrapper}>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-          >
-            <MyTableHead />
-            <TableBody>
-              {stableSort(this.state.kpis, getSorting("asc", "title")).map(kpi => {
-                return (
-                  <TableRow
-                    hover
-                    onClick={event => {
-                      this.handleClick(event, kpi.id);
-                    }}
-                    tabIndex={-1}
-                    key={kpi.id}
-                  >
-                    <TableCell width="10%" align="left">
-                      {kpi.id}
-                    </TableCell>
-                    <TableCell width="25%" align="left">
-                      <Link to={`../kpicard/${kpi.id}`}>
-                        {kpi.title}
-                      </Link>
-                    </TableCell>
-                    <TableCell width="35%" align="left">
-                      {kpi.description}
-                    </TableCell>
-                    <TableCell width="15%" align="left">
-                      {kpi.type}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
+        <Table
+          className={classes.table}
+          aria-labelledby="tableTitle"
+        >
+          <MyTableHead />
+          <TableBody>
+            {stableSort(
+              this.state.tasks,
+              getSorting("asc", "title")
+            ).map(task => {
+              return (
+                <TableRow
+                  hover
+                  onClick={event => {
+                    this.handleClick(event, task.id);
+                  }}
+                  tabIndex={-1}
+                  key={task.id}
+                >
+                  <TableCell width="25%" align="left">
+                    <Link to={`../actioncard/${task.id}`}>
+                      {task.title}
+                    </Link>
+                  </TableCell>
+                  <TableCell width="35%" align="left">
+                    {task.description}
+                  </TableCell>
+                  <TableCell width="15%" align="left">
+                    {task.taskstatus}
+                  </TableCell>
+                  <TableCell align="left">
+                    {task.assigned.fullName}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(ProjectKpis);
+export default withStyles(styles)(ProjectActions);

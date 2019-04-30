@@ -15,29 +15,25 @@ import Typography from "@material-ui/core/Typography/index";
 import Topbar from "../Topbar";
 import Card from "@material-ui/core/Card/index";
 import CardContent from "@material-ui/core/CardContent/index";
-import moment from "moment/moment";
-import Button from "@material-ui/core/Button/index";
-import InputAdornment from "@material-ui/core/InputAdornment/index";
 import { Redirect } from "react-router-dom";
 import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
-import ReactDOM from "react-dom";
-import { Editor, EditorState } from "draft-js";
 import "../../stylesheets/Draft.css";
 import ProjectKpis from "./ProjectKpis";
+import ProjectActions from "./ProjectActions";
+import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
+import PropTypes from "prop-types";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
-export const styles = theme => ({
+const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.grey["100"],
     overflow: "hidden",
-
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
   },
   grid: {
     width: 1200,
@@ -144,6 +140,18 @@ export const styles = theme => ({
   }
 });
 
+function TabContainer({ children, dir }) {
+  return (
+    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
+      {children}
+    </Typography>
+  );
+}
+
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired
+};
+
 class ProjectCard extends React.Component {
   constructor(props) {
     super(props);
@@ -151,6 +159,10 @@ class ProjectCard extends React.Component {
     // state values.
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
+
+  handleChange = (event, value) => {
+    this.setState({ value });
+  };
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
@@ -161,11 +173,11 @@ class ProjectCard extends React.Component {
     projid: 0,
     title: "",
     businessGoal: "",
-    editorState: EditorState.createEmpty(),
     org: "",
     orgId: "",
     orgName: "",
     description: "",
+    value: 0,
     hasError: ""
   };
 
@@ -182,45 +194,6 @@ class ProjectCard extends React.Component {
     });
   };
 
-  handleSubmit(event) {
-    event.preventDefault();
-
-    setTimeout(() => {
-      if (this.state.id > 0) {
-        // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
-        // We have a project id passed through the URL, do an
-        // update on the project.
-        let updatePath = "/api/projects/" + this.state.id;
-        fetch(updatePath, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
-        })
-          .then(data => {
-            this.setState({ msg: "Project updated." });
-          })
-          .catch(err => {
-            this.setState({ msg: "Error occurred." });
-          });
-      } else {
-        // No project id, so we will do a create.  The difference
-        // is we do a POST instead of a PUT.
-        fetch("/api/projects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
-        })
-          .then(data => {
-            //console.log(data);
-          })
-          .catch(err => {
-            this.setState({ msg: "Error occurred." });
-          });
-      }
-      //setSubmitting(false);
-    }, 2000);
-  }
-
   componentDidMount() {
     this.setOrganizationInfo();
   }
@@ -231,6 +204,7 @@ class ProjectCard extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { value } = this.state;
     const currentPath = this.props.location.pathname;
     let projId = this.props.match.params.id;
 
@@ -250,13 +224,26 @@ class ProjectCard extends React.Component {
               container
               className={classes.grid}
             >
-              <Grid item xs={12}>
-                <Card className={classes.card}>
-                  <CardContent>
-                    <ProjectDetail projectId={projId}/>
-                    <ProjectKpis projectId={projId}/>
-                  </CardContent>
-                </Card>
+              <Grid item xs={6}>
+                <ProjectDetail projectId={projId}/>
+              </Grid>
+              <Grid item xs={6}>
+                <Tabs
+                  value={this.state.value}
+                  onChange={this.handleChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                >
+                  <Tab label="KPIs" />
+                  <Tab label="Actions" />
+                  <Tab label="People" />
+                </Tabs>
+                {value === 0 && <TabContainer>KPIs</TabContainer>}
+                  <ProjectKpis projectId={projId}/>
+                {value === 1 && <TabContainer>Actions</TabContainer>}
+                  <ProjectActions projectId={projId}/>
+                {value === 2 && <TabContainer>People</TabContainer>}
+                  <ProjectPersons projectId={projId}/>
               </Grid>
             </Grid>
           </Grid>

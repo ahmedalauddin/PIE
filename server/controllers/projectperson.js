@@ -47,7 +47,6 @@ module.exports = {
     let isOwner = "";
     let isInProject = "";
 
-
     if (jsonData) {
       // Convert the JSON into some arrays for a SQL statement.
       for (var i = 0; i < jsonData.length; i++) {

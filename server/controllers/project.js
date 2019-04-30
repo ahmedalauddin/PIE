@@ -17,7 +17,6 @@ const KPI = require("../models").Kpi;
 const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
 const Person = require("../models").Person;
-const ProjectPerson = require("../models").ProjectPerson;
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
@@ -40,6 +39,19 @@ module.exports = {
       startAt: req.params.startDate,
       endAt: req.params.endDate
     })
+      .then(p => {
+        // SQL to insert all people from the org into the ProjectPersons table with
+        // the project id.
+        let projectId = p.id;
+        let sql = "INSERT into `ProjectPersons` " +
+          "(personId, projectId, owner, inProject)  " +
+          "Select Pe.id, " + projectId + ", 0, 0 from Organizations O, Projects P, Persons Pe  " +
+          "where O.id = P.orgId and Pe.orgId = O.id and P.id = " + projectId + " " +
+          "ON DUPLICATE KEY UPDATE personId=values(personId)";
+        logger.debug(`${callerType} update ProjectPerson -> sql: ${sql}`);
+
+        return models.sequelize.query(sql);
+      })
       .then(p => {
         logger.info(`${callerType} create -> successful, id: ${p.id}`);
         res.status(201).send(p);

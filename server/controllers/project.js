@@ -17,6 +17,7 @@ const KPI = require("../models").Kpi;
 const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
 const Person = require("../models").Person;
+const ProjectPerson = require("../models").ProjectPerson;
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
@@ -219,12 +220,12 @@ module.exports = {
     // TODO - need to pass in org id
     return models.sequelize
       .query(
-        "select P.id, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`, P.progress, " +
-          "P.startAt, P.endAt, T.title as taskName, " +
+        "select P.id, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`, P.progress, P.startAt, P.endAt, " +
           "(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per where P.id = PP.projectId " +
-          "and Per.id = PP.personId and PP.owner = '1') as owners " +
-          "from Projects P, TaskStatuses TS, Kpis K, Tasks T " +
-          "where P.statusId = TS.id and P.mainKpiId = K.id and P.currentTaskId = T.id " +
+          "and Per.id = PP.personId and PP.owner = '1') as owners, " +
+          "(select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks " +
+          "from Projects P, TaskStatuses TS, Kpis K " +
+          "where P.statusId = TS.id and P.mainKpiId = K.id " +
           "and P.orgId = " + req.params.orgId + " " +
           "order by P.title",
         {

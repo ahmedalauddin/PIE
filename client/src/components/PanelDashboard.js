@@ -22,7 +22,6 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
-import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import { getOrgId, getOrgName } from "../redux";
 import moment from "moment";
@@ -46,6 +45,52 @@ const rows = [
   { id: "start", numeric: false, disablePadding: true, label: "Start Date" },
   { id: "end", numeric: false, disablePadding: true, label: "End Date" }
 ];
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.grey["100"],
+    overflow: "hidden",
+
+    backgroundSize: "cover",
+    backgroundPosition: "0 400px",
+    paddingBottom: 200
+  },
+  grid: {
+    width: 1200,
+    marginTop: 40,
+    [theme.breakpoints.down("sm")]: {
+      width: "calc(100% - 20px)"
+    }
+  },
+  paper: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: '15%',
+    flexShrink: 0,
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  },
+  details: {
+    alignItems: 'center',
+  },
+  column: {
+    flexBasis: '15%',
+  },
+  link: {
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  }
+});
 
 class MyTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -145,17 +190,17 @@ class PanelDashboard extends Component {
             orgName: orgName
           });
         });
-      //msg = "List of projects for organization ";
-    } else {
-      //this.setState({readyToRedirect: true});
-
-      // Else select all projects.
-      fetch("/api/projects")
-        .then(res => res.json())
-        .then(projects => this.setState({ projects }));
-      msg = "List of projects for all organizations";
     }
   };
+
+  formatDate(dateInput) {
+    let dateOut = "";
+
+    if (dateInput !== null) {
+      dateOut = moment(dateInput).format("YYYY-MM-DD");
+    }
+    return dateOut;
+  }
 
   handleClick = (event, id) => {};
 
@@ -182,28 +227,23 @@ class PanelDashboard extends Component {
             >
               <Grid container item xs={12}>
                 <Grid item xs={12}>
-                  <Paper className={classes.paper}>
-                    <div className={classes.box}>
-                      <Typography color="secondary" gutterBottom>
-                        Project Dashboard for {this.state.orgName}
-                      </Typography>
-                    </div>
-                    <div>
-                      <Typography variant="body1" gutterBottom>
+
                         <div className={classes.root}>
-                          <ExpansionPanel>
-                            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                          <ExpansionPanel expanded={false}>
+                            <ExpansionPanelSummary>
                               <div className={classes.column}>
-                                <Typography className={classes.heading}>Project title</Typography>
-                              </div>
-                              <div className={classes.column}>
-                                <Typography className={classes.secondaryHeading}>
-                                  Stauts
+                                <Typography className={classes.heading}>
+                                  Project title
                                 </Typography>
                               </div>
                               <div className={classes.column}>
                                 <Typography className={classes.secondaryHeading}>
-                                  Pending actions
+                                  Status
+                                </Typography>
+                              </div>
+                              <div className={classes.column}>
+                                <Typography className={classes.secondaryHeading}>
+                                  Targeted KPI
                                 </Typography>
                               </div>
                               <div className={classes.column}>
@@ -220,7 +260,7 @@ class PanelDashboard extends Component {
                           </ExpansionPanel>
                           {this.state.projects.map(project => {
                             return (
-                              <ExpansionPanel>
+                              <ExpansionPanel key={project.id}>
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                   <div className={classes.column}>
                                     <Typography className={classes.heading}>
@@ -236,35 +276,34 @@ class PanelDashboard extends Component {
                                   </div>
                                   <div className={classes.column}>
                                     <Typography className={classes.secondaryHeading}>
-                                      {project.taskName}
+                                      {project.mainKpi}
                                     </Typography>
                                   </div>
                                   <div className={classes.column}>
                                     <Typography className={classes.secondaryHeading}>
-                                      {moment(project.startAt).format("YYYY-MM-DD")}
+                                      {this.formatDate(project.startAt)}
                                     </Typography>
                                   </div>
                                   <div className={classes.column}>
                                     <Typography className={classes.secondaryHeading}>
-                                      {moment(project.endAt).format("YYYY-MM-DD")}
+                                      {this.formatDate(project.endAt)}
                                     </Typography>
                                   </div>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails className={classes.details}>
-                                  <Typography className={classes.secondaryHeading}>
-                                    Targeted KPI: {project.mainKpi}
-                                    <br/>
-                                    Owners: {project.owners}
-                                  </Typography>
-
+                                  <div>
+                                    <Typography className={classes.secondaryHeading}>
+                                      Owners: {project.owners}<br/>
+                                      Tasks: {project.tasks}
+                                    </Typography>
+                                  </div>
                                 </ExpansionPanelDetails>
                               </ExpansionPanel>
                               );
                             })}
-                        </div>
-                      </Typography>
+
                     </div>
-                  </Paper>
+
                 </Grid>
               </Grid>
             </Grid>

@@ -5,7 +5,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-04-17
+ * Modified: 2019-04-29
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -30,6 +30,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
 import { Redirect } from "react-router-dom";
+import ChipInput from "material-ui-chip-input";
+import AutoComplete from 'material-ui/AutoComplete';
 
 class KpiCard extends React.Component {
   constructor(props) {
@@ -40,6 +42,8 @@ class KpiCard extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
+    this.handleDeleteChip = this.handleDeleteChip.bind(this);
+    this.handleAddChip = this.handleAddChip.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -67,7 +71,11 @@ class KpiCard extends React.Component {
     isNew: false,
     expanded: false,
     hasError: false,
-    labelWidth: 0
+    labelWidth: 0,
+    focus: false,
+    nextItem: '',
+    selectedChip: -1,
+    editingChip: -1
   };
 
   handleChange = name => event => {
@@ -80,6 +88,26 @@ class KpiCard extends React.Component {
 
   handleSelectChange = event => {
     this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleDeleteChip(index) {
+    this.handleUpdate([
+      ...this.props.list.slice(0, index),
+      ...this.props.list.slice(index + 1)
+    ]);
+  };
+
+  handleAddChip(chip, position = this.props.list.length) {
+    if(this.state.editingChip > -1) {
+      position = this.state.editingChip;
+    }
+
+    this.handleUpdate([
+      ...this.props.list.slice(0, position),
+      this.state.nextItem,
+      ...this.props.list.slice(position)
+    ]);
+    this.setState({nextItem: '', editingChip: -1});
   };
 
   componentDidCatch(error, info) {

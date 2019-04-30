@@ -86,7 +86,7 @@ class Topbar extends Component {
   }
 
   current = () => {
-    if (this.props.currentPath === "/dashboard") {
+    if (this.props.currentPath === "/paneldashboard") {
       return 0;
     }
     if (this.props.currentPath === "/highlight") {

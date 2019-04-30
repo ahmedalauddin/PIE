@@ -96,8 +96,11 @@ module.exports = {
 
   // List all KPIs for a single project
   listByProject(req, res) {
+    // Important note, but the where clause is used with the included model Project.  See the example
+    // here, http://docs.sequelizejs.com/manual/associations.html#belongs-to-many-associations, for
+    // User.findAll.
     return models.Kpi.findAll({
-      where: { projectId: req.params.projid },
+
       order: [["title", "DESC"]],
       include: [
         {
@@ -106,6 +109,7 @@ module.exports = {
         },
         {
           model: models.Project,
+          where: { id: req.params.projid },
           as: "project"
         },
         {

@@ -19,9 +19,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -32,7 +29,9 @@ import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
-
+import ReactDOM from "react-dom";
+import { Editor, EditorState } from "draft-js";
+import "../stylesheets/Draft.css";
 
 class ProjectCard extends React.Component {
   constructor(props) {
@@ -44,6 +43,7 @@ class ProjectCard extends React.Component {
     this.handleKpiSelectChange = this.handleKpiSelectChange.bind(this);
     this.showToolbar = this.showToolbar.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
+    this.onChange = editorState => this.setState({ editorState });
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -55,6 +55,7 @@ class ProjectCard extends React.Component {
     projid: 0,
     title: "",
     businessGoal: "",
+    editorState: EditorState.createEmpty(),
     org: "",
     orgId: "",
     orgName: "",
@@ -174,7 +175,7 @@ class ProjectCard extends React.Component {
     // If we have a project ID, show the toolbar.
     let toolbarText = "";
     if (parseInt(this.state.id) > 0) {
-      toolbarText = <CardToolbar projid={this.state.id}/>;
+      toolbarText = <CardToolbar projid={this.state.id} />;
     }
     return toolbarText;
   }
@@ -209,34 +210,90 @@ class ProjectCard extends React.Component {
                   <Card className={classes.card}>
                     <CardContent>
                       {this.showToolbar()}
-                      <Table>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography color="secondary" gutterBottom>
-                              {this.state.msg}
-                            </Typography>
-                            <Typography variant="h5" component="h2">
-                              <TextField
-                                required
-                                id="title-required"
-                                label="Title"
-                                onChange={this.handleChange("title")}
-                                value={this.state.title}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
+                      <Grid item container xs={12}>
+                        <Grid item xs={6}>
+                          <Typography color="secondary" gutterBottom>
+                            {this.state.msg}
+                          </Typography>
+                          <Typography variant="h5" component="h2">
+                            <TextField
+                              required
+                              id="title-required"
+                              label="Title"
+                              onChange={this.handleChange("title")}
+                              value={this.state.title}
+                              className={classes.textField}
+                              margin="normal"
+                            />
+                          </Typography>
+                          <Typography component="p">
+                            <TextField
+                              id="description"
+                              label="Description"
+                              multiline
+                              rowsMax="6"
+                              value={this.state.description}
+                              onChange={this.handleChange("description")}
+                              className={classes.textField}
+                              fullWidth
+                              margin="normal"
+                              InputLabelProps={{
+                                shrink: true
+                              }}
+                            />
+                          </Typography>
+                          <Typography component="p">
+                            <TextField
+                              id="businessGoal"
+                              label="Business Goal"
+                              multiline
+                              rowsMax="4"
+                              value={this.state.businessGoal}
+                              onChange={this.handleChange("businessGoal")}
+                              className={classes.textField}
+                              fullWidth
+                              margin="normal"
+                              InputLabelProps={{
+                                shrink: true
+                              }}
+                            />
+                          </Typography>
+                          <Typography component="p">
+                            <FormControl className={classes.formControl}>
+                              <InputLabel htmlFor="kpi-simple">
+                                Main KPI
+                              </InputLabel>
+                              <Select
+                                value={this.state.mainKpiId}
+                                onChange={this.handleKpiSelectChange}
+                                inputProps={{
+                                  name: "mainKpiId",
+                                  id: "mainKpiId"
+                                }}
+                              >
+                                {this.state.kpis.map(kpi => {
+                                  return (
+                                    <MenuItem key={kpi.id} value={kpi.id}>
+                                      {kpi.title}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </Select>
+                            </FormControl>
+                            <br />
+                            <br />
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <div className={classes.inlineRight}>
                             <Typography component="p">
                               <TextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.description}
-                                onChange={this.handleChange("description")}
+                                id="startAt"
+                                label="Start Date"
+                                type="date"
+                                value={this.state.startAt}
+                                onChange={this.handleChange("startAt")}
                                 className={classes.textField}
-                                fullWidth
-                                margin="normal"
                                 InputLabelProps={{
                                   shrink: true
                                 }}
@@ -244,109 +301,50 @@ class ProjectCard extends React.Component {
                             </Typography>
                             <Typography component="p">
                               <TextField
-                                id="businessGoal"
-                                label="Business Goal"
-                                multiline
-                                rowsMax="4"
-                                value={this.state.businessGoal}
-                                onChange={this.handleChange("businessGoal")}
+                                id="endAt"
+                                label="End Date"
+                                type="date"
+                                value={this.state.endAt}
+                                onChange={this.handleChange("endAt")}
                                 className={classes.textField}
-                                fullWidth
-                                margin="normal"
                                 InputLabelProps={{
                                   shrink: true
                                 }}
                               />
                             </Typography>
-                            <Typography component="p">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="kpi-simple">
-                                  Main KPI
-                                </InputLabel>
-                                <Select
-                                  value={this.state.mainKpiId}
-                                  onChange={this.handleKpiSelectChange}
-                                  inputProps={{
-                                    name: "mainKpiId",
-                                    id: "mainKpiId"
+
+                            <Typography variant="h6" gutterBottom>
+                              <Typography variant="h5" component="h2">
+                                <TextField
+                                  id="standard-required"
+                                  label="Progress"
+                                  onChange={this.handleChange("progress")}
+                                  value={this.state.progress}
+                                  className={classes.textField}
+                                  InputProps={{
+                                    endAdornment: (
+                                      <InputAdornment position="end">
+                                        %
+                                      </InputAdornment>
+                                    )
                                   }}
-                                >
-                                  {this.state.kpis.map(kpi => {
-                                    return (
-                                      <MenuItem key={kpi.id} value={kpi.id}>
-                                        {kpi.title}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                              <br />
-                              <br />
+                                />
+                              </Typography>
                             </Typography>
-                          </TableCell>
-                          <TableCell
-                            style={{ verticalAlign: "top", width: "25%" }}
-                          >
-                            <div className={classes.inlineRight}>
-                              <Typography component="p">
-                                <TextField
-                                  id="startAt"
-                                  label="Start Date"
-                                  type="date"
-                                  value={this.state.startAt}
-                                  onChange={this.handleChange("startAt")}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
-                              <Typography component="p">
-                                <TextField
-                                  id="endAt"
-                                  label="End Date"
-                                  type="date"
-                                  value={this.state.endAt}
-                                  onChange={this.handleChange("endAt")}
-                                  className={classes.textField}
-                                  InputLabelProps={{
-                                    shrink: true
-                                  }}
-                                />
-                              </Typography>
-                              <Typography variant="h6" gutterBottom>
-                                <Typography variant="h5" component="h2">
-                                  <TextField
-                                    id="standard-required"
-                                    label="Progress"
-                                    onChange={this.handleChange("progress")}
-                                    value={this.state.progress}
-                                    className={classes.textField}
-                                    InputProps={{
-                                      endAdornment: (
-                                        <InputAdornment position="end">
-                                          %
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                  />
-                                </Typography>
-                              </Typography>
-                              <div className={classes.spaceTop}>
-                                <Button
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={this.handleSubmit}
-                                  className={classes.secondary}
-                                >
-                                  {this.state.buttonText}
-                                </Button>
-                              </div>
-                              <br />
+                            <div className={classes.spaceTop}>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={this.handleSubmit}
+                                className={classes.secondary}
+                              >
+                                {this.state.buttonText}
+                              </Button>
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      </Table>
+                            <br />
+                          </div>
+                        </Grid>
+                      </Grid>
                     </CardContent>
                   </Card>
                 </Grid>

@@ -112,6 +112,7 @@ module.exports = (sequelize, DataTypes) => {
     logger.debug(`${callerType} Project hasOne TaskStatus`);
     Project.hasOne(models.TaskStatus);
 
+
     logger.debug(`${callerType} Kpi belongsToMany Project`);
     Project.belongsToMany(models.Kpi, {
       through: "KpiProjects",

@@ -29,8 +29,8 @@ module.exports = router => {
   router.get("/api/kpis/:id", kpi.findById);
 
   // get KPIs by project
-  logger.debug(`${callerClass} GET -> path: /api/kpis/project/:projid`);
-  router.get("/api/kpis/project/:projid", kpi.listByProject);
+  logger.debug(`${callerClass} GET -> path: /api/kpis-project/:projid`);
+  router.get("/api/kpis-project/:projid", kpi.listByProject);
 
   // Update a KPI with id
   logger.debug(`${callerClass} PUT -> path: /api/kpis/:id`);

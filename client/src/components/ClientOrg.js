@@ -105,7 +105,7 @@ class ClientOrg extends React.Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/dashboard" />;
+      return <Redirect to="/paneldashboard" />;
     }
 
     return (

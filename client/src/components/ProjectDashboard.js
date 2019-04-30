@@ -139,13 +139,8 @@ class ProjectDashboard extends Component {
         });
       //msg = "List of projects for organization ";
     } else {
-      //this.setState({readyToRedirect: true});
-
-      // Else select all projects.
-      fetch("/api/projects")
-        .then(res => res.json())
-        .then(projects => this.setState({ projects }));
-      msg = "List of projects for all organizations";
+      this.setState({hasError: true});
+      return <Redirect to="/Login" />;
     }
   };
 

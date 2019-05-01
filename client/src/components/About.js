@@ -74,13 +74,18 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: April 19, 2019<br/><br/>
+                          Build date: May 1, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: New dashboard component listing projects with relevant information.  Also have
-                          added the ProjectPerson component which allows you to assin people and owners to a project.
+                          Notes: Changes to project component. Now allows you to see and edit the project on the
+                          left side of the screen with tabs for KPIs, actions, and people associated with the project
+                          on the right side.
+
+                          Other Sequelize changes to populate the ProjectPersons table when the project is created.
+
+                          Signup option has been move into the Login component and removed from the appbar.
                         </Typography>
                       </div>
                     </CardContent>

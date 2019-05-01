@@ -10,7 +10,7 @@
  * Editor:   Brad Kaufman
  */
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -23,6 +23,8 @@ import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { store, setUser } from "../redux";
+import TableCell from "@material-ui/core/TableCell";
+import { unstable_Box as Box } from '@material-ui/core/Box';
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -132,6 +134,9 @@ class Login extends React.Component {
                         gutterBottom
                       >
                         Please login
+                      </Typography>
+                      <Typography component="div">
+                        or signup <Link to={`/signup`}>here</Link>
                       </Typography>
                       <Typography
                         variant="h5"

@@ -1,12 +1,13 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/project/ProjectCard.js
- * Created:  2019-02-05 09:23:45
+ * File:     /client/src/components/project/NewProject.js
+ * Descr:    Create new project.
+ * Created:  2019-04-30
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-04-19
+ * Modified: 2019-04-30
  * Editor:   Brad Kaufman
- * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
+ * Notes:
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -28,6 +29,7 @@ import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import Paper from "@material-ui/core/Paper";
 
 const styles = theme => ({
   root: {
@@ -152,7 +154,7 @@ TabContainer.propTypes = {
   children: PropTypes.node.isRequired
 };
 
-class ProjectCard extends React.Component {
+class NewProject extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
@@ -215,45 +217,14 @@ class ProjectCard extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
-        <div className={classes.root}>
-          <Grid container justify="center">
-            <Grid
-              spacing={24}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid item xs={6}>
-                <ProjectDetail projectId={projId}/>
-              </Grid>
-              <Grid item xs={6}>
-                <Tabs
-                  value={this.state.value}
-                  onChange={this.handleChange}
-                  indicatorColor="primary"
-                  textColor="primary"
-                >
-                  <Tab label="KPIs" />
-                  <Tab label="Actions" />
-                  <Tab label="People" />
-                </Tabs>
-                {value === 0 && <TabContainer>KPIs
-                  <ProjectKpis projectId={projId}/>
-                </TabContainer>}
-                {value === 1 && <TabContainer>Actions
-                  <ProjectActions projectId={projId}/>
-                </TabContainer>}
-                {value === 2 && <TabContainer>People
-                  <ProjectPersons projectId={projId}/>
-                </TabContainer>}
-              </Grid>
-            </Grid>
-          </Grid>
-        </div>
+        <Card>
+          <CardContent>
+            <ProjectDetail projectId=""/>
+          </CardContent>
+        </Card>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(ProjectCard);
+export default withStyles(styles)(NewProject);

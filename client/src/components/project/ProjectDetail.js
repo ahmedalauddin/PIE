@@ -180,7 +180,6 @@ class ProjectDetail extends React.Component {
         <Typography color="secondary" gutterBottom>
           {this.state.msg}
         </Typography>
-
         <Typography variant="h5" component="h2">
           <TextField
             required
@@ -306,7 +305,6 @@ class ProjectDetail extends React.Component {
           </div>
           <br />
         </div>
-
       </form>
     );
   }

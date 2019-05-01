@@ -5,7 +5,7 @@ const Menu = [
     pathname: "/dashboard"
   },*/
   {
-    label: "Dashboard 2",
+    label: "Dashboard",
     pathname: "/paneldashboard"
   },
   {
@@ -39,10 +39,6 @@ const Menu = [
   {
     label: "Client Filter",
     pathname: "/clientorg"
-  },
-  {
-    label: "Signup",
-    pathname: "/signup"
   },
   {
     label: "Logout",

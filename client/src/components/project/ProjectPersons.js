@@ -162,69 +162,68 @@ class ProjectPersons extends React.Component {
 
     return (
       <div>
-        <Paper className={classes.paper}>
-          <div className={classes.box}>
-            <Typography color="secondary" gutterBottom>
-              Select people assigned to project: {this.state.projectName}
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="body1" gutterBottom>
-              <div className={classes.tableWrapper}>
-                <Table
-                  className={classes.table}
-                  aria-labelledby="tableTitle"
-                >
-                  <MyTableHead />
-                  <TableBody>
-                    {this.state.orgPersons.map((person) => {
-                      return (
-                        <TableRow
-                          hover
-                          onClick={event => {}}
-                          tabIndex={-1}
-                          key={person.id}
-                        >
-                          <TableCell align="left" width="15%">
-                            <Checkbox
-                              key={person.id}
-                              checked={!!+person.inProject}
-                              tabIndex={-1}
-                              onChange={this.handleToggle(person.id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left" width="15%">
-                            <Checkbox
-                              key={"own" + person.id}
-                              checked={!!+person.owner}
-                              tabIndex={-1}
-                              onChange={this.handleOwnerToggle("own" + person.id)}
-                            />
-                          </TableCell>
-                          <TableCell align="left">
-                            <strong>{person.lastName}, {person.firstName}<br/></strong>
-                            {person.email}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </Typography>
-          </div>
-          <div className={classes.spaceTop}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSubmit}
-              className={classes.secondary}
-            >
-              Update People
-            </Button>
-          </div>
-          <br />
-        </Paper>
+        <div className={classes.box}>
+          <Typography color="secondary" gutterBottom>
+            Select people assigned to project: {this.state.projectName}
+          </Typography>
+        </div>
+        <div>
+          <Typography variant="body1" gutterBottom>
+            <div className={classes.tableWrapper}>
+              <Table
+                className={classes.table}
+                aria-labelledby="tableTitle"
+              >
+                <MyTableHead />
+                <TableBody>
+                  {this.state.orgPersons.map((person) => {
+                    return (
+                      <TableRow
+                        hover
+                        onClick={event => {}}
+                        tabIndex={-1}
+                        key={person.id}
+                      >
+                        <TableCell align="left" width="15%">
+                          <Checkbox
+                            key={person.id}
+                            checked={!!+person.inProject}
+                            tabIndex={-1}
+                            onChange={this.handleToggle(person.id)}
+                          />
+                        </TableCell>
+                        <TableCell align="left" width="15%">
+                          <Checkbox
+                            key={"own" + person.id}
+                            checked={!!+person.owner}
+                            tabIndex={-1}
+                            onChange={this.handleOwnerToggle("own" + person.id)}
+                          />
+                        </TableCell>
+                        <TableCell align="left">
+                          <strong>{person.lastName}, {person.firstName}<br/></strong>
+                          {person.email}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </Typography>
+        </div>
+        <div className={classes.spaceTop}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleSubmit}
+            className={classes.secondary}
+          >
+            Update People
+          </Button>
+        </div>
+        <br />
+
       </div>
     );
   }

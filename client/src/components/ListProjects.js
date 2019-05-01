@@ -4,7 +4,7 @@
  * Created:  2019-01-16
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-18
+ * Modified: 2019-04-30
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -26,6 +26,8 @@ import { styles } from "./styles/MaterialSense";
 import { stableSort, getSorting } from "./TableFunctions";
 import Button from "@material-ui/core/Button";
 import { getOrgId, getOrgName } from "../redux";
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
@@ -227,6 +229,7 @@ class ListProjects extends Component {
                         </div>
                       </Typography>
                     </div>
+
                   </Paper>
                 </Grid>
               </Grid>

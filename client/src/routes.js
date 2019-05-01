@@ -19,7 +19,8 @@ import Login from "./components/Login";
 import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectPersons from "./components/project/ProjectPersons";
-import ProjectCard from "./components/project/ProjectCard";
+import Project from "./components/project/Project";
+import NewProject from "./components/project/NewProject";
 import ActionCard from "./components/ActionCard";
 import ProjectDashboard from "./components/ProjectDashboard";
 import PanelDashboard from "./components/PanelDashboard";
@@ -45,8 +46,8 @@ export default props => (
         <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/analytics" component={withAuth(Analytics)} />
-        <Route exact path="/projectcard" component={withAuth(ProjectCard)} />
-        <Route path="/projectcard/:id" component={withAuth(ProjectCard)} />
+        <Route exact path="/project" component={withAuth(Project)} />
+        <Route path="/project/:id" component={withAuth(Project)} />
         <Route path="/projectpersons/:id" component={withAuth(ProjectPersons)} />
         <Route path="/departmentcard/:id" component={withAuth(DepartmentCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
@@ -56,6 +57,7 @@ export default props => (
         <Route path="/listdepts/:id" component={withAuth(ListDepts)} />
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/listprojects" component={withAuth(ListProjects)} />
+        <Route exact path="/newproject" component={withAuth(NewProject)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/kpicard" component={withAuth(KpiCard)} />
         <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />

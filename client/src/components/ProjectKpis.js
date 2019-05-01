@@ -130,10 +130,6 @@ class ProjectKpis extends Component {
     return (
       <React.Fragment>
         <div className={classes.root}>
-          <Typography color="secondary" gutterBottom>
-            Project KPIs
-          </Typography>
-
           <Typography variant="body1" gutterBottom>
             <Paper className={classes.root}>
               <div className={classes.tableWrapper}>

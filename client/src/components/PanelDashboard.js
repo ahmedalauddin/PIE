@@ -12,8 +12,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -22,17 +20,15 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
-import { stableSort, getSorting } from "./TableFunctions";
 import { getOrgId, getOrgName } from "../redux";
 import moment from "moment";
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Chip from '@material-ui/core/Chip';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
@@ -139,6 +135,7 @@ class PanelDashboard extends Component {
   constructor(props) {
     super(props);
     this.handleNull = this.handleNull.bind(this);
+    this.addProject = this.addProject.bind(this);
   };
 
   state = {
@@ -204,6 +201,10 @@ class PanelDashboard extends Component {
 
   handleClick = (event, id) => {};
 
+  addProject = () => {
+    return <Redirect to="/newproject" />;
+  }
+
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
@@ -263,7 +264,7 @@ class PanelDashboard extends Component {
                           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <div className={classes.column}>
                               <Typography className={classes.heading}>
-                                <Link to={`/projectcard/${project.id}`}>
+                                <Link to={`/project/${project.id}`}>
                                   {project.projectTitle}
                                 </Link>
                               </Typography>
@@ -300,6 +301,11 @@ class PanelDashboard extends Component {
                         </ExpansionPanel>
                       );
                     })}
+                    <br/>
+                    <br/>
+                    <Fab component={Link} color="primary" aria-label="Add" to={`/NewProject`} className={classes.fab}>
+                      <AddIcon />
+                    </Fab>
                   </div>
                 </Grid>
               </Grid>

@@ -114,9 +114,6 @@ class ProjectKpis extends Component {
 
     return (
       <div>
-        <Typography color="secondary" gutterBottom>
-          KPIs
-        </Typography>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}

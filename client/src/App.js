@@ -10,6 +10,7 @@
 import React, { Component } from "react";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import "./stylesheets/App.css";
+import "typeface-roboto";
 import Routes from "./routes";
 import { blue, indigo } from "@material-ui/core/colors";
 import { bindActionCreators } from "redux";

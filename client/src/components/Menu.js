@@ -8,10 +8,11 @@ const Menu = [
     label: "Dashboard",
     pathname: "/paneldashboard"
   },
+  /*
   {
     label: "Recent",
     pathname: "/highlight"
-  },
+  }, */
   {
     label: "Login",
     pathname: "/login"
@@ -24,6 +25,7 @@ const Menu = [
     label: "Projects",
     pathname: "/listprojects"
   },
+  /*
   {
     label: "Organizations",
     pathname: "/listorgs"
@@ -35,7 +37,7 @@ const Menu = [
   {
     label: "Analytics",
     pathname: "/analytics"
-  },
+  }, */
   {
     label: "Client Filter",
     pathname: "/clientorg"

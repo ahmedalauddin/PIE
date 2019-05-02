@@ -1,7 +1,7 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /client/src/components/ProjectCard.js
- * Descr:    Project component.  Allows create and upadte.
+ * Descr:    Project component.  Allows create and update.
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----

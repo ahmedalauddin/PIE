@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-04-19
+ * Modified: 2019-05-02
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -13,28 +13,39 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Typography from "@material-ui/core/Typography/index";
 import Topbar from "../Topbar";
-import Card from "@material-ui/core/Card/index";
-import CardContent from "@material-ui/core/CardContent/index";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import "../../stylesheets/Draft.css";
-import ProjectKpis from "./ProjectKpis";
-import ProjectActions from "./ProjectActions";
 import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Button from "@material-ui/core/Button";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpandMoreIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Fab from "@material-ui/core/Fab";
+import KpiTable from "./KpiTable";
+import ActionTable from "./ActionTable";
+import AddIcon from "@material-ui/icons/Add";
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.grey["100"],
     overflow: "hidden",
+    backgroundSize: "cover",
+    paddingBottom: 200
   },
   grid: {
     width: 1200,
@@ -128,16 +139,23 @@ const styles = theme => ({
     display: "flex",
     flexWrap: "wrap"
   },
-  textField: {
+  textFieldWide: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200
+    width: 400
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   },
   dense: {
     marginTop: 19
   },
   menu: {
     width: 200
+  },
+  spaceTop: {
+    marginTop: 50
   }
 });
 
@@ -161,6 +179,12 @@ class Project extends React.Component {
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
+  handlePanelChange = panel => (event, expanded) => {
+    this.setState({
+      expanded: expanded ? panel : false,
+    });
+  };
+
   handleChange = (event, value) => {
     this.setState({ value });
   };
@@ -179,7 +203,8 @@ class Project extends React.Component {
     orgName: "",
     description: "",
     value: 0,
-    hasError: ""
+    hasError: "",
+    expanded: null
   };
 
   setOrganizationInfo = () => {
@@ -207,6 +232,7 @@ class Project extends React.Component {
     const { classes } = this.props;
     const { value } = this.state;
     const currentPath = this.props.location.pathname;
+    const { expanded } = this.state;
     let projId = this.props.match.params.id;
 
     if (this.state.hasError) {
@@ -216,38 +242,51 @@ class Project extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
-        <Paper className={classes.paper}>
-        <Grid container justify="center" spacing={24}>
-            <Grid item lg>
-              <Paper className={classes.paper} >
+        <div className={classes.root}>
+          <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
+            <Grid item lg={10}>
+              <Paper className={classes.paper}>
+                check font
                 <ProjectDetail projectId={projId}/>
               </Paper>
             </Grid>
-            <Grid item lg>
-              <Paper className={classes.paper} >
-              <Tabs
-                value={this.state.value}
-                onChange={this.handleChange}
-                indicatorColor="primary"
-                textColor="primary"
-              >
-                <Tab label="KPIs" />
-                <Tab label="Actions" />
-                <Tab label="People" />
-              </Tabs>
-              {value === 0 && <TabContainer>
-                <ProjectKpis projectId={projId}/>
-              </TabContainer>}
-              {value === 1 && <TabContainer>
-                <ProjectActions projectId={projId}/>
-              </TabContainer>}
-              {value === 2 && <TabContainer>
-                <ProjectPersons projectId={projId}/>
-              </TabContainer>}
-              </Paper>
+            <Grid item lg={10}>
+              <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handlePanelChange('panel1')}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>KPIs</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/kpicard`} className={classes.fab}>
+                    <AddIcon />
+                  </Fab>
+                  <KpiTable projectId={projId}/>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel expanded={expanded === 'panel2'} onChange={this.handlePanelChange('panel2')}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>Actions</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/actioncard`} className={classes.fab}>
+                    <AddIcon />
+                  </Fab>
+                  <ActionTable projectId={projId}/>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+              <ExpansionPanel expanded={expanded === 'panel3'} onChange={this.handlePanelChange('panel3')}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>People</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/kpicard`} className={classes.fab}>
+                    <AddIcon />
+                  </Fab>
+                  <ProjectPersons projectId={projId}/>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
             </Grid>
           </Grid>
-        </Paper>
+        </div>
       </React.Fragment>
     );
   }

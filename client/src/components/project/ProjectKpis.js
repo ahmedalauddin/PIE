@@ -22,20 +22,22 @@ import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import { styles } from "../styles/MaterialSense";
 import { stableSort, getSorting } from "../TableFunctions";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
 const rows = [
-  { id: "id", numeric: true, disablePadding: true, label: "ID" },
+  { id: "id", numeric: false, disablePadding: true, label: "ID" },
   { id: "title", numeric: false, disablePadding: true, label: "KPI" },
   {
     id: "description",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Description"
   },
   {
     id: "type",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Type"
   }
 ];
@@ -131,18 +133,18 @@ class ProjectKpis extends Component {
                     tabIndex={-1}
                     key={kpi.id}
                   >
-                    <TableCell width="10%" align="left">
+                    <TableCell className={classes.paddingDense} width="10%" align="left">
                       {kpi.id}
                     </TableCell>
-                    <TableCell width="25%" align="left">
+                    <TableCell className={classes.paddingDense} width="30%" align="left">
                       <Link to={`../kpicard/${kpi.id}`}>
                         {kpi.title}
                       </Link>
                     </TableCell>
-                    <TableCell width="35%" align="left">
+                    <TableCell className={classes.paddingDense} width="40%" align="left">
                       {kpi.description}
                     </TableCell>
-                    <TableCell width="15%" align="left">
+                    <TableCell className={classes.paddingDense} width="20%" align="left">
                       {kpi.type}
                     </TableCell>
                   </TableRow>
@@ -150,6 +152,11 @@ class ProjectKpis extends Component {
               })}
             </TableBody>
           </Table>
+        </div>
+        <div>
+          <Fab component={Link} color="primary" aria-label="Add" to={`/kpicard`} className={classes.fab}>
+            <AddIcon />
+          </Fab>
         </div>
       </div>
     );

@@ -187,7 +187,7 @@ class ProjectDetail extends React.Component {
             label="Project Title"
             onChange={this.handleChange("title")}
             value={this.state.title}
-            className={classes.textField}
+            fullWidth
             margin="normal"
           />
         </Typography>
@@ -199,7 +199,6 @@ class ProjectDetail extends React.Component {
             rowsMax="6"
             value={this.state.description}
             onChange={this.handleChange("description")}
-            className={classes.textField}
             fullWidth
             margin="normal"
             InputLabelProps={{
@@ -215,95 +214,96 @@ class ProjectDetail extends React.Component {
             rowsMax="4"
             value={this.state.businessGoal}
             onChange={this.handleChange("businessGoal")}
-            className={classes.textField}
             fullWidth
+            className={classes.textFieldWide}
             margin="normal"
             InputLabelProps={{
               shrink: true
             }}
           />
         </Typography>
-        <Typography component="p">
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="kpi-simple">
-              Main KPI
-            </InputLabel>
-            <Select
-              value={this.state.mainKpiId}
-              onChange={this.handleKpiSelectChange}
-              inputProps={{
-                name: "mainKpiId",
-                id: "mainKpiId"
-              }}
-            >
-              {this.state.kpis.map(kpi => {
-                return (
-                  <MenuItem key={kpi.id} value={kpi.id}>
-                    {kpi.title}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <br />
-          <br />
-        </Typography>
-        <div className={classes.inlineRight}>
-          <Typography component="p">
-            <TextField
-              id="startAt"
-              label="Start Date"
-              type="date"
-              value={this.state.startAt}
-              onChange={this.handleChange("startAt")}
-              className={classes.textField}
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
-          </Typography>
-          <Typography component="p">
-            <TextField
-              id="endAt"
-              label="End Date"
-              type="date"
-              value={this.state.endAt}
-              onChange={this.handleChange("endAt")}
-              className={classes.textField}
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
-          </Typography>
-          <Typography variant="h6" gutterBottom>
-            <Typography variant="h5" component="h2">
+        <Grid container lg>
+          <Grid item lg>
+            <Typography component="p">
+              <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="kpi-simple">
+                  Main KPI
+                </InputLabel>
+                <Select
+                  value={this.state.mainKpiId}
+                  onChange={this.handleKpiSelectChange}
+                  inputProps={{
+                    name: "mainKpiId",
+                    id: "mainKpiId"
+                  }}
+                >
+                  {this.state.kpis.map(kpi => {
+                    return (
+                      <MenuItem key={kpi.id} value={kpi.id}>
+                        {kpi.title}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Typography>
+            <Typography variant="h6" gutterBottom>
+              <Typography variant="h5" component="h2">
+                <TextField
+                  id="standard-required"
+                  label="Progress"
+                  onChange={this.handleChange("progress")}
+                  value={this.state.progress}
+                  className={classes.textFieldWide}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        %
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </Typography>
+            </Typography>
+          </Grid>
+          <Grid item lg>
+            <Typography component="p">
               <TextField
-                id="standard-required"
-                label="Progress"
-                onChange={this.handleChange("progress")}
-                value={this.state.progress}
-                className={classes.textField}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      %
-                    </InputAdornment>
-                  )
+                id="startAt"
+                label="Start Date"
+                type="date"
+                value={this.state.startAt}
+                onChange={this.handleChange("startAt")}
+                className={classes.textFieldWide}
+                InputLabelProps={{
+                  shrink: true
                 }}
               />
             </Typography>
-          </Typography>
-          <div className={classes.spaceTop}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSubmit}
-              className={classes.secondary}
-            >
-              {this.state.buttonText}
-            </Button>
-          </div>
-          <br />
+            <Typography component="p">
+              <TextField
+                id="endAt"
+                label="End Date"
+                type="date"
+                value={this.state.endAt}
+                onChange={this.handleChange("endAt")}
+                className={classes.textFieldWide}
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
+            </Typography>
+          </Grid>
+        </Grid>
+        <div className={classes.spaceTop}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleSubmit}
+            className={classes.secondary}
+          >
+            {this.state.buttonText}
+          </Button>
         </div>
       </form>
     );

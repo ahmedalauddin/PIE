@@ -30,6 +30,8 @@ import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import Analytics from "./components/Analytics";
 import withAuth from "./components/withAuth.jsx";
+// For testing
+import TestProject from "./components/project/TestProject";
 
 export default props => (
   <BrowserRouter>
@@ -67,6 +69,7 @@ export default props => (
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
+        <Route exact path="/testproject" component={TestProject} />
       </Switch>
     </ScrollToTop>
   </BrowserRouter>

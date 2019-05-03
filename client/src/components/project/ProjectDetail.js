@@ -53,7 +53,7 @@ class ProjectDetail extends React.Component {
     orgId: "",
     orgName: "",
     description: "",
-    mainKpiId: 0,
+    mainKpiId: null,
     hasError: "",
     kpis: [],
     startAt: "",

@@ -227,19 +227,19 @@ module.exports = {
       });
   },
 
-  // List most recent projects
+  // get projects by organization
+  // TODO - need left outer joins!!!!
   getProjectDashboard(req, res) {
     // TODO - need to pass in org id
-    return models.sequelize
-      .query(
-        "select P.id, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`, P.progress, P.startAt, P.endAt, " +
-          "(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per where P.id = PP.projectId " +
-          "and Per.id = PP.personId and PP.owner = '1') as owners, " +
-          "(select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks " +
-          "from Projects P, TaskStatuses TS, Kpis K " +
-          "where P.statusId = TS.id and P.mainKpiId = K.id " +
-          "and P.orgId = " + req.params.orgId + " " +
-          "order by P.title",
+    let sql = "select P.id, P.orgId, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`,\
+      P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
+      Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+      (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
+      from Projects P left outer join TaskStatuses TS on P.statusId = TS.id \
+      left outer join Kpis K on P.mainKpiId = K.id  \
+      where P.orgId = " + req.params.orgId + " order by P.title";
+      return models.sequelize
+      .query(sql,
         {
           type: models.sequelize.QueryTypes.SELECT,
           limit: 15

@@ -25,11 +25,11 @@ const Menu = [
     label: "Projects",
     pathname: "/listprojects"
   },
-  /*
   {
     label: "Organizations",
     pathname: "/listorgs"
   },
+  /*
   {
     label: "Users",
     pathname: "/listpersons"

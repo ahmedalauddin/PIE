@@ -127,11 +127,12 @@ class ClientOrg extends React.Component {
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
-                        style={{ textTransform: "uppercase" }}
+                        variant="h5"
+                        component="h2"
                         color="secondary"
                         gutterBottom
                       >
-                        {this.state.msgText}
+                        Select client organization
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <FormControl className={classes.formControl}>

@@ -12,12 +12,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Topbar from "./Topbar";
 import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { getOrgId, getOrgName } from "../redux";
@@ -29,6 +23,7 @@ import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import CardContent from "@material-ui/core/CardContent";
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
@@ -47,7 +42,6 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.grey["100"],
     overflow: "hidden",
-
     backgroundSize: "cover",
     backgroundPosition: "0 400px",
     paddingBottom: 200
@@ -88,47 +82,6 @@ const styles = theme => ({
   }
 });
 
-class MyTableHead extends React.Component {
-  createSortHandler = property => event => {
-    this.props.onRequestSort(event, property);
-  };
-
-  render() {
-    const { order, orderBy } = this.props;
-
-    return (
-      <TableHead>
-        <TableRow>
-          {rows.map(
-            row => (
-              <TableCell
-                key={row.id}
-                align={row.numeric ? "right" : "left"}
-                padding={row.disablePadding ? "none" : "default"}
-                sortDirection={orderBy === row.id ? order : false}
-              >
-                <Tooltip
-                  title="Sort"
-                  placement={row.numeric ? "bottom-end" : "bottom-start"}
-                  enterDelay={300}
-                >
-                  <TableSortLabel
-                    active={orderBy === row.id}
-                    direction={order}
-                    onClick={this.createSortHandler(row.id)}
-                  >
-                    {row.label}
-                  </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-            ),
-            this
-          )}
-        </TableRow>
-      </TableHead>
-    );
-  }
-}
 var msg = "";
 
 class PanelDashboard extends Component {
@@ -229,6 +182,13 @@ class PanelDashboard extends Component {
               <Grid container item xs={12}>
                 <Grid item xs={12}>
                   <div className={classes.root}>
+                    <Typography
+                      variant="subtitle1"
+                      color="secondary"
+                      gutterBottom
+                    >
+                      Projects listed for {getOrgName()}
+                    </Typography>
                     <ExpansionPanel expanded={false}>
                       <ExpansionPanelSummary>
                         <div className={classes.column}>
@@ -303,7 +263,7 @@ class PanelDashboard extends Component {
                     })}
                     <br/>
                     <br/>
-                    <Fab component={Link} color="primary" aria-label="Add" to={`/NewProject`} className={classes.fab}>
+                    <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
                       <AddIcon />
                     </Fab>
                   </div>

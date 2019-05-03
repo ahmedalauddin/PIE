@@ -10,8 +10,8 @@
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline/index";
-import Typography from "@material-ui/core/Typography/index";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { Link, Redirect } from "react-router-dom";
 import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
@@ -19,13 +19,12 @@ import "../../stylesheets/Draft.css";
 import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
 import Grid from "@material-ui/core/Grid";
-import SectionHeader from "../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
 import KpiTable from "./KpiTable";

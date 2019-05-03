@@ -30,8 +30,15 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import { getOrgId, getOrgName, getOrgDepartments } from "../redux";
 import { Redirect } from "react-router-dom";
-import ChipInput from "material-ui-chip-input";
-import AutoComplete from 'material-ui/AutoComplete';
+import { WithContext as ReactTags } from "react-tag-input";
+import "./styles/ReactTags.css";
+
+const KeyCodes = {
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 class KpiCard extends React.Component {
   constructor(props) {
@@ -42,8 +49,9 @@ class KpiCard extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
-    //this.handleDeleteChip = this.handleDeleteChip.bind(this);
-    //this.handleAddChip = this.handleAddChip.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleAddition = this.handleAddition.bind(this);
+    this.handleDrag = this.handleDrag.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -74,8 +82,16 @@ class KpiCard extends React.Component {
     labelWidth: 0,
     focus: false,
     nextItem: '',
-    selectedChip: -1,
-    editingChip: -1
+    tags: [],
+    suggestions: [
+      { id: 'Cluster analysis', text: 'Cluster analysis' },
+      { id: 'Linear regression', text: 'Linear regression' },
+      { id: 'Monte Carlo simulations', text: 'Monte Carlo simulations' },
+      { id: 'Time-series analysis', text: 'Time-series analysis' },
+      { id: 'Natural language processing', text: 'Natural language processing' },
+      { id: 'Predictive analytics', text: 'Predictive analytics' },
+      { id: 'Machine learning', text: 'Machine learning' }
+    ]
   };
 
   handleChange = name => event => {
@@ -90,27 +106,27 @@ class KpiCard extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  /*
-  handleDeleteChip(index) {
-    this.handleUpdate([
-      ...this.props.list.slice(0, index),
-      ...this.props.list.slice(index + 1)
-    ]);
-  };
+  handleDelete(i) {
+    const { tags } = this.state;
+    this.setState({
+      tags: tags.filter((tag, index) => index !== i),
+    });
+  }
 
-  handleAddChip(chip, position = this.props.list.length) {
-    if(this.state.editingChip > -1) {
-      position = this.state.editingChip;
-    }
+  handleAddition(tag) {
+    this.setState(state => ({ tags: [...state.tags, tag] }));
+  }
 
-    this.handleUpdate([
-      ...this.props.list.slice(0, position),
-      this.state.nextItem,
-      ...this.props.list.slice(position)
-    ]);
-    this.setState({nextItem: '', editingChip: -1});
-  };
-  */
+  handleDrag(tag, currPos, newPos) {
+    const tags = [...this.state.tags];
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    this.setState({ tags: newTags });
+  }
 
   componentDidCatch(error, info) {
     console.log("error: " + error + ", info: " + info);
@@ -220,6 +236,7 @@ class KpiCard extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const { tags, suggestions } = this.state;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -356,6 +373,22 @@ class KpiCard extends React.Component {
                               </FormControl>
                               <br/><br/><br/>
                             </Typography>
+                            <div>
+                              <ReactTags
+                                classNames={{
+                                  tags: "ReactTags__tags",
+                                  tagInput: "ReactTags__tagInput",
+                                  selected: "ReactTags__selected",
+                                  suggestions: "ReactTags__suggestions",
+                                  activeSuggestion: "ReactTags__suggestions ul li.ReactTags__activeSuggestion"}}
+                                tags={tags}
+                                suggestions={suggestions}
+                                handleDelete={this.handleDelete}
+                                handleAddition={this.handleAddition}
+                                handleDrag={this.handleDrag}
+                                delimiters={delimiters} />
+                            </div>
+                            <br /><br />
                             <Typography component="p">
                               <Button
                                 variant="contained"

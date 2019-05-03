@@ -247,9 +247,7 @@ class Project extends React.Component {
               <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handlePanelChange('panel1')}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>KPIs</Typography>
-                  <Typography className={classes.secondaryHeading}>
 
-                  </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Fab component={Link} size="small" color="primary" aria-label="Add"
@@ -276,6 +274,7 @@ class Project extends React.Component {
               <ExpansionPanel expanded={expanded === 'panel3'} onChange={this.handlePanelChange('panel3')}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>People</Typography>
+                  <Typography className={classes.secondaryHeading}>Select owners and people assigned to the project</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Fab component={Link} size="small" color="primary" aria-label="Add" to={`/personcard`} className={classes.fab}>

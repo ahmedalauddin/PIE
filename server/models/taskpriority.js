@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      priority: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

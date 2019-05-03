@@ -34,10 +34,11 @@ module.exports = {
   // List all statuses
   list(req, res) {
     return models.TaskPriority.findAll({
+      order: [["priority", "ASC"]],
     })
       .then(_d => {
         logger.debug(`${callerType} list -> successful, count: ${_d.length}`);
-        res.status(201).send(_k);
+        res.status(201).send(_d);
       })
       .catch(error => {
         logger.error(`${callerType} list -> error: ${error.stack}`);

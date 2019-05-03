@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-24
+ * Modified: 2019-05-02
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -14,20 +14,18 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "./Topbar";
 import { styles } from "./styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 import SectionHeader from "./typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
+import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import { getOrgId, getOrgName } from "../redux";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 class ActionCard extends React.Component {
   constructor(props) {
@@ -45,13 +43,16 @@ class ActionCard extends React.Component {
   state = {
     task: {},
     projectId: 0,
+    projectName: "",
     title: "",
     type: "",
     org: "",
     orgId: "",
     orgName: "",
-    assigned: 0,
+    assigned: null,
     assignedList: [],
+    priority: null,
+    priorityList: [],
     description: "",
     msg: "",
     buttonText: "",
@@ -88,10 +89,13 @@ class ActionCard extends React.Component {
   //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
   handleSubmit(event) {
     event.preventDefault();
+    // Project ID and task id (if there is the latter, are passed in by location.state.
+    const projectId = this.props.location.state.projectId;
+    const taskId = this.props.location.state.actionId;
 
     setTimeout(() => {
       if (this.state.id > 0) {
-        let updatePath = "/api/tasks/" + this.state.id;
+        let updatePath = "/api/tasks/" + taskId;
         fetch(updatePath, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -114,51 +118,61 @@ class ActionCard extends React.Component {
           body: JSON.stringify(this.state)
         })
           .then(data => {
-            this.setState({ msg: "Action item created" });
+            // TODO - make sure this works.
+            this.props.history.push(`/project/${projectId}`);
+            //this.setState({ msg: "Action item created" });
           })
           .catch(err => {
             //console.log(err);
           });
       }
-      //setSubmitting(false);
     }, 2000);
   }
 
   componentDidMount() {
     this.setOrganizationInfo();
-    const projid = this.props.location.state.projid;
-    this.setState({
-      projectId: projid
-    });
+    // Project ID and task id (if there is the latter, are passed in by location.state.
+    const projectId = this.props.location.state.projectId;
+    const taskId = this.props.location.state.actionId;
 
     // Use the project to get the assigned to list.
-    if (parseInt(projid) > 0) {
-      fetch(`/api/projects/${projid}`)
+    if (parseInt(projectId) > 0) {
+      fetch(`/api/projects/${projectId}`)
         .then(res => res.json())
         .then(project => {
           this.setState({
-            assignedList: project.team
+            assignedList: project.team,
+            projectName: project.title
           });
         });
     }
 
-    if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/tasks/${this.props.match.params.id}`)
+    fetch(`/api/taskpriorities`)
+      .then(res => res.json())
+      .then(priorities => {
+        this.setState({
+          priorityList: priorities
+        });
+      });
+
+    if (parseInt(taskId) > 0) {
+      fetch(`/api/tasks/${taskId}`)
         .then(res => res.json())
         .then(task => {
           this.setState({
-            id: this.props.match.params.id,
+            id: taskId,
             title: task.title,
             description: task.description,
             assigned: task.assigned.fullName,
             orgId: task.orgId,
-            projectid: task.projectId,
+            projectId: task.projectId,
             buttonText: "Update"
           });
         });
     } else {
       this.setState({
         isEditing: true,
+        projectId: projectId,
         buttonText: "Create"
       });
     }
@@ -166,7 +180,7 @@ class ActionCard extends React.Component {
 
   render() {
     const { classes } = this.props;
-    //const currentPath = this.props.location.pathname;
+    const projectId = this.props.location.state.projectId;
 
     return (
       <React.Fragment>
@@ -182,109 +196,118 @@ class ActionCard extends React.Component {
                 container
                 className={classes.grid}
               >
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
-                      <Table>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography
-                              style={{ textTransform: "uppercase" }}
-                              color="secondary"
-                              gutterBottom
-                            >
-                              Action Detail<br/>
-                              {this.state.msg}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography variant="h5" component="h2">
-                              <TextField
-                                required
-                                id="title-required"
-                                label="Title"
-                                onChange={this.handleChange("title")}
-                                value={this.state.title}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.description}
-                                onChange={this.handleChange("description")}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="organization"
-                                label="Organization"
-                                defaultValue={this.state.orgName}
-                                className={classes.textField}
-                                margin="normal"
-                                InputProps={{
-                                  readOnly: true,
-                                }}
-                              />
-                            </Typography>
-                            <Typography variant="h5" component="h2">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="assigned-simple">
-                                  Assigned To
-                                </InputLabel>
-                                <Select
-                                  value={this.state.assigned}
-                                  onChange={this.handleSelectChange}
-                                  inputProps={{
-                                    name: "assigned",
-                                    id: "assigned-simple"
-                                  }}
-                                >
-                                  {this.state.assignedList.map(person => {
-                                    return (
-                                      <MenuItem key={person.id} value={person.id}>
-                                        {person.fullName}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                              <br />
-                              <br />
-                              <br />
-                            </Typography>
-                            <div className={classes.spaceTop}>
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={this.handleSubmit}
-                                className={classes.secondary}
-                              >
-                                {this.state.buttonText}
-                              </Button>
-                            </div>
-                            <br />
-                          </TableCell>
-                        </TableRow>
-                      </Table>
+                      <Typography
+                        style={{ textTransform: "uppercase" }}
+                        color="secondary"
+                        gutterBottom
+                      >
+                        Action Detail<br/>
+                      </Typography>
+                      <Typography variant="h6">
+                        Project: {this.state.projectName}
+                      </Typography>
+                      <Typography variant="h6">
+                        Organization: {getOrgName()}
+                      </Typography>
+                      <Typography variant="h5" component="h2">
+                        <TextField
+                          required
+                          id="title-required"
+                          label="Title"
+                          onChange={this.handleChange("title")}
+                          value={this.state.title}
+                          className={classes.textField}
+                          margin="normal"
+                        />
+                      </Typography>
+                      <Typography component="p">
+                        <TextField
+                          id="description"
+                          label="Description"
+                          multiline
+                          rowsMax="6"
+                          value={this.state.description}
+                          onChange={this.handleChange("description")}
+                          className={classes.textField}
+                          fullWidth
+                          margin="normal"
+                          InputLabelProps={{
+                            shrink: true
+                          }}
+                        />
+                      </Typography>
+                      <Typography variant="h5" component="h2">
+                        <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor="assigned-simple">
+                            Priority
+                          </InputLabel>
+                          <Select
+                            value={this.state.priority}
+                            onChange={this.handleSelectChange}
+                            inputProps={{
+                              name: "priority",
+                              id: "priority-simple"
+                            }}
+                          >
+                            {this.state.priorityList.map(priority => {
+                              return (
+                                <MenuItem key={priority.id} value={priority.id}>
+                                  {priority.label}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Typography>
+                      <Typography variant="h5" component="h2">
+                        <FormControl className={classes.formControl}>
+                          <InputLabel htmlFor="assigned-simple">
+                            Assigned To
+                          </InputLabel>
+                          <Select
+                            value={this.state.assigned}
+                            onChange={this.handleSelectChange}
+                            inputProps={{
+                              name: "assigned",
+                              id: "assigned-simple"
+                            }}
+                          >
+                            {this.state.assignedList.map(person => {
+                              return (
+                                <MenuItem key={person.id} value={person.id}>
+                                  {person.fullName}
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </FormControl>
+                        <br />
+                        <br />
+                        <br />
+                      </Typography>
+                      <div className={classes.spaceTop}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={this.handleSubmit}
+                          className={classes.secondary}
+                        >
+                          {this.state.buttonText}
+                        </Button>
+                      </div>
+                      <br />
                     </CardContent>
                   </Card>
                 </Grid>
+
               </Grid>
             </Grid>
+
+
           </div>
         </form>
       </React.Fragment>

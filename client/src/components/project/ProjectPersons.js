@@ -162,11 +162,6 @@ class ProjectPersons extends React.Component {
 
     return (
       <div>
-        <div className={classes.box}>
-          <Typography color="secondary" gutterBottom>
-            Select people assigned to project: {this.state.projectName}
-          </Typography>
-        </div>
         <div>
           <Typography variant="body1" gutterBottom>
             <div className={classes.tableWrapper}>

@@ -42,8 +42,8 @@ class KpiCard extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
-    this.handleDeleteChip = this.handleDeleteChip.bind(this);
-    this.handleAddChip = this.handleAddChip.bind(this);
+    //this.handleDeleteChip = this.handleDeleteChip.bind(this);
+    //this.handleAddChip = this.handleAddChip.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -90,6 +90,7 @@ class KpiCard extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  /*
   handleDeleteChip(index) {
     this.handleUpdate([
       ...this.props.list.slice(0, index),
@@ -109,6 +110,7 @@ class KpiCard extends React.Component {
     ]);
     this.setState({nextItem: '', editingChip: -1});
   };
+  */
 
   componentDidCatch(error, info) {
     console.log("error: " + error + ", info: " + info);
@@ -119,10 +121,13 @@ class KpiCard extends React.Component {
   //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
   handleSubmit(event) {
     event.preventDefault();
+    // Project ID and KPI id (if there is the latter, are passed in by location.state.
+    const projectId = this.props.location.state.projectId;
+    const kpiId = this.props.location.state.kpiId;
 
     setTimeout(() => {
-      if (this.state.id > 0) {
-        let updatePath = "/api/kpis/" + this.state.id;
+      if (kpiId > 0) {
+        let updatePath = "/api/kpis/" + kpiId;
         fetch(updatePath, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -130,14 +135,14 @@ class KpiCard extends React.Component {
         })
           .then(response => {
             if (response.status.toString().localeCompare("201")) {
-              this.setState({ msg: "KPI updated" });
+              return <Redirect to={`/project/${projectId}`} />;
             }
           })
           .catch(err => {
-            //console.log(err);
+            console.log(err);
           });
       } else {
-        // No project id, so we will do a create.  The difference
+        // No KPI id, so we will do a create.  The difference
         // is we do a POST instead of a PUT.
         fetch("/api/kpis", {
           method: "POST",
@@ -146,8 +151,11 @@ class KpiCard extends React.Component {
         })
           .then(response => {
             if (response.status.toString().localeCompare("201")) {
-              this.setState({ msg: "KPI created" });
+              return <Redirect to={`/project/${projectId}`} />;
             }
+          })
+          .then(() => {
+            return <Redirect to={`/project/${projectId}`}/>;
           })
           .catch(err => {
             //console.log(err);
@@ -172,17 +180,16 @@ class KpiCard extends React.Component {
 
   componentDidMount() {
     this.setOrganizationInfo();
-    const projid = this.props.location.state;
-    this.setState({
-      projectId: projid
-    });
+    // Project ID and KPI id (if there is the latter, are passed in by location.state.
+    const projectId = this.props.location.state.projectId;
+    const kpiId = this.props.location.state.kpiId;
 
-    if (parseInt(this.props.match.params.id) > 0) {
-      fetch(`/api/kpis/${this.props.match.params.id}`)
+    if (parseInt(kpiId) > 0) {
+      fetch(`/api/kpis/${kpiId}`)
         .then(res => res.json())
         .then(kpi => {
           this.setState({
-            id: this.props.match.params.id,
+            id: kpiId,
             title: kpi.title,
             description: kpi.description,
             level: kpi.level,
@@ -191,13 +198,14 @@ class KpiCard extends React.Component {
             deptId: kpi.deptId,
             type: kpi.type,
             kpitype: kpi.type,
-            projectid: kpi.projectId,
+            projectId: projectId,
             buttonText: "Update"
           });
         });
     } else {
       this.setState({
         isEditing: true,
+        projectId: projectId,
         buttonText: "Create"
       });
     }

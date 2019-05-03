@@ -23,16 +23,9 @@ import SectionHeader from "../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Button from "@material-ui/core/Button";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpandMoreIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
 import KpiTable from "./KpiTable";
@@ -254,9 +247,14 @@ class Project extends React.Component {
               <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handlePanelChange('panel1')}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>KPIs</Typography>
+                  <Typography className={classes.secondaryHeading}>
+
+                  </Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/kpicard`} className={classes.fab}>
+                  <Fab component={Link} size="small" color="primary" aria-label="Add"
+                    to={{pathname: '/kpicard', state: {projectId: projId} }}
+                    className={classes.fab}>
                     <AddIcon />
                   </Fab>
                   <KpiTable projectId={projId}/>
@@ -267,7 +265,9 @@ class Project extends React.Component {
                   <Typography className={classes.heading}>Actions</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/actioncard`} className={classes.fab}>
+                  <Fab component={Link} size="small" color="primary" aria-label="Add"
+                    to={{pathname: '/actioncard', state: {projectId: projId} }}
+                    className={classes.fab}>
                     <AddIcon />
                   </Fab>
                   <ActionTable projectId={projId}/>
@@ -278,7 +278,7 @@ class Project extends React.Component {
                   <Typography className={classes.heading}>People</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} variant="contained" size="small" color="primary" aria-label="Add" to={`/kpicard`} className={classes.fab}>
+                  <Fab component={Link} size="small" color="primary" aria-label="Add" to={`/personcard`} className={classes.fab}>
                     <AddIcon />
                   </Fab>
                   <ProjectPersons projectId={projId}/>

@@ -1,0 +1,81 @@
+{
+  "project": {},
+  "projectId": 0,
+  "title": "2",
+  "type": "lagging",
+  "level": "2",
+  "org": "",
+  "orgId": 2,
+  "orgName": "Northwest Lumber",
+  "departments": [
+    {
+      "id": 5,
+      "orgId": 2,
+      "name": "Another Dept",
+      "description": null,
+      "createdAt": null,
+      "updatedAt": null
+    },
+    {
+      "id": 6,
+      "orgId": 2,
+      "name": "Executive Management",
+      "description": null,
+      "createdAt": null,
+      "updatedAt": null
+    }
+  ],
+  "deptId": 6,
+  "description": "2",
+  "formula": "2",
+  "startAt": "",
+  "endAt": "",
+  "msg": "",
+  "kpitype": "",
+  "buttonText": "Create",
+  "isEditing": true,
+  "redirect": false,
+  "isNew": false,
+  "expanded": false,
+  "hasError": false,
+  "labelWidth": 0,
+  "focus": false,
+  "nextItem": "",
+  "selectedChip": -1,
+  "editingChip": -1,
+  "projectid": "118",
+  "organizations": [
+    {
+      "id": 5,
+      "name": "Another Company"
+    },
+    {
+      "id": 3,
+      "name": "Diamond Wind Turbine"
+    },
+    {
+      "id": 9,
+      "name": "Dummy Company"
+    },
+    {
+      "id": 7,
+      "name": "Invenergy"
+    },
+    {
+      "id": 2,
+      "name": "Northwest Lumber"
+    },
+    {
+      "id": 8,
+      "name": "Puget Sound Energy"
+    },
+    {
+      "id": 4,
+      "name": "Thoughtive"
+    },
+    {
+      "id": 1,
+      "name": "ValueInfinity"
+    }
+  ]
+}

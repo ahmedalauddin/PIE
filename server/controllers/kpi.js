@@ -16,7 +16,11 @@ const Organization = require("../models").Organization;
 const callerType = "controller";
 
 module.exports = {
+
   create(req, res) {
+    const projectId = req.body.projectId;
+    logger.debug(`${callerType} create -> projectId: ${projectId}`);
+    logger.debug(`${callerType} create -> JSON: req.body: ${JSON.stringify(req.body)}`);
     return models.Kpi.create({
       title: req.body.title,
       description: req.body.description,
@@ -26,9 +30,19 @@ module.exports = {
       status: req.body.taskstatus,
       orgId: req.body.orgId
     })
-      .then(_k => {
-        logger.debug(`${callerType} create -> added kpi, id: ${_k.id}`);
-        res.status(201).send(_k);
+      .then(k => {
+        logger.debug(`${callerType} create -> added kpi, id: ${k.id}`);
+        // SQL to insert all people from the org into the ProjectPersons table with
+        // the project id.
+        let kpiId = k.id;
+        let sql = "INSERT into `KpiProjects` " +
+          "(projectId, KpiId)  " +
+          "values (" + projectId + ", " + kpiId + ")";
+        logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
+        return models.sequelize.query(sql);
+      })
+      .then(() => {
+        res.status(201).send();
       })
       .catch(error => {
         logger.error(`${callerType} create -> error: ${error.stack}`);
@@ -100,7 +114,6 @@ module.exports = {
     // here, http://docs.sequelizejs.com/manual/associations.html#belongs-to-many-associations, for
     // User.findAll.
     return models.Kpi.findAll({
-
       order: [["title", "DESC"]],
       include: [
         {

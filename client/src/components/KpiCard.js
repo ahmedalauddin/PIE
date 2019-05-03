@@ -155,7 +155,8 @@ class KpiCard extends React.Component {
             }
           })
           .then(() => {
-            return <Redirect to={`/project/${projectId}`}/>;
+            // Redirect to the Project component.
+            this.props.history.push(`/project/${projectId}`);
           })
           .catch(err => {
             //console.log(err);

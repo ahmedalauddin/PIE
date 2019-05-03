@@ -118,9 +118,10 @@ class ActionCard extends React.Component {
           body: JSON.stringify(this.state)
         })
           .then(data => {
-            // TODO - make sure this works.
+            // Redirect to the Project component.
+            // TODO - pass a message to Project indicating the action creation
+            // was successful.
             this.props.history.push(`/project/${projectId}`);
-            //this.setState({ msg: "Action item created" });
           })
           .catch(err => {
             //console.log(err);

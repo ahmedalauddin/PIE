@@ -79,6 +79,7 @@ models.sequelize
     require("./server/routes/mindmap")(router);
     require("./server/routes/task")(router);
     require("./server/routes/taskpriority")(router);
+    require("./server/routes/kpitag")(router);
     require("./server/routes/auth")(router);
   })
   .catch(error => {

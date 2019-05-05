@@ -16,6 +16,7 @@ const Department = require("./department");
 const TaskStatus = require("./taskstatus");
 const TaskPriority = require("./taskpriority");
 const Kpi = require("./kpi");
+const KpiTag = require("./kpitag");
 const Mindmap = require("./mindmap");
 const Task = require("./task");
 const ProjectPerson = require("./projectperson");
@@ -28,6 +29,7 @@ module.exports = {
   Department,
   TaskStatus,
   TaskPriority,
+  KpiTag,
   Kpi,
   Mindmap,
   Task,

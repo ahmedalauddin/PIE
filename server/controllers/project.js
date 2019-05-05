@@ -14,7 +14,6 @@
 const Organization = require("../models").Organization;
 const Project = require("../models").Project;
 const KPI = require("../models").Kpi;
-const KpiProject = require("../models").KpiProject;
 const Task = require("../models").Task;
 const Person = require("../models").Person;
 const models = require("../models");
@@ -23,7 +22,8 @@ const util = require("util");
 const callerType = "controller";
 
 module.exports = {
-  // creates a project
+  // Creates a project in the Project table, then inserts into ProjectPersons, setting its
+  // `inProject` flag to false for all people.
   create(req, res) {
     let _obj = util.inspect(req, { showHidden: false, depth: null });
     logger.debug(`${callerType} create -> request: ${_obj}`);
@@ -228,7 +228,6 @@ module.exports = {
   },
 
   // get projects by organization
-  // TODO - need left outer joins!!!!
   getProjectDashboard(req, res) {
     // TODO - need to pass in org id
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`,\
@@ -238,7 +237,7 @@ module.exports = {
       from Projects P left outer join TaskStatuses TS on P.statusId = TS.id \
       left outer join Kpis K on P.mainKpiId = K.id  \
       where P.orgId = " + req.params.orgId + " order by P.title";
-      return models.sequelize
+    return models.sequelize
       .query(sql,
         {
           type: models.sequelize.QueryTypes.SELECT,

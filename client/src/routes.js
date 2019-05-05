@@ -28,6 +28,7 @@ import About from "./components/About";
 import DepartmentCard from "./components/DepartmentCard";
 import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
+import Kpi from "./components/Kpi";
 import Analytics from "./components/Analytics";
 import TestProject from "./components/project/TestProject";
 import TestChip  from "./components/project/TestChip";
@@ -64,6 +65,7 @@ export default props => (
         <Route exact path="/newproject" component={withAuth(NewProject)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/kpicard" component={withAuth(KpiCard)} />
+        <Route exact path="/kpi" component={withAuth(Kpi)} />
         <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />
         <Route exact path="/actioncard" component={withAuth(ActionCard)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />

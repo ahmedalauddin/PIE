@@ -16,6 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import { Link } from "react-router-dom";
 
 let counter = 0;
 
@@ -247,7 +248,16 @@ class KpiTable extends React.Component {
                       <TableCell component="th" scope="row" padding="none">
                         {n.id}
                       </TableCell>
-                      <TableCell align="left">{n.title}</TableCell>
+                      <TableCell align="left">
+                        <Link to={{
+                          pathname: '/kpi',
+                          state: {
+                            projectId: this.props.projectId,
+                            kpiId: n.id
+                          } }}>
+                          {n.title}
+                        </Link>
+                      </TableCell>
                       <TableCell align="left">{n.description}</TableCell>
                       <TableCell align="left">{n.type}</TableCell>
                     </TableRow>

@@ -83,7 +83,7 @@ class KpiCard extends React.Component {
     labelWidth: 0,
     focus: false,
     nextItem: '',
-    tags: [],
+    tags: [{id: '', text: ''}],
     suggestions: [
       { id: 'Cluster analysis', text: 'Cluster analysis' },
       { id: 'Linear regression', text: 'Linear regression' },
@@ -135,7 +135,6 @@ class KpiCard extends React.Component {
     return <Redirect to="/Login" />;
   };
 
-  //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
   handleSubmit(event) {
     event.preventDefault();
     // Project ID and KPI id (if there is the latter, are passed in by location.state.
@@ -173,7 +172,8 @@ class KpiCard extends React.Component {
           })
           .then(() => {
             // Redirect to the Project component.
-            this.props.history.push(`/project/${projectId}`);
+            // TODO - uncomment this
+            // this.props.history.push(`/project/${projectId}`);
           })
           .catch(err => {
             //console.log(err);
@@ -216,9 +216,14 @@ class KpiCard extends React.Component {
             deptId: kpi.deptId,
             type: kpi.type,
             kpitype: kpi.type,
+            tags: kpi.tags.map(item => ({
+              id: item.tag,
+              text: item.tag,
+            })),
             projectId: projectId,
             buttonText: "Update"
           });
+          let x = 1;
         });
     } else {
       this.setState({
@@ -251,162 +256,153 @@ class KpiCard extends React.Component {
           <div className={classes.root}>
             <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
               <Grid item lg={10}>
+                <Paper className={classes.paper}>
+
+                  <Typography
+                    style={{ textTransform: "uppercase" }}
+                    color="secondary"
+                    gutterBottom
+                  >
+                    KPI Detail
+                  </Typography>
+
+                  <Typography color="secondary" gutterBottom>
+                    {this.state.msg}
+                  </Typography>
 
 
 
-                  <SectionHeader title="" subtitle="" />
-                  <Card className={classes.card}>
-                    <CardContent>
-                      <Table>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography
-                              style={{ textTransform: "uppercase" }}
-                              color="secondary"
-                              gutterBottom
-                            >
-                              KPI Detail
-                            </Typography>
-                          </TableCell>
-                          <Typography color="secondary" gutterBottom>
-                            {this.state.msg}
-                          </Typography>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell style={{ verticalAlign: "top" }}>
-                            <Typography variant="h5" component="h2">
-                              <TextField
-                                required
-                                id="title-required"
-                                label="Title"
-                                onChange={this.handleChange("title")}
-                                value={this.state.title}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="description"
-                                label="Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.description}
-                                onChange={this.handleChange("description")}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="formula"
-                                label="Formula Description"
-                                multiline
-                                rowsMax="6"
-                                value={this.state.formula}
-                                onChange={this.handleChange("formula")}
-                                className={classes.textField}
-                                fullWidth
-                                margin="normal"
-                                InputLabelProps={{
-                                  shrink: true
-                                }}
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="dept-simple">
-                                  Department
-                                </InputLabel>
-                                <Select
-                                  value={this.state.deptId}
-                                  onChange={this.handleSelectChange}
-                                  inputProps={{
-                                    name: "deptId",
-                                    id: "deptId"
-                                  }}
-                                >
-                                  {this.state.departments.map(dept => {
-                                    return (
-                                      <MenuItem key={dept.id} value={dept.id}>
-                                        {dept.name}
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </Select>
-                              </FormControl>
-                              <br />
-                              <br />
-                            </Typography>
-                            <Typography component="p">
-                              <TextField
-                                id="level"
-                                label="Level"
-                                onChange={this.handleChange("level")}
-                                value={this.state.level}
-                                className={classes.textField}
-                                margin="normal"
-                              />
-                            </Typography>
-                            <Typography component="p">
-                              <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
-                              <FormControl className={classes.formControl}>
-                                <Select
-                                  value={this.state.type}
-                                  onChange={this.handleSelectChange}
-                                  inputProps={{
-                                    name: 'type',
-                                    id: 'kpi-type-simple',
-                                  }}
-                                >
-                                  <MenuItem value="">None</MenuItem>
-                                  <MenuItem value="lagging">Lagging</MenuItem>
-                                  <MenuItem value="leading">Leading</MenuItem>
-                                </Select>
-                              </FormControl>
-                              <br/><br/><br/>
-                            </Typography>
-                            <div>
-                              <Typography component="p">
-                                KPI Tags
-                              </Typography>
-                              <ReactTags
-                                classNames={{
-                                  tags: "ReactTags__tags",
-                                  tagInput: "ReactTags__tagInput",
-                                  tagInputField: "ReactTags__tagInput input.ReactTags__tagInputField:focus",
-                                  selected: "ReactTags__selected",
-                                  suggestions: "ReactTags__suggestions ul",
-                                  activeSuggestion: "ReactTags__suggestions ul li.ReactTags__activeSuggestion"}}
-                                tags={tags}
-                                suggestions={suggestions}
-                                handleDelete={this.handleDelete}
-                                handleAddition={this.handleAddition}
-                                handleDrag={this.handleDrag}
-                                delimiters={delimiters} />
-                            </div>
-                            <br /><br />
-                            <Typography component="p">
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={this.handleSubmit}
-                                className={classes.secondary}
-                              >
-                                {this.state.buttonText}
-                              </Button>
-                            </Typography>
-                            <br />
-                          </TableCell>
-                        </TableRow>
-                      </Table>
-                    </CardContent>
-                  </Card>
+                  <Typography variant="h5" component="h2">
+                    <TextField
+                      required
+                      id="title-required"
+                      label="Title"
+                      fullWidth
+                      onChange={this.handleChange("title")}
+                      value={this.state.title}
+                      className={classes.textField}
+                      margin="normal"
+                    />
+                  </Typography>
+                  <Typography component="p">
+                    <TextField
+                      id="description"
+                      label="Description"
+                      multiline
+                      rowsMax="6"
+                      value={this.state.description}
+                      onChange={this.handleChange("description")}
+                      className={classes.textField}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                    />
+                  </Typography>
+                  <Typography component="p">
+                    <TextField
+                      id="formula"
+                      label="Formula Description"
+                      multiline
+                      rowsMax="6"
+                      value={this.state.formula}
+                      onChange={this.handleChange("formula")}
+                      className={classes.textField}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                    />
+                  </Typography>
+                  <Typography component="p">
+                    <FormControl className={classes.formControl}>
+                      <InputLabel htmlFor="dept-simple">
+                        Department
+                      </InputLabel>
+                      <Select
+                        value={this.state.deptId}
+                        onChange={this.handleSelectChange}
+                        inputProps={{
+                          name: "deptId",
+                          id: "deptId"
+                        }}
+                      >
+                        {this.state.departments.map(dept => {
+                          return (
+                            <MenuItem key={dept.id} value={dept.id}>
+                              {dept.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                    <br />
+                    <br />
+                  </Typography>
+                  <Typography component="p">
+                    <TextField
+                      id="level"
+                      label="Level"
+                      onChange={this.handleChange("level")}
+                      value={this.state.level}
+                      className={classes.textField}
+                      margin="normal"
+                    />
+                  </Typography>
+                  <Typography component="p">
+                    <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
+                    <FormControl className={classes.formControl}>
+                      <Select
+                        value={this.state.type}
+                        onChange={this.handleSelectChange}
+                        inputProps={{
+                          name: 'type',
+                          id: 'kpi-type-simple',
+                        }}
+                      >
+                        <MenuItem value="">None</MenuItem>
+                        <MenuItem value="lagging">Lagging</MenuItem>
+                        <MenuItem value="leading">Leading</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <br/><br/><br/>
+                  </Typography>
+                  <div>
+                    <Typography component="p">
+                      KPI Tags
+                    </Typography>
+                    <ReactTags
+                      classNames={{
+                        tags: "ReactTags__tags",
+                        tagInput: "ReactTags__tagInput",
+                        tagInputField: "ReactTags__tagInput input.ReactTags__tagInputField:focus",
+                        selected: "ReactTags__selected",
+                        suggestions: "ReactTags__suggestions ul",
+                        activeSuggestion: "ReactTags__suggestions ul li.ReactTags__activeSuggestion"}}
+                      tags={tags}
+                      suggestions={suggestions}
+                      handleDelete={this.handleDelete}
+                      handleAddition={this.handleAddition}
+                      handleDrag={this.handleDrag}
+                      delimiters={delimiters} />
+                  </div>
+                  <br /><br />
+                  <Typography component="p">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={this.handleSubmit}
+                      className={classes.secondary}
+                    >
+                      {this.state.buttonText}
+                    </Button>
+                  </Typography>
+                  <br />
 
+
+                </Paper>
               </Grid>
             </Grid>
           </div>

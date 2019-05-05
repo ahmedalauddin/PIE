@@ -72,6 +72,13 @@ module.exports = (sequelize, DataTypes) => {
   logger.debug(`${callerType} Kpi end definition`);
 
   Kpi.associate = models => {
+    logger.debug(`${callerType} Kpi hasMany KpiTag`);
+    Kpi.hasMany(models.KpiTag, {
+      as: "tags",
+      foreignKey: "kpiId",
+      targetKey: "kpiId"
+    });
+
     logger.debug(`${callerType} Kpi belongsTo Organization`);
     Kpi.belongsTo(models.Organization, {
       as: "organization",

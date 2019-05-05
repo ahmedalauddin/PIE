@@ -19,6 +19,7 @@ module.exports = {
 
   create(req, res) {
     const projectId = req.body.projectId;
+    let kpiId = null;
     logger.debug(`${callerType} create -> projectId: ${projectId}`);
     logger.debug(`${callerType} create -> JSON: req.body: ${JSON.stringify(req.body)}`);
     return models.Kpi.create({
@@ -34,12 +35,34 @@ module.exports = {
         logger.debug(`${callerType} create -> added kpi, id: ${k.id}`);
         // SQL to insert all people from the org into the ProjectPersons table with
         // the project id.
-        let kpiId = k.id;
+        kpiId = k.id;
         let sql = "INSERT into `KpiProjects` " +
           "(projectId, KpiId)  " +
           "values (" + projectId + ", " + kpiId + ")";
         logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
         return models.sequelize.query(sql);
+      })
+      .then(() => {
+        // SQL to insert all tags.  Need to loop through the array of tags to build the strings of values
+        // we'll insert.
+        let tags = req.body.tags;
+        let tag = "";
+        if (tags.length > 0) {
+          let valueStr = "";
+          for (let i = 0; i < tags.length; i++) {
+            tag = tags[i].text;
+            valueStr += "(" + kpiId.toString() + ", '" + tag + "')";
+            if (i < (tags.length-1)) {
+              valueStr += ",";
+            }
+          }
+          let sql =
+            "INSERT into `KpiTags` (kpiId, tag) " +
+            "values " + valueStr + " " +
+            "ON DUPLICATE KEY UPDATE kpiId=" + kpiId;
+          logger.debug(`${callerType} insert KpiTags -> sql: ${sql}`);
+          return models.sequelize.query(sql);
+        }
       })
       .then(() => {
         res.status(201).send();
@@ -92,6 +115,14 @@ module.exports = {
         {
           model: models.Department,
           as: "department"
+        },
+        {
+          model: models.Project,
+          as: "project"
+        },
+        {
+          model: models.KpiTag,
+          as: "tags"
         }
       ]
     })

@@ -74,18 +74,19 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: May 3, 2019<br/><br/>
+                          Build date: May 6, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Notes: Changes to project component. Now allows you to see and edit the project on the
-                          left side of the screen with tabs for KPIs, actions, and people associated with the project
-                          on the right side.
-
-                          Other Sequelize changes to populate the ProjectPersons table when the project is created.
-
-                          Signup option has been move into the Login component and removed from the appbar.
+                          Changes to project component.
+                          <ul>
+                            <li>Ability to add and update a project has been fixed.</li>
+                            <li>Tags added to KPIs. Provides ability to add multiple tags to a KPI.</li>
+                            <li>Added Sequelize code to support tags.</li>
+                            <li>Minor updates for fomatting.</li>
+                            <li>Added edit icons to the list of KPIs displayed on the project screen.</li>
+                          </ul>
                         </Typography>
                       </div>
                     </CardContent>

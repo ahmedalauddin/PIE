@@ -4,8 +4,8 @@
  * Created:  2019-03-23 14:04:12
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-23 15:08:22
- * Editor:   Darrin Tisdale
+ * Modified: 2019-05-05
+ * Editor:   Brad Kaufman
  */
 
 import { combineReducers, createStore } from "redux";
@@ -30,6 +30,17 @@ export const setUser = userData => ({
 export const setOrg = orgData => ({
   type: "ORGANIZATION",
   payload: orgData
+});
+
+/**
+ * *setProject*
+ * redux action to set the organization
+ *
+ * @param {*} projectData
+ */
+export const setProject = projectData => ({
+  type: "PROJECT",
+  payload: projectData
 });
 
 // local default date, used during initialization
@@ -58,8 +69,13 @@ export const reducers = (state = defaultState, action) => {
         ...state,
         organization: action.payload
       };
+    case "PROJECT":
+      return {
+        ...state,
+        project: action.payload
+      };
     default:
-      return state;
+    return state;
   }
 };
 
@@ -154,4 +170,15 @@ export function getUserOrgName() {
  */
 export function getOrgDepartments() {
   return JSON.parse(store.getState().state.organization).departments;
+}
+
+/**
+ * *getProject*
+ * Retrieve the project from redux
+ *
+ * @export
+ * @returns JSON with the information from the active project being used.
+ */
+export function getProject() {
+  return JSON.parse(store.getState().state.project);
 }

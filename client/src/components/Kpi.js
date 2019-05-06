@@ -33,6 +33,8 @@ import { Redirect } from "react-router-dom";
 import { WithContext as ReactTags } from "react-tag-input";
 import "./styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
+import EditIcon from "@material-ui/icons/Edit";
+import IconButton from "@material-ui/core/IconButton";
 
 const KeyCodes = {
   comma: 188,
@@ -66,6 +68,7 @@ class KpiCard extends React.Component {
     org: "",
     orgId: 0,
     orgName: "",
+    projectName: "",
     departments: [],
     deptId: 0,
     description: "",
@@ -213,6 +216,7 @@ class KpiCard extends React.Component {
             level: kpi.level,
             formula: kpi.formulaDescription,
             orgId: kpi.orgId,
+            projectName: kpi.project.title,
             deptId: kpi.deptId,
             type: kpi.type,
             kpitype: kpi.type,
@@ -263,15 +267,14 @@ class KpiCard extends React.Component {
                     color="secondary"
                     gutterBottom
                   >
-                    KPI Detail
+                    KPI Detail<br/>
                   </Typography>
-
-                  <Typography color="secondary" gutterBottom>
-                    {this.state.msg}
+                  <Typography variant="h6">
+                    Project: {this.state.projectName}
                   </Typography>
-
-
-
+                  <Typography variant="h6">
+                    Organization: {getOrgName()}
+                  </Typography>
                   <Typography variant="h5" component="h2">
                     <TextField
                       required

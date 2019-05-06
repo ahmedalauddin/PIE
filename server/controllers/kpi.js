@@ -159,6 +159,10 @@ module.exports = {
         {
           model: models.Department,
           as: "department"
+        },
+        {
+          model: models.KpiTag,
+          as: "tags"
         }
       ]
     })

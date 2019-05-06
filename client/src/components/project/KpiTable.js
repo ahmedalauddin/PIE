@@ -11,12 +11,13 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link } from "react-router-dom";
+import EditIcon from "@material-ui/icons/Edit";
+import IconButton from "@material-ui/core/IconButton";
 
 let counter = 0;
 
@@ -45,11 +46,14 @@ function getSorting(order, orderBy) {
 }
 
 // TODO - convert rows into KPI data.
+
 const rows = [
-  { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
-  { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-  { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
+  { id: "edit", numeric: false, disablePadding: false, label: "" },
+  { id: "id", numeric: false, disablePadding: false, label: "ID" },
+  { id: "title", numeric: false, disablePadding: false, label: "Title" },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" },
+  { id: "type", numeric: false, disablePadding: false, label: "Type" },
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -127,9 +131,6 @@ const toolbarStyles = theme => ({
   },
 });
 
-
-
-
 const styles = theme => ({
   root: {
     width: '100%',
@@ -143,7 +144,13 @@ const styles = theme => ({
   },
 });
 
+
 class KpiTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.editComponent = this.editComponent.bind(this);
+  }
+
   state = {
     order: 'asc',
     orderBy: 'title',
@@ -164,6 +171,16 @@ class KpiTable extends React.Component {
         .then(res => res.json())
         .then(kpis => this.setState({ data: kpis }));
     }
+  }
+
+  editComponent(id) {
+    return `<Redirect to={{
+      pathname: '/kpi',
+      state: {
+        projectId: ${this.props.projectId},
+        kpiId: ${id}
+      }
+    }} />`;
   }
 
   handleRequestSort = (event, property) => {
@@ -246,6 +263,12 @@ class KpiTable extends React.Component {
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
+                        <IconButton onClick={this.editComponent(n.id)}>
+                          <EditIcon color="primary" />
+                        </IconButton>
+
+                      </TableCell>
+                      <TableCell component="th" scope="row" padding="none">
                         {n.id}
                       </TableCell>
                       <TableCell align="left">
@@ -260,6 +283,7 @@ class KpiTable extends React.Component {
                       </TableCell>
                       <TableCell align="left">{n.description}</TableCell>
                       <TableCell align="left">{n.type}</TableCell>
+                      <TableCell align="left">{n.tags.map(tag => tag.tag).join(", ")}</TableCell>
                     </TableRow>
                   );
                 })}

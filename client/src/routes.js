@@ -30,6 +30,7 @@ import OrganizationCard from "./components/OrganizationCard";
 import KpiCard from "./components/KpiCard";
 import Kpi from "./components/Kpi";
 import Analytics from "./components/Analytics";
+import Search from "./components/kpi/Search";
 import TestProject from "./components/project/TestProject";
 import TestChip  from "./components/project/TestChip";
 import withAuth from "./components/withAuth.jsx";
@@ -73,6 +74,7 @@ export default props => (
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
+        <Route exact path="/search" component={Search} />
         <Route exact path="/testproject" component={TestProject} />
         <Route exact path="/chip" component={TestChip} />
       </Switch>

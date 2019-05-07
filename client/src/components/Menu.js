@@ -8,11 +8,10 @@ const Menu = [
     label: "Dashboard",
     pathname: "/paneldashboard"
   },
-  /*
   {
-    label: "Recent",
-    pathname: "/highlight"
-  }, */
+    label: "Search",
+    pathname: "/search"
+  },
   {
     label: "Login",
     pathname: "/login"

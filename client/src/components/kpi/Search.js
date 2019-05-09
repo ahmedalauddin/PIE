@@ -1,7 +1,7 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/Login.js
- * Descr:    Login component, authenticates the user into the app.
+ * File:     /client/src/components/kpi/Search.js
+ * Descr:    Search component for KPIs.
  * Created:  2019-02-04
  * Author:   Brad Kaufman
  * Descr:    Login and authentication for the app.
@@ -24,7 +24,7 @@ import { store, setUser } from "../../redux";
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import TableCell from "@material-ui/core/TableCell";
 import SearchIcon from "@material-ui/icons/Search";
-import InputBase from "@material-ui/core/InputBase";
+import KpiSearchResults from "./KpiSearchResults";
 
 const styles = theme => ({
   root: {
@@ -101,18 +101,9 @@ class Search extends React.Component {
   // fields.
   state = {
     id: "",
-    email: "",
-    pwdhash: "",
-    password: "",
-    isEditing: false,
-    isLoggedIn: false,
-    isFailedLogin: false,
-    readyToRedirect: false,
-    userData: "",
-    storeUser: "",
-    expanded: false,
-    labelWidth: 0,
-    msgText: ""
+    searchText: "",
+    searchString: "",
+    kpis: []
   };
 
   constructor(props) {
@@ -132,52 +123,23 @@ class Search extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    // Authenticate against the username
-    fetch("/api/auth/authenticate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(this.state)
-    })
-      .then(response => {
-        if (!response.ok) {
-          // here, we get out of the then handlers and
-          // over to the catch handler
-          throw new Error("Network response was not ok.");
-        } else {
-          // status code 200 is success.
-          console.log("Login.js, logged in. Status = 200");
-          return response.json();
-        }
-      })
-      .then(data => {
-        store.dispatch(setUser(JSON.stringify(data)));
-        console.log("Login.js, user:" + JSON.stringify(data));
-      })
-      .then(() => {
-        console.log("Ready to redirect");
-        this.setState({
-          isLoggedIn: true,
-          readyToRedirect: true
-        });
-      })
-      .catch(err => {
-        // TODO - set error login on form.
-        this.setState({
-          isFailedLogin: true,
-          msgText: "Login failed, please try again."
-        });
-      });
+    // Search KPIs
+    // TODO - get text from <InputBase>
+    let searchText = this.state.searchText;
+    if (searchText != "") {
+      this.setState({searchString: searchText});
+    }
   }
+
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
 
   componentDidMount() {}
 
   render() {
     const { classes } = this.props;
     const currentPath = this.props.location.pathname;
-
-    if (this.state.readyToRedirect) {
-      return <Redirect to="/clientorg" />;
-    }
 
     return (
       <React.Fragment>
@@ -193,7 +155,7 @@ class Search extends React.Component {
                 container
                 className={classes.grid}
               >
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={8}>
                   <Card className={classes.card}>
                     <CardContent>
                       <Typography
@@ -203,27 +165,27 @@ class Search extends React.Component {
                         gutterBottom
                       >
                         Search KPIs
-                        <div className={classes.search}>
-                          <div className={classes.searchIcon}>
-                            <SearchIcon />
+                        <form className={classes.container} noValidate autoComplete="off">
+                          <div className={classes.search}>
+                            <TextField
+                              id="searchText"
+                              label="Search"
+                              className={classes.textField}
+                              value={this.state.searchText}
+                              onChange={this.handleChange("searchText")}
+                              margin="normal"
+                            />
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={this.handleSubmit}
+                              className={classes.secondary}
+                            >
+                              Submit
+                            </Button>
                           </div>
-                          <InputBase
-                            placeholder="Search…"
-                            classes={{
-                              root: classes.inputRoot,
-                              input: classes.inputInput,
-                            }}
-                          />
-                        </div>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={this.handleSubmit}
-                          className={classes.secondary}
-                        >
-                          Submit
-                        </Button>
-
+                        </form>
+                        <KpiSearchResults searchString={this.state.searchString}/>
                       </Typography>
                     </CardContent>
                   </Card>

@@ -85,16 +85,17 @@ class KpiCard extends React.Component {
     hasError: false,
     labelWidth: 0,
     focus: false,
-    nextItem: '',
-    tags: [{id: '', text: ''}],
+    nextItem: "",
+    tags: [{id: "", text: ""}],
     suggestions: [
-      { id: 'Cluster analysis', text: 'Cluster analysis' },
-      { id: 'Linear regression', text: 'Linear regression' },
-      { id: 'Monte Carlo simulations', text: 'Monte Carlo simulations' },
-      { id: 'Time-series analysis', text: 'Time-series analysis' },
-      { id: 'Natural language processing', text: 'Natural language processing' },
-      { id: 'Predictive analytics', text: 'Predictive analytics' },
-      { id: 'Machine learning', text: 'Machine learning' }
+      { id: "Cluster analysis", text: "Cluster analysis" },
+      { id: "Linear regression", text: "Linear regression" },
+      { id: "Monte Carlo simulations", text: "Monte Carlo simulations" },
+      { id: "Time-series analysis", text: "Time-series analysis" },
+      { id: "Natural language processing", text: "Natural language processing" },
+      { id: "Predictive analytics", text: "Predictive analytics" },
+      { id: "Logistic regression", text: "Logistic regression" },
+      { id: "Machine learning", text: "Machine learning" }
     ]
   };
 

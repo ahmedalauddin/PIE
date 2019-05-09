@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { styles } from "./styles/MaterialSense";
 
-class EditProject extends React.Component {
+class EditPerson extends React.Component {
   state = {
     person: ""
   };
@@ -100,4 +100,4 @@ class EditProject extends React.Component {
   }
 }
 
-export default withStyles(styles)(EditProject);
+export default withStyles(styles)(EditPerson);

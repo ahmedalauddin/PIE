@@ -140,6 +140,12 @@ module.exports = {
 
   // Search KPIs
   search(req, res) {
+    // TODO - add searching against view, which includes tags.
+    /*
+    select * from vw_Kpis where (tags like '%anal%' or title like '%anal%'
+                or description like '%anal%');
+     */
+
     logger.error(`${callerType} KPI, search `);
     let searchText = req.params.text;
     let sql = "select K.*, KT.*, P.title as projectTitle, O.name as orgName " +

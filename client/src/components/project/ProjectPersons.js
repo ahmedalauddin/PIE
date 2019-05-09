@@ -11,14 +11,14 @@
  */
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper/index";
-import Table from "@material-ui/core/Table/index";
-import TableBody from "@material-ui/core/TableBody/index";
-import TableCell from "@material-ui/core/TableCell/index";
-import TableHead from "@material-ui/core/TableHead/index";
-import TableRow from "@material-ui/core/TableRow/index";
-import Checkbox from "@material-ui/core/Checkbox/index";
-import Typography from "@material-ui/core/Typography/index";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Checkbox from "@material-ui/core/Checkbox";
+import Typography from "@material-ui/core/Typography";
 import { Redirect } from "react-router-dom";
 import { styles } from "../styles/MaterialSense";
 import { getOrgId } from "../../redux";

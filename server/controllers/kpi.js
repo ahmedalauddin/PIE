@@ -148,13 +148,9 @@ module.exports = {
 
     logger.error(`${callerType} KPI, search `);
     let searchText = req.params.text;
-    let sql = "select K.*, KT.*, P.title as projectTitle, O.name as orgName " +
-      "from Projects P, Organizations O, KpiProjects KP, Kpis K " +
-      "left outer join KpiTags KT on K.id = KT.kpiId " +
-      "where (KT.tag like '%" + searchText + "%' or K.title like '%" + searchText + "%' " +
-      "or K.description like '%" + searchText + "%') " +
-      "and K.id = KP.kpiId and " +
-      "KP.projectId = P.id and P.orgId = O.id";
+    let sql = "select * from vw_Kpis " +
+      "where (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
+      "or description like '%" + searchText + "%') ";
     logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
     return models.sequelize
       .query(sql,

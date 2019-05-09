@@ -14,8 +14,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link } from "react-router-dom";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
+import Checkbox from "@material-ui/core/Checkbox";
 
 let counter = 0;
 
@@ -51,6 +50,8 @@ const rows = [
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "type", numeric: false, disablePadding: false, label: "Type" },
+  { id: "project", numeric: false, disablePadding: false, label: "Project Name" },
+  { id: "organization", numeric: false, disablePadding: false, label: "Client" },
   { id: "tags", numeric: false, disablePadding: false, label: "Tags" }
 ];
 
@@ -268,11 +269,10 @@ class KpiSearchResults extends React.Component {
                       key={n.id}
                       selected={isSelected}
                     >
-                      <TableCell component="th" scope="row" padding="none">
-                        <IconButton onClick={this.editComponent(n.id)}>
-                          <EditIcon color="primary" />
-                        </IconButton>
-
+                      <TableCell component="th" scope="row" padding="checkbox">
+                        <Checkbox
+                          selected={false}
+                        />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.id}
@@ -289,7 +289,9 @@ class KpiSearchResults extends React.Component {
                       </TableCell>
                       <TableCell align="left">{n.description}</TableCell>
                       <TableCell align="left">{n.type}</TableCell>
-                      <TableCell align="left">{n.tags.map(tag => tag.tag).join(", ")}</TableCell>
+                      <TableCell align="left">{n.title}</TableCell>
+                      <TableCell align="left">{n.orgName}</TableCell>
+                      <TableCell align="left">{n.tags}</TableCell>
                     </TableRow>
                   );
                 })}

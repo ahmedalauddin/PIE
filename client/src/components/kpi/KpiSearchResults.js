@@ -10,15 +10,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { getProject, getOrgName } from "../../redux";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import CardContent from "@material-ui/core/CardContent";
 
 let counter = 0;
 
@@ -215,7 +212,8 @@ class KpiSearchResults extends React.Component {
       .then(response => {
         if (response.status === 200) {
           // status code 200 is success.
-        } else {
+          // Redirect back to the project.
+          return <Redirect to={`/project/${projectId}`} />;
         }
       })
       .catch(err => {

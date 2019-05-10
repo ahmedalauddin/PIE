@@ -121,8 +121,6 @@ class Search extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    // Search KPIs
-    // TODO - get text from <InputBase>
     let searchText = this.state.searchText;
     if (searchText != "") {
       this.setState({searchString: searchText});

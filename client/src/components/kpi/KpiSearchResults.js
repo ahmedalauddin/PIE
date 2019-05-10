@@ -14,9 +14,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link } from "react-router-dom";
+import { getProject, getOrgName } from "../../redux";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import CardContent from "@material-ui/core/CardContent";
 
 let counter = 0;
 
@@ -158,6 +160,7 @@ class KpiSearchResults extends React.Component {
   state = {
     order: 'asc',
     orderBy: 'title',
+    projectId: null,
     selected: [],
     data:[],        // this will be for the kpis
     submitted: null,
@@ -167,6 +170,7 @@ class KpiSearchResults extends React.Component {
 
   performSearch() {
     // Search KPIs
+    const projectId = getProject().id;
     let searchString = this.props.searchString;
     if (searchString != "") {
       fetch("/api/kpis-search/" + searchString, {
@@ -175,7 +179,8 @@ class KpiSearchResults extends React.Component {
         .then(res => res.json())
         .then(kpis => this.setState({
           data: kpis,
-          submitted: true
+          submitted: true,
+          projectId: projectId
         }));
     }
   }
@@ -185,7 +190,7 @@ class KpiSearchResults extends React.Component {
   }
 
   componentDidMount() {
-    this.performSearch();
+    // this.performSearch();
   }
 
   editComponent(id) {
@@ -201,9 +206,8 @@ class KpiSearchResults extends React.Component {
   handleAssign(event) {
     event.preventDefault();
 
-    // Set the JWT token with the org ID>
-    fetch("/api/kpis-assign/118", {
-    // fetch("/api/kpis-assign/" + this.props.projectId, {
+    const projectId = getProject().id;
+    fetch("/api/kpis-assign/" + projectId, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(this.state)
@@ -259,8 +263,6 @@ class KpiSearchResults extends React.Component {
     this.setState({ selected: newSelected });
   };
 
-
-
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -272,12 +274,12 @@ class KpiSearchResults extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   handleToggle = value => () => {
+    // Use "selected" on the KPI search result array to manage the checkbox toggle,
+    // stored in state as data[].
     const { selected } = this.state;
     const { data } = this.state;
     const idArray = data.map(k=> {return(k.id);});
     const currentIndex = idArray.indexOf(parseInt(value));
-    // selected[currentIndex] = !selected[currentIndex];
-    // let kpis = this.state.kpis;
     data[currentIndex].selected = !data[currentIndex].selected;
 
     this.setState({
@@ -289,7 +291,9 @@ class KpiSearchResults extends React.Component {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-    let i = 0;
+    const projectName = getProject().title;
+    const orgName = getOrgName();
+
     return (
       <div>
         <div className={classes.tableWrapper}>
@@ -342,7 +346,6 @@ class KpiSearchResults extends React.Component {
                       <TableCell align="left">{n.tags}</TableCell>
                     </TableRow>
                   );
-                  i++;
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 49 * emptyRows }}>
@@ -376,6 +379,16 @@ class KpiSearchResults extends React.Component {
         >
           Assign to Project
         </Button>
+        <Typography
+          variant="h5"
+          component="h2"
+          color="secondary"
+          gutterBottom
+        >
+          Assign to project<br/>
+          Project: {projectName}<br/>
+          Organization: (orgName}
+        </Typography>
       </div>
     );
   }

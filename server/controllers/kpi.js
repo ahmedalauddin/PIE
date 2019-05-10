@@ -14,6 +14,7 @@ const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const Organization = require("../models").Organization;
 const callerType = "controller";
+const util = require("util");
 
 module.exports = {
 
@@ -108,32 +109,63 @@ module.exports = {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
     //const id = req.params.id;
     /*
-    return models.Kpi.update(
-      {
-        title: req.body.title,
-        description: req.body.description,
-        formulaDescription: req.body.formula,
-        type: req.body.type,
-        level: req.body.level,
-        status: req.body.taskstatus,
-        orgId: req.body.orgId
-      },
-      {
-        returning: true,
-        where: {
-          id: id
+    Need something like this:
+    /*
+      INSERT into `KpiProjects`
+      (kpiId, projectId)
+      VALUES
+        ('69', '118'),
+        ('67', '118'),
+        ('66', '118')
+      ON DUPLICATE KEY
+      UPDATE projectId=projectId, kpiId=kpiId;
+     */
+    // Break the input json down into an array and we can update with one SQL statement.
+    // Use JSON.parse.
+    var jsonData = req.body.data;
+    let sqlArrays = "";
+    let sql = "";
+    let doInsert = false;
+    let projectId = req.body.projectId;
+
+    if (jsonData) {
+      // Convert the JSON into some arrays for a SQL statement.
+      for (var i = 0; i < jsonData.length; i++) {
+        // Only add items where selected is true
+        if (jsonData[i].selected === true) {
+          if (doInsert === true) {
+            sqlArrays += ", ";
+          }
+          sqlArrays += "('" + jsonData[i].id + "', '" + projectId + "') ";
+          doInsert = true;
         }
       }
-    )
-      .then(_k => {
-        logger.debug(`${callerType} update -> successful`);
-        res.status(201).send(_k);
-      })
-      .catch(error => {
-        logger.error(`${callerType} update -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-      */
+      if (doInsert === true) {
+        sql = "INSERT into `KpiProjects` " +
+          "(kpiId, projectId) " +
+          "VALUES " + sqlArrays +
+          "ON DUPLICATE KEY " +
+          "UPDATE projectId=projectId, kpiId=kpiId;"
+
+        let _obj = util.inspect(req, { showHidden: false, depth: null });
+        logger.debug(`${callerType} KPI assignToProject -> request: ${_obj}`);
+        logger.debug(`${callerType} KPI assignToProject -> sql: ${sql}`);
+
+        return models.sequelize
+          .query(sql)
+          .then(([results, metadata]) => {
+            // Results will be an empty array and metadata will contain the number of affected rows.
+            console.log("KPI assignToProject -> update: successful");
+          })
+          .catch(error => {
+            logger.error(`${callerType} KPI assignToProject -> error: ${error.stack}`);
+            res.status(400).send(error);
+          });
+      } else {
+        logger.debug(`${callerType} KPI assignToProject -> no JSON data in request`);
+        return "error - no JSON";
+      }
+    }
   },
 
   // Find a Kpi by Id

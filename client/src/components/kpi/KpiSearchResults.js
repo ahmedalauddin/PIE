@@ -15,6 +15,8 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link } from "react-router-dom";
 import Checkbox from "@material-ui/core/Checkbox";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 
 let counter = 0;
 
@@ -149,13 +151,16 @@ class KpiSearchResults extends React.Component {
     super(props);
     this.performSearch = this.performSearch.bind(this);
     this.editComponent = this.editComponent.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleAssign = this.handleAssign.bind(this);
   }
 
   state = {
     order: 'asc',
     orderBy: 'title',
     selected: [],
-    data:[],
+    data:[],        // this will be for the kpis
+    submitted: null,
     page: 0,
     rowsPerPage: 5,
   };
@@ -168,7 +173,10 @@ class KpiSearchResults extends React.Component {
         method: "GET",
       })
         .then(res => res.json())
-        .then(kpis => this.setState({ data: kpis }));
+        .then(kpis => this.setState({
+          data: kpis,
+          submitted: true
+        }));
     }
   }
 
@@ -188,6 +196,27 @@ class KpiSearchResults extends React.Component {
         kpiId: ${id}
       }
     }} />`;
+  }
+
+  handleAssign(event) {
+    event.preventDefault();
+
+    // Set the JWT token with the org ID>
+    fetch("/api/kpis-assign/118", {
+    // fetch("/api/kpis-assign/" + this.props.projectId, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.state)
+    })
+      .then(response => {
+        if (response.status === 200) {
+          // status code 200 is success.
+        } else {
+        }
+      })
+      .catch(err => {
+
+      });
   }
 
   handleRequestSort = (event, property) => {
@@ -230,6 +259,8 @@ class KpiSearchResults extends React.Component {
     this.setState({ selected: newSelected });
   };
 
+
+
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -240,11 +271,25 @@ class KpiSearchResults extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  handleToggle = value => () => {
+    const { selected } = this.state;
+    const { data } = this.state;
+    const idArray = data.map(k=> {return(k.id);});
+    const currentIndex = idArray.indexOf(parseInt(value));
+    // selected[currentIndex] = !selected[currentIndex];
+    // let kpis = this.state.kpis;
+    data[currentIndex].selected = !data[currentIndex].selected;
+
+    this.setState({
+      data: data,
+    });
+  };
+
   render() {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
+    let i = 0;
     return (
       <div>
         <div className={classes.tableWrapper}>
@@ -271,7 +316,10 @@ class KpiSearchResults extends React.Component {
                     >
                       <TableCell component="th" scope="row" padding="checkbox">
                         <Checkbox
-                          selected={false}
+                          key={n.id}
+                          checked={!!+n.selected}
+                          tabIndex={-1}
+                          onChange={this.handleToggle(n.id)}
                         />
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
@@ -281,8 +329,8 @@ class KpiSearchResults extends React.Component {
                         <Link to={{
                           pathname: '/kpi',
                           state: {
-                            projectId: this.props.projectId,
-                            kpiId: n.id
+                              projectId: this.props.projectId,
+                              kpiId: n.id
                           } }}>
                           {n.title}
                         </Link>
@@ -294,6 +342,7 @@ class KpiSearchResults extends React.Component {
                       <TableCell align="left">{n.tags}</TableCell>
                     </TableRow>
                   );
+                  i++;
                 })}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 49 * emptyRows }}>
@@ -318,6 +367,15 @@ class KpiSearchResults extends React.Component {
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={this.handleAssign}
+          className={classes.secondary}
+        >
+          Assign to Project
+        </Button>
       </div>
     );
   }

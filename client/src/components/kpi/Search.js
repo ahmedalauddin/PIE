@@ -184,14 +184,6 @@ class Search extends React.Component {
                           </div>
                         </form>
                         <KpiSearchResults searchString={this.state.searchString}/>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={this.handleSubmit}
-                          className={classes.secondary}
-                        >
-                          Assign to Project
-                        </Button>
                       </Typography>
                     </CardContent>
                   </Card>

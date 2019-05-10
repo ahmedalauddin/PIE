@@ -24,6 +24,10 @@ module.exports = router => {
   logger.debug(`${callerClass} POST -> path: /api/kpis`);
   router.post("/api/kpis", kpi.create);
 
+  // Assign KPIs to a project
+  logger.debug(`${callerClass} POST -> path: /api/kpis-assign/:projid`);
+  router.post("/api/kpis-assign/:projid", kpi.assignToProject);
+
   // select a kpi by ID
   logger.debug(`${callerClass} GET -> path: /api/kpis/:id`);
   router.get("/api/kpis/:id", kpi.findById);

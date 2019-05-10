@@ -1,118 +1,64 @@
 {
-  "project": {},
-  "projectId": "118",
-  "title": "Simple regression",
-  "type": "lagging",
-  "level": "1",
-  "org": "",
-  "orgId": 2,
-  "orgName": "Northwest Lumber",
-  "departments": [
+  "order": "asc",
+  "orderBy": "title",
+  "selected": [],
+  "data": [
     {
-      "id": 5,
+      "id": 53,
       "orgId": 2,
-      "name": "Another Dept",
-      "description": null,
-      "createdAt": null,
-      "updatedAt": null
+      "deptId": null,
+      "title": "New KPI",
+      "description": "Linear regression and Bayesian analysis",
+      "level": 1,
+      "type": "leading",
+      "status": null,
+      "createdAt": "2019-05-03T18:55:50.000Z",
+      "updatedAt": "2019-05-06T21:33:22.000Z",
+      "projectId": null,
+      "formulaDescription": "",
+      "departmentId": null,
+      "projectTitle": "Lean operations",
+      "orgName": "Northwest Lumber",
+      "tags": null
     },
     {
-      "id": 6,
+      "id": 66,
       "orgId": 2,
-      "name": "Executive Management",
-      "description": null,
-      "createdAt": null,
-      "updatedAt": null
+      "deptId": null,
+      "title": "eee",
+      "description": "eee",
+      "level": 0,
+      "type": "",
+      "status": null,
+      "createdAt": "2019-05-04T20:45:01.000Z",
+      "updatedAt": "2019-05-04T20:45:01.000Z",
+      "projectId": null,
+      "formulaDescription": "",
+      "departmentId": null,
+      "projectTitle": "Address Increasing Annual Costs",
+      "orgName": "Northwest Lumber",
+      "tags": "Natural language processing,Time-series analysis"
+    },
+    {
+      "id": 67,
+      "orgId": 2,
+      "deptId": null,
+      "title": "Increase efficiency",
+      "description": "Sample description for increasing energy",
+      "level": 1,
+      "type": "",
+      "status": null,
+      "createdAt": "2019-05-04T21:28:59.000Z",
+      "updatedAt": "2019-05-05T13:55:10.000Z",
+      "projectId": null,
+      "formulaDescription": "",
+      "departmentId": null,
+      "projectTitle": "Address Increasing Annual Costs",
+      "orgName": "Northwest Lumber",
+      "tags": "Cluster analysis,Linear regression,Predictive analytics,Time-series analysis"
     }
   ],
-  "deptId": 6,
-  "description": "Simple regression against costs, inventory, and maintenance.",
-  "formula": "None",
-  "startAt": "",
-  "endAt": "",
-  "msg": "",
-  "kpitype": "",
-  "buttonText": "Create",
-  "isEditing": true,
-  "redirect": false,
-  "isNew": false,
-  "expanded": false,
-  "hasError": false,
-  "labelWidth": 0,
-  "focus": false,
-  "nextItem": "",
-  "tags": [
-    {
-      "id": "Linear regression",
-      "text": "Linear regression"
-    },
-    {
-      "id": "Predictive analytics",
-      "text": "Predictive analytics"
-    }
-  ],
-  "suggestions": [
-    {
-      "id": "Cluster analysis",
-      "text": "Cluster analysis"
-    },
-    {
-      "id": "Linear regression",
-      "text": "Linear regression"
-    },
-    {
-      "id": "Monte Carlo simulations",
-      "text": "Monte Carlo simulations"
-    },
-    {
-      "id": "Time-series analysis",
-      "text": "Time-series analysis"
-    },
-    {
-      "id": "Natural language processing",
-      "text": "Natural language processing"
-    },
-    {
-      "id": "Predictive analytics",
-      "text": "Predictive analytics"
-    },
-    {
-      "id": "Machine learning",
-      "text": "Machine learning"
-    }
-  ],
-  "organizations": [
-    {
-      "id": 5,
-      "name": "Another Company"
-    },
-    {
-      "id": 3,
-      "name": "Diamond Wind Turbine"
-    },
-    {
-      "id": 9,
-      "name": "Dummy Company"
-    },
-    {
-      "id": 7,
-      "name": "Invenergy"
-    },
-    {
-      "id": 2,
-      "name": "Northwest Lumber"
-    },
-    {
-      "id": 8,
-      "name": "Puget Sound Energy"
-    },
-    {
-      "id": 4,
-      "name": "Thoughtive"
-    },
-    {
-      "id": 1,
-      "name": "ValueInfinity"
-    }
-  ]
+  "submitted": true,
+  "page": 0,
+  "rowsPerPage": 5
 }

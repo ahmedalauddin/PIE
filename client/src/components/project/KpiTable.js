@@ -156,6 +156,7 @@ class KpiTable extends React.Component {
     orderBy: 'title',
     selected: [],
     data:[],
+    submitted: null,
     page: 0,
     rowsPerPage: 5,
   };

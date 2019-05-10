@@ -103,6 +103,39 @@ module.exports = {
       });
   },
 
+  // For KPI search, assign KPIs to the project.
+  assignToProject(req, res) {
+    logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
+    //const id = req.params.id;
+    /*
+    return models.Kpi.update(
+      {
+        title: req.body.title,
+        description: req.body.description,
+        formulaDescription: req.body.formula,
+        type: req.body.type,
+        level: req.body.level,
+        status: req.body.taskstatus,
+        orgId: req.body.orgId
+      },
+      {
+        returning: true,
+        where: {
+          id: id
+        }
+      }
+    )
+      .then(_k => {
+        logger.debug(`${callerType} update -> successful`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} update -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+      */
+  },
+
   // Find a Kpi by Id
   findById(req, res) {
     logger.error(`${callerType} KPI, findById `);

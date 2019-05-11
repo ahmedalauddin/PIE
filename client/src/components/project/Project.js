@@ -249,7 +249,6 @@ class Project extends React.Component {
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
-                check font
                 <ProjectDetail projectId={projId}/>
               </Paper>
             </Grid>

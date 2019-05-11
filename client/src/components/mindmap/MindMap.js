@@ -23,7 +23,7 @@ class MindMap extends Component {
     this.LoadGraph();
   }
 
-  //LoadGraph = () => {};
+  LoadGraph = () => {};
 
   render() {
     const { classes } = this.props;

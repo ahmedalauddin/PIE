@@ -94,7 +94,7 @@ const styles = theme => ({
   },
 });
 
-class Search extends React.Component {
+class KpiSearch extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
@@ -195,4 +195,4 @@ class Search extends React.Component {
   }
 }
 
-export default withStyles(styles)(Search);
+export default withStyles(styles)(KpiSearch);

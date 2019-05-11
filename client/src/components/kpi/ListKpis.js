@@ -1,22 +1,22 @@
 // List for editing KPIs, 1/22/19.
 // Will be removed eventually.  Essentially a test harness for EditProject.
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
-import Grid from "@material-ui/core/Grid";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Topbar from "../Topbar";
+import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper/index";
+import Table from "@material-ui/core/Table/index";
+import TableBody from "@material-ui/core/TableBody/index";
+import TableCell from "@material-ui/core/TableCell/index";
+import TableHead from "@material-ui/core/TableHead/index";
+import TableRow from "@material-ui/core/TableRow/index";
+import TableSortLabel from "@material-ui/core/TableSortLabel/index";
+import Tooltip from "@material-ui/core/Tooltip/index";
+import Typography from "@material-ui/core/Typography/index";
 import { Link } from "react-router-dom";
-import { styles } from "./styles/MaterialSense";
-import { stableSort, getSorting } from "./TableFunctions";
+import { styles } from "../styles/MaterialSense";
+import { stableSort, getSorting } from "../TableFunctions";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: true, label: "ID" },

@@ -12,7 +12,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link, Redirect } from "react-router-dom";
-import { getProject, getOrgName } from "../../redux";
+import { getProjectName, getOrgName } from "../../redux";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -167,7 +167,7 @@ class KpiSearchResults extends React.Component {
 
   performSearch() {
     // Search KPIs
-    const projectId = getProject().id;
+    const projectId = this.props.projectId;
     let searchString = this.props.searchString;
     if (searchString != "") {
       fetch("/api/kpis-search/" + searchString, {
@@ -203,7 +203,7 @@ class KpiSearchResults extends React.Component {
   handleAssign(event) {
     event.preventDefault();
 
-    const projectId = getProject().id;
+    const projectId = this.props.projectId;
     fetch("/api/kpis-assign/" + projectId, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -289,7 +289,8 @@ class KpiSearchResults extends React.Component {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-    const projectName = getProject().title;
+    const projectId = this.props.projectId;
+    const projectName = getProjectName();
     const orgName = getOrgName();
 
     return (
@@ -384,8 +385,14 @@ class KpiSearchResults extends React.Component {
           gutterBottom
         >
           Assign to project<br/>
+        </Typography>
+        <Typography
+          variant="h7"
+          color="default"
+          gutterBottom
+        >
           Project: {projectName}<br/>
-          Organization: (orgName}
+          Organization: {orgName}
         </Typography>
       </div>
     );

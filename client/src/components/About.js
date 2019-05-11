@@ -74,19 +74,13 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: May 6, 2019<br/><br/>
+                          Build date: May 11, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Changes to project component.
-                          <ul>
-                            <li>Ability to add and update a project has been fixed.</li>
-                            <li>Tags added to KPIs. Provides ability to add multiple tags to a KPI.</li>
-                            <li>Added Sequelize code to support tags.</li>
-                            <li>Minor updates for fomatting.</li>
-                            <li>Added edit icons to the list of KPIs displayed on the project screen.</li>
-                          </ul>
+                          Adding KPI search to assign KPIs from another project to the selected project.
+
                         </Typography>
                       </div>
                     </CardContent>

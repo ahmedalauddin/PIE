@@ -8,7 +8,7 @@ import EditPerson from "./components/EditPerson";
 import ListProjects from "./components/ListProjects";
 import ListPersons from "./components/ListPersons";
 import ListActions from "./components/ListActions";
-import ListKpis from "./components/ListKpis";
+import ListKpis from "./components/kpi/ListKpis";
 import ListOrgs from "./components/ListOrgs";
 import ListDepts from "./components/ListDepts";
 import MindMap from "./components/mindmap/MindMap";
@@ -27,10 +27,10 @@ import PanelDashboard from "./components/PanelDashboard";
 import About from "./components/About";
 import DepartmentCard from "./components/DepartmentCard";
 import OrganizationCard from "./components/OrganizationCard";
-import KpiCard from "./components/KpiCard";
-import Kpi from "./components/Kpi";
+import KpiCard from "./components/kpi/KpiCard";
+import Kpi from "./components/kpi/Kpi";
 import Analytics from "./components/Analytics";
-import Search from "./components/kpi/Search";
+import KpiSearch from "./components/kpi/KpiSearch";
 import TestProject from "./components/project/TestProject";
 import TestChip  from "./components/project/TestChip";
 import withAuth from "./components/withAuth.jsx";
@@ -74,7 +74,7 @@ export default props => (
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
-        <Route exact path="/search" component={Search} />
+        <Route exact path="/kpisearch" component={KpiSearch} />
         <Route exact path="/testproject" component={TestProject} />
         <Route exact path="/chip" component={TestChip} />
       </Switch>

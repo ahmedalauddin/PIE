@@ -182,3 +182,14 @@ export function getOrgDepartments() {
 export function getProject() {
   return JSON.parse(store.getState().state.project);
 }
+
+/**
+ * *getProject*
+ * Retrieve the project from redux
+ *
+ * @export
+ * @returns JSON with the information from the active project being used.
+ */
+export function getProjectName() {
+  return JSON.parse(store.getState().state.project).title;
+}

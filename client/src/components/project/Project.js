@@ -30,6 +30,8 @@ import Fab from "@material-ui/core/Fab";
 import KpiTable from "./KpiTable";
 import ActionTable from "./ActionTable";
 import AddIcon from "@material-ui/icons/Add";
+import Button from "@material-ui/core/Button";
+import SearchIcon from "@material-ui/icons/Search";
 
 const styles = theme => ({
   root: {
@@ -106,6 +108,15 @@ const styles = theme => ({
   },
   card: {
     maxWidth: 1000
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
   },
   media: {
     height: 0,
@@ -243,43 +254,55 @@ class Project extends React.Component {
               </Paper>
             </Grid>
             <Grid item lg={10}>
-              <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handlePanelChange('panel1')}>
+              <ExpansionPanel expanded={expanded === "panel1"} onChange={this.handlePanelChange("panel1")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>KPIs</Typography>
 
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} size="small" color="primary" aria-label="Add"
-                    to={{pathname: '/kpi', state: {projectId: projId} }}
-                    className={classes.fab}>
-                    <AddIcon />
-                  </Fab>
-                  <KpiTable projectId={projId}/>
+                  <div>
+                    <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                      aria-label="Add" to={{pathname: "/kpi", state: {projectId: projId} }} >
+                      Add New
+                      <AddIcon className={classes.rightIcon}>
+                        Add New</AddIcon>
+                    </Button>
+                    <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                      aria-label="Search KPIs" to={{pathname: "/kpisearch", state: {projectId: projId} }} >
+                      Search and Assign
+                      <SearchIcon className={classes.rightIcon} />
+                    </Button>
+                  </div>
+                  <div>
+                    <KpiTable projectId={projId}/>
+                  </div>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === 'panel2'} onChange={this.handlePanelChange('panel2')}>
+              <ExpansionPanel expanded={expanded === "panel2"} onChange={this.handlePanelChange("panel2")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>Actions</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Fab component={Link} size="small" color="primary" aria-label="Add"
-                    to={{pathname: '/actioncard', state: {projectId: projId} }}
+                    to={{pathname: "/actioncard", state: {projectId: projId} }}
                     className={classes.fab}>
                     <AddIcon />
                   </Fab>
                   <ActionTable projectId={projId}/>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === 'panel3'} onChange={this.handlePanelChange('panel3')}>
+              <ExpansionPanel expanded={expanded === "panel3"} onChange={this.handlePanelChange("panel3")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>People</Typography>
                   <Typography className={classes.secondaryHeading}>Select owners and people assigned to the project</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} size="small" color="primary" aria-label="Add" to={`/personcard`} className={classes.fab}>
-                    <AddIcon />
-                  </Fab>
-                  <ProjectPersons projectId={projId}/>
+                  <p>
+                    <Button variant="contained" color="primary" className={classes.button}>
+                      <AddIcon className={classes.rightIcon}>Add New</AddIcon>
+                    </Button>
+                  </p>
+                  <ProjectPersons projectId={projId} />
                 </ExpansionPanelDetails>
               </ExpansionPanel>
             </Grid>

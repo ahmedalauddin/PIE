@@ -53,7 +53,8 @@ const rows = [
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "type", numeric: false, disablePadding: false, label: "Type" },
-  { id: "tags", numeric: false, disablePadding: false, label: "Tags" }
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
+  { id: "delete", numeric: false, disablePadding: false, label: "" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -267,7 +268,6 @@ class KpiTable extends React.Component {
                         <IconButton onClick={this.editComponent(n.id)}>
                           <EditIcon color="primary" />
                         </IconButton>
-
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">
                         {n.id}
@@ -285,6 +285,11 @@ class KpiTable extends React.Component {
                       <TableCell align="left">{n.description}</TableCell>
                       <TableCell align="left">{n.type}</TableCell>
                       <TableCell align="left">{n.tags.map(tag => tag.tag).join(", ")}</TableCell>
+                      <TableCell component="th" scope="row" padding="none">
+                        <IconButton onClick={this.editComponent(n.id)}>
+                          <DeleteIcon color="primary" />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

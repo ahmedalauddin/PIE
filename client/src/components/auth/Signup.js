@@ -9,20 +9,20 @@
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Typography from "@material-ui/core/Typography/index";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
+import Card from "@material-ui/core/Card/index";
+import CardContent from "@material-ui/core/CardContent/index";
+import Grid from "@material-ui/core/Grid/index";
+import SectionHeader from "../typo/SectionHeader";
+import MenuItem from "@material-ui/core/MenuItem/index";
+import TextField from "@material-ui/core/TextField/index";
+import InputLabel from "@material-ui/core/InputLabel/index";
+import FormControl from "@material-ui/core/FormControl/index";
+import Select from "@material-ui/core/Select/index";
+import Button from "@material-ui/core/Button/index";
 
 class Signup extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various

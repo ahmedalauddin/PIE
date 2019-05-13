@@ -90,25 +90,25 @@ class Topbar extends Component {
       return 0;
     }
     if (this.props.currentPath === "/login") {
-      return 2;
+      return 1;
     }
     if (this.props.currentPath === "/mindmap") {
-      return 3;
+      return 2;
     }
     if (this.props.currentPath === "/listprojects") {
-      return 4;
+      return 3;
     }
     if (this.props.currentPath === "/listorgs") {
-      return 5;
+      return 4;
     }
     if (this.props.currentPath === "/listpersons") {
-      return 6;
+      return 5;
     }
     if (this.props.currentPath === "/analytics") {
-      return 7;
+      return 6;
     }
     if (this.props.currentPath === "/clientorg") {
-      return 8;
+      return 7;
     }
     if (this.props.currentPath === "/logout") {
       return 9;

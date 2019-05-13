@@ -150,6 +150,7 @@ class KpiTable extends React.Component {
   constructor(props) {
     super(props);
     this.editComponent = this.editComponent.bind(this);
+    this.deactivateKpi = this.deactivateKpi.bind(this);
   }
 
   state = {
@@ -184,6 +185,26 @@ class KpiTable extends React.Component {
       }
     }} />`;
   }
+
+  deactivateKpi(id) {
+    setTimeout(() => {
+      if (id > 0) {
+        // Deactivate a KPI
+        let removePath = "/api/kpis-deactivate/" + id;
+        fetch(removePath, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.state)
+        })
+          .then(data => {
+            this.setState({ msg: "KPI updated." });
+          })
+          .catch(err => {
+            this.setState({ msg: "Error occurred." });
+          });
+      }
+    }, 2000);
+  };
 
   handleRequestSort = (event, property) => {
     const orderBy = property;
@@ -286,7 +307,7 @@ class KpiTable extends React.Component {
                       <TableCell align="left">{n.type}</TableCell>
                       <TableCell align="left">{n.tags.map(tag => tag.tag).join(", ")}</TableCell>
                       <TableCell component="th" scope="row" padding="none">
-                        <IconButton onClick={this.editComponent(n.id)}>
+                        <IconButton >
                           <DeleteIcon color="primary" />
                         </IconButton>
                       </TableCell>

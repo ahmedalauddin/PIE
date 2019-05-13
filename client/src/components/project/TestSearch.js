@@ -22,7 +22,8 @@ import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import KpiSearchResults from "./KpiSearchResults";
+
+
 
 const styles = theme => ({
   root: {
@@ -85,6 +86,9 @@ const styles = theme => ({
       width: 200,
     },
   },
+  controlBlock: {
+    alignItems: 'bottom',
+},
   sectionDesktop: {
     display: 'none',
     [theme.breakpoints.up('md')]: {
@@ -99,7 +103,7 @@ const styles = theme => ({
   },
 });
 
-class KpiSearch extends React.Component {
+class TestSearch extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
@@ -149,7 +153,7 @@ class KpiSearch extends React.Component {
         <Topbar currentPath={currentPath}/>
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
-            <Grid container justify="center">
+            <Grid container justify="center" alignItems="baseline">
               <Grid
                 spacing={24}
                 alignItems="center"
@@ -158,12 +162,18 @@ class KpiSearch extends React.Component {
                 className={classes.grid}
               >
                 <Grid item xs={12} md={8}>
-                  <Card className={classes.card}>
-                    <CardContent>
-                      <Typography variant="h5" component="h2" color="secondary" gutterBottom>
-                        Search KPIs
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    color="secondary"
+                    gutterBottom
+                  >
+                    Search KPIs
+                  </Typography>
+
                         <form className={classes.container} noValidate autoComplete="off">
                           <div>
+
                             <TextField
                               id="searchText"
                               label="Search"
@@ -182,18 +192,21 @@ class KpiSearch extends React.Component {
                               }
                               label="Search current client only"
                             />
-                            <Button variant="contained" color="primary" onClick={this.handleSubmit} className={classes.secondary}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={this.handleSubmit}
+                              className={classes.secondary}
+                            >
                               Submit
                             </Button>
                           </div>
                         </form>
                         <Typography>
-                          <KpiSearchResults searchString={this.state.searchString} projectId={this.props.projectId}
-                            searchOrgOnly={this.state.checkedOrg}/>
+                          Search results here
                         </Typography>
-                      </Typography>
-                    </CardContent>
-                  </Card>
+
+
                 </Grid>
               </Grid>
             </Grid>
@@ -204,4 +217,4 @@ class KpiSearch extends React.Component {
   }
 }
 
-export default withStyles(styles)(KpiSearch);
+export default withStyles(styles)(TestSearch);

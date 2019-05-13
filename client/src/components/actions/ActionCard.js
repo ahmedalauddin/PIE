@@ -10,22 +10,22 @@
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import { getOrgId, getOrgName } from "../redux";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Typography from "@material-ui/core/Typography/index";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
+import Grid from "@material-ui/core/Grid/index";
+import SectionHeader from "../typo/SectionHeader";
+import TextField from "@material-ui/core/TextField/index";
+import Paper from "@material-ui/core/Paper/index";
+import Button from "@material-ui/core/Button/index";
+import { getOrgId, getOrgName } from "../../redux";
+import FormControl from "@material-ui/core/FormControl/index";
+import MenuItem from "@material-ui/core/MenuItem/index";
+import InputLabel from "@material-ui/core/InputLabel/index";
+import Select from "@material-ui/core/Select/index";
+import Card from "@material-ui/core/Card/index";
+import CardContent from "@material-ui/core/CardContent/index";
 
 class ActionCard extends React.Component {
   constructor(props) {

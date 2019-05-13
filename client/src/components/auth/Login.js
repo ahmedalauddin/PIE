@@ -12,18 +12,18 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import { store, setUser } from "../redux";
-import TableCell from "@material-ui/core/TableCell";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Typography from "@material-ui/core/Typography/index";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
+import Card from "@material-ui/core/Card/index";
+import CardContent from "@material-ui/core/CardContent/index";
+import Grid from "@material-ui/core/Grid/index";
+import SectionHeader from "../typo/SectionHeader";
+import TextField from "@material-ui/core/TextField/index";
+import Button from "@material-ui/core/Button/index";
+import { store, setUser } from "../../redux";
+import TableCell from "@material-ui/core/TableCell/index";
 import { unstable_Box as Box } from '@material-ui/core/Box';
 
 class Login extends React.Component {

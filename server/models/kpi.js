@@ -51,6 +51,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      active: {
+        type: DataTypes.TINYINT,
+        allowNull: true
+      },
       status: {
         type: DataTypes.STRING,
         allowNull: true

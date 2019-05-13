@@ -6,22 +6,22 @@ import Cards from "./components/Cards";
 import ScrollToTop from "./components/ScrollTop";
 import EditPerson from "./components/EditPerson";
 import ListProjects from "./components/ListProjects";
-import ListPersons from "./components/ListPersons";
-import ListActions from "./components/ListActions";
+import ListPersons from "./components/person/ListPersons";
+import ListActions from "./components/actions/ListActions";
 import ListKpis from "./components/kpi/ListKpis";
 import ListOrgs from "./components/ListOrgs";
 import ListDepts from "./components/ListDepts";
 import MindMap from "./components/mindmap/MindMap";
 import Main from "./components/Main";
-import Signup from "./components/Signup";
-import Logout from "./components/Logout";
-import Login from "./components/Login";
+import Signup from "./components/auth/Signup";
+import Logout from "./components/auth/Logout";
+import Login from "./components/auth/Login";
 import UserInfo from "./components/UserInfo";
 import ClientOrg from "./components/ClientOrg";
 import ProjectPersons from "./components/project/ProjectPersons";
 import Project from "./components/project/Project";
 import NewProject from "./components/project/NewProject";
-import ActionCard from "./components/ActionCard";
+import ActionCard from "./components/actions/ActionCard";
 import ProjectDashboard from "./components/ProjectDashboard";
 import PanelDashboard from "./components/PanelDashboard";
 import About from "./components/About";
@@ -31,8 +31,7 @@ import KpiCard from "./components/kpi/KpiCard";
 import Kpi from "./components/kpi/Kpi";
 import Analytics from "./components/Analytics";
 import KpiSearch from "./components/kpi/KpiSearch";
-import TestProject from "./components/project/TestProject";
-import TestChip  from "./components/project/TestChip";
+import TestSearch from "./components/project/TestSearch";
 import withAuth from "./components/withAuth.jsx";
 // For testing
 
@@ -75,8 +74,7 @@ export default props => (
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
         <Route exact path="/kpisearch" component={KpiSearch} />
-        <Route exact path="/testproject" component={TestProject} />
-        <Route exact path="/chip" component={TestChip} />
+        <Route exact path="/testsearch" component={TestSearch} />
       </Switch>
     </ScrollToTop>
   </BrowserRouter>

@@ -37,12 +37,14 @@ module.exports = router => {
   router.get("/api/kpis-project/:projid", kpi.listByProject);
 
   // search KPIs
-  logger.debug(`${callerClass} GET -> path: /api/kpis-search/:text`);
-  router.get("/api/kpis-search/:text", kpi.search);
+  logger.debug(`${callerClass} GET -> path: /api/kpis-search`);
+  router.get("/api/kpis-search", kpi.search);
 
   // Update a KPI with id
   logger.debug(`${callerClass} PUT -> path: /api/kpis/:id`);
   router.put("/api/kpis/:id", kpi.update);
 
-  // TODO create DELETE /api/kpis/:id to delete a kpi
+  // Deactivate a KPI with id
+  logger.debug(`${callerClass} PUT -> path: /api/kpis-deactivate/:id`);
+  router.put("/api/kpis-deactivate/:id", kpi.deactivate);
 };

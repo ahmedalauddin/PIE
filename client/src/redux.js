@@ -174,7 +174,7 @@ export function getOrgDepartments() {
 
 /**
  * *getProject*
- * Retrieve the project from redux
+ * Retrieve the active project from redux
  *
  * @export
  * @returns JSON with the information from the active project being used.
@@ -184,8 +184,8 @@ export function getProject() {
 }
 
 /**
- * *getProject*
- * Retrieve the project from redux
+ * *getProjectName*
+ * Retrieve the active project name from redux
  *
  * @export
  * @returns JSON with the information from the active project being used.

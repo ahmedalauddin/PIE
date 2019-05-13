@@ -12,7 +12,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import { Link, Redirect } from "react-router-dom";
-import { getProjectName, getOrgName } from "../../redux";
+import { getProjectName, getProject, getOrgName, getOrgId } from "../../redux";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -42,8 +42,6 @@ function stableSort(array, cmp) {
 function getSorting(order, orderBy) {
   return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
-
-// TODO - convert rows into KPI data.
 
 const rows = [
   { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -167,11 +165,19 @@ class KpiSearchResults extends React.Component {
 
   performSearch() {
     // Search KPIs
-    const projectId = this.props.projectId;
+    const projectId = getProject().id;
+    const orgId = getOrgId();
+    const searchOrgOnly = this.props.searchOrgOnly;
     let searchString = this.props.searchString;
     if (searchString != "") {
-      fetch("/api/kpis-search/" + searchString, {
+      fetch("/api/kpis-search" , {
         method: "GET",
+        headers: new Headers({
+          'searchString': searchString,
+          'projectId': projectId,
+          'orgId': orgId,
+          'searchOrgOnly': searchOrgOnly
+        })
       })
         .then(res => res.json())
         .then(kpis => this.setState({
@@ -289,7 +295,7 @@ class KpiSearchResults extends React.Component {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-    const projectId = this.props.projectId;
+    const projectId = getProject().id;
     const projectName = getProjectName();
     const orgName = getOrgName();
 
@@ -377,17 +383,9 @@ class KpiSearchResults extends React.Component {
           className={classes.secondary}
         >
           Assign to Project
-        </Button>
+        </Button><br/><br/>
         <Typography
-          variant="h5"
-          component="h2"
-          color="secondary"
-          gutterBottom
-        >
-          Assign to project<br/>
-        </Typography>
-        <Typography
-          variant="h7"
+          component="h5"
           color="default"
           gutterBottom
         >

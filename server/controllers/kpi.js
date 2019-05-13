@@ -17,7 +17,6 @@ const callerType = "controller";
 const util = require("util");
 
 module.exports = {
-
   create(req, res) {
     const projectId = req.body.projectId;
     let kpiId = null;
@@ -104,24 +103,43 @@ module.exports = {
       });
   },
 
+  // Deactivate a Kpi
+  deactivate(req, res) {
+    const id = req.params.id;
+    return models.Kpi.update(
+      {
+        active: 0
+      },
+      {
+        returning: true,
+        where: {
+          id: id
+        }
+      }
+    )
+      .then(_k => {
+        logger.debug(`${callerType} KPI deactivate, id ${id} -> successful`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} KPI deactivate, id ${id} -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // For KPI search, assign KPIs to the project.
   assignToProject(req, res) {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
-    //const id = req.params.id;
     /*
     Need something like this:
-    /*
       INSERT into `KpiProjects`
       (kpiId, projectId)
       VALUES
-        ('69', '118'),
-        ('67', '118'),
-        ('66', '118')
+        ('69', '118'), ('67', '118'), ('66', '118')
       ON DUPLICATE KEY
       UPDATE projectId=projectId, kpiId=kpiId;
      */
-    // Break the input json down into an array and we can update with one SQL statement.
-    // Use JSON.parse.
+
     var jsonData = req.body.data;
     let sqlArrays = "";
     let sql = "";
@@ -130,6 +148,8 @@ module.exports = {
 
     if (jsonData) {
       // Convert the JSON into some arrays for a SQL statement.
+      // Break the input json down into an array and we can update with one SQL statement.
+      // Use JSON.parse.
       for (var i = 0; i < jsonData.length; i++) {
         // Only add items where selected is true
         if (jsonData[i].selected === true) {
@@ -205,17 +225,21 @@ module.exports = {
 
   // Search KPIs
   search(req, res) {
-    // TODO - add searching against view, which includes tags.
-    /*
-    select * from vw_Kpis where (tags like '%anal%' or title like '%anal%'
-                or description like '%anal%');
-     */
-
-    logger.error(`${callerType} KPI, search `);
-    let searchText = req.params.text;
+    // Note that we created a view to make it easier to search.
+    logger.debug(`${callerType} KPI, search `);
+    logger.debug(`${callerType} KPI, search, headers: ` + JSON.stringify(req.headers));
+    let searchText = req.headers.searchstring;
+    let projectId = req.headers.projectid;
+    let orgId = req.headers.orgid;
+    let searchOrgOnly = req.headers.searchorgonly;
+    logger.debug(`${callerType} create KpiProject -> searchOrgOnly: ${searchOrgOnly}`);
     let sql = "select * from vw_Kpis " +
       "where (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
-      "or description like '%" + searchText + "%') ";
+      "or description like '%" + searchText + "%') " +
+      "and (projectId <> " + projectId + " or projectId is null) and active = 1";
+    if (searchOrgOnly == "true") {
+      sql += " and (orgId = " + orgId + " or orgId is null)";
+    }
     logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
@@ -259,8 +283,11 @@ module.exports = {
         {
           model: models.KpiTag,
           as: "tags"
-        }
-      ]
+        },
+      ],
+      where: {
+        active: 1
+      }
     })
       .then(_k => {
         logger.debug(`${callerType} listByProject -> successful, count: ${_k.length}`);
@@ -280,7 +307,10 @@ module.exports = {
           model: models.Organization,
           as: "organization"
         }
-      ]
+      ],
+      where: {
+        active: 1
+      }
     })
       .then(_k => {
         logger.debug(`${callerType} list -> successful, count: ${_k.length}`);

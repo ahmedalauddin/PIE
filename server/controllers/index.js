@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-04-12
+ * Modified: 2019-05-14
  * Editor:   Brad Kaufman
  */
 
@@ -18,6 +18,7 @@ const TaskPriority = require("./taskpriority");
 const Kpi = require("./kpi");
 const KpiTag = require("./kpitag");
 const Mindmap = require("./mindmap");
+const Milestone = require("./milestone");
 const Task = require("./task");
 const ProjectPerson = require("./projectperson");
 
@@ -32,6 +33,7 @@ module.exports = {
   KpiTag,
   Kpi,
   Mindmap,
+  Milestone,
   Task,
   ProjectPerson
 };

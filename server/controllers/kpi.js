@@ -129,11 +129,15 @@ module.exports = {
 
   // For KPI search, assign KPIs to the project.
   // TODO: change this so it's a save as new instead of just using the KpiProjects table.
+  /*
+    This will need to insert records into the KPI table, just copying the KPIs from other projects.
+    Not too many changes: the main diff is we'll insert into the Kpis table instead of KpiProjects.
+   */
   saveAsNew(req, res) {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
     /*
     Need something like this:
-      INSERT into `KpiProjects`
+      INSERT into `Kpis`
       (kpiId, projectId)
       VALUES
         ('69', '118'), ('67', '118'), ('66', '118')
@@ -162,7 +166,7 @@ module.exports = {
         }
       }
       if (doInsert === true) {
-        sql = "INSERT into `KpiProjects` " +
+        sql = "INSERT into `Kpis` " +
           "(kpiId, projectId) " +
           "VALUES " + sqlArrays +
           "ON DUPLICATE KEY " +
@@ -179,18 +183,18 @@ module.exports = {
             console.log("KPI assignToProject -> update: successful");
           })
           .catch(error => {
-            logger.error(`${callerType} KPI assignToProject -> error: ${error.stack}`);
+            logger.error(`${callerType} KPI saveAsNew -> error: ${error.stack}`);
             res.status(400).send(error);
           });
       } else {
-        logger.debug(`${callerType} KPI assignToProject -> no JSON data in request`);
+        logger.debug(`${callerType} KPI saveAsNew -> no JSON data in request`);
         return "error - no JSON";
       }
     }
   },
 
   // For KPI search, assign KPIs to the project.
-  // TODO: change this so it's a save as new instead of just using the KpiProjects table.
+  /*
   assignToProject(req, res) {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
     /*
@@ -201,7 +205,7 @@ module.exports = {
         ('69', '118'), ('67', '118'), ('66', '118')
       ON DUPLICATE KEY
       UPDATE projectId=projectId, kpiId=kpiId;
-     */
+
 
     var jsonData = req.body.data;
     let sqlArrays = "";
@@ -250,6 +254,7 @@ module.exports = {
       }
     }
   },
+   */
 
   // Find a Kpi by Id
   findById(req, res) {

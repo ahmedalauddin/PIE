@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
+      milestoneId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       priorityId: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -75,6 +79,13 @@ module.exports = (sequelize, DataTypes) => {
     Task.belongsTo(models.Person, {
       as: "assigned",
       foreignKey: "assignedTo",
+      onDelete: "cascade"
+    });
+
+    logger.debug(`${callerType} Task belongsTo Milestone`);
+    Task.belongsTo(models.Milestone, {
+      as: "milestone",
+      foreignKey: "milestoneId",
       onDelete: "cascade"
     });
 

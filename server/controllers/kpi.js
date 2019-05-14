@@ -128,6 +128,69 @@ module.exports = {
   },
 
   // For KPI search, assign KPIs to the project.
+  // TODO: change this so it's a save as new instead of just using the KpiProjects table.
+  saveAsNew(req, res) {
+    logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
+    /*
+    Need something like this:
+      INSERT into `KpiProjects`
+      (kpiId, projectId)
+      VALUES
+        ('69', '118'), ('67', '118'), ('66', '118')
+      ON DUPLICATE KEY
+      UPDATE projectId=projectId, kpiId=kpiId;
+     */
+
+    var jsonData = req.body.data;
+    let sqlArrays = "";
+    let sql = "";
+    let doInsert = false;
+    let projectId = req.body.projectId;
+
+    if (jsonData) {
+      // Convert the JSON into some arrays for a SQL statement.
+      // Break the input json down into an array and we can update with one SQL statement.
+      // Use JSON.parse.
+      for (var i = 0; i < jsonData.length; i++) {
+        // Only add items where selected is true
+        if (jsonData[i].selected === true) {
+          if (doInsert === true) {
+            sqlArrays += ", ";
+          }
+          sqlArrays += "('" + jsonData[i].id + "', '" + projectId + "') ";
+          doInsert = true;
+        }
+      }
+      if (doInsert === true) {
+        sql = "INSERT into `KpiProjects` " +
+          "(kpiId, projectId) " +
+          "VALUES " + sqlArrays +
+          "ON DUPLICATE KEY " +
+          "UPDATE projectId=projectId, kpiId=kpiId;"
+
+        let _obj = util.inspect(req, { showHidden: false, depth: null });
+        logger.debug(`${callerType} KPI assignToProject -> request: ${_obj}`);
+        logger.debug(`${callerType} KPI assignToProject -> sql: ${sql}`);
+
+        return models.sequelize
+          .query(sql)
+          .then(([results, metadata]) => {
+            // Results will be an empty array and metadata will contain the number of affected rows.
+            console.log("KPI assignToProject -> update: successful");
+          })
+          .catch(error => {
+            logger.error(`${callerType} KPI assignToProject -> error: ${error.stack}`);
+            res.status(400).send(error);
+          });
+      } else {
+        logger.debug(`${callerType} KPI assignToProject -> no JSON data in request`);
+        return "error - no JSON";
+      }
+    }
+  },
+
+  // For KPI search, assign KPIs to the project.
+  // TODO: change this so it's a save as new instead of just using the KpiProjects table.
   assignToProject(req, res) {
     logger.debug(`${callerType} KPI assignToProject -> reg: ${JSON.stringify(req.body)}`);
     /*
@@ -261,34 +324,15 @@ module.exports = {
 
   // List all KPIs for a single project
   listByProject(req, res) {
-    // Important note, but the where clause is used with the included model Project.  See the example
-    // here, http://docs.sequelizejs.com/manual/associations.html#belongs-to-many-associations, for
-    // User.findAll.
-    return models.Kpi.findAll({
-      order: [["title", "DESC"]],
-      include: [
+    let sql = "select * from vw_Kpis " +
+      "where projectId = " + req.params.projid + " and active = 1";
+    logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
         {
-          model: Organization,
-          as: "organization"
-        },
-        {
-          model: models.Project,
-          where: { id: req.params.projid },
-          as: "project"
-        },
-        {
-          model: models.Department,
-          as: "department"
-        },
-        {
-          model: models.KpiTag,
-          as: "tags"
-        },
-      ],
-      where: {
-        active: 1
-      }
-    })
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
       .then(_k => {
         logger.debug(`${callerType} listByProject -> successful, count: ${_k.length}`);
         res.status(201).send(_k);
@@ -300,6 +344,7 @@ module.exports = {
   },
 
   // List all KPIs
+  // TODO: change this and use active flag from KpiProjects.
   list(req, res) {
     return models.Kpi.findAll({
       include: [

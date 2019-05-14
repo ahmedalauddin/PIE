@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       kpiId: {
         type: DataTypes.INTEGER,
       },
+      active: {
+        type: DataTypes.TINYINT,
+        allowNull: true
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

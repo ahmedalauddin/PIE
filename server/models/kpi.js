@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
+      projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       description: {
         type: DataTypes.STRING,
         allowNull: true
@@ -43,16 +47,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      active: {
+        type: DataTypes.TINYINT,
+        allowNull: false
+      },
       level: {
         type: DataTypes.INTEGER,
         allowNull: true
       },
       type: {
         type: DataTypes.STRING,
-        allowNull: true
-      },
-      active: {
-        type: DataTypes.TINYINT,
         allowNull: true
       },
       status: {
@@ -97,21 +101,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade"
     });
 
-    logger.debug(`${callerType} Kpi hasMany Project`);
+    logger.debug(`${callerType} Kpi belongsTo Project`);
     Kpi.hasMany(models.Project, {
-      as: "mainKpis",
-      foreignKey: "mainKpiId",
-      onDelete: "cascade"
-    });
-
-    logger.debug(`${callerType} Kpi belongsToMany Project`);
-    Kpi.belongsToMany(models.Project, {
-      through: "KpiProjects",
       as: "project",
-      foreignKey: "kpiId",
-      otherKey: "projectId"
+      foreignKey: "projectId"
     });
-  };
-
+  }
   return Kpi;
 };

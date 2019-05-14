@@ -1,25 +1,22 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
+import React from "react";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tooltip from "@material-ui/core/Tooltip";
+import DeleteIcon from "@material-ui/icons/Delete";
+import FilterListIcon from "@material-ui/icons/FilterList";
+import { lighten } from "@material-ui/core/styles/colorManipulator";
 import { Link } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 
-let counter = 0;
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -286,7 +283,7 @@ class KpiTable extends React.Component {
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
-                        <IconButton onClick={this.editComponent(n.id)}>
+                        <IconButton onClick={() => {this.editComponent(n.id);}}>
                           <EditIcon color="primary" />
                         </IconButton>
                       </TableCell>
@@ -295,7 +292,7 @@ class KpiTable extends React.Component {
                       </TableCell>
                       <TableCell align="left">
                         <Link to={{
-                          pathname: '/kpi',
+                          pathname: "/kpi",
                           state: {
                             projectId: this.props.projectId,
                             kpiId: n.id
@@ -305,9 +302,9 @@ class KpiTable extends React.Component {
                       </TableCell>
                       <TableCell align="left">{n.description}</TableCell>
                       <TableCell align="left">{n.type}</TableCell>
-                      <TableCell align="left">{n.tags.map(tag => tag.tag).join(", ")}</TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        <IconButton >
+                      <TableCell align="left">{n.tags}</TableCell>
+                      <TableCell padding="none">
+                        <IconButton onClick={() => {this.deactivateKpi(n.id);}}>
                           <DeleteIcon color="primary" />
                         </IconButton>
                       </TableCell>

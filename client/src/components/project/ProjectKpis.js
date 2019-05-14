@@ -128,7 +128,7 @@ class ProjectKpis extends Component {
                   <TableRow
                     hover
                     onClick={event => {
-                      this.handleClick(event, kpi.id);
+                        this.handleClick(event, kpi.id);
                     }}
                     tabIndex={-1}
                     key={kpi.id}

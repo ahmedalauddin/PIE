@@ -74,12 +74,12 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: May 11, 2019<br/><br/>
+                          Build date: May 14, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Adding KPI search to assign KPIs from another project to the selected project.
+                          Adding Milestones to the Project component.
 
                         </Typography>
                       </div>

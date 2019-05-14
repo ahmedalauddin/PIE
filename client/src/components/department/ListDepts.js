@@ -9,23 +9,23 @@
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
-import Grid from "@material-ui/core/Grid";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Topbar from "../Topbar";
+import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
+import Table from "@material-ui/core/Table/index";
+import TableBody from "@material-ui/core/TableBody/index";
+import TableCell from "@material-ui/core/TableCell/index";
+import TableHead from "@material-ui/core/TableHead/index";
+import TableRow from "@material-ui/core/TableRow/index";
+import Paper from "@material-ui/core/Paper/index";
+import TableSortLabel from "@material-ui/core/TableSortLabel/index";
+import Tooltip from "@material-ui/core/Tooltip/index";
+import Typography from "@material-ui/core/Typography/index";
 import { Link, Redirect } from "react-router-dom";
-import { styles } from "./styles/MaterialSense";
-import { stableSort, getSorting } from "./TableFunctions";
-import Button from "@material-ui/core/Button";
+import { styles } from "../styles/MaterialSense";
+import { stableSort, getSorting } from "../TableFunctions";
+import Button from "@material-ui/core/Button/index";
 
 const rows = [
   { id: "id", numeric: true, disablePadding: false, label: "ID" },

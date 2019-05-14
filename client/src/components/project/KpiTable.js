@@ -104,14 +104,22 @@ EnhancedTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-const toolbarStyles = theme => ({
+const styles = theme => ({
   root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
     paddingRight: theme.spacing.unit,
+  },
+  table: {
+    minWidth: 1020,
+  },
+  tableWrapper: {
+    overflowX: 'auto',
   },
   highlight:
     theme.palette.type === 'light'
       ? {
-          color: theme.palette.secondary.main,
+        color: theme.palette.secondary.main,
         backgroundColor: lighten(theme.palette.secondary.light, 0.85),
       }
       : {
@@ -128,20 +136,6 @@ const toolbarStyles = theme => ({
     flex: '0 0 auto',
   },
 });
-
-const styles = theme => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-  },
-  table: {
-    minWidth: 1020,
-  },
-  tableWrapper: {
-    overflowX: 'auto',
-  },
-});
-
 
 class KpiTable extends React.Component {
   constructor(props) {

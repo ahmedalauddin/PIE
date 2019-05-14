@@ -11,7 +11,6 @@
 
 // declarations
 const models = require("../models");
-const Person = require("../models").Person;
 const Project = require("../models").Project;
 const Task = require("../models").Task;
 const TaskStatus = require("../models").TaskStatus;
@@ -28,7 +27,7 @@ module.exports = {
       projectId: parseInt(req.body.projectId)
     })
       .then(t => {
-        logger.debug(`${callerType} create -> added task, id: ${t.id}`);
+        logger.debug(`${callerType} create -> added Milestone, id: ${t.id}`);
         res.status(201).send(t);
       })
       .catch(error => {
@@ -46,7 +45,7 @@ module.exports = {
         depth: null
       })}`
     );
-    return models.Task.update(
+    return models.Milestone.update(
       {
         title: req.body.title,
         description: req.body.description,
@@ -60,18 +59,18 @@ module.exports = {
       }
     )
       .then(p => {
-        logger.debug(`${callerType} update Task -> successful`);
+        logger.debug(`${callerType} update Milestone -> successful`);
         res.status(200).send(p);
       })
       .catch(error => {
-        logger.error(`${callerType} update Task -> error: ${error.stack}`);
+        logger.error(`${callerType} update Milestone -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
 
   // Find a milestone by Id
   findById(req, res) {
-    return models.Task.findById(req.params.id, {
+    return models.Milestone.findById(req.params.id, {
       include: [
         {
           model: Project,
@@ -99,7 +98,7 @@ module.exports = {
 
   // List all milestones for a single project
   listByProject(req, res) {
-    return models.Task.findAll({
+    return models.Milestone.findAll({
       where: { projectId: req.params.projid },
       order: [["targetDate", "ASC"]],
       include: [

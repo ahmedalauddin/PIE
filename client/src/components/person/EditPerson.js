@@ -1,12 +1,12 @@
 // Simpler version of edit person, 1/22/19.
 import React from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "./Topbar";
-import Grid from "@material-ui/core/Grid";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Topbar from "../Topbar";
+import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import { styles } from "./styles/MaterialSense";
+import Paper from "@material-ui/core/Paper/index";
+import Typography from "@material-ui/core/Typography/index";
+import { styles } from "../styles/MaterialSense";
 
 class EditPerson extends React.Component {
   state = {

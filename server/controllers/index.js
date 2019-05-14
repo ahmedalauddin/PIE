@@ -7,7 +7,6 @@
  * Modified: 2019-05-14
  * Editor:   Brad Kaufman
  */
-
 const Organization = require("./organization");
 const Person = require("./person");
 const Project = require("./project");

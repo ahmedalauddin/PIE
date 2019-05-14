@@ -77,6 +77,7 @@ models.sequelize
     require("./server/routes/kpi")(router);
     require("./server/routes/projectperson")(router);
     require("./server/routes/mindmap")(router);
+    require("./server/routes/milestone")(router);
     require("./server/routes/task")(router);
     require("./server/routes/taskpriority")(router);
     require("./server/routes/kpitag")(router);

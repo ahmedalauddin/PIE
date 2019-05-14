@@ -12,20 +12,20 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import Button from "@material-ui/core/Button";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import { setOrg, store } from "../redux";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Typography from "@material-ui/core/Typography/index";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
+import Card from "@material-ui/core/Card/index";
+import CardContent from "@material-ui/core/CardContent/index";
+import Grid from "@material-ui/core/Grid/index";
+import SectionHeader from "../typo/SectionHeader";
+import Button from "@material-ui/core/Button/index";
+import InputLabel from "@material-ui/core/InputLabel/index";
+import FormControl from "@material-ui/core/FormControl/index";
+import MenuItem from "@material-ui/core/MenuItem/index";
+import Select from "@material-ui/core/Select/index";
+import { setOrg, store } from "../../redux";
 
 class ClientOrg extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various

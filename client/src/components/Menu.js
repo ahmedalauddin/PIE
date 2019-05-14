@@ -4,9 +4,6 @@ const Menu = [
     pathname: "/paneldashboard"
   },
   {
-    label: "Test Search",
-    pathname: "/testsearch"
-  },  {
     label: "Login",
     pathname: "/login"
   },

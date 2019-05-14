@@ -139,10 +139,10 @@ module.exports = {
           model: Task,
           as: "tasks"
         },
-        {
+        /* {
           model: KPI,
           as: "mainKpi"
-        },
+        }, */
         {
           model: KPI,
           as: "kpis"

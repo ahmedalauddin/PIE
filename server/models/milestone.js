@@ -16,7 +16,7 @@ const callerType = "model";
 module.exports = (sequelize, DataTypes) => {
   logger.debug(`${callerType} Milestone start definition`);
   var Milestone = sequelize.define(
-    "Task",
+    "Milestone",
     {
       id: {
         type: DataTypes.INTEGER,
@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true
       },
       projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      orgId: {
         type: DataTypes.INTEGER,
         allowNull: true
       },

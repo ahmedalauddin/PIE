@@ -102,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     logger.debug(`${callerType} Kpi belongsTo Project`);
-    Kpi.hasMany(models.Project, {
+    Kpi.belongsTo(models.Project, {
       as: "project",
       foreignKey: "projectId"
     });

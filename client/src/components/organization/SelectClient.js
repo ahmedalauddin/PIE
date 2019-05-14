@@ -12,19 +12,19 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import Button from "@material-ui/core/Button";
-import FormControl from "@material-ui/core/FormControl";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Typography from "@material-ui/core/Typography/index";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
+import Card from "@material-ui/core/Card/index";
+import CardContent from "@material-ui/core/CardContent/index";
+import MenuItem from "@material-ui/core/MenuItem/index";
+import Select from "@material-ui/core/Select/index";
+import InputLabel from "@material-ui/core/InputLabel/index";
+import Grid from "@material-ui/core/Grid/index";
+import SectionHeader from "../typo/SectionHeader";
+import Button from "@material-ui/core/Button/index";
+import FormControl from "@material-ui/core/FormControl/index";
 
 const buttonstyles = theme => ({
   primary: {

@@ -85,8 +85,7 @@ module.exports = (sequelize, DataTypes) => {
     logger.debug(`${callerType} Task belongsTo Milestone`);
     Task.belongsTo(models.Milestone, {
       as: "milestone",
-      foreignKey: "milestoneId",
-      onDelete: "cascade"
+      foreignKey: "milestoneId"
     });
 
     logger.debug(`${callerType} Task belongsTo TaskPriority`);

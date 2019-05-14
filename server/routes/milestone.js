@@ -17,9 +17,10 @@ const logger = require("../util/logger")(__filename);
 module.exports = router => {
   const callerType = "router";
 
+  // TODO: may need list method
   // get all milestones
-  logger.debug(`${callerType} GET -> path: /api/milestones`);
-  router.get("/api/milestones", milestoneController.list);
+  // logger.debug(`${callerType} GET -> path: /api/milestones`);
+  // router.get("/api/milestones", milestoneController.list);
 
   // get all milestones by project id
   logger.debug(`${callerType} GET -> path: /api/milestones-project/:projid`);
@@ -33,9 +34,6 @@ module.exports = router => {
   logger.debug(`${callerType} PUT -> path: /api/milestones/:id`);
   router.put("/api/milestones/:id", milestoneController.update);
 
-  // TODO add DELETE /api/tasks/:id for deleting a milestone
+  // TODO add DELETE /api/tasks/:id for deleting (or deactivating) a milestone
 
-  // Find a task by ID
-  logger.debug(`${callerType} GET -> path: /api/milestones/:id`);
-  router.get("/api/milestones/:id", milestoneController.findById);
 };

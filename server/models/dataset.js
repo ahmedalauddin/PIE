@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "projectId",
       onDelete: "cascade"
     });
+
     logger.debug(`${callerType} DataSet belongsTo DataSource`);
     DataSet.belongsTo(models.DataSource, {
       as: "dataSource",

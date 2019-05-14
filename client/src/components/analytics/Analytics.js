@@ -1,10 +1,10 @@
 import withStyles from "@material-ui/core/styles/withStyles";
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { styles } from "./styles/MaterialSense";
-import Topbar from "./Topbar";
-import IframeComponent from "./iframe/IframeComponent";
-import "./iframe/IframeSytyle.css";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import { styles } from "../styles/MaterialSense";
+import Topbar from "../Topbar";
+import IframeComponent from "../iframe/IframeComponent";
+import "../iframe/IframeSytyle.css";
 
 class Analytics extends Component {
   state = {

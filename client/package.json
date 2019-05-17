@@ -16,7 +16,6 @@
     "debug": "^4.1.1",
     "draft-js": "^0.10.5",
     "formik": "^1.5.4",
-    "fsevents": "^2.0.6",
     "jss": "^9.8.7",
     "loglevel": "github:pimterry/loglevel",
     "moment": "^2.24.0",

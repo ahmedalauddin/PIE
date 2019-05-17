@@ -46,8 +46,6 @@ module.exports = (sequelize, DataTypes) => {
   /*
   TaskStatus.associate = models => {
     logger.debug(`${callerType} TaskStatus hasMany Task`);
-
-
   }; */
 
   return TaskStatus;

@@ -22,6 +22,10 @@ module.exports = router => {
   // logger.debug(`${callerType} GET -> path: /api/milestones`);
   // router.get("/api/milestones", milestoneController.list);
 
+  // get by id
+  logger.debug(`${callerType} GET -> path: /api/milestones/:id`);
+  router.get("/api/milestones/:id", milestoneController.findById);
+
   // get all milestones by project id
   logger.debug(`${callerType} GET -> path: /api/milestones-project/:projid`);
   router.get("/api/milestones-project/:projid", milestoneController.listByProject);

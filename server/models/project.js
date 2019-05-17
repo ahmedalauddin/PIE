@@ -108,15 +108,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "projectId"
     });
 
-    /*
-    logger.debug(`${callerType} Project hasOne KPI`);
-    Project.belongsTo(models.Kpi, {
-      as: "mainKpi",
-      foreignKey: "mainKpiId"
-    }); */
-
-    logger.debug(`${callerType} Project hasOne TaskStatus`);
-    Project.hasOne(models.TaskStatus);
+    logger.debug(`${callerType} Project belongsTo TaskStatus`);
+    Project.belongsTo(models.TaskStatus, {
+      as: "status",
+      foreignKey: "statusId"
+    });
 
     logger.debug(`${callerType} Project hasMany Task`);
     Project.hasMany(models.Task, {

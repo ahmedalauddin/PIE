@@ -29,6 +29,7 @@ import DepartmentCard from "./components/department/DepartmentCard";
 import OrganizationCard from "./components/organization/OrganizationCard";
 import KpiCard from "./components/kpi/KpiCard";
 import Kpi from "./components/kpi/Kpi";
+import Milestone from "./components/milestone/Milestone";
 import Analytics from "./components/analytics/Analytics";
 import KpiSearch from "./components/kpi/KpiSearch";
 import TestSearch from "./components/project/TestSearch";
@@ -66,6 +67,7 @@ export default props => (
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/kpicard" component={withAuth(KpiCard)} />
         <Route exact path="/kpi" component={withAuth(Kpi)} />
+        <Route exact path="/milestone" component={withAuth(Milestone)} />
         <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />
         <Route exact path="/actioncard" component={withAuth(ActionCard)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />

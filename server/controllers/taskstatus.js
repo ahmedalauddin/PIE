@@ -15,29 +15,14 @@ const logger = require("../util/logger")(__filename);
 const callerType = "controller";
 
 module.exports = {
-  // Find a status by Id
-  findById(req, res) {
-    return models.TaskStatus.findByPk(req.params.id, {
-    })
-      .then(_d => {
-        logger.debug(
-          `${callerType} findById -> successful, title: ${_d.label}`
-        );
-        res.status(201).send(_d);
-      })
-      .catch(error => {
-        logger.error(`${callerType} findById -> error: ${error.stack}`);
-        res.status(400).send(error);
-      });
-  },
 
   // List all statuses
   list(req, res) {
     return models.TaskStatus.findAll({
     })
-      .then(_d => {
-        logger.debug(`${callerType} list -> successful, count: ${_d.length}`);
-        res.status(201).send(_k);
+      .then(_s => {
+        logger.debug(`${callerType} list -> successful, count: ${_s.length}`);
+        res.status(201).send(_s);
       })
       .catch(error => {
         logger.error(`${callerType} list -> error: ${error.stack}`);

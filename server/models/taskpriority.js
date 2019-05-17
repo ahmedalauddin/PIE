@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     logger.debug(`${callerType} TaskPriority hasMany Task`);
     TaskPriority.hasMany(models.Task, {
       as: "tasks",
-      foreignKey: "statusId"
+      foreignKey: "priorityId"
     });
   };
 

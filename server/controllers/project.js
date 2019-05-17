@@ -15,6 +15,7 @@ const Organization = require("../models").Organization;
 const Project = require("../models").Project;
 const KPI = require("../models").Kpi;
 const Task = require("../models").Task;
+const TaskStatus = require("../models").TaskStatus;
 const Person = require("../models").Person;
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
@@ -139,13 +140,13 @@ module.exports = {
           model: Task,
           as: "tasks"
         },
-        /* {
-          model: KPI,
-          as: "mainKpi"
-        }, */
         {
           model: KPI,
           as: "kpis"
+        },
+        {
+          model: TaskStatus,
+          as: "status"
         },
         {
           model: Person,

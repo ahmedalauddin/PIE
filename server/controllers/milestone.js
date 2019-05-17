@@ -70,7 +70,7 @@ module.exports = {
 
   // Find a milestone by Id
   findById(req, res) {
-    return models.Milestone.findById(req.params.id, {
+    return models.Milestone.findByPk(req.params.id, {
       include: [
         {
           model: Project,
@@ -80,10 +80,7 @@ module.exports = {
           model: Task,
           as: "tasks"
         },
-        {
-          model: TaskStatus,
-          as: "status"
-        },
+
       ]
     })
       .then(t => {

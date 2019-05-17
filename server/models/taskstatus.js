@@ -43,14 +43,12 @@ module.exports = (sequelize, DataTypes) => {
   );
   logger.debug(`${callerType} TaskStatus end definition`);
 
+  /*
   TaskStatus.associate = models => {
     logger.debug(`${callerType} TaskStatus hasMany Task`);
-    TaskStatus.hasMany(models.Task, {
-      as: "tasks",
-      foreignKey: "statusId"
-    });
 
-  };
+
+  }; */
 
   return TaskStatus;
 };

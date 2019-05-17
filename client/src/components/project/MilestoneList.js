@@ -1,17 +1,19 @@
 import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-import { Link } from "react-router-dom";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
 import moment from "moment";
 import AlarmOnIcon from "@material-ui/icons/AlarmOn";
 import AddIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
 
 const styles = theme => ({
   root: {
@@ -55,11 +57,45 @@ const styles = theme => ({
 class MilestoneList extends React.Component {
   constructor(props) {
     super(props);
+    this.editMilestone = this.editMilestone.bind(this);
+    this.editAction = this.editAction.bind(this);
+    this.renderMilestoneRedirect = this.renderMilestoneRedirect.bind(this);
+    this.renderActionRedirect = this.renderActionRedirect.bind(this);
   }
 
   state = {
     milestones: [],
+    redirectMilestone: false,
+    redirectMilestoneId: 0,
+    redirectAction: false,
+    redirectActionId: 0
   };
+
+  renderMilestoneRedirect = () => {
+    if (this.state.redirectMilestone) {
+      return <Redirect to={{
+        pathname: '/milestone',
+        state: {
+          projectId: `${this.props.projectId}`,
+          milestoneId: `${this.state.redirectMilestoneId}`
+        }
+      }}
+      />;
+    }
+  }
+
+  renderActionRedirect = () => {
+    if (this.state.redirectAction) {
+      return <Redirect to={{
+        pathname: '/actioncard',
+        state: {
+          projectId: `${this.props.projectId}`,
+          actionId: `${this.state.redirectActionId}`
+        }
+      }}
+      />;
+    }
+  }
 
   componentDidMount() {
     // MilestoneList is expected to take a param of project ID, and fetch the KPIs
@@ -74,14 +110,18 @@ class MilestoneList extends React.Component {
     }
   }
 
-  editComponent(id) {
-    return `<Redirect to={{
-      pathname: '/kpi',
-      state: {
-        projectId: ${this.props.projectId},
-        kpiId: ${id}
-      }
-    }} />`;
+  editMilestone(id) {
+    this.setState({
+      redirectMilestone: true,
+      redirectMilestoneId: id
+    });
+  }
+
+  editAction(id) {
+    this.setState({
+      redirectAction: true,
+      redirectActionId: id
+    });
   }
 
   render() {
@@ -90,36 +130,50 @@ class MilestoneList extends React.Component {
     //let counter = 1;
 
     return (
-      <List component="nav" className={classes.root}>
-        {milestones.map((milestone,i) => (
-          <div key={milestone}>
-            <ListItem alignItems="flex-start">
-              <AlarmOnIcon coor="primary" className={classes.leftIcon}/>
-              <ListItemText
-                primary={`Milestone ${i+1}: ${milestone.title}`}
-                secondary={
-                  <React.Fragment>
-                    <Typography component="span" className={classes.inline} color="textPrimary">
-                      Target date:
-                    </Typography>
-                    {" " + moment(milestone.targetDate).format("YYYY-MM-DD")}
-                  </React.Fragment>
-                }
-              />
-            </ListItem>
-              {milestone.tasks.map(task => (
-                <ListItem className={classes.nested}>
-                <Typography variant="h7">
-                  <ListItemText inset primary={`${task.title}: ${task.description}`}/>
-                </Typography>
+      <div>
+        {this.renderActionRedirect()};
+        {this.renderMilestoneRedirect()};
+        <List component="nav" className={classes.root}>
+          {milestones.map((milestone,i) => (
+            <div key={milestone}>
+              <ListItem alignItems="flex-start">
+                <AlarmOnIcon coor="primary" className={classes.leftIcon}/>
+                <ListItemIcon>
+                  <IconButton onClick={() => {this.editMilestone(milestone.id);}}>
+                    <EditIcon color="primary" />
+                  </IconButton>
+                </ListItemIcon>
+                <ListItemText
+                  primary={`Milestone ${i+1}: ${milestone.title}`}
+                  secondary={
+                    <React.Fragment>
+                      <Typography component="span" className={classes.inline} color="textPrimary">
+                        Target date:
+                      </Typography>
+                      {" " + moment(milestone.targetDate).format("YYYY-MM-DD")}
+                    </React.Fragment>
+                  }
+                />
               </ListItem>
-              )
-            )}
-          </div>
-        ),
-        this)
-        }
-      </List>
+                {milestone.tasks.map(task => (
+                  <ListItem className={classes.nested}>
+                  <Typography variant="h7">
+                    <ListItemIcon>
+                      <IconButton onClick={() => {this.editAction(task.id);}}>
+                        <EditIcon color="primary" />
+                      </IconButton>
+                    </ListItemIcon>
+                    <ListItemText inset primary={`${task.title}: ${task.description}`}/>
+                  </Typography>
+                </ListItem>
+                )
+              )}
+            </div>
+          ),
+          this)
+          }
+        </List>
+      </div>
     );
   }
 }

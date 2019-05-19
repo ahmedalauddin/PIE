@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { Redirect } from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
@@ -14,6 +14,8 @@ import AlarmOnIcon from "@material-ui/icons/AlarmOn";
 import AddIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
   root: {
@@ -38,7 +40,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.secondary.dark,
       },
   nested: {
-    paddingLeft: theme.spacing.unit * 4,
+    paddingLeft: theme.spacing.unit * 6,
   },
   inline: {
     display: 'inline',
@@ -81,6 +83,8 @@ class MilestoneList extends React.Component {
         }
       }}
       />;
+    } else {
+      return "";
     }
   }
 
@@ -94,6 +98,8 @@ class MilestoneList extends React.Component {
         }
       }}
       />;
+    } else {
+      return "";
     }
   }
 
@@ -157,14 +163,12 @@ class MilestoneList extends React.Component {
               </ListItem>
                 {milestone.tasks.map(task => (
                   <ListItem className={classes.nested}>
-                  <Typography variant="h7">
                     <ListItemIcon>
                       <IconButton onClick={() => {this.editAction(task.id);}}>
-                        <EditIcon color="primary" />
+                        <EditIcon fontSize="small" color="primary" />
                       </IconButton>
                     </ListItemIcon>
                     <ListItemText inset primary={`${task.title}: ${task.description}`}/>
-                  </Typography>
                 </ListItem>
                 )
               )}
@@ -173,6 +177,11 @@ class MilestoneList extends React.Component {
           this)
           }
         </List>
+        <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+          aria-label="Add Action" to={{pathname: "/actioncard", state: {projectId: this.props.projectId} }} >
+          Add Action
+          <AddIcon className={classes.rightIcon} />
+        </Button>
       </div>
     );
   }

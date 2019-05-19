@@ -4,35 +4,39 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-14
+ * Modified: 2019-05-17
  * Editor:   Brad Kaufman
  */
+const Auth = require("./auth");
+const Dataset = require("./dataset");
+const Datasource = require("./datasource");
+const Department = require("./department");
+const Kpi = require("./kpi");
+const KpiTag = require("./kpitag");
+const Milestone = require("./milestone");
+const Mindmap = require("./mindmap");
 const Organization = require("./organization");
 const Person = require("./person");
 const Project = require("./project");
-const Auth = require("./auth");
-const Department = require("./department");
+const ProjectPerson = require("./projectperson");
+const Task = require("./task");
 const TaskStatus = require("./taskstatus");
 const TaskPriority = require("./taskpriority");
-const Kpi = require("./kpi");
-const KpiTag = require("./kpitag");
-const Mindmap = require("./mindmap");
-const Milestone = require("./milestone");
-const Task = require("./task");
-const ProjectPerson = require("./projectperson");
 
 module.exports = {
+  Auth,
+  Dataset,
+  Datasource,
+  Department,
+  Kpi,
+  KpiTag,
+  Milestone,
+  Mindmap,
   Organization,
   Person,
   Project,
-  Auth,
-  Department,
-  TaskStatus,
-  TaskPriority,
-  KpiTag,
-  Kpi,
-  Mindmap,
-  Milestone,
+  ProjectPerson,
   Task,
-  ProjectPerson
+  TaskPriority,
+  TaskStatus
 };

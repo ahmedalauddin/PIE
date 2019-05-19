@@ -31,17 +31,6 @@ module.exports = {
       status: req.body.taskstatus,
       orgId: req.body.orgId
     })
-      .then(k => {
-        logger.debug(`${callerType} create -> added kpi, id: ${k.id}`);
-        // SQL to insert all people from the org into the ProjectPersons table with
-        // the project id.
-        kpiId = k.id;
-        let sql = "INSERT into `KpiProjects` " +
-          "(projectId, KpiId)  " +
-          "values (" + projectId + ", " + kpiId + ")";
-        logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
-        return models.sequelize.query(sql);
-      })
       .then(() => {
         // SQL to insert all tags.  Need to loop through the array of tags to build the strings of values
         // we'll insert.
@@ -300,7 +289,7 @@ module.exports = {
     let projectId = req.headers.projectid;
     let orgId = req.headers.orgid;
     let searchOrgOnly = req.headers.searchorgonly;
-    logger.debug(`${callerType} create KpiProject -> searchOrgOnly: ${searchOrgOnly}`);
+    logger.debug(`${callerType} search Kpi -> searchOrgOnly: ${searchOrgOnly}`);
     let sql = "select * from vw_Kpis " +
       "where (tags like '%" + searchText + "%' or title like '%" + searchText + "%' " +
       "or description like '%" + searchText + "%') " +
@@ -331,7 +320,7 @@ module.exports = {
   listByProject(req, res) {
     let sql = "select * from vw_Kpis " +
       "where projectId = " + req.params.projid + " and active = 1";
-    logger.debug(`${callerType} create KpiProject -> sql: ${sql}`);
+    logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
         {

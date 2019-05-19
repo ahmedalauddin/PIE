@@ -47,7 +47,9 @@ module.exports = (sequelize, DataTypes) => {
       freezeTableName: true
     }
   );
+  logger.debug(`${callerType} Organization end definition`);
 
+  logger.debug(`${callerType} Organization start associations`);
   Organization.associate = models => {
     logger.debug(`${callerType} Organization hasMany Person`);
     Organization.hasMany(models.Person, {
@@ -75,6 +77,7 @@ module.exports = (sequelize, DataTypes) => {
       as: "mindmap"
     });
   };
+  logger.debug(`${callerType} Organization end associations`);
 
   return Organization;
 };

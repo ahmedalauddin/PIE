@@ -17,6 +17,7 @@ const KPI = require("../models").Kpi;
 const Task = require("../models").Task;
 const TaskStatus = require("../models").TaskStatus;
 const Person = require("../models").Person;
+const Milestone = require("../models").Milestone;
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const util = require("util");
@@ -151,6 +152,10 @@ module.exports = {
         {
           model: Person,
           as: "team"
+        },
+        {
+          model: Milestone,
+          as: "milestones"
         }
       ]
     })
@@ -257,20 +262,23 @@ module.exports = {
   // List most recent projects
   getMostRecent(req, res) {
     // SQL for most recent projects.
+    // TODO - factor out KpiProjects, we're not using it now.
+    /*
+    let sql  = "select id, title, description, startAt, ProjectUpdated, " +
+    "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
+    "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
+    "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
+    " (select  P.id as id, P.title, P.description, P.startAt, P.updatedAt as ProjectUpdated , " +
+    "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
+    "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
+    "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+    "      and P.id = KP.projectId) as KUdate, " +
+    "   (select max(K.createdAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
+    "      and P.id = KP.projectId) as KCdate " +
+    "   from Projects P) as Proj "; */
+    let sql = "";
     return models.sequelize
-      .query(
-        "select id, title, description, startAt, ProjectUpdated, " +
-          "    greatest(ProjectUpdated, COALESCE(TUdate, '2000-01-01'), " +
-          "      COALESCE(TCdate, '2000-01-01'), COALESCE(KUdate, '2000-01-01'), " +
-          "      COALESCE(KCdate, '2000-01-01')) as MostRecent from " +
-          " (select  P.id as id, P.title, P.description, P.startAt, P.updatedAt as ProjectUpdated , " +
-          "   (select max(T.updatedAt) from Tasks T where T.projectId = P.id) as TUdate, " +
-          "   (select max(T.createdAt) from Tasks T where T.projectId = P.id) as TCdate, " +
-          "   (select max(K.updatedAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
-          "      and P.id = KP.projectId) as KUdate, " +
-          "   (select max(K.createdAt) from Kpis K, KpiProjects KP where K.id = KP.kpiId " +
-          "      and P.id = KP.projectId) as KCdate " +
-          "   from Projects P) as Proj ",
+      .query(sql,
         {
           type: models.sequelize.QueryTypes.SELECT,
           limit: 3,

@@ -64,6 +64,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   logger.debug(`${callerType} Milestone end definition`);
 
+  logger.debug(`${callerType} Milestone start associations`);
   Milestone.associate = models => {
     logger.debug(`${callerType} Milestone belongsTo Project`);
     Milestone.belongsTo(models.Project, {
@@ -85,6 +86,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "milestoneId"
     });
   };
+  logger.debug(`${callerType} Milestone end associations`);
 
   return Milestone;
 };

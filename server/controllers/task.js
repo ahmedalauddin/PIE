@@ -15,6 +15,7 @@ const Person = require("../models").Person;
 const Project = require("../models").Project;
 const TaskPriority = require("../models").TaskPriority;
 const TaskStatus = require("../models").TaskStatus;
+const Milestone = require("../models").Milestone;
 const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
@@ -26,6 +27,7 @@ module.exports = {
       description: req.body.description,
       status: req.body.taskstatus,
       assignedTo: req.body.assigned,
+      milestone: req.body.milestone,
       projectId: parseInt(req.body.projectId)
     })
       .then(t => {
@@ -81,6 +83,10 @@ module.exports = {
         {
           model: Person,
           as: "assigned"
+        },
+        {
+          model: Milestone,
+          as: "milestone"
         },
         {
           model: TaskStatus,

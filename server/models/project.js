@@ -120,6 +120,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "projectId"
     });
 
+    logger.debug(`${callerType} Project hasMany Milestone`);
+    Project.hasMany(models.Milestone, {
+      as: "milestones",
+      foreignKey: "projectId"
+    });
+
     logger.debug(`${callerType} Project belongsToMany Person`);
     Project.belongsToMany(models.Person, {
       through: "ProjectPersons",

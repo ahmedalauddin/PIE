@@ -51,6 +51,8 @@ class ActionCard extends React.Component {
     orgName: "",
     assigned: null,
     assignedList: [],
+    milestone: null,
+    milestoneList: [],
     priority: null,
     priorityList: [],
     description: "",
@@ -143,7 +145,8 @@ class ActionCard extends React.Component {
         .then(project => {
           this.setState({
             assignedList: project.team,
-            projectName: project.title
+            projectName: project.title,
+            milestoneList: project.milestones
           });
         });
     }
@@ -187,130 +190,145 @@ class ActionCard extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
-        <form onSubmit={this.handleSubmit} noValidate>
-          <div className={classes.root}>
-            <Grid container justify="center">
-              <Grid
-                spacing={24}
-                alignItems="center"
-                justify="center"
-                container
-                className={classes.grid}
-              >
-                <Grid item xs={12} md={6}>
-                  <SectionHeader title="" subtitle="" />
-                  <Card className={classes.card}>
-                    <CardContent>
-                      <Typography
-                        style={{ textTransform: "uppercase" }}
-                        color="secondary"
-                        gutterBottom
-                      >
-                        Action Detail<br/>
-                      </Typography>
-                      <Typography variant="h6">
-                        Project: {this.state.projectName}
-                      </Typography>
-                      <Typography variant="h6">
-                        Organization: {getOrgName()}
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <TextField
-                          required
-                          id="title-required"
-                          label="Title"
-                          onChange={this.handleChange("title")}
-                          value={this.state.title}
-                          className={classes.textField}
-                          margin="normal"
-                        />
-                      </Typography>
-                      <Typography component="p">
-                        <TextField
-                          id="description"
-                          label="Description"
-                          multiline
-                          rowsMax="6"
-                          value={this.state.description}
-                          onChange={this.handleChange("description")}
-                          className={classes.textField}
-                          fullWidth
-                          margin="normal"
-                          InputLabelProps={{
-                            shrink: true
+        <div className={classes.root}>
+          <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
+            <Grid item lg={10}>
+              <Paper className={classes.paper}>
+                <form onSubmit={this.handleSubmit} noValidate>
+                  <Typography
+                    variant="h7"
+                    color="secondary"
+                    gutterBottom
+                  >
+                    Action Detail<br/>
+                  </Typography>
+                  <Typography variant="h7">
+                    Project: {this.state.projectName}
+                  </Typography>
+                  <Typography variant="h7">
+                    Organization: {getOrgName()}
+                  </Typography>
+                  <Grid container spacing={24}>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        id="title-required"
+                        label="Title"
+                        onChange={this.handleChange("title")}
+                        value={this.state.title}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        id="description"
+                        label="Description"
+                        multiline
+                        rowsMax="6"
+                        value={this.state.description}
+                        onChange={this.handleChange("description")}
+                        className={classes.textField}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                          shrink: true
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="assigned-simple">
+                          Priority
+                        </InputLabel>
+                        <Select
+                          value={this.state.priority}
+                          onChange={this.handleSelectChange}
+                          inputProps={{
+                            name: "priority",
+                            id: "priority-simple"
                           }}
-                        />
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="assigned-simple">
-                            Priority
-                          </InputLabel>
-                          <Select
-                            value={this.state.priority}
-                            onChange={this.handleSelectChange}
-                            inputProps={{
-                              name: "priority",
-                              id: "priority-simple"
-                            }}
-                          >
-                            {this.state.priorityList.map(priority => {
-                              return (
-                                <MenuItem key={priority.id} value={priority.id}>
-                                  {priority.label}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Typography>
-                      <Typography variant="h5" component="h2">
-                        <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="assigned-simple">
-                            Assigned To
-                          </InputLabel>
-                          <Select
-                            value={this.state.assigned}
-                            onChange={this.handleSelectChange}
-                            inputProps={{
-                              name: "assigned",
-                              id: "assigned-simple"
-                            }}
-                          >
-                            {this.state.assignedList.map(person => {
-                              return (
-                                <MenuItem key={person.id} value={person.id}>
-                                  {person.fullName}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </FormControl>
-                        <br />
-                        <br />
-                        <br />
-                      </Typography>
-                      <div className={classes.spaceTop}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={this.handleSubmit}
-                          className={classes.secondary}
                         >
-                          {this.state.buttonText}
-                        </Button>
-                      </div>
+                          {this.state.priorityList.map(priority => {
+                            return (
+                              <MenuItem key={priority.id} value={priority.id}>
+                                {priority.label}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="assigned-simple">
+                          Assigned To
+                        </InputLabel>
+                        <Select
+                          value={this.state.assigned}
+                          onChange={this.handleSelectChange}
+                          inputProps={{
+                            name: "assigned",
+                            id: "assigned-simple"
+                          }}
+                        >
+                          {this.state.assignedList.map(person => {
+                            return (
+                              <MenuItem key={person.id} value={person.id}>
+                                {person.fullName}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
                       <br />
-                    </CardContent>
-                  </Card>
-                </Grid>
-
-              </Grid>
+                      <br />
+                      <br />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="milestone-simple">
+                          Milestone
+                        </InputLabel>
+                        <Select
+                          value={this.state.milestone}
+                          onChange={this.handleSelectChange}
+                          inputProps={{
+                            name: "milestone",
+                            id: "milestone-simple"
+                          }}
+                        >
+                          {this.state.milestoneList.map(milestone => {
+                            return (
+                              <MenuItem key={milestone.id} value={milestone.id}>
+                                {milestone.title}: target date {milestone.targetDate}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                      <br />
+                      <br />
+                      <br />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleSubmit}
+                        className={classes.secondary}
+                      >
+                        {this.state.buttonText}
+                      </Button>
+                      <br />
+                    </Grid>
+                  </Grid>
+                </form>
+              </Paper>
             </Grid>
+          </Grid>
+        </div>
 
-
-          </div>
-        </form>
       </React.Fragment>
     );
   }

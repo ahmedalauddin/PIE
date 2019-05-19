@@ -63,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      allowLogin: {
+        type: DataTypes.TINYINT,
+        allowNull: true,
+      },
       deptId: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -144,8 +148,10 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   );
+  logger.debug(`${callerType} Person end definition`);
 
   // now prepare the associations
+  logger.debug(`${callerType} Person start associations`);
   Person.associate = models => {
     logger.debug(`${callerType} Person belongsTo Organization`);
     Person.belongsTo(models.Organization, {
@@ -168,6 +174,7 @@ module.exports = (sequelize, DataTypes) => {
       otherKey: "projectId"
     });
   };
+  logger.debug(`${callerType} Person end associations`);
 
   return Person;
 };

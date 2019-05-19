@@ -15,8 +15,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { styles } from "../styles/MaterialSense";
-import Card from "@material-ui/core/Card/index";
-import CardContent from "@material-ui/core/CardContent/index";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid/index";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -26,10 +26,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import { Redirect } from "react-router-dom";
-import { WithContext as ReactTags } from "react-tag-input";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
-import ProjectDetail from "../project/ProjectDetail";
 
 class Milestone extends React.Component {
   constructor(props) {
@@ -200,99 +198,95 @@ class Milestone extends React.Component {
             <Grid item lg={10}>
               <Paper className={classes.paper}>
                 <form onSubmit={this.handleSubmit} noValidate>
-                  <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
-                    <Grid item lg={10}>
-                        <Typography
-                          variant="h6"
-                          color="secondary"
-                          gutterBottom
-                        >
-                          Milestone Detail<br/>
-                        </Typography>
-                        <Typography variant="h7">
-                          Project: {this.state.projectName}
-                        </Typography>
-                        <Typography variant="h7">
-                          Organization: {getOrgName()}
-                        </Typography>
-                      <Grid container spacing={24}>
-                        <Grid item xs={12}>
-                          <TextField
-                            required
-                            id="title-required"
-                            label="Title"
-                            fullWidth
-                            onChange={this.handleChange("title")}
-                            value={this.state.title}
-                            className={classes.textField}
-                            margin="normal"
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <TextField
-                            id="description"
-                            label="Description"
-                            multiline
-                            rowsMax="6"
-                            value={this.state.description}
-                            onChange={this.handleChange("description")}
-                            className={classes.textField}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <TextField
-                            id="targetDate"
-                            label="Target Date"
-                            type="date"
-                            value={this.state.targetDate}
-                            onChange={this.handleChange("targetDate")}
-                            className={classes.textFieldWide}
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12}>
-                          <FormControl className={classes.formControl}>
-                            <InputLabel htmlFor="assigned-simple">
-                              Status
-                            </InputLabel>
-                            <Select
-                              value={this.state.status}
-                              onChange={this.handleSelectChange}
-                              inputProps={{
-                                name: "status",
-                                id: "status-simple"
-                              }}
-                            >
-                              {this.state.statusList.map(status => {
-                                return (
-                                  <MenuItem key={status.id} value={status.id}>
-                                    {status.label}
-                                  </MenuItem>
-                                );
-                              })}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-                        <Typography component="p">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleSubmit}
-                            className={classes.secondary}
-                          >
-                            {this.state.buttonText}
-                          </Button>
-                        </Typography>
-                        <br />
-                      </Grid>
+                  <Typography
+                    variant="h7"
+                    color="secondary"
+                    gutterBottom
+                  >
+                    Milestone Detail<br/>
+                  </Typography>
+                  <Typography variant="h7">
+                    Project: {this.state.projectName}
+                  </Typography>
+                  <Typography variant="h7">
+                    Organization: {getOrgName()}
+                  </Typography>
+                  <Grid container spacing={24}>
+                    <Grid item sm={12}>
+                      <TextField
+                        required
+                        id="title-required"
+                        label="Title"
+                        fullWidth
+                        onChange={this.handleChange("title")}
+                        value={this.state.title}
+                        className={classes.textField}
+                        margin="normal"
+                      />
                     </Grid>
+                    <Grid item sm={12}>
+                      <TextField
+                        id="description"
+                        label="Description"
+                        multiline
+                        rowsMax="6"
+                        value={this.state.description}
+                        onChange={this.handleChange("description")}
+                        className={classes.textField}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{
+                          shrink: true
+                        }}
+                      />
+                    </Grid>
+                    <Grid item sm={12}>
+                      <TextField
+                        id="targetDate"
+                        label="Target Date"
+                        type="date"
+                        value={this.state.targetDate}
+                        onChange={this.handleChange("targetDate")}
+                        className={classes.textFieldWide}
+                        InputLabelProps={{
+                          shrink: true
+                        }}
+                      />
+                    </Grid>
+                    <Grid item sm={12}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="assigned-simple">
+                          Status
+                        </InputLabel>
+                        <Select
+                          value={this.state.status}
+                          onChange={this.handleSelectChange}
+                          inputProps={{
+                            name: "status",
+                            id: "status-simple"
+                          }}
+                        >
+                          {this.state.statusList.map(status => {
+                            return (
+                              <MenuItem key={status.id} value={status.id}>
+                                {status.label}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item sm={12}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleSubmit}
+                        className={classes.secondary}
+                      >
+                        {this.state.buttonText}
+                      </Button>
+                    </Grid>
+                    <br />
                   </Grid>
                 </form>
               </Paper>

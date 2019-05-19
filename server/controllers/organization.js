@@ -11,9 +11,6 @@
 
 // declarations
 const models = require("../models");
-//const Person = require("../models/person");
-//const Project = require("../models/project");
-//const Kpi = require("../models/kpi");
 const logger = require("../util/logger")(__filename);
 const mvcType = "controller";
 

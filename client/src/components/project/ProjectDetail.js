@@ -291,6 +291,17 @@ class ProjectDetail extends React.Component {
               }}
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSubmit}
+              className={classes.secondary}
+            >
+              {this.state.buttonText}
+            </Button>
+            <br />
+          </Grid>
         </Grid>
       </form>
     );

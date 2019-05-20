@@ -22,7 +22,7 @@ import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField/index";
 import Button from "@material-ui/core/Button/index";
-import { store, setUser } from "../../redux";
+import { store, setUser, setOrg } from "../../redux";
 import TableCell from "@material-ui/core/TableCell/index";
 import { unstable_Box as Box } from '@material-ui/core/Box';
 
@@ -79,9 +79,10 @@ class Login extends React.Component {
           return response.json();
         }
       })
-      .then(data => {
-        store.dispatch(setUser(JSON.stringify(data)));
-        console.log("Login.js, user:" + JSON.stringify(data));
+      .then(user => {
+        // Use Redux to save the user information.
+        store.dispatch(setUser(JSON.stringify(user)));
+        console.log("Login.js, user:" + JSON.stringify(user));
       })
       .then(() => {
         console.log("Ready to redirect");
@@ -90,6 +91,13 @@ class Login extends React.Component {
           readyToRedirect: true
         });
       })
+      .then(() => {
+      console.log("Ready to redirect");
+      this.setState({
+        isLoggedIn: true,
+        readyToRedirect: true
+      });
+    })
       .catch(err => {
         // TODO - set error login on form.
         this.setState({

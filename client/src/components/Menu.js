@@ -1,23 +1,33 @@
 const Menu = [
   {
     label: "Dashboard",
-    pathname: "/paneldashboard"
+    pathname: "/paneldashboard",
+    admin: false,
+    intro: false
   },
   {
     label: "Login",
-    pathname: "/login"
+    pathname: "/login",
+    admin: false,
+    intro: true
   },
   {
     label: "Mind Map",
-    pathname: "/mindmap"
+    pathname: "/mindmap",
+    admin: true,
+    intro: false
   },
   {
     label: "Projects",
-    pathname: "/listprojects"
+    pathname: "/listprojects",
+    admin: true,
+    intro: false
   },
   {
     label: "Organizations",
-    pathname: "/orgdashboard"
+    pathname: "/orgdashboard",
+    admin: true,
+    intro: false
   },
 /*
   {
@@ -26,7 +36,9 @@ const Menu = [
   }, */
   {
     label: "Client Filter",
-    pathname: "/clientorg"
+    pathname: "/clientorg",
+    admin: true,
+    intro: false
   },
   {
     label: "Logout",
@@ -34,7 +46,9 @@ const Menu = [
   },
   {
     label: "About",
-    pathname: "/about"
+    pathname: "/about",
+    admin: false,
+    intro: true
   }
 ];
 

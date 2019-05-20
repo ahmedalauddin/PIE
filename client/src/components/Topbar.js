@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { Link, withRouter } from "react-router-dom";
+import { isAdministrator, isLoggedIn } from "../redux";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -8,6 +9,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Menu from "./Menu";
+
 const logo = require("../images/ValueInfLogo.png");
 const styles = theme => ({
   appBar: {
@@ -142,7 +144,7 @@ class Topbar extends Component {
                     textColor="primary"
                     onChange={this.handleChange}
                   >
-                    {Menu.map((item, index) => (
+                    {Menu.map((item, index) => (((isAdministrator()==true) || item.intro || (isLoggedIn() && !item.admin)) &&
                       <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                     ))}
                   </Tabs>

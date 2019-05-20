@@ -193,3 +193,40 @@ export function getProject() {
 export function getProjectName() {
   return JSON.parse(store.getState().state.project).title;
 }
+
+/**
+ * *isAdministrator*
+ * Is the logged in user an administrator
+ *
+ * @export
+ * @returns boolean if the user is an administrator.
+ */
+export function isAdministrator() {
+  let isAdmin = false;
+  try {
+    isAdmin = JSON.parse(store.getState().state.user).organization.owningOrg;
+    console.log("isAdministrator: user: " + JSON.parse(store.getState().state.user).email + ", is admin: " + isAdmin.toString());
+  } catch (error) {
+    console.log("isAdministrator: error");
+  }
+  return isAdmin;
+}
+
+/**
+ * *isAdministrator*
+ * Is the logged in user an administrator
+ *
+ * @export
+ * @returns boolean if the user is an administrator.
+ */
+export function isLoggedIn() {
+  let user = null;
+  let loggedIn = false;
+  try {
+    user = JSON.parse(store.getState().state.user);
+    loggedIn = true;
+  } catch (error) {
+    console.log("user not logged in");
+  }
+  return loggedIn;
+}

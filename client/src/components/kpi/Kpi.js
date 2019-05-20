@@ -356,7 +356,7 @@ class KpiCard extends React.Component {
                     />
                   </Typography>
                   <Typography component="p">
-                    <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
+                    <InputLabel shrink htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
                     <FormControl className={classes.formControl}>
                       <Select
                         value={this.state.type}

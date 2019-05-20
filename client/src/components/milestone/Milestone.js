@@ -1,22 +1,19 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/ProjectCard.js
- * Descr:    Project component.  Allows create and update.
- * Created:  2019-02-05 09:23:45
+ * File:     /client/src/components/Milestone.js
+ * Descr:    Milestone component.  Allows create and update.
+ * Created:  2019-05-03
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-02
+ * Modified: 2019-05-20
  * Editor:   Brad Kaufman
- * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
+ * Notes:
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
-import { styles } from "../styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid/index";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
@@ -28,6 +25,136 @@ import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
+import {red} from "@material-ui/core/colors";
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.grey["100"],
+    overflow: "hidden",
+    backgroundSize: "cover",
+    paddingBottom: 200
+  },
+  grid: {
+    width: 1200,
+    marginTop: 40,
+    [theme.breakpoints.down("sm")]: {
+      width: "calc(100% - 20px)"
+    }
+  },
+  paper: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary
+  },
+  rangeLabel: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing.unit * 2
+  },
+  topBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 32
+  },
+  outlinedButton: {
+    textTransform: "uppercase",
+    margin: theme.spacing.unit
+  },
+  actionButton: {
+    textTransform: "uppercase",
+    margin: theme.spacing.unit,
+    width: 152
+  },
+  blockCenter: {
+    padding: theme.spacing.unit * 2,
+    textAlign: "center"
+  },
+  block: {
+    padding: theme.spacing.unit * 2
+  },
+  box: {
+    marginBottom: 40,
+    height: 65
+  },
+  inlining: {
+    display: "inline-block",
+    marginRight: 10
+  },
+  buttonBar: {
+    display: "flex"
+  },
+  alignRight: {
+    display: "flex",
+    justifyContent: "flex-end"
+  },
+  noBorder: {
+    borderBottomStyle: "hidden"
+  },
+  loadingState: {
+    opacity: 0.05
+  },
+  loadingMessage: {
+    position: "absolute",
+    top: "40%",
+    left: "40%"
+  },
+  card: {
+    maxWidth: 1000
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%" // 16:9
+  },
+  actions: {
+    display: "flex"
+  },
+  expand: {
+    transform: "rotate(0deg)",
+    marginLeft: "auto",
+    transition: theme.transitions.create("transform", {
+      duration: theme.transitions.duration.shortest
+    })
+  },
+  expandOpen: {
+    transform: "rotate(180deg)"
+  },
+  avatar: {
+    backgroundColor: red[500]
+  },
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  textFieldWide: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 400
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  dense: {
+    marginTop: 19
+  },
+  menu: {
+    width: 200
+  },
+  spaceTop: {
+    marginTop: 50
+  }
+});
 
 class Milestone extends React.Component {
   constructor(props) {
@@ -113,7 +240,7 @@ class Milestone extends React.Component {
           body: JSON.stringify(this.state)
         })
           .then(response => {
-            if (response.status.toString().localeCompare("201")) {
+            if (response.status.toString().localeCompare("200")) {
               return <Redirect to={`/project/${projectId}`} />;
             }
           })
@@ -157,15 +284,13 @@ class Milestone extends React.Component {
             id: milestoneId,
             title: milestone.title,
             description: milestone.description,
-            level: milestone.level,
-            formula: milestone.formulaDescription,
-            orgId: milestone.orgId,
+            targetDate: milestone.targetDate,
+            statusId: milestone.statusId,
             projectName: milestone.project.title,
             projectId: projectId,
             buttonText: "Update"
           });
-          let x = 1;
-        })
+        });
     } else {
       this.setState({
         isEditing: true,
@@ -212,7 +337,7 @@ class Milestone extends React.Component {
                     Organization: {getOrgName()}
                   </Typography>
                   <Grid container spacing={24}>
-                    <Grid item sm={12}>
+                    <Grid item xs={12} sm={6}>
                       <TextField
                         required
                         id="title-required"
@@ -224,7 +349,7 @@ class Milestone extends React.Component {
                         margin="normal"
                       />
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item xs={12} sm={6}>
                       <TextField
                         id="description"
                         label="Description"
@@ -240,7 +365,7 @@ class Milestone extends React.Component {
                         }}
                       />
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item xs={12} sm={6}>
                       <TextField
                         id="targetDate"
                         label="Target Date"
@@ -253,13 +378,13 @@ class Milestone extends React.Component {
                         }}
                       />
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="assigned-simple">
+                        <InputLabel shrink htmlFor="status-simple">
                           Status
                         </InputLabel>
                         <Select
-                          value={this.state.status}
+                          value={this.state.statusId}
                           onChange={this.handleSelectChange}
                           inputProps={{
                             name: "status",
@@ -276,7 +401,7 @@ class Milestone extends React.Component {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item xs={12} sm={6}>
                       <Button
                         variant="contained"
                         color="primary"

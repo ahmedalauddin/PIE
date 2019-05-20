@@ -32,6 +32,34 @@ module.exports = {
       });
   },
 
+  dashboardList(req, res) {
+    logger.debug(`organizations dashboardList`);
+    let sql = " Select O.*,  \
+      (select group_concat(title order by title  SEPARATOR ', ') from Projects P where P.orgId = O.id) as projects,  \
+      (select group_concat(fullName order by fullName SEPARATOR '; ' ) from Persons Pe where Pe.orgId = O.id  \
+      ) as people,\
+      (select group_concat(name order by name SEPARATOR ', ' ) from Departments D where D.orgId = O.id \
+       ) as departments, \
+      (select group_concat(title order by title SEPARATOR ', ' ) from Kpis K where K.orgId = O.id \
+       ) as kpis \
+       from Organizations O \
+      order by name";
+    return models.sequelize.query(
+      sql,
+      {
+        type: models.sequelize.QueryTypes.SELECT
+      }
+    )
+      .then(orgs => {
+        logger.info(`${mvcType} selectList -> ${orgs.length} orgs`);
+        res.status(200).send(orgs);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
   // select all organizations
   list(req, res) {
     if (req.query.format === "select") {

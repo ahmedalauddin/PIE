@@ -136,7 +136,7 @@ class ClientOrg extends React.Component {
                       </Typography>
                       <Typography variant="h5" component="h2">
                         <FormControl className={classes.formControl}>
-                          <InputLabel htmlFor="org-simple">
+                          <InputLabel shrink htmlFor="org-simple">
                             Organization
                           </InputLabel>
                           <Select

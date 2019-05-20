@@ -20,6 +20,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/organizations`);
   router.get("/api/organizations", orgController.list);
 
+  // select all organizations for a dashboard list
+  logger.debug(`${callerType} GET -> path: /api/organizations-dashboard`);
+  router.get("/api/organizations-dashboard", orgController.dashboardList);
+
   // select a single organization by ID
   logger.debug(`${callerType} GET -> path: /api/organizations/:id`);
   router.get("/api/organizations/:id", orgController.findById);

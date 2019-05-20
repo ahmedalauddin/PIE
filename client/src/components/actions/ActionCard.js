@@ -13,7 +13,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Typography from "@material-ui/core/Typography/index";
 import Topbar from "../Topbar";
-import { styles } from "../styles/MaterialSense";
 import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField/index";
@@ -24,8 +23,136 @@ import FormControl from "@material-ui/core/FormControl/index";
 import MenuItem from "@material-ui/core/MenuItem/index";
 import InputLabel from "@material-ui/core/InputLabel/index";
 import Select from "@material-ui/core/Select/index";
-import Card from "@material-ui/core/Card/index";
-import CardContent from "@material-ui/core/CardContent/index";
+import {red} from "@material-ui/core/colors";
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.grey["100"],
+    overflow: "hidden",
+    backgroundSize: "cover",
+    paddingBottom: 200
+  },
+  grid: {
+    width: 1200,
+    marginTop: 40,
+    [theme.breakpoints.down("sm")]: {
+      width: "calc(100% - 20px)"
+    }
+  },
+  paper: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary
+  },
+  rangeLabel: {
+    display: "flex",
+    justifyContent: "space-between",
+    paddingTop: theme.spacing.unit * 2
+  },
+  topBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 32
+  },
+  outlinedButton: {
+    textTransform: "uppercase",
+    margin: theme.spacing.unit
+  },
+  actionButton: {
+    textTransform: "uppercase",
+    margin: theme.spacing.unit,
+    width: 152
+  },
+  blockCenter: {
+    padding: theme.spacing.unit * 2,
+    textAlign: "center"
+  },
+  block: {
+    padding: theme.spacing.unit * 2
+  },
+  box: {
+    marginBottom: 40,
+    height: 65
+  },
+  inlining: {
+    display: "inline-block",
+    marginRight: 10
+  },
+  buttonBar: {
+    display: "flex"
+  },
+  alignRight: {
+    display: "flex",
+    justifyContent: "flex-end"
+  },
+  noBorder: {
+    borderBottomStyle: "hidden"
+  },
+  loadingState: {
+    opacity: 0.05
+  },
+  loadingMessage: {
+    position: "absolute",
+    top: "40%",
+    left: "40%"
+  },
+  card: {
+    maxWidth: 1000
+  },
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  media: {
+    height: 0,
+    paddingTop: "56.25%" // 16:9
+  },
+  actions: {
+    display: "flex"
+  },
+  expand: {
+    transform: "rotate(0deg)",
+    marginLeft: "auto",
+    transition: theme.transitions.create("transform", {
+      duration: theme.transitions.duration.shortest
+    })
+  },
+  expandOpen: {
+    transform: "rotate(180deg)"
+  },
+  avatar: {
+    backgroundColor: red[500]
+  },
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  textFieldWide: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 400
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  dense: {
+    marginTop: 19
+  },
+  menu: {
+    width: 200
+  },
+  spaceTop: {
+    marginTop: 50
+  }
+});
 
 class ActionCard extends React.Component {
   constructor(props) {
@@ -169,6 +296,7 @@ class ActionCard extends React.Component {
             description: task.description,
             assigned: task.assigned.fullName,
             orgId: task.orgId,
+            milestone: task.milestoneId,
             projectId: task.projectId,
             buttonText: "Update"
           });
@@ -236,11 +364,9 @@ class ActionCard extends React.Component {
                         }}
                       />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="assigned-simple">
-                          Priority
-                        </InputLabel>
+                        <InputLabel shrink htmlFor="priority-simple">Priority</InputLabel>
                         <Select
                           value={this.state.priority}
                           onChange={this.handleSelectChange}
@@ -259,11 +385,9 @@ class ActionCard extends React.Component {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="assigned-simple">
-                          Assigned To
-                        </InputLabel>
+                        <InputLabel shrink htmlFor="assigned-simple">Assigned To</InputLabel>
                         <Select
                           value={this.state.assigned}
                           onChange={this.handleSelectChange}
@@ -272,6 +396,9 @@ class ActionCard extends React.Component {
                             id: "assigned-simple"
                           }}
                         >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
                           {this.state.assignedList.map(person => {
                             return (
                               <MenuItem key={person.id} value={person.id}>
@@ -285,11 +412,9 @@ class ActionCard extends React.Component {
                       <br />
                       <br />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="milestone-simple">
-                          Milestone
-                        </InputLabel>
+                        <InputLabel shrink htmlFor="milestone-simple">Milestone</InputLabel>
                         <Select
                           value={this.state.milestone}
                           onChange={this.handleSelectChange}
@@ -298,6 +423,9 @@ class ActionCard extends React.Component {
                             id: "milestone-simple"
                           }}
                         >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
                           {this.state.milestoneList.map(milestone => {
                             return (
                               <MenuItem key={milestone.id} value={milestone.id}>
@@ -311,7 +439,7 @@ class ActionCard extends React.Component {
                       <br />
                       <br />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={6}>
                       <Button
                         variant="contained"
                         color="primary"
@@ -328,7 +456,6 @@ class ActionCard extends React.Component {
             </Grid>
           </Grid>
         </div>
-
       </React.Fragment>
     );
   }

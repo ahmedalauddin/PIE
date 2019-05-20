@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import InstructionDialog from "./dialogs/InstructionDialog";
-import SwipeDialog from "./dialogs/SwipeDialog";
-import Topbar from "./Topbar";
-import ProjectCardItem from "./cards/ProjectCardItem";
-import ActionCardItem from "./cards/ActionCardItem";
-import styles from "./styles/DashboardStyles";
+import CssBaseline from "@material-ui/core/CssBaseline/index";
+import Paper from "@material-ui/core/Paper/index";
+import Typography from "@material-ui/core/Typography/index";
+import Grid from "@material-ui/core/Grid/index";
+import InstructionDialog from "../dialogs/InstructionDialog";
+import SwipeDialog from "../dialogs/SwipeDialog";
+import Topbar from "../Topbar";
+import ProjectCardItem from "../cards/ProjectCardItem";
+import ActionCardItem from "../cards/ActionCardItem";
+import styles from "../styles/DashboardStyles";
 
 class HighlightDashboard extends Component {
   state = {

@@ -1,7 +1,8 @@
 // Main routes component for react Router.
 import React from "react";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
-import HighlightDashboard from "./components/HighlightDashboard";
+import HighlightDashboard from "./components/dashboard/HighlightDashboard";
+import OrgDashboard from "./components/organization/OrgDashboard";
 import Cards from "./components/cards/Cards";
 import ScrollToTop from "./components/ScrollTop";
 import EditPerson from "./components/person/EditPerson";
@@ -22,8 +23,8 @@ import ProjectPersons from "./components/project/ProjectPersons";
 import Project from "./components/project/Project";
 import NewProject from "./components/project/NewProject";
 import ActionCard from "./components/actions/ActionCard";
-import ProjectDashboard from "./components/ProjectDashboard";
-import PanelDashboard from "./components/PanelDashboard";
+import ProjectDashboard from "./components/dashboard/ProjectDashboard";
+import PanelDashboard from "./components/dashboard/PanelDashboard";
 import About from "./components/About";
 import DepartmentCard from "./components/department/DepartmentCard";
 import OrganizationCard from "./components/organization/OrganizationCard";
@@ -43,6 +44,7 @@ export default props => (
       <Switch>
         <Route exact path="/dashboard" component={withAuth(ProjectDashboard)} />
         <Route exact path="/paneldashboard" component={withAuth(PanelDashboard)} />
+        <Route exact path="/orgdashboard" component={withAuth(OrgDashboard)} />
         <Route exact path="/highlight" component={withAuth(HighlightDashboard)} />
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />

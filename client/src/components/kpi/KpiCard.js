@@ -319,7 +319,7 @@ class KpiCard extends React.Component {
                             </Typography>
                             <Typography component="p">
                               <FormControl className={classes.formControl}>
-                                <InputLabel htmlFor="dept-simple">
+                                <InputLabel shrink htmlFor="dept-simple">
                                   Department
                                 </InputLabel>
                                 <Select
@@ -353,7 +353,7 @@ class KpiCard extends React.Component {
                               />
                             </Typography>
                             <Typography component="p">
-                              <InputLabel htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
+                              <InputLabel shrink htmlFor="kpi-type-simple">KPI Type</InputLabel><br/>
                               <FormControl className={classes.formControl}>
                                 <Select
                                   value={this.state.type}

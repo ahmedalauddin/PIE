@@ -230,7 +230,7 @@ class ProjectDetail extends React.Component {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="kpi-simple">Main KPI</InputLabel>
+              <InputLabel shrink htmlFor="kpi-simple">Main KPI</InputLabel>
               <Select
                 value={this.state.mainKpiId}
                 onChange={this.handleKpiSelectChange}

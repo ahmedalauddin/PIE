@@ -17,13 +17,9 @@ const Menu = [
   },
   {
     label: "Organizations",
-    pathname: "/listorgs"
+    pathname: "/orgdashboard"
   },
-  /*
-  {
-    label: "Users",
-    pathname: "/listpersons"
-  },
+/*
   {
     label: "Analytics",
     pathname: "/analytics"

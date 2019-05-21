@@ -32,7 +32,9 @@ const Menu = [
 /*
   {
     label: "Analytics",
-    pathname: "/analytics"
+    pathname: "/analytics",
+    admin: true,
+    intro: false
   }, */
   {
     label: "Client Filter",
@@ -42,7 +44,9 @@ const Menu = [
   },
   {
     label: "Logout",
-    pathname: "/logout"
+    pathname: "/logout",
+    admin: false,
+    intro: false
   },
   {
     label: "About",

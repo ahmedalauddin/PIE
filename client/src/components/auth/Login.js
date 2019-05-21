@@ -22,7 +22,7 @@ import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField/index";
 import Button from "@material-ui/core/Button/index";
-import { store, setUser, setOrg } from "../../redux";
+import { store, setUser, setOrg, isAdministrator } from "../../redux";
 import TableCell from "@material-ui/core/TableCell/index";
 import { unstable_Box as Box } from '@material-ui/core/Box';
 
@@ -38,6 +38,7 @@ class Login extends React.Component {
     isLoggedIn: false,
     isFailedLogin: false,
     readyToRedirect: false,
+    redirectTarget: "",
     userData: "",
     storeUser: "",
     expanded: false,
@@ -61,6 +62,7 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let redirectTarget = "";
 
     // Authenticate against the username
     fetch("/api/auth/authenticate", {
@@ -83,21 +85,24 @@ class Login extends React.Component {
         // Use Redux to save the user information.
         store.dispatch(setUser(JSON.stringify(user)));
         console.log("Login.js, user:" + JSON.stringify(user));
+        if (!isAdministrator()) {
+          store.dispatch(setOrg(JSON.stringify(user.organization)));
+          console.log("Login.js, non-admin, organization:" + JSON.stringify(user).organization);
+        }
       })
       .then(() => {
         console.log("Ready to redirect");
+        if (!isAdministrator()) {
+          redirectTarget = "/paneldashboard";
+        } else {
+          redirectTarget = "/clientorg";
+        }
         this.setState({
           isLoggedIn: true,
-          readyToRedirect: true
+          readyToRedirect: true,
+          redirectTarget: redirectTarget
         });
       })
-      .then(() => {
-      console.log("Ready to redirect");
-      this.setState({
-        isLoggedIn: true,
-        readyToRedirect: true
-      });
-    })
       .catch(err => {
         // TODO - set error login on form.
         this.setState({
@@ -114,7 +119,7 @@ class Login extends React.Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/clientorg" />;
+      return <Redirect to={this.state.redirectTarget} />;
     }
 
     return (

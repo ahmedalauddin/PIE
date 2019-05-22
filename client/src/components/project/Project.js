@@ -282,7 +282,7 @@ class Project extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Fab component={Link} size="small" color="primary" aria-label="Add"
-                    to={{pathname: "/milestones", state: {projectId: projId} }}
+                    to={{pathname: "/milestone", state: {projectId: projId} }}
                     className={classes.fab}>
                     <AddIcon />
                   </Fab>

@@ -1,11 +1,12 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /server/controllers/milestone.js
+ * Descr:    Sequelize controller for milestone.
  * Created:  2019-05-12
  * Author:   Brad Kaufman
  * -----
- * Modified:
- * Editor:
+ * Modified: 2019-05-22
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -20,10 +21,18 @@ const callerType = "controller";
 
 module.exports = {
   create(req, res) {
+    logger.debug(
+      `${callerType} update -> body: ${util.inspect(req.body, {
+        showHidden: false,
+        depth: null
+      })}`
+    );
     return models.Milestone.create({
       title: req.body.title,
       description: req.body.description,
-      status: req.body.taskstatus,
+      statusId: req.body.statusId,
+      orgId: req.body.orgId,
+      targetDate: req.body.targetDate,
       projectId: parseInt(req.body.projectId)
     })
       .then(t => {
@@ -49,7 +58,10 @@ module.exports = {
       {
         title: req.body.title,
         description: req.body.description,
-        status: req.body.taskstatus
+        statusId: req.body.statusId,
+        orgId: req.body.orgId,
+        targetDate: req.body.targetDate,
+        projectId: parseInt(req.body.projectId)
       },
       {
         returning: true,
@@ -80,15 +92,18 @@ module.exports = {
           model: Task,
           as: "tasks"
         },
-
+        {
+          model: TaskStatus,
+          as: "status"
+        }
       ]
     })
       .then(t => {
-        logger.debug(`${callerType} findById -> id: ${t.id}`);
+        logger.debug(`${callerType} Milestone findById -> id: ${t.id}`);
         res.status(200).send(t);
       })
       .catch(error => {
-        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        logger.error(`${callerType} Milestone findById -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -100,8 +115,16 @@ module.exports = {
       order: [["targetDate", "ASC"]],
       include: [
         {
+          model: Project,
+          as: "project"
+        },
+        {
           model: models.Task,
           as: "tasks"
+        },
+        {
+          model: TaskStatus,
+          as: "status"
         }
       ]
     })

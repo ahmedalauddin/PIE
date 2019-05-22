@@ -175,13 +175,12 @@ class KpiCard extends React.Component {
             this.setState({
               readyToRedirect: true
             });
-
           })
           .catch(err => {
-            //console.log(err);
+            console.log(err);
           });
       }
-      //setSubmitting(false);
+      // setSubmitting(false);
     }, 2000);
   };
 
@@ -254,7 +253,6 @@ class KpiCard extends React.Component {
     if (this.state.readyToRedirect) {
       return <Redirect to={`/project/${projectId}`} />;
     }
-
 
     return (
       <React.Fragment>

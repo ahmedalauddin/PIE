@@ -133,18 +133,17 @@ class MilestoneList extends React.Component {
   render() {
     const { classes } = this.props;
     const { milestones } = this.state;
-    //let counter = 1;
 
     return (
       <div>
-        {this.renderActionRedirect()};
-        {this.renderMilestoneRedirect()};
+        {this.renderActionRedirect()}
+        {this.renderMilestoneRedirect()}
         <List component="nav" className={classes.root}>
           {milestones.map((milestone,i) => (
             <div key={milestone}>
               <ListItem alignItems="flex-start">
                 <AlarmOnIcon coor="primary" className={classes.leftIcon}/>
-                <ListItemIcon>
+                  <ListItemIcon>
                   <IconButton onClick={() => {this.editMilestone(milestone.id);}}>
                     <EditIcon color="primary" />
                   </IconButton>
@@ -154,9 +153,9 @@ class MilestoneList extends React.Component {
                   secondary={
                     <React.Fragment>
                       <Typography component="span" className={classes.inline} color="textPrimary">
-                        Target date:
+                        Target date: {" " + moment(milestone.targetDate).format("MM/DD/YYYY")},
+                        Status: { milestone.status.label }
                       </Typography>
-                      {" " + moment(milestone.targetDate).format("YYYY-MM-DD")}
                     </React.Fragment>
                   }
                 />

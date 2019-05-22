@@ -29,13 +29,12 @@ const Menu = [
     admin: true,
     intro: false
   },
-/*
   {
     label: "Analytics",
     pathname: "/analytics",
     admin: true,
     intro: false
-  }, */
+  },
   {
     label: "Client Filter",
     pathname: "/clientorg",

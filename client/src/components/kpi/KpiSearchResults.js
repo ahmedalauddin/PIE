@@ -153,14 +153,15 @@ class KpiSearchResults extends React.Component {
   }
 
   state = {
-    order: 'asc',
-    orderBy: 'title',
+    order: "asc",
+    orderBy: "title",
     projectId: null,
     selected: [],
     data:[],        // this will be for the kpis
     submitted: null,
+    readyToRedirect: false,
     page: 0,
-    rowsPerPage: 5,
+    rowsPerPage: 5
   };
 
   performSearch() {
@@ -216,11 +217,10 @@ class KpiSearchResults extends React.Component {
       body: JSON.stringify(this.state)
     })
       .then(response => {
-        if (response.status === 200) {
-          // status code 200 is success.
-          // Redirect back to the project.
-          return <Redirect to={`/project/${projectId}`} />;
-        }
+        // Redirect to the Project component.
+        this.setState({
+          readyToRedirect: true
+        });
       })
       .catch(err => {
 
@@ -298,6 +298,10 @@ class KpiSearchResults extends React.Component {
     const projectId = getProject().id;
     const projectName = getProjectName();
     const orgName = getOrgName();
+
+    if (this.state.readyToRedirect) {
+      return <Redirect to={`/project/${projectId}`} />;
+    }
 
     return (
       <div>

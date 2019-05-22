@@ -27,30 +27,39 @@ module.exports = {
       description: req.body.description,
       formulaDescription: req.body.formula,
       type: req.body.type,
+      active: 1,
+      projectId: req.body.projectId,
       level: req.body.level,
       status: req.body.taskstatus,
       orgId: req.body.orgId
     })
-      .then(() => {
+      .then(kpi => {
         // SQL to insert all tags.  Need to loop through the array of tags to build the strings of values
         // we'll insert.
         let tags = req.body.tags;
+        let kpiId = kpi.id;
+        logger.debug(`${callerType} create Kpi -> tags: ${JSON.stringify(req.body.tags)}`);
+        logger.debug(`${callerType} create Kpi -> tags.length: ${tags.length}`);
         let tag = "";
         if (tags.length > 0) {
           let valueStr = "";
           for (let i = 0; i < tags.length; i++) {
             tag = tags[i].text;
-            valueStr += "(" + kpiId.toString() + ", '" + tag + "')";
-            if (i < (tags.length-1)) {
-              valueStr += ",";
+            if (tag !== "") {
+              valueStr += "(" + kpiId.toString() + ", '" + tag + "')";
+              if (i < (tags.length - 1)) {
+                valueStr += ",";
+              }
             }
           }
-          let sql =
-            "INSERT into `KpiTags` (kpiId, tag) " +
-            "values " + valueStr + " " +
-            "ON DUPLICATE KEY UPDATE kpiId=" + kpiId;
-          logger.debug(`${callerType} insert KpiTags -> sql: ${sql}`);
-          return models.sequelize.query(sql);
+          if (valueStr !== "") {
+            let sql =
+              "INSERT into `KpiTags` (kpiId, tag) " +
+              "values " + valueStr + " " +
+              "ON DUPLICATE KEY UPDATE kpiId=" + kpiId;
+            logger.debug(`${callerType} insert KpiTags -> sql: ${sql}`);
+            return models.sequelize.query(sql);
+          }
         }
       })
       .then(() => {

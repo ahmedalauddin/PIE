@@ -77,6 +77,7 @@ class KpiCard extends React.Component {
     endAt: "",
     msg: "",
     kpitype: "",
+    readyToRedirect: false,
     buttonText: "Create",
     isEditing: false,
     redirect: false,
@@ -169,15 +170,12 @@ class KpiCard extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(response => {
-            if (response.status.toString().localeCompare("201")) {
-              return <Redirect to={`/project/${projectId}`} />;
-            }
-          })
           .then(() => {
             // Redirect to the Project component.
-            // TODO - uncomment this
-            // this.props.history.push(`/project/${projectId}`);
+            this.setState({
+              readyToRedirect: true
+            });
+
           })
           .catch(err => {
             //console.log(err);
@@ -240,18 +238,23 @@ class KpiCard extends React.Component {
     // Have to set the state of the individual fields for the handleChange function for the TextFields.
     // Do this using the project state.
 
-    fetch("/api/organizations/?format=select")
+    fetch("/api/projects/" + projectId)
       .then(results => results.json())
-      .then(organizations => this.setState({ organizations }));
+      .then(project => this.setState({ project }));
   }
 
   render() {
     const { classes } = this.props;
     const { tags, suggestions } = this.state;
+    const projectId = this.props.location.state.projectId;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
+    if (this.state.readyToRedirect) {
+      return <Redirect to={`/project/${projectId}`} />;
+    }
+
 
     return (
       <React.Fragment>

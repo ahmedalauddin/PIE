@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       active: {
         type: DataTypes.TINYINT,
-        allowNull: false
+        allowNull: true
       },
       level: {
         type: DataTypes.INTEGER,

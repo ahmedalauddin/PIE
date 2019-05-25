@@ -21,11 +21,13 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, getProjectName } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
 import {red} from "@material-ui/core/colors";
+import Snackbar from "@material-ui/core/Snackbar";
+import Slide from "@material-ui/core/Slide";
 
 const styles = theme => ({
   root: {
@@ -181,6 +183,8 @@ class Milestone extends React.Component {
     statusId: 0,
     buttonText: "Create",
     readyToRedirect: false,
+    validationError: false,
+    openSnackbar: false,
     message: "",
     isEditing: false,
     redirect: false,
@@ -205,6 +209,14 @@ class Milestone extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+
+  handleClose = () => {
+    this.setState({ openSnackbar: false });
+  };
+
+  handleClick = Transition => () => {
+    this.setState({ openSnackbar: true, Transition });
+  };
 
   componentDidCatch(error, info) {
     console.log("error: " + error + ", info: " + info);
@@ -245,13 +257,28 @@ class Milestone extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(() => {
-            // Redirect to the Project component.
-            let message = "Milestone '" + this.state.title + "' added."
-            this.setState({
-              readyToRedirect: true,
-              message: message
-            });
+          .then((response) => {
+            if (response.status === 400) {
+              // Error: for now, we'll assume it's with the milestone not being within the project start and end dates.
+              let message = "Milestone '" + this.state.title + "' could not be added.  The milestone falls " +
+                "outside the range of the project start and end dates.  Please correct the milestone's target " +
+                "date and and submit your request again.";
+              this.setState({
+                readyToRedirect: false,
+                message: message,
+                validationError: true,
+                openSnackbar: true
+              });
+            } else {
+              // Redirect to the Project component.
+              let message = "Milestone '" + this.state.title + "' added."
+              this.setState({
+                readyToRedirect: true,
+                message: message
+              });
+
+            }
+            console.log(response.json());
           })
           .catch(err => {
             console.log(err);
@@ -296,9 +323,11 @@ class Milestone extends React.Component {
           });
         });
     } else {
+      let projectName = getProjectName();
       this.setState({
         isEditing: true,
         projectId: projectId,
+        projectName: projectName,
         buttonText: "Create"
       });
     }
@@ -431,6 +460,15 @@ class Milestone extends React.Component {
             </Grid>
           </Grid>
         </div>
+        <Snackbar
+          open={this.state.openSnackbar}
+          onClose={this.handleClose}
+          TransitionComponent={this.state.Transition}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{this.state.message}</span>}
+        />
       </React.Fragment>
     );
   }

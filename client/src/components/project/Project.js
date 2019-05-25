@@ -173,13 +173,14 @@ function TabContainer({ children, dir }) {
   );
 }
 
-function TransitionUp(props) {
-  return <Slide {...props} direction="up" />;
-}
-
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired
 };
+
+
+function TransitionUp(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 class Project extends React.Component {
   constructor(props) {

@@ -40,6 +40,9 @@ module.exports = {
         res.status(201).send(t);
       })
       .catch(error => {
+        // Would like to handle the constraint error from the database if the milestone falls outside of the project
+        // start and end date: "check constraint on Projects.startAt failed".  In the meantime, just assume
+        // this is the error when we get a 400 code response.
         logger.error(`${callerType} create -> error: ${error.stack}`);
         res.status(400).send(error);
       });

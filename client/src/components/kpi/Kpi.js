@@ -86,6 +86,7 @@ class KpiCard extends React.Component {
     hasError: false,
     labelWidth: 0,
     focus: false,
+    message: "",
     nextItem: "",
     tags: [{id: "", text: ""}],
     suggestions: [
@@ -154,10 +155,13 @@ class KpiCard extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(response => {
-            if (response.status.toString().localeCompare("201")) {
-              return <Redirect to={`/project/${projectId}`} />;
-            }
+          .then(() => {
+            // Redirect to the Project component.
+            let message = "KPI '" + this.state.title + "' updated."
+            this.setState({
+              readyToRedirect: true,
+              message: message
+            });
           })
           .catch(err => {
             console.log(err);
@@ -172,8 +176,10 @@ class KpiCard extends React.Component {
         })
           .then(() => {
             // Redirect to the Project component.
+            let message = "KPI '" + this.state.title + "' added."
             this.setState({
-              readyToRedirect: true
+              readyToRedirect: true,
+              message: message
             });
           })
           .catch(err => {
@@ -251,7 +257,12 @@ class KpiCard extends React.Component {
       return <h1>An error occurred.</h1>;
     }
     if (this.state.readyToRedirect) {
-      return <Redirect to={`/project/${projectId}`} />;
+      return <Redirect to={{
+        pathname: `/project/${projectId}`,
+        state: {
+          message: `${this.state.message}`
+        }
+      }} />;
     }
 
     return (
@@ -405,8 +416,6 @@ class KpiCard extends React.Component {
                     </Button>
                   </Typography>
                   <br />
-
-
                 </Paper>
               </Grid>
             </Grid>

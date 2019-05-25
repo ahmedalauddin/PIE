@@ -24,6 +24,7 @@ import MenuItem from "@material-ui/core/MenuItem/index";
 import InputLabel from "@material-ui/core/InputLabel/index";
 import Select from "@material-ui/core/Select/index";
 import {red} from "@material-ui/core/colors";
+import {Redirect} from "react-router-dom";
 
 const styles = theme => ({
   root: {
@@ -176,6 +177,8 @@ class ActionCard extends React.Component {
     org: "",
     orgId: "",
     orgName: "",
+    readyToRedirect: false,
+    message: "",
     assigned: null,
     assignedList: [],
     milestone: null,
@@ -215,7 +218,6 @@ class ActionCard extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  //handleSubmit(values, {resetForm, setErrors, setSubmitting}) {
   handleSubmit(event) {
     event.preventDefault();
     // Project ID and task id (if there is the latter, are passed in by location.state.
@@ -230,10 +232,13 @@ class ActionCard extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(response => {
-            if (response.status.toString().localeCompare("201")) {
-              this.setState({ msg: "Action item updated" });
-            }
+          .then(() => {
+            // Redirect to the Project component.
+            let message = "Action '" + this.state.title + "' updated."
+            this.setState({
+              readyToRedirect: true,
+              message: message
+            });
           })
           .catch(err => {
             //console.log(err);
@@ -246,11 +251,13 @@ class ActionCard extends React.Component {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(this.state)
         })
-          .then(data => {
+          .then(() => {
             // Redirect to the Project component.
-            // TODO - pass a message to Project indicating the action creation
-            // was successful.
-            this.props.history.push(`/project/${projectId}`);
+            let message = "Action '" + this.state.title + "' added."
+            this.setState({
+              readyToRedirect: true,
+              message: message
+            });
           })
           .catch(err => {
             //console.log(err);
@@ -313,6 +320,19 @@ class ActionCard extends React.Component {
   render() {
     const { classes } = this.props;
     const projectId = this.props.location.state.projectId;
+
+    if (this.state.hasError) {
+      return <h1>An error occurred.</h1>;
+    }
+    if (this.state.readyToRedirect) {
+      // return <Redirect to={`/project/${projectId}`} />;
+      return <Redirect to={{
+        pathname: `/project/${projectId}`,
+        state: {
+          message: `${this.state.message}`
+        }
+      }} />;
+    }
 
     return (
       <React.Fragment>

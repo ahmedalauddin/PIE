@@ -347,7 +347,6 @@ module.exports = {
   },
 
   // List all KPIs
-  // TODO: change this and use active flag from KpiProjects.
   list(req, res) {
     return models.Kpi.findAll({
       include: [

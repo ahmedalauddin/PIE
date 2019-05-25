@@ -181,6 +181,7 @@ class Milestone extends React.Component {
     statusId: 0,
     buttonText: "Create",
     readyToRedirect: false,
+    message: "",
     isEditing: false,
     redirect: false,
     isNew: false,
@@ -227,8 +228,10 @@ class Milestone extends React.Component {
         })
           .then(() => {
             // Redirect to the Project component.
+            let message = "Milestone '" + this.state.title + "' updated."
             this.setState({
-              readyToRedirect: true
+              readyToRedirect: true,
+              message: message
             });
           })
           .catch(err => {
@@ -244,8 +247,10 @@ class Milestone extends React.Component {
         })
           .then(() => {
             // Redirect to the Project component.
+            let message = "Milestone '" + this.state.title + "' added."
             this.setState({
-              readyToRedirect: true
+              readyToRedirect: true,
+              message: message
             });
           })
           .catch(err => {
@@ -314,7 +319,12 @@ class Milestone extends React.Component {
       return <h1>An error occurred.</h1>;
     }
     if (this.state.readyToRedirect) {
-      return <Redirect to={`/project/${projectId}`} />;
+      return <Redirect to={{
+        pathname: `/project/${projectId}`,
+        state: {
+          message: `${this.state.message}`
+        }
+      }} />;
     }
 
     return (

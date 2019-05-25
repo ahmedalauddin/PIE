@@ -33,6 +33,8 @@ import MilestoneList from "./MilestoneList";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
+import Snackbar from "@material-ui/core/Snackbar";
+import Slide from "@material-ui/core/Slide";
 
 const styles = theme => ({
   root: {
@@ -171,6 +173,10 @@ function TabContainer({ children, dir }) {
   );
 }
 
+function TransitionUp(props) {
+  return <Slide {...props} direction="up" />;
+}
+
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired
 };
@@ -208,7 +214,10 @@ class Project extends React.Component {
     description: "",
     value: 0,
     hasError: "",
-    expanded: null
+    expanded: null,
+    openSnackbar: false,
+    snackbarMessage: "",
+    message: ""
   };
 
   setOrganizationInfo = () => {
@@ -224,8 +233,24 @@ class Project extends React.Component {
     });
   };
 
+  handleClose = () => {
+    this.setState({ openSnackbar: false });
+  };
+
+  handleClick = Transition => () => {
+    this.setState({ openSnackbar: true, Transition });
+  };
+
   componentDidMount() {
     this.setOrganizationInfo();
+    let message = "";
+    if (this.props.location.state && this.props.location.state.message)  {
+      message = this.props.location.state.message;
+      this.setState({
+        openSnackbar: true,
+        message: message
+      });
+    }
   }
 
   componentDidCatch() {
@@ -324,7 +349,17 @@ class Project extends React.Component {
               </ExpansionPanel>
             </Grid>
           </Grid>
+          <Button onClick={this.handleClick(TransitionUp)}>Up</Button>
         </div>
+        <Snackbar
+          open={this.state.openSnackbar}
+          onClose={this.handleClose}
+          TransitionComponent={this.state.Transition}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{this.state.message}</span>}
+        />
       </React.Fragment>
     );
   }

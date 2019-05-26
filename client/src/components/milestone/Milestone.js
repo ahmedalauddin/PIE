@@ -21,7 +21,7 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName, getOrgDepartments, getProjectName } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, getProjectName, getProject } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
@@ -179,6 +179,8 @@ class Milestone extends React.Component {
     description: "",
     orgId: 0,
     projectName: "",
+    projectStartAt: null,
+    projectEndAt: null,
     msg: "",
     statusId: 0,
     buttonText: "Create",
@@ -311,6 +313,7 @@ class Milestone extends React.Component {
       fetch(`/api/milestones/${milestoneId}`)
         .then(res => res.json())
         .then(milestone => {
+          let project = getProject();
           this.setState({
             id: milestoneId,
             title: milestone.title,
@@ -319,15 +322,20 @@ class Milestone extends React.Component {
             statusId: milestone.statusId,
             projectName: milestone.project.title,
             projectId: projectId,
+            projectStartAt: project.startAt,
+            projectEndAt: project.endAt,
             buttonText: "Update"
           });
         });
     } else {
       let projectName = getProjectName();
+      let project = getProject();
       this.setState({
         isEditing: true,
         projectId: projectId,
         projectName: projectName,
+        projectStartAt: project.startAt,
+        projectEndAt: project.endAt,
         buttonText: "Create"
       });
     }

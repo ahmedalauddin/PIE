@@ -11,20 +11,28 @@
 "use strict";
 
 const logger = require("../util/logger")(__filename);
-const Project = require("../models").Project;
 const callerType = "model";
 
-
-function checkTargetDate(milestone, options, callback) {
+function checkTargetDate(milestone) {
   // TODO - need to validate against project start and end dates.
+  let projectStart = new Date(milestone.projectStartAt);
+  let projectEnd = new Date(milestone.projectEndAt);
+  let success = true;
+  console.log(JSON.stringify(milestone));
   console.log("Milestone: checkTargetDate -- project ID ", milestone.projectId);
-  let project = Project.findByPk(milestone.projectId)
-    .then(project => {
-      console.log("got project, startAt = ", project.startAt);
-      return project;
-    });
-  console.log("Milestone checkTargetDate: startAt = ", project.startAt)
-  return "success";
+  console.log("Milestone checkTargetDate: startAt = " + projectStart + ", target = " + milestone.targetDate);
+  if (projectStart != null) {
+    if (milestone.targetDate < projectStart) {
+      throw new Error("Milestone target date is prior to the start of the project.");
+    }
+  }
+  if (projectEnd != null) {
+    if (milestone.targetDate > projectEnd) {
+      throw new Error("Milestone target date is after the end of the project.");
+    }
+  }
+  console.log("Milestone checkTargetDate: startAt = ", milestone.projectStartAt)
+  return success;
 };
 
 module.exports = (sequelize, DataTypes) => {
@@ -58,9 +66,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
+      projectStartAt: {
+        type: DataTypes.VIRTUAL
+      },
+      projectEndAt: {
+        type: DataTypes.VIRTUAL
+      },
       statusId: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: true,
+        defaultValue: "1",
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -84,8 +99,15 @@ module.exports = (sequelize, DataTypes) => {
         beforeCreate: (milestone, options, callback) => {
           console.log("Milestone: beforeCreate");
           console.log("Milestone: beforeCreate -- title ", milestone.title, ", project ID ", milestone.projectId);
-          checkTargetDate(milestone, options, callback);
-          return callback(null, options);
+          if (milestone.statusId == 0) {
+            milestone.statusId = 1;
+          }
+          if (milestone.targetDate) {
+            return checkTargetDate(milestone, options, callback);
+          } else {
+            return callback(null, options);
+          }
+
         },
         afterCreate: (res) => {
           console.log("Milestone: afterCreate: Created milestone with target date ", res.dataValues.targetDate);

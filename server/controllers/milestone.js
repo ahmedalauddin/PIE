@@ -33,7 +33,9 @@ module.exports = {
       statusId: req.body.statusId,
       orgId: req.body.orgId,
       targetDate: req.body.targetDate,
-      projectId: parseInt(req.body.projectId)
+      projectId: parseInt(req.body.projectId),
+      projectStartAt: new Date(req.body.projectStartAt),
+      projectEndAt: new Date(req.body.projectEndAt)
     })
       .then(t => {
         logger.debug(`${callerType} create -> added Milestone, id: ${t.id}`);

@@ -252,6 +252,14 @@ class Project extends React.Component {
     }
   }
 
+  showMessages = (message) => {
+    // alert(message);
+    this.setState( {
+      openSnackbar: true,
+      message: message
+    });
+  }
+
   componentDidCatch() {
     return <Redirect to="/Login" />;
   }
@@ -274,7 +282,7 @@ class Project extends React.Component {
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
-                <ProjectDetail projectId={projId}/>
+                <ProjectDetail projectId={projId} messages={this.showMessages}/>
               </Paper>
             </Grid>
             <Grid item lg={10}>

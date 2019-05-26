@@ -59,7 +59,7 @@ class ProjectDetail extends React.Component {
     startAt: "",
     endAt: "",
     progress: 0,
-    msg: "",
+    message: "",
     buttonText: "Create",
     isEditing: false,
     redirect: false,
@@ -93,6 +93,10 @@ class ProjectDetail extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
+  anotherFunction = () => {
+    this.props.showMessages(this.state.message);
+  };
+
   handleSubmit(event) {
     event.preventDefault();
 
@@ -108,10 +112,15 @@ class ProjectDetail extends React.Component {
           body: JSON.stringify(this.state)
         })
           .then(data => {
-            this.setState({ msg: "Project updated." });
+            this.setState({ message: "Project updated." });
           })
+          .then( () => {
+              console.log("Going to log message: " + this.state.message);
+              this.props.messages(this.state.message);
+            }
+          )
           .catch(err => {
-            this.setState({ msg: "Error occurred." });
+            this.setState({ message: "Error occurred." });
           });
       } else {
         // No project id, so we will do a create. The difference
@@ -125,7 +134,7 @@ class ProjectDetail extends React.Component {
             //console.log(data);
           })
           .catch(err => {
-            this.setState({ msg: "Error occurred." });
+            this.setState({ message: "Error occurred." });
           });
       }
       //setSubmitting(false);
@@ -180,10 +189,13 @@ class ProjectDetail extends React.Component {
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
+
+    // this.props.messages("Entering project detail component");
+
     return (
       <form onSubmit={this.handleSubmit} noValidate>
         <Typography color="secondary" gutterBottom>
-          {this.state.msg}
+          {this.state.message}
         </Typography>
         <Grid container spacing={24}>
           <Grid item xs={12}>

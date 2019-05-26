@@ -11,7 +11,21 @@
 "use strict";
 
 const logger = require("../util/logger")(__filename);
+const Project = require("../models").Project;
 const callerType = "model";
+
+
+function checkTargetDate(milestone, options, callback) {
+  // TODO - need to validate against project start and end dates.
+  console.log("Milestone: checkTargetDate -- project ID ", milestone.projectId);
+  let project = Project.findByPk(milestone.projectId)
+    .then(project => {
+      console.log("got project, startAt = ", project.startAt);
+      return project;
+    });
+  console.log("Milestone checkTargetDate: startAt = ", project.startAt)
+  return "success";
+};
 
 module.exports = (sequelize, DataTypes) => {
   logger.debug(`${callerType} Milestone start definition`);
@@ -59,7 +73,30 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: "Milestones"
+      tableName: "Milestones",
+      hooks: {
+        beforeValidate: (milestone, options, callback) => {
+
+        },
+        afterValidate: () => {
+          console.log("Milestone: afterValidate");
+        },
+        beforeCreate: (milestone, options, callback) => {
+          console.log("Milestone: beforeCreate");
+          console.log("Milestone: beforeCreate -- title ", milestone.title, ", project ID ", milestone.projectId);
+          checkTargetDate(milestone, options, callback);
+          return callback(null, options);
+        },
+        afterCreate: (res) => {
+          console.log("Milestone: afterCreate: Created milestone with target date ", res.dataValues.targetDate);
+        },
+        beforeUpdate: () => {
+          console.log("Milestone: beforeCreate");
+        },
+        afterUpdate: () => {
+          console.log("Milestone: afterUpdate");
+        }
+      }
     }
   );
   logger.debug(`${callerType} Milestone end definition`);

@@ -88,14 +88,18 @@ class SelectClient extends React.Component {
           // status code 200 is success.
           this.setState({ isLoggedIn: true });
         } else {
-          this.setState({ isFailedLogin: true, isLoggedIn: false });
-          this.setState({ msgText: "Setting token failed, please try again." });
+          this.setState({
+            isFailedLogin: true,
+            isLoggedIn: false,
+            msgText: "Setting token failed, please try again."
+          });
         }
       })
       .catch(err => {
         // TODO - set error login on form.
-        this.setState({ isFailedLogin: true });
-        this.setState({ msgText: "Setting token failed, please try again." });
+        this.setState({
+          isFailedLogin: true,
+          msgText: "Setting token failed, please try again." });
       });
   }
 

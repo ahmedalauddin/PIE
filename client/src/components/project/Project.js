@@ -200,8 +200,6 @@ class Project extends React.Component {
     this.setState({ value });
   };
 
-  // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
-  // fields.
   state = {
     project: {},
     organizations: [],

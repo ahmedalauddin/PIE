@@ -114,7 +114,7 @@ class ProjectDetail extends React.Component {
             this.setState({ msg: "Error occurred." });
           });
       } else {
-        // No project id, so we will do a create.  The difference
+        // No project id, so we will do a create. The difference
         // is we do a POST instead of a PUT.
         fetch("/api/projects", {
           method: "POST",

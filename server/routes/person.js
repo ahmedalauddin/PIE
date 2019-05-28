@@ -39,6 +39,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/project-persons/:projectId`);
   router.get("/api/project-persons/:projectId", personController.findByProject);
 
+  // Find a person by organization
+  logger.debug(`${callerType} GET -> path: /api/persons-org/:orgId`);
+  router.get("/api/persons-org/:orgId", personController.findByOrganization);
+
   // Find a person by email
   logger.debug(`${callerType} GET -> path: /api/persons/email/:email`);
   router.get("/api/persons/email/:email", personController.findByEmail);

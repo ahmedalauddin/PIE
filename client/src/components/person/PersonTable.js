@@ -1,51 +1,40 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
-
-let counter = 0;
-
-function desc(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function stableSort(array, cmp) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = cmp(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
-
-function getSorting(order, orderBy) {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
-}
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/person/PersonTable.js
+ * Created:  2019-05-27
+ * Descr:    Table of people with edit buttons.
+ * Author:   Brad Kaufman
+ * -----
+ * Modified:
+ * Editor:   Brad Kaufman
+ */
+import React from "react";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import { Link, Redirect } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tooltip from "@material-ui/core/Tooltip";
+import { desc, stableSort, getSorting } from "../common/TableFunctions";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { lighten } from "@material-ui/core/styles/colorManipulator";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
 
 // TODO - convert rows into tasks data.
 const rows = [
-  { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
-  { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-  { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-  { id: 'assigned', numeric: false, disablePadding: false, label: 'Assigned' },
+  { id: "edit", numeric: false, disablePadding: false, label: "" },
+  { id: "name", numeric: false, disablePadding: false, label: "Name" },
+  { id: "email", numeric: false, disablePadding: false, label: "Email" },
+  { id: "department", numeric: false, disablePadding: false, label: "Department" },
+  { id: "role", numeric: false, disablePadding: false, label: "Role" },
+  { id: "projects", numeric: false, disablePadding: false, label: "Projects" }
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -136,12 +125,20 @@ const styles = theme => ({
   },
 });
 
-class ActionTable extends React.Component {
+class PersonTable extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     order: 'asc',
     orderBy: 'title',
+    readyToEdit: false,
+    personId: null,
+    organizationId: null,
     selected: [],
     data:[],
+    persons: [],
     page: 0,
     rowsPerPage: 5,
   };
@@ -149,13 +146,12 @@ class ActionTable extends React.Component {
   componentDidMount() {
     // ActionTable is expected to take a param of project ID, and fetch the actions
     // associated only with that project.
-    let projectid = parseInt(this.props.projectId);
+    let organizationId = parseInt(this.props.organizationId);
 
-    if (projectid) {
-      // Fetch the actions only for a single project
-      fetch(`/api/tasks/project/${projectid}`)
+    if (organizationId) {
+      fetch(`/api/persons-org/${organizationId}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ data: kpis }));
+        .then(persons => this.setState({ persons: persons }));
     }
   }
 
@@ -172,7 +168,7 @@ class ActionTable extends React.Component {
 
   handleSelectAllClick = event => {
     if (event.target.checked) {
-      this.setState(state => ({ selected: state.data.map(n => n.id) }));
+      this.setState(state => ({ selected: state.persons.map(n => n.id) }));
       return;
     }
     this.setState({ selected: [] });
@@ -207,15 +203,37 @@ class ActionTable extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
+  setEditRedirect = (personId, orgId) => {
+    this.setState({
+      readyToEdit: true,
+      personId: personId,
+      organizationId: orgId
+    });
+  }
+
+  renderEditRedirect = () => {
+    if (this.state.readyToEdit) {
+      return <Redirect to={{
+        pathname: '/person',
+        state: {
+          personId: this.state.personId,
+          organizationId: this.state.organizationId,
+          referrer: '/organization'
+        }
+      }} />;
+    }
+  }
+
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
     const { classes } = this.props;
-    const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    const { persons, order, orderBy, selected, rowsPerPage, page } = this.state;
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, persons.length - page * rowsPerPage);
 
     return (
       <div>
+        {this.renderEditRedirect()}
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -223,28 +241,41 @@ class ActionTable extends React.Component {
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
-              rowCount={data.length}
+              rowCount={persons.length}
             />
             <TableBody>
-              {stableSort(data, getSorting(order, orderBy))
+              {stableSort(persons, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
+                .map(person => {
+                  const isSelected = this.isSelected(person.id);
                   return (
                     <TableRow
                       hover
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
+                      key={person.id}
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
-                        {n.id}
+                        <IconButton onClick={() => {this.setEditRedirect(person.id, person.orgId);}}>
+                          <EditIcon color="primary" />
+                        </IconButton>
                       </TableCell>
-                      <TableCell align="left">{n.title}</TableCell>
-                      <TableCell align="left">{n.description}</TableCell>
-                      <TableCell align="left">{n.taskstatus}</TableCell>
-                      <TableCell align="left">{n.assigned.fullName}</TableCell>
+                      <TableCell align="left">
+                        <Link to={{
+                          pathname: "/person",
+                          state: {
+                            personId: person.id,
+                            organizationId: person.orgId,
+                            referrer: "/organization"
+                          } }}>
+                          {person.fullName}
+                        </Link>
+                      </TableCell>
+                      <TableCell align="left">{person.email}</TableCell>
+                      <TableCell align="left">{person.department}</TableCell>
+                      <TableCell align="left">{person.role}</TableCell>
+                      <TableCell align="left">{person.projects}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -259,7 +290,7 @@ class ActionTable extends React.Component {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
+          count={persons.length}
           rowsPerPage={rowsPerPage}
           page={page}
           backIconButtonProps={{
@@ -276,8 +307,8 @@ class ActionTable extends React.Component {
   }
 }
 
-ActionTable.propTypes = {
+PersonTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ActionTable);
+export default withStyles(styles)(PersonTable);

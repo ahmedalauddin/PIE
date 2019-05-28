@@ -56,9 +56,9 @@ module.exports = {
       });
   },
 
-  // Update a person
   update(req, res) {
     const id = req.params.id;
+    logger.debug("Calling Person update");
     logger.debug(
       `${callerType} update -> body: ${util.inspect(req.body, {
         showHidden: false,
@@ -146,6 +146,31 @@ module.exports = {
       })
       .catch(error => {
         logger.error(`${callerType} findByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  findByOrganization(req, res) {
+    let orgId = req.params.orgId;
+    let sql = "select P.id, P.fullName, P.email, P.role, P.orgId, D.name as department, \
+      (select group_concat(title) from Projects Pr, ProjectPersons PP \
+      where Pr.id = PP.projectId and PP.personId = P.id order by Pr.title) as projects \
+      from Persons P left outer join Departments D on P.deptId = D.id \
+      where P.orgId = " + orgId + "  \
+      order by P.fullName";
+    return models.sequelize
+      .query(
+        sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(p => {
+        logger.debug(`${callerType} findByOrganization -> sql: ${orgId}`);
+        res.status(200).send(p);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByOrganization -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },

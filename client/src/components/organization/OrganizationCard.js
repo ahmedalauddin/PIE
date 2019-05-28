@@ -33,43 +33,6 @@ import Button from "@material-ui/core/Button/index";
 import { Link } from "react-router-dom";
 import OrgToolbar from "../navigation/OrgToolbar";
 
-/*
-const ExpandingSectionGridItem = (classes, project) => {
-  // TODO - add the org's project list here.
-  // Just a placeholder for stuff we'll put in the expanding section.  Considering putting action items here.
-  return (
-    <div className={classes.inlineLeft}>
-      <Typography
-        variant="h6"
-        style={{ textTransform: "uppercase" }}
-        color="secondary"
-        gutterBottom
-      >
-        This organization s projects
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Project #1
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br />
-        Project started 12 February 2018
-        <br />
-      </Typography>
-      <Typography variant="h5" gutterBottom>
-        Project #2
-      </Typography>
-      <Typography variant="h7" gutterBottom>
-        Leading KPI
-        <br />
-        Project started 14 March 2018
-        <br />
-      </Typography>
-    </div>
-  );
-};
-*/
-
 class OrganizationCard extends React.Component {
   constructor(props) {
     super(props);

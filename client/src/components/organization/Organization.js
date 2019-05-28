@@ -1,12 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/project/Project.js
- * Created:  2019-02-05 09:23:45
+ * File:     /client/src/components/organization/0rganization.js
+ * Created:  2019-05-22
  * Author:   Brad Kaufman
  * -----
  * Modified: 2019-05-02
  * Editor:   Brad Kaufman
- * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -16,25 +15,20 @@ import Topbar from "../Topbar";
 import { Link, Redirect } from "react-router-dom";
 import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import "../../stylesheets/Draft.css";
-import ProjectPersons from "./ProjectPersons";
-import ProjectDetail from "./ProjectDetail";
+import OrganizationDetail from "./OrganizationDetail";
 import Grid from "@material-ui/core/Grid";
 import { red } from "@material-ui/core/colors";
-import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
-import KpiTable from "./KpiTable";
-import ActionTable from "./ActionTable";
-import MilestoneList from "./MilestoneList";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
-import SearchIcon from "@material-ui/icons/Search";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
+import PersonTable from "../person/PersonTable";
 
 const styles = theme => ({
   root: {
@@ -165,29 +159,14 @@ const styles = theme => ({
   }
 });
 
-function TabContainer({ children, dir }) {
-  return (
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
-      {children}
-    </Typography>
-  );
-}
-
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-
+// Transition for the snackbar
 function TransitionUp(props) {
   return <Slide {...props} direction="up" />;
 }
 
-class Project extends React.Component {
+class Organization extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
-    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   handlePanelChange = panel => (event, expanded) => {
@@ -219,19 +198,6 @@ class Project extends React.Component {
     message: ""
   };
 
-  setOrganizationInfo = () => {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
-    let departments = getOrgDepartments();
-
-    this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
-    });
-  };
-
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
@@ -241,7 +207,6 @@ class Project extends React.Component {
   };
 
   componentDidMount() {
-    this.setOrganizationInfo();
     let message = "";
     if (this.props.location.state && this.props.location.state.message)  {
       message = this.props.location.state.message;
@@ -253,7 +218,6 @@ class Project extends React.Component {
   }
 
   showMessages = (message) => {
-    // alert(message);
     this.setState( {
       openSnackbar: true,
       message: message
@@ -269,7 +233,7 @@ class Project extends React.Component {
     const { value } = this.state;
     const currentPath = this.props.location.pathname;
     const { expanded } = this.state;
-    let projId = this.props.match.params.id;
+    let orgId = this.props.match.params.id;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -282,58 +246,34 @@ class Project extends React.Component {
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
-                <ProjectDetail projectId={projId} messages={this.showMessages}/>
+                <OrganizationDetail orgId={orgId} messages={this.showMessages}/>
               </Paper>
             </Grid>
             <Grid item lg={10}>
-              <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
+              <ExpansionPanel expanded={expanded === "panelProjects"} onChange={this.handlePanelChange("panelProjects")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>KPIs</Typography>
+                  <Typography className={classes.heading}>Projects</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Grid container>
                     <Grid item lg={10}>
-                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
-                        aria-label="Add" to={{pathname: "/kpi", state: {projectId: projId} }} >
-                        Add New
-                        <AddIcon className={classes.rightIcon} />
-                      </Button>
-                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
-                        aria-label="Search KPIs" to={{pathname: "/kpisearch", state: {projectId: projId} }} >
-                        Search and Assign
-                        <SearchIcon className={classes.rightIcon} />
-                      </Button>
-                      <KpiTable projectId={projId}/>
+                      List of projects go here.
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === "panelMilestones"} onChange={this.handlePanelChange("panelMilestones")}>
+              <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>Milestones</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Fab component={Link} size="small" color="primary" aria-label="Add"
-                    to={{pathname: "/milestone", state: {projectId: projId} }}
-                    className={classes.fab}>
-                    <AddIcon />
-                  </Fab>
-                  <MilestoneList projectId={projId}/>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === "panelActions"} onChange={this.handlePanelChange("panelActions")}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>Actions</Typography>
+                <Typography className={classes.heading}>KPIs</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
-                <Fab component={Link} size="small" color="primary" aria-label="Add"
-                  to={{pathname: "/actioncard", state: {projectId: projId} }}
-                  className={classes.fab}>
-                  <AddIcon />
-                </Fab>
-                <ActionTable projectId={projId}/>
+                <Grid container>
+                  <Grid item lg={10}>
+                    KPIs go here.
+                  </Grid>
+                </Grid>
               </ExpansionPanelDetails>
-            </ExpansionPanel>
+              </ExpansionPanel>
               <ExpansionPanel expanded={expanded === "panelPersons"} onChange={this.handlePanelChange("panelPersons")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>People</Typography>
@@ -341,15 +281,12 @@ class Project extends React.Component {
                 <ExpansionPanelDetails>
                   <Grid container>
                     <Grid item lg={10}>
-                      <Typography className={classes.secondaryHeading}>
-                        Select owners and people assigned to the project
-                      </Typography>
-                    <Fab component={Link} size="small" color="primary" aria-label="Add"
-                      to={{pathname: "/", state: {projectId: projId} }}
-                      className={classes.fab}>
-                      <AddIcon />
-                    </Fab>
-                    <ProjectPersons projectId={projId} />
+                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                          aria-label="Add" to={{pathname: "/person", state: {organizationId: orgId} }} >
+                        Add New
+                        <AddIcon className={classes.rightIcon} />
+                      </Button>
+                      <PersonTable organizationId={orgId} />
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
@@ -372,4 +309,4 @@ class Project extends React.Component {
   }
 }
 
-export default withStyles(styles)(Project);
+export default withStyles(styles)(Organization);

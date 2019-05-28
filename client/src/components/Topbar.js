@@ -8,7 +8,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Menu from "./Menu";
 
 const logo = require("../images/ValueInfLogo.png");
 const styles = theme => ({
@@ -65,6 +64,63 @@ const styles = theme => ({
   }
 });
 
+const Menu = [
+  {
+    label: "Dashboard",
+    pathname: "/paneldashboard",
+    admin: false,
+    intro: false
+  },
+  {
+    label: "Login",
+    pathname: "/login",
+    admin: false,
+    intro: true
+  },
+  {
+    label: "Mind Map",
+    pathname: "/mindmap",
+    admin: true,
+    intro: false
+  },
+  {
+    label: "Projects",
+    pathname: "/listprojects",
+    admin: true,
+    intro: false
+  },
+  {
+    label: "Organizations",
+    pathname: "/orgdashboard",
+    admin: true,
+    intro: false
+  },
+  {
+    label: "Analytics",
+    pathname: "/analytics",
+    admin: true,
+    intro: false
+  },
+  {
+    label: "Client Filter",
+    pathname: "/clientorg",
+    admin: true,
+    intro: false
+  },
+  {
+    label: "Logout",
+    pathname: "/logout",
+    admin: false,
+    intro: false
+  },
+  {
+    label: "About",
+    pathname: "/about",
+    admin: false,
+    intro: true
+  }
+];
+
 class Topbar extends Component {
   state = {
     value: 0,
@@ -88,41 +144,46 @@ class Topbar extends Component {
   }
 
   current = () => {
+    let value = 0;
     if (this.props.currentPath === "/paneldashboard") {
-      return 0;
+      value = 0;
     }
     if (this.props.currentPath === "/login") {
-      return 1;
+      value = 1;
     }
     if (this.props.currentPath === "/mindmap") {
-      return 2;
+      value = 2;
     }
     if (this.props.currentPath === "/listprojects") {
-      return 3;
+      value = 3;
     }
     if (this.props.currentPath === "/listorgs") {
-      return 4;
+      value = 4;
     }
     if (this.props.currentPath === "/listpersons") {
-      return 5;
+      value = 5;
     }
     if (this.props.currentPath === "/analytics") {
-      return 6;
+      value = 6;
     }
     if (this.props.currentPath === "/clientorg") {
-      return 7;
+      value = 7;
     }
     if (this.props.currentPath === "/logout") {
-      return 9;
+      value = 9;
     }
     if (this.props.currentPath === "/about") {
-      return 10;
+      value = 10;
     }
+    return value;
   };
 
   render() {
     const { classes, location } = this.props;
     const currentPath = location ? location.pathname : "/";
+    let loggedIn = isLoggedIn();
+    let isAdmin =  isAdministrator();
+
 
     return (
       <AppBar position="absolute" color="default" className={classes.appBar}>
@@ -144,7 +205,7 @@ class Topbar extends Component {
                     textColor="primary"
                     onChange={this.handleChange}
                   >
-                    {Menu.map((item, index) => (((isAdministrator()==true) || item.intro || (isLoggedIn() && !item.admin)) &&
+                    {Menu.map((item, index) => ((isAdmin || item.intro || loggedIn) &&
                       <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                     ))}
                   </Tabs>

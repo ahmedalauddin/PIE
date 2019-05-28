@@ -12,16 +12,12 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { styles } from "../styles/MaterialSense";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField";
 import moment from "moment";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect } from "react-router-dom";
-import CardToolbar from "../navigation/CardToolbar";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -99,45 +95,36 @@ class ProjectDetail extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let projectId = parseInt(this.state.id);
+    let apiPath = "";
+    let successMessage = "";
+    let method = "";
+
+    if (projectId > 0) {
+      // For updates
+      apiPath = "/api/projects/" + projectId;
+      successMessage = "Project updated."
+      method = "POST";
+    } else {
+      // For create
+      apiPath = "/api/projects/";
+      successMessage = "Project created."
+      method = "PUT";
+    }
 
     setTimeout(() => {
-      if (this.state.id > 0) {
-        // alert('We have an ID, proj id = ' + this.state.id + ', title = ' + this.state.title);
-        // We have a project id passed through the URL, do an
-        // update on the project.
-        let updatePath = "/api/projects/" + this.state.id;
-        fetch(updatePath, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
+      fetch(apiPath, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then( () => {
+          console.log("Going to log message: " + successMessage);
+          this.props.messages(successMessage);
         })
-          .then(data => {
-            this.setState({ message: "Project updated." });
-          })
-          .then( () => {
-              console.log("Going to log message: " + this.state.message);
-              this.props.messages(this.state.message);
-            }
-          )
-          .catch(err => {
-            this.setState({ message: "Error occurred." });
-          });
-      } else {
-        // No project id, so we will do a create. The difference
-        // is we do a POST instead of a PUT.
-        fetch("/api/projects", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
-        })
-          .then(data => {
-            //console.log(data);
-          })
-          .catch(err => {
-            this.setState({ message: "Error occurred." });
-          });
-      }
-      //setSubmitting(false);
+        .catch(err => {
+          this.setState({ message: "Error occurred." });
+        });
     }, 2000);
   }
 

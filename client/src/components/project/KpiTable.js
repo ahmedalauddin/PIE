@@ -45,7 +45,6 @@ function getSorting(order, orderBy) {
 
 const rows = [
   { id: "edit", numeric: false, disablePadding: false, label: "" },
-  { id: "id", numeric: false, disablePadding: false, label: "ID" },
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "type", numeric: false, disablePadding: false, label: "Type" },
@@ -279,9 +278,6 @@ class KpiTable extends React.Component {
                         <IconButton onClick={() => {this.editComponent(n.id);}}>
                           <EditIcon color="primary" />
                         </IconButton>
-                      </TableCell>
-                      <TableCell component="th" scope="row" padding="none">
-                        {n.id}
                       </TableCell>
                       <TableCell align="left">
                         <Link to={{

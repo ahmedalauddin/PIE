@@ -146,47 +146,38 @@ class KpiCard extends React.Component {
     // Project ID and KPI id (if there is the latter, are passed in by location.state.
     const projectId = this.props.location.state.projectId;
     const kpiId = this.props.location.state.kpiId;
+    let apiPath = "";
+    let successMessage = "";
+    let method = "";
+
+    if (kpiId > 0) {
+      // For updates
+      apiPath = "/api/kpis/" + kpiId;
+      successMessage = "KPI '" + this.state.title + "' updated."
+      method = "PUT";
+    } else {
+      // For create
+      apiPath = "/api/kpis/";
+      successMessage = "KPI '" + this.state.title + "' created."
+      method = "POST";
+    }
 
     setTimeout(() => {
-      if (kpiId > 0) {
-        let updatePath = "/api/kpis/" + kpiId;
-        fetch(updatePath, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
-        })
-          .then(() => {
-            // Redirect to the Project component.
-            let message = "KPI '" + this.state.title + "' updated."
-            this.setState({
-              readyToRedirect: true,
-              message: message
-            });
-          })
-          .catch(err => {
-            console.log(err);
+      fetch(apiPath, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then(() => {
+          // Redirect to the Project component.
+          this.setState({
+            readyToRedirect: true,
+            message: successMessage
           });
-      } else {
-        // No KPI id, so we will do a create.  The difference
-        // is we do a POST instead of a PUT.
-        fetch("/api/kpis", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.state)
         })
-          .then(() => {
-            // Redirect to the Project component.
-            let message = "KPI '" + this.state.title + "' added."
-            this.setState({
-              readyToRedirect: true,
-              message: message
-            });
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
-      // setSubmitting(false);
+        .catch(err => {
+          console.log(err);
+        });
     }, 2000);
   };
 

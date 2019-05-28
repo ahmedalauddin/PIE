@@ -1,13 +1,12 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/Milestone.js
- * Descr:    Milestone component.  Allows create and update.
- * Created:  2019-05-03
+ * File:     /client/src/components/person/Person.js
+ * Descr:    Person component.  Allows create and update.
+ * Created:  2019-05-23
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-20
+ * Modified: 2019-05-27
  * Editor:   Brad Kaufman
- * Notes:
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -158,7 +157,7 @@ const styles = theme => ({
   }
 });
 
-class Milestone extends React.Component {
+class Person extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
@@ -166,23 +165,20 @@ class Milestone extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
-    this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
+    // this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
   // fields.
   state = {
-    project: {},
-    projectId: 0,
-    title: "",
-    id: 0,
-    description: "",
-    orgId: 0,
-    projectName: "",
-    projectStartAt: null,
-    projectEndAt: null,
-    msg: "",
-    statusId: 0,
+    orgId: null,
+    fullName: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    departments: [],
+    deptId: null,
     buttonText: "Create",
     readyToRedirect: false,
     validationError: false,
@@ -196,7 +192,8 @@ class Milestone extends React.Component {
     hasError: false,
     labelWidth: 0,
     focus: false,
-    nextItem: ""
+    nextItem: "",
+    referrer: ""
   };
 
   handleChange = name => event => {
@@ -228,25 +225,21 @@ class Milestone extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    // Project ID and KPI id (if there is the latter, are passed in by location.state.
-    const projectId = this.props.location.state.projectId;
-    const milestoneId = parseInt(this.props.location.state.milestoneId);
+    const personId = this.props.location.state.personId;
+    const orgId = this.props.location.state.organizationId;
     let apiPath = "";
     let successMessage = "";
-    let validationErrorMessage = "Milestone '" + this.state.title + "' could not be added.  The milestone falls " +
-      "outside the range of the project start and end dates.  Please correct the milestone's target " +
-      "date and and submit your request again.";
     let method = "";
 
-    if (milestoneId > 0) {
+    if (personId > 0) {
       // For updates
-      apiPath = "/api/milestones/" + milestoneId;
-      successMessage = "Milestone '" + this.state.title + "' updated."
+      apiPath = "/api/persons/" + personId;
+      successMessage = "User " + this.state.lastName + " updated."
       method = "PUT";
     } else {
       // For create
-      apiPath = "/api/milestones/";
-      successMessage = "Milestone '" + this.state.title + "' created."
+      apiPath = "/api/persons/";
+      successMessage = "User " + this.state.lastName + " created."
       method = "POST";
     }
 
@@ -256,97 +249,65 @@ class Milestone extends React.Component {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(this.state)
       })
-        .then((response) => {
-          if (response.status === 400) {
-            // Error: for now, we'll assume it's with the milestone not being within the project start and end dates.
-            this.setState({
-              readyToRedirect: false,
-              message: validationErrorMessage,
-              validationError: true,
-              openSnackbar: true
-            });
-          } else {
-            // Redirect to the Project component.
-            this.setState({
-              readyToRedirect: true,
-              message: successMessage
-            });
-          }
+        .then( () => {
+          console.log("Going to log message: " + successMessage);
+          this.setState({
+            message: successMessage,
+            readyToRedirect: true
+          });
         })
         .catch(err => {
           this.setState({ message: "Error occurred." });
         });
-      }, 2000);
-  };
-
-  setOrganizationInfo = () => {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
-    let departments = getOrgDepartments();
-
-    this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
-    });
+    }, 2000);
   };
 
   componentDidMount() {
-    this.setOrganizationInfo();
-    // Project ID and KPI id (if there is the latter, are passed in by location.state.
-    const projectId = this.props.location.state.projectId;
-    const milestoneId = this.props.location.state.milestoneId;
+    let personId = this.props.location.state.personId;
+    let orgId = this.props.location.state.organizationId;
+    let referrer = this.props.location.state.referrer;
 
-    if (parseInt(milestoneId) > 0) {
-      fetch(`/api/milestones/${milestoneId}`)
+    if (parseInt(personId) > 0) {
+      fetch(`/api/persons/${personId}`)
         .then(res => res.json())
-        .then(milestone => {
-          let project = getProject();
+        .then(person => {
           this.setState({
-            id: milestoneId,
-            title: milestone.title,
-            description: milestone.description,
-            targetDate: milestone.targetDate,
-            statusId: milestone.statusId,
-            projectName: milestone.project.title,
-            projectId: projectId,
-            projectStartAt: project.startAt,
-            projectEndAt: project.endAt,
-            buttonText: "Update"
+            id: personId,
+            orgId: orgId,
+            fullName: person.fullName,
+            firstName: person.firstName,
+            lastName: person.lastName,
+            email: person.email,
+            role: person.role,
+            deptId: person.deptId,
+            buttonText: "Update",
+            referrer: referrer
           });
         });
     } else {
-      let projectName = getProjectName();
-      let project = getProject();
       this.setState({
         isEditing: true,
-        projectId: projectId,
-        projectName: projectName,
-        projectStartAt: project.startAt,
-        projectEndAt: project.endAt,
-        buttonText: "Create"
+        orgId: orgId,
+        buttonText: "Create",
+        referrer: referrer
       });
     }
-    // Have to set the state of the individual fields for the handleChange function for the TextFields.
-    // Do this using the project state.
 
-    fetch("/api/taskstatuses")
+    fetch("/api/departments/org/" + orgId)
       .then(results => results.json())
-      .then(statuses => this.setState({ statusList: statuses }));
+      .then(departments => this.setState({ departments: departments }));
   }
 
   render() {
     const { classes } = this.props;
-    const { tags, suggestions } = this.state;
-    const projectId = this.props.location.state.projectId;
+    const orgId = this.props.location.state.organizationId;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
     if (this.state.readyToRedirect) {
       return <Redirect to={{
-        pathname: `/project/${projectId}`,
+        pathname: `/organization/${orgId}`,
         state: {
           message: `${this.state.message}`
         }
@@ -367,10 +328,7 @@ class Milestone extends React.Component {
                     color="secondary"
                     gutterBottom
                   >
-                    Milestone Detail<br/>
-                  </Typography>
-                  <Typography variant="h7">
-                    Project: {this.state.projectName}
+                    User<br/>
                   </Typography>
                   <Typography variant="h7">
                     Organization: {getOrgName()}
@@ -379,61 +337,66 @@ class Milestone extends React.Component {
                     <Grid item xs={12} sm={6}>
                       <TextField
                         required
-                        id="title-required"
-                        label="Title"
+                        id="firstName"
+                        label="First Name"
                         fullWidth
-                        onChange={this.handleChange("title")}
-                        value={this.state.title}
+                        onChange={this.handleChange("firstName")}
+                        value={this.state.firstName}
+                        className={classes.textField}
+                        margin="normal"
+                      />
+                      <TextField
+                        required
+                        id="lastName"
+                        label="Last Name"
+                        fullWidth
+                        onChange={this.handleChange("lastName")}
+                        value={this.state.lastName}
                         className={classes.textField}
                         margin="normal"
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        id="description"
-                        label="Description"
-                        multiline
-                        rowsMax="6"
-                        value={this.state.description}
-                        onChange={this.handleChange("description")}
-                        className={classes.textField}
+                        required
+                        id="email"
+                        label="Email Address"
                         fullWidth
+                        onChange={this.handleChange("email")}
+                        value={this.state.email}
+                        className={classes.textField}
                         margin="normal"
-                        InputLabelProps={{
-                          shrink: true
-                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        id="targetDate"
-                        label="Target Date"
-                        type="date"
-                        value={this.state.targetDate}
-                        onChange={this.handleChange("targetDate")}
-                        className={classes.textFieldWide}
-                        InputLabelProps={{
-                          shrink: true
-                        }}
+                        required
+                        id="role"
+                        label="Role"
+                        fullWidth
+                        onChange={this.handleChange("role")}
+                        value={this.state.role}
+                        className={classes.textField}
+                        margin="normal"
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel shrink htmlFor="status-simple">
-                          Status
+                        <InputLabel shrink htmlFor="department-simple">
+                          Department
                         </InputLabel>
                         <Select
-                          value={this.state.statusId}
+                          value={this.state.deptId}
                           onChange={this.handleSelectChange}
                           inputProps={{
-                            name: "statusId",
-                            id: "statusId"
+                            name: "deptId",
+                            id: "deptId"
                           }}
                         >
-                          {this.state.statusList.map(status => {
+                          {this.state.departments.map(department => {
                             return (
-                              <MenuItem key={status.id} value={status.id}>
-                                {status.label}
+                              <MenuItem key={department.id} value={department.id}>
+                                {department.name}
                               </MenuItem>
                             );
                           })}
@@ -471,4 +434,5 @@ class Milestone extends React.Component {
   }
 }
 
-export default withStyles(styles)(Milestone);
+export default withStyles(styles)(Person);
+

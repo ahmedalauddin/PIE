@@ -27,8 +27,9 @@ import ProjectDashboard from "./components/dashboard/ProjectDashboard";
 import PanelDashboard from "./components/dashboard/PanelDashboard";
 import About from "./components/About";
 import DepartmentCard from "./components/department/DepartmentCard";
-import OrganizationCard from "./components/organization/OrganizationCard";
+import Organization from "./components/organization/Organization";
 import KpiCard from "./components/kpi/KpiCard";
+import Person from "./components/person/Person";
 import Kpi from "./components/kpi/Kpi";
 import Milestone from "./components/milestone/Milestone";
 import Analytics from "./components/analytics/Analytics";
@@ -59,7 +60,7 @@ export default props => (
         <Route path="/projectpersons/:id" component={withAuth(ProjectPersons)} />
         <Route path="/departmentcard/:id" component={withAuth(DepartmentCard)} />
         <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
-        <Route path="/organizationcard/:id" component={withAuth(OrganizationCard)} />
+        <Route path="/organization/:id" component={withAuth(Organization)} />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
         <Route path="/listdepts/:id" component={withAuth(ListDepts)} />
@@ -68,6 +69,8 @@ export default props => (
         <Route exact path="/newproject" component={withAuth(NewProject)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/kpicard" component={withAuth(KpiCard)} />
+        <Route exact path="/person/:id" component={withAuth(Person)} />
+        <Route exact path="/person" component={withAuth(Person)} />
         <Route exact path="/kpi" component={withAuth(Kpi)} />
         <Route exact path="/milestone" component={withAuth(Milestone)} />
         <Route exact path="/actioncard/:id" component={withAuth(ActionCard)} />
@@ -77,8 +80,6 @@ export default props => (
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />
         <Route exact path="/cards" component={Cards} />
-        <Route exact path="/kpisearch" component={KpiSearch} />
-        <Route exact path="/testsearch" component={TestSearch} />
       </Switch>
     </ScrollToTop>
   </BrowserRouter>

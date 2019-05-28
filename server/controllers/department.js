@@ -85,7 +85,7 @@ module.exports = {
   listByOrg(req, res) {
     return models.Department.findAll({
       where: { orgId: req.params.orgid },
-      order: [["name", "DESC"]],
+      order: [["name", "ASC"]],
       include: [
         {
           model: Organization,

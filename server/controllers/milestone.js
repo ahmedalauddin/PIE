@@ -14,7 +14,9 @@
 const models = require("../models");
 const Project = require("../models").Project;
 const Task = require("../models").Task;
+const Person = require("../models").Person;
 const TaskStatus = require("../models").TaskStatus;
+const TaskPriority = require("../models").TaskPriority;
 const util = require("util");
 const logger = require("../util/logger")(__filename);
 const callerType = "controller";
@@ -125,7 +127,21 @@ module.exports = {
         },
         {
           model: models.Task,
-          as: "tasks"
+          as: "tasks",
+          include: [
+            {
+              model: TaskStatus,
+              as: "status"
+            },
+            {
+              model: TaskPriority,
+              as: "priority"
+            },
+            {
+              model: Person,
+              as: "assigned"
+            }
+          ]
         },
         {
           model: TaskStatus,

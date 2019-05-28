@@ -310,7 +310,7 @@ class Project extends React.Component {
               </ExpansionPanel>
               <ExpansionPanel expanded={expanded === "panelMilestones"} onChange={this.handlePanelChange("panelMilestones")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>Milestones</Typography>
+                  <Typography className={classes.heading}>Milestones and Actions</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Fab component={Link} size="small" color="primary" aria-label="Add"
@@ -321,19 +321,6 @@ class Project extends React.Component {
                   <MilestoneList projectId={projId}/>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-              <ExpansionPanel expanded={expanded === "panelActions"} onChange={this.handlePanelChange("panelActions")}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>Actions</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <Fab component={Link} size="small" color="primary" aria-label="Add"
-                  to={{pathname: "/actioncard", state: {projectId: projId} }}
-                  className={classes.fab}>
-                  <AddIcon />
-                </Fab>
-                <ActionTable projectId={projId}/>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
               <ExpansionPanel expanded={expanded === "panelPersons"} onChange={this.handlePanelChange("panelPersons")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>People</Typography>

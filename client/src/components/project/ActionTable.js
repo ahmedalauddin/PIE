@@ -1,17 +1,19 @@
-import React from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
+import React from "react";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tooltip from "@material-ui/core/Tooltip";
+import { lighten } from "@material-ui/core/styles/colorManipulator";
+import { Redirect } from "react-router-dom";
+import IconButton from "@material-ui/core/IconButton";
+import EditIcon from "@material-ui/icons/Edit";
 
 let counter = 0;
 
@@ -41,11 +43,11 @@ function getSorting(order, orderBy) {
 
 // TODO - convert rows into tasks data.
 const rows = [
-  { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
-  { id: 'title', numeric: false, disablePadding: false, label: 'Title' },
-  { id: 'description', numeric: false, disablePadding: false, label: 'Description' },
-  { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
-  { id: 'assigned', numeric: false, disablePadding: false, label: 'Assigned' },
+  { id: "edit", numeric: false, disablePadding: false, label: "" },
+  { id: "title", numeric: false, disablePadding: false, label: "Title" },
+  { id: "description", numeric: false, disablePadding: false, label: "Description" },
+  { id: "status", numeric: false, disablePadding: false, label: "Status" },
+  { id: "assigned", numeric: false, disablePadding: false, label: "Assigned" },
 ];
 
 class EnhancedTableHead extends React.Component {
@@ -141,6 +143,8 @@ class ActionTable extends React.Component {
     order: 'asc',
     orderBy: 'title',
     selected: [],
+    actionId: null,
+    readyToEdit: false,
     data:[],
     page: 0,
     rowsPerPage: 5,
@@ -155,7 +159,7 @@ class ActionTable extends React.Component {
       // Fetch the actions only for a single project
       fetch(`/api/tasks/project/${projectid}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ data: kpis }));
+        .then(tasks => this.setState({ data: tasks }));
     }
   }
 
@@ -209,6 +213,25 @@ class ActionTable extends React.Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
+  setEditRedirect = (actionId) => {
+    this.setState({
+      readyToEdit: true,
+      actionId: actionId
+    });
+  }
+
+  renderEditRedirect = () => {
+    if (this.state.readyToEdit) {
+      return <Redirect to={{
+        pathname: '/actioncard',
+        state: {
+          projectId: this.props.projectId,
+          actionId: this.state.actionId
+        }
+      }} />;
+    }
+  }
+
   render() {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
@@ -216,6 +239,7 @@ class ActionTable extends React.Component {
 
     return (
       <div>
+        {this.renderEditRedirect()}
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -228,23 +252,32 @@ class ActionTable extends React.Component {
             <TableBody>
               {stableSort(data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
+                .map(action => {
+                  const isSelected = this.isSelected(action.id);
                   return (
                     <TableRow
                       hover
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
+                      key={action.id}
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
-                        {n.id}
+                        <IconButton onClick={() => {this.setEditRedirect(action.id);}}>
+                          <EditIcon color="primary" />
+                        </IconButton>
                       </TableCell>
-                      <TableCell align="left">{n.title}</TableCell>
-                      <TableCell align="left">{n.description}</TableCell>
-                      <TableCell align="left">{n.taskstatus}</TableCell>
-                      <TableCell align="left">{n.assigned.fullName}</TableCell>
+                      <TableCell align="left">{action.title}</TableCell>
+                      <TableCell align="left">{action.description}</TableCell>
+                      <TableCell align="left">
+                        {() => {
+                          if (action.status) {
+                            return action.status.label;
+                          }
+                          }
+                        }
+                      </TableCell>
+                      <TableCell align="left">{action.assigned.fullName}</TableCell>
                     </TableRow>
                   );
                 })}

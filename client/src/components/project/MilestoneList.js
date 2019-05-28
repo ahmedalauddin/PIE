@@ -167,7 +167,18 @@ class MilestoneList extends React.Component {
                         <EditIcon fontSize="small" color="primary" />
                       </IconButton>
                     </ListItemIcon>
-                    <ListItemText inset primary={`${task.title}: ${task.description}`}/>
+                    <ListItemText inset
+                      primary={`${task.title}: ${task.description}`}
+                      secondary={
+                        <React.Fragment>
+                          <Typography component="span" className={classes.inline} color="textPrimary">
+                            Priority: {task.priority.label}<br/>
+                            Assigned to: {task.assigned.fullName}<br/>
+                            Status: { task.status.label }
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
                 </ListItem>
                 )
               )}

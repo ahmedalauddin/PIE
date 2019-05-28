@@ -12,7 +12,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-import { Link } from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -138,7 +138,6 @@ const styles = theme => ({
 class KpiTable extends React.Component {
   constructor(props) {
     super(props);
-    this.editComponent = this.editComponent.bind(this);
     this.deactivateKpi = this.deactivateKpi.bind(this);
   }
 
@@ -147,6 +146,8 @@ class KpiTable extends React.Component {
     orderBy: 'title',
     selected: [],
     data:[],
+    kpiId: null,
+    readyToEdit: false,
     submitted: null,
     page: 0,
     rowsPerPage: 5,
@@ -165,14 +166,23 @@ class KpiTable extends React.Component {
     }
   }
 
-  editComponent(id) {
-    return `<Redirect to={{
-      pathname: '/kpi',
-      state: {
-        projectId: ${this.props.projectId},
-        kpiId: ${id}
-      }
-    }} />`;
+  setEditRedirect = (kpiId) => {
+    this.setState({
+      readyToEdit: true,
+      kpiId: kpiId
+    });
+  }
+
+  renderEditRedirect = () => {
+    if (this.state.readyToEdit) {
+      return <Redirect to={{
+        pathname: '/kpi',
+        state: {
+          projectId: this.props.projectId,
+          kpiId: this.state.kpiId
+        }
+      }} />;
+    }
   }
 
   deactivateKpi(id) {
@@ -252,6 +262,7 @@ class KpiTable extends React.Component {
 
     return (
       <div>
+        {this.renderEditRedirect()}
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -264,36 +275,29 @@ class KpiTable extends React.Component {
             <TableBody>
               {stableSort(data, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-                  const isSelected = this.isSelected(n.id);
+                .map(kpi => {
+                  const isSelected = this.isSelected(kpi.id);
                   return (
                     <TableRow
                       hover
                       aria-checked={isSelected}
                       tabIndex={-1}
-                      key={n.id}
+                      key={kpi.id}
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
-                        <IconButton onClick={() => {this.editComponent(n.id);}}>
+                        <IconButton onClick={() => {this.setEditRedirect(kpi.id);}}>
                           <EditIcon color="primary" />
                         </IconButton>
                       </TableCell>
                       <TableCell align="left">
-                        <Link to={{
-                          pathname: "/kpi",
-                          state: {
-                            projectId: this.props.projectId,
-                            kpiId: n.id
-                          } }}>
-                          {n.title}
-                        </Link>
+                        {kpi.title}
                       </TableCell>
-                      <TableCell align="left">{n.description}</TableCell>
-                      <TableCell align="left">{n.type}</TableCell>
-                      <TableCell align="left">{n.tags}</TableCell>
+                      <TableCell align="left">{kpi.description}</TableCell>
+                      <TableCell align="left">{kpi.type}</TableCell>
+                      <TableCell align="left">{kpi.tags}</TableCell>
                       <TableCell padding="none">
-                        <IconButton onClick={() => {this.deactivateKpi(n.id);}}>
+                        <IconButton onClick={() => {this.deactivateKpi(kpi.id);}}>
                           <DeleteIcon color="primary" />
                         </IconButton>
                       </TableCell>

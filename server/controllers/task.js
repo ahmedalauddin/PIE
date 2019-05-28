@@ -117,6 +117,10 @@ module.exports = {
         {
           model: models.Person,
           as: "assigned"
+        },
+        {
+          model: TaskStatus,
+          as: "status"
         }
       ]
     })

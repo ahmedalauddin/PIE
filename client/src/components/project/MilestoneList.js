@@ -91,7 +91,7 @@ class MilestoneList extends React.Component {
   renderActionRedirect = () => {
     if (this.state.redirectAction) {
       return <Redirect to={{
-        pathname: '/actioncard',
+        pathname: '/action',
         state: {
           projectId: `${this.props.projectId}`,
           actionId: `${this.state.redirectActionId}`
@@ -188,7 +188,7 @@ class MilestoneList extends React.Component {
           }
         </List>
         <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
-          aria-label="Add Action" to={{pathname: "/actioncard", state: {projectId: this.props.projectId} }} >
+          aria-label="Add Action" to={{pathname: "/action", state: {projectId: this.props.projectId} }} >
           Add Action
           <AddIcon className={classes.rightIcon} />
         </Button>

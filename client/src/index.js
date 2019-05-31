@@ -7,7 +7,6 @@
  * Modified: 2019-03-16 17:23:07
  * Editor:   Darrin Tisdale
  */
-
 import React from "react";
 import * as ReactDOM from "react-dom";
 import "./stylesheets/index.css";

@@ -233,6 +233,91 @@ module.exports = {
       });
   },
 
+
+  getProjectYears(req, res) {
+    logger.debug(`${callerType} getProjectYears -> id = ${req.params.orgId}`);
+    let orgId = req.params.orgId;
+    let sql = "select min(Year(P.startAt)) as beginYear, max(Year(P.endAt)) as endYear \
+      from Projects P  where P.orgId = " + orgId + " limit 1";
+    return models.sequelize
+      .query(
+        sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(years => {
+        logger.info(`${callerType} getProjectYears -> returned`);
+        res.status(200).send(years);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
+  // get projects by organization
+  getProjectFilteredDashboard(req, res) {
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body.status: ${req.body.status}`);
+    //logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
+    let i = 0;
+    let orgId = req.body.orgId;
+    let status = req.body.status;
+    let years = req.body.projectYear;
+    let statusClause = "";
+    let statusList = "";
+    let yearClause = "";
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> status.length: ${status.length}`);
+    if (status.length >= 1) {
+      for (i = 0; i < status.length; i++) {
+        status[i] = "'" + status[i] + "'";
+      }
+      statusList = status.join();
+      statusClause = " and TS.label in (" + statusList + ")";
+    }
+
+    let first = true;
+    if (years.length >= 1) {
+      for (i = 0; i < years.length; i++) {
+        if (!first) {
+          yearClause += " or (Year(P.startAt) <= " + years[i] + " and Year(P.endAt) >= " + years[i] + ")";
+        } else {
+          first = false;
+          yearClause += " (Year(P.startAt) <= " + years[i] + " and Year(P.endAt) >= " + years[i] + ")";
+        }
+      }
+      yearClause = " and (" + yearClause + ")";
+    }
+
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard`);
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> orgId: ${orgId}, filter: ${status}`);
+
+
+    let sql = "select P.id, P.orgId, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`,\
+      P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
+      Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+      (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
+      from Projects P left outer join TaskStatuses TS on P.statusId = TS.id \
+      left outer join Kpis K on P.mainKpiId = K.id \
+      where P.orgId = " + orgId + statusClause + yearClause + " order by P.title";
+
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT,
+          limit: 20
+        }
+      )
+      .then(projects => {
+        res.status(200).send(projects);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
   // get projects by organization
   getProjectDashboard(req, res) {
     // TODO - need to pass in org id
@@ -247,7 +332,7 @@ module.exports = {
       .query(sql,
         {
           type: models.sequelize.QueryTypes.SELECT,
-          limit: 15
+          limit: 20
         }
       )
       .then(projects => {

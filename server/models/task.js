@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      comments: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       projectId: {
         type: DataTypes.INTEGER,
         allowNull: true

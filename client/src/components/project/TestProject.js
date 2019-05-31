@@ -506,7 +506,7 @@ class TestProject extends React.Component {
                   <Typography className={classes.heading}>Actions</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                  <Fab component={Link} color="primary" aria-label="Add" to={`/actioncard`} className={classes.fab}>
+                  <Fab component={Link} color="primary" aria-label="Add" to={`/action`} className={classes.fab}>
                     <AddIcon />
                   </Fab>
                   <ActionTable/>

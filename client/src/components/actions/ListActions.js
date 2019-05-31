@@ -173,7 +173,7 @@ class ListActions extends Component {
                                       key={task.id}
                                     >
                                       <TableCell width="25%" align="left">
-                                        <Link to={`/actioncard/${task.id}`}>
+                                        <Link to={`/action/${task.id}`}>
                                           {task.title}
                                         </Link>
                                       </TableCell>

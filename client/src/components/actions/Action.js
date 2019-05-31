@@ -155,13 +155,14 @@ const styles = theme => ({
   }
 });
 
-class ActionCard extends React.Component {
+class Action extends React.Component {
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.cancel = this.cancel.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
@@ -179,12 +180,14 @@ class ActionCard extends React.Component {
     orgName: "",
     readyToRedirect: false,
     message: "",
+    comments: "",
     assigned: null,
     assignedList: [],
     milestone: null,
     milestoneList: [],
     priority: null,
     priorityList: [],
+    status: null,
     description: "",
     msg: "",
     buttonText: "",
@@ -217,6 +220,12 @@ class ActionCard extends React.Component {
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
   };
+
+  cancel() {
+    this.setState({
+      readyToRedirect: true
+    });
+  }
 
   handleSubmit(event) {
     event.preventDefault();
@@ -260,7 +269,7 @@ class ActionCard extends React.Component {
             });
           })
           .catch(err => {
-            //console.log(err);
+            console.log(err);
           });
       }
     }, 2000);
@@ -301,7 +310,10 @@ class ActionCard extends React.Component {
             id: taskId,
             title: task.title,
             description: task.description,
-            assigned: task.assigned.fullName,
+            comments: task.comments,
+            assigned: task.assigned.id,
+            priority: task.priority.id,
+            status: task.status.id,
             orgId: task.orgId,
             milestone: task.milestoneId,
             projectId: task.projectId,
@@ -384,6 +396,22 @@ class ActionCard extends React.Component {
                         }}
                       />
                     </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        id="comments"
+                        label="Comments"
+                        multiline
+                        rowsMax="8"
+                        value={this.state.comments}
+                        onChange={this.handleChange("comments")}
+                        fullWidth
+                        className={classes.textField}
+                        margin="normal"
+                        InputLabelProps={{
+                          shrink: true
+                        }}
+                      />
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
                         <InputLabel shrink htmlFor="priority-simple">Priority</InputLabel>
@@ -429,8 +457,6 @@ class ActionCard extends React.Component {
                         </Select>
                       </FormControl>
                       <br />
-                      <br />
-                      <br />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <FormControl className={classes.formControl}>
@@ -456,17 +482,23 @@ class ActionCard extends React.Component {
                         </Select>
                       </FormControl>
                       <br />
-                      <br />
-                      <br />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12}>
                       <Button
                         variant="contained"
                         color="primary"
                         onClick={this.handleSubmit}
-                        className={classes.secondary}
+                        className={classes.button}
                       >
                         {this.state.buttonText}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.cancel}
+                        className={classes.button}
+                      >
+                        Cancel
                       </Button>
                       <br />
                     </Grid>
@@ -481,4 +513,4 @@ class ActionCard extends React.Component {
   }
 }
 
-export default withStyles(styles)(ActionCard);
+export default withStyles(styles)(Action);

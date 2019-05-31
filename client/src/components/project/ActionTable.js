@@ -223,7 +223,7 @@ class ActionTable extends React.Component {
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
       return <Redirect to={{
-        pathname: '/actioncard',
+        pathname: '/action',
         state: {
           projectId: this.props.projectId,
           actionId: this.state.actionId

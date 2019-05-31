@@ -29,6 +29,7 @@ import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
 import PersonTable from "../person/PersonTable";
+import CardContent from "@material-ui/core/CardContent";
 
 const styles = theme => ({
   root: {
@@ -246,6 +247,14 @@ class Organization extends React.Component {
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  color="secondary"
+                  gutterBottom
+                >
+                  Organization
+                </Typography>
                 <OrganizationDetail orgId={orgId} messages={this.showMessages}/>
               </Paper>
             </Grid>

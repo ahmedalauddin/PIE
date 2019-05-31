@@ -25,10 +25,12 @@ module.exports = {
     return models.Task.create({
       title: req.body.title,
       description: req.body.description,
-      status: req.body.taskstatus,
+      statusId: req.body.taskstatus,
       assignedTo: req.body.assigned,
-      milestone: req.body.milestone,
-      projectId: parseInt(req.body.projectId)
+      milestoneId: req.body.milestone,
+      comments: req.body.comments,
+      projectId: parseInt(req.body.projectId),
+      priorityId: req.body.priority
     })
       .then(t => {
         logger.debug(`${callerType} create -> added task, id: ${t.id}`);
@@ -53,7 +55,10 @@ module.exports = {
       {
         title: req.body.title,
         description: req.body.description,
-        status: req.body.taskstatus
+        milestoneId: req.body.milestone,
+        comments: req.body.comments,
+        statusId: req.body.taskstatus,
+        priorityId: req.body.priority
       },
       {
         returning: true,

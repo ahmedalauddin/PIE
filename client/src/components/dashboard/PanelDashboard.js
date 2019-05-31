@@ -23,7 +23,33 @@ import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions/index
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";
-import CardContent from "@material-ui/core/CardContent/index";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import ListItemText from "@material-ui/core/ListItemText";
+import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
+import Chip from "@material-ui/core/Chip";
+import Button from "@material-ui/core/Button";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const statuses = [
+  "Pending",
+  "In Progress",
+  "Completed"
+];
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
@@ -38,6 +64,18 @@ const rows = [
 ];
 
 const styles = theme => ({
+  chip: {
+    margin: 2,
+  },
+  filterSelect: {
+    alignItems: "baseline",
+  },
+  filters: {
+    alignItems: "baseline",
+  },
+  noLabel: {
+    marginTop: theme.spacing.unit * 3,
+  },
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.grey["100"],
@@ -60,24 +98,33 @@ const styles = theme => ({
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    flexBasis: '15%',
+    flexBasis: "15%",
     flexShrink: 0,
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: 150,
+    maxWidth: 400,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
   details: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   column: {
-    flexBasis: '15%',
+    flexBasis: "15%",
   },
   link: {
     color: theme.palette.primary.main,
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
     },
   }
 });
@@ -89,6 +136,7 @@ class PanelDashboard extends Component {
     super(props);
     this.handleNull = this.handleNull.bind(this);
     this.addProject = this.addProject.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
   };
 
   state = {
@@ -98,8 +146,13 @@ class PanelDashboard extends Component {
     organization:"",
     orgName: "",
     selected: [],
+    selectedYrs: [],
     projects: [],
+    yearList: [],
+    status: [],
+    projectYear: [],
     readyToRedirect: false,
+    selectChips: null,
     user: "",
     toProject: false,
     toProjectId: "",
@@ -137,10 +190,30 @@ class PanelDashboard extends Component {
         .then(projects => {
           this.setState({
             projects: projects,
-            orgName: orgName
+            orgName: orgName,
+            orgId: orgId
           });
         });
     }
+
+    // Get list of years for filtering.
+    fetch("/api/projects-years/" + orgId)
+      .then(res => {
+        return res.json();
+      })
+      .then(years => {
+        let beginYear = years[0].beginYear;
+        let endYear = years[0].endYear;
+        let yearList = [];
+        let i = 0;
+        for (var yr=beginYear; yr <= endYear; yr++) {
+          yearList[i] = yr;
+          i++;
+        }
+        this.setState({
+          yearList: yearList,
+        });
+      });
   };
 
   formatDate(dateInput) {
@@ -156,7 +229,34 @@ class PanelDashboard extends Component {
 
   addProject = () => {
     return <Redirect to="/newproject" />;
-  }
+  };
+
+  handleChange = event => {
+    this.setState({ status: event.target.value });
+  };
+
+  handleYearChange = event => {
+    this.setState({ projectYear: event.target.value });
+  };
+
+  handleUpdate = (event) => {
+    event.preventDefault();
+    setTimeout(() => {
+      fetch("/api/projects-filtered", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(projects => {
+          this.setState({
+            projects: projects
+          });
+        });
+    }, 2000);
+  };
 
   render() {
     const { classes } = this.props;
@@ -189,6 +289,63 @@ class PanelDashboard extends Component {
                     >
                       Projects listed for {getOrgName()}
                     </Typography>
+                    <div className={classes.filters}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="selectChips">Filter by status</InputLabel>
+                        <Select
+                          multiple
+                          value={this.state.status}
+                          onChange={this.handleChange}
+                          input={<Input id="selectChips" />}
+                          renderValue={selected => (
+                            <div className={classes.chips}>
+                              {selected.map(value =>
+                                <Chip key={value} label={value} className={classes.chip} />
+                                )}
+                            </div>
+                          )}
+                          MenuProps={MenuProps}
+                        >
+                          {statuses.map(status => (
+                            <MenuItem key={status} value={status}>
+                              {status}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="yearFilter">Filter by project year</InputLabel>
+                        <Select
+                          multiple
+                          value={this.state.projectYear}
+                          onChange={this.handleYearChange}
+                          input={<Input id="yearFilter" />}
+                          renderValue={selectedYrs => (
+                            <div className={classes.chips}>
+                              {selectedYrs.map(value =>
+                                <Chip key={value} label={value} className={classes.chip} />
+                              )}
+                            </div>
+                          )}
+                          MenuProps={MenuProps}
+                        >
+                          {this.state.yearList.map(year => (
+                            <MenuItem key={year} value={year}>
+                              {year}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        vertical-align="bottom"
+                        onClick={this.handleUpdate}
+                        className={classes.secondary}
+                      >
+                        Update Results
+                      </Button>
+                    </div>
                     <ExpansionPanel expanded={false}>
                       <ExpansionPanelSummary>
                         <div className={classes.column}>

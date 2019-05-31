@@ -262,15 +262,7 @@ class PersonTable extends React.Component {
                         </IconButton>
                       </TableCell>
                       <TableCell align="left">
-                        <Link to={{
-                          pathname: "/person",
-                          state: {
-                            personId: person.id,
-                            organizationId: person.orgId,
-                            referrer: "/organization"
-                          } }}>
-                          {person.fullName}
-                        </Link>
+                        {person.fullName}
                       </TableCell>
                       <TableCell align="left">{person.email}</TableCell>
                       <TableCell align="left">{person.department}</TableCell>

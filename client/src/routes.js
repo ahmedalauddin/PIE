@@ -33,7 +33,7 @@ import MyDraft from "./components/project/MyDraft";
 import Kpi from "./components/kpi/Kpi";
 import Milestone from "./components/milestone/Milestone";
 import Analytics from "./components/analytics/Analytics";
-import KpiSearch from "./components/kpi/KpiSearch";
+import Test1 from "./components/project/Test1";
 import TestSearch from "./components/project/TestSearch";
 import withAuth from "./components/withAuth.jsx";
 // For testing
@@ -54,6 +54,7 @@ export default props => (
         <Route exact path="/draft" component={MyDraft} />
         <Route exact path="/" component={Main} />
         <Route exact path="/userinfo" component={UserInfo} />
+        <Route exact path="/test" component={Test1} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/project" component={withAuth(Project)} />

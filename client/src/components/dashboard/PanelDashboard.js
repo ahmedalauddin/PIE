@@ -33,6 +33,7 @@ import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -294,188 +295,189 @@ class PanelDashboard extends Component {
         <div className={classes.root}>
           {this.renderEditRedirect()}
           <Grid container justify="center">
-            <Grid
-              spacing={24}
-              alignItems="center"
-              justify="center"
-              container
-              className={classes.grid}
-            >
-              <Grid container item xs={12}>
-                <Grid item xs={12}>
-                  <div className={classes.root}>
-                    <Typography
-                      variant="subtitle1"
-                      color="secondary"
-                      gutterBottom
-                    >
-                      Projects listed for {getOrgName()}
-                    </Typography>
-                    <div className={classes.filters}>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="selectChips">Filter by status</InputLabel>
-                        <Select
-                          multiple
-                          value={this.state.status}
-                          onChange={this.handleChange}
-                          input={<Input id="selectChips" />}
-                          renderValue={selected => (
-                            <div className={classes.chips}>
-                              {selected.map(value =>
-                                <Chip key={value} label={value} className={classes.chip} />
-                                )}
-                            </div>
-                          )}
-                          MenuProps={MenuProps}
-                        >
-                          {statuses.map(status => (
-                            <MenuItem key={status} value={status}>
-                              {status}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="yearStartFilter">Filter by projects beginning in year</InputLabel>
-                        <Select
-                          multiple
-                          value={this.state.startYear}
-                          onChange={this.handleStartYearChange}
-                          input={<Input id="yearStartFilter" />}
-                          renderValue={selectedYrs => (
-                            <div className={classes.chips}>
-                              {selectedYrs.map(value =>
-                                <Chip key={value} label={value} className={classes.chip} />
-                              )}
-                            </div>
-                          )}
-                          MenuProps={MenuProps}
-                        >
-                          {this.state.yearList.map(year => (
-                            <MenuItem key={year} value={year}>
-                              {year}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="yearEndFilter">Filter by projects ending in year</InputLabel>
-                        <Select
-                          multiple
-                          value={this.state.endYear}
-                          onChange={this.handleEndYearChange}
-                          input={<Input id="yearEndFilter" />}
-                          renderValue={selectedYrs => (
-                            <div className={classes.chips}>
-                              {selectedYrs.map(value =>
-                                <Chip key={value} label={value} className={classes.chip} />
-                              )}
-                            </div>
-                          )}
-                          MenuProps={MenuProps}
-                        >
-                          {this.state.yearList.map(year => (
-                            <MenuItem key={year} value={year}>
-                              {year}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={this.handleUpdate}
-                        className={classes.secondary}
-                      >
-                        Update Results
-                      </Button>
+            <Grid container spacing={24} alignItems="center" justify="flex-start" className={classes.grid}>
+              <Typography variant="subtitle1" color="secondary" gutterBottom>
+                Projects listed for {getOrgName()}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
+            <Grid item>
+              <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="selectChips">Status</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.status}
+                  onChange={this.handleChange}
+                  input={<Input id="selectChips" />}
+                  renderValue={selected => (
+                    <div className={classes.chips}>
+                      {selected.map(value =>
+                        <Chip key={value} label={value} className={classes.chip} />
+                        )}
                     </div>
-                    <ExpansionPanel expanded={false}>
-                      <ExpansionPanelSummary>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {statuses.map(status => (
+                    <MenuItem key={status} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>Filter by status</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="yearStartFilter">Start year</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.startYear}
+                  onChange={this.handleStartYearChange}
+                  input={<Input id="yearStartFilter" />}
+                  renderValue={selectedYrs => (
+                    <div className={classes.chips}>
+                      {selectedYrs.map(value =>
+                        <Chip key={value} label={value} className={classes.chip} />
+                      )}
+                    </div>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {this.state.yearList.map(year => (
+                    <MenuItem key={year} value={year}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>Filter projects beginning in year</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl className={classes.formControl}>
+                <InputLabel htmlFor="yearEndFilter">End year</InputLabel>
+                <Select
+                  multiple
+                  value={this.state.endYear}
+                  onChange={this.handleEndYearChange}
+                  input={<Input id="yearEndFilter" />}
+                  renderValue={selectedYrs => (
+                    <div className={classes.chips}>
+                      {selectedYrs.map(value =>
+                        <Chip key={value} label={value} className={classes.chip} />
+                      )}
+                    </div>
+                  )}
+                  MenuProps={MenuProps}
+                >
+                  {this.state.yearList.map(year => (
+                    <MenuItem key={year} value={year}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>Filter projects ending in year</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <FormControl className={classes.formControl}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleUpdate}
+                  className={classes.secondary}
+                >
+                  Update Results
+                </Button>
+              </FormControl>
+            </Grid>
+            <Grid container lg={10} justify="center" spacing={3}>
+              <Grid lg={10} item spacing={3}>
+                <ExpansionPanel expanded={false}>
+                  <ExpansionPanelSummary>
+                    <div className={classes.column}>
+                    </div>
+                    <div className={classes.column}>
+                    <Typography className={classes.heading}>
+                      Project title
+                    </Typography>
+                  </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        Status
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        Targeted KPI
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        Start date
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        End date
+                      </Typography>
+                    </div>
+                  </ExpansionPanelSummary>
+                </ExpansionPanel>
+                {this.state.projects.map(project => {
+                  return (
+                    <ExpansionPanel key={project.id}>
+                      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                         <div className={classes.column}>
+                          <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
+                            <EditIcon color="primary" />
+                          </IconButton>
                         </div>
                         <div className={classes.column}>
-                        <Typography className={classes.heading}>
-                          Project title
-                        </Typography>
-                      </div>
-                        <div className={classes.column}>
-                          <Typography className={classes.secondaryHeading}>
-                            Status
+                          <Typography className={classes.heading}>
+                            {project.projectTitle}
                           </Typography>
                         </div>
                         <div className={classes.column}>
                           <Typography className={classes.secondaryHeading}>
-                            Targeted KPI
+                            {project.status}
                           </Typography>
                         </div>
                         <div className={classes.column}>
                           <Typography className={classes.secondaryHeading}>
-                            Start date
+                            {project.mainKpi}
                           </Typography>
                         </div>
                         <div className={classes.column}>
                           <Typography className={classes.secondaryHeading}>
-                            End date
+                            {this.formatDate(project.startAt)}
+                          </Typography>
+                        </div>
+                        <div className={classes.column}>
+                          <Typography className={classes.secondaryHeading}>
+                            {this.formatDate(project.endAt)}
                           </Typography>
                         </div>
                       </ExpansionPanelSummary>
+                      <ExpansionPanelDetails className={classes.details}>
+                        <div>
+                          <Typography className={classes.secondaryHeading}>
+                            Owners: {project.owners}<br/>
+                            Tasks: {project.tasks}
+                          </Typography>
+                        </div>
+                      </ExpansionPanelDetails>
                     </ExpansionPanel>
-                    {this.state.projects.map(project => {
-                      return (
-                        <ExpansionPanel key={project.id}>
-                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <div className={classes.column}>
-                              <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
-                                <EditIcon color="primary" />
-                              </IconButton>
-                            </div>
-                            <div className={classes.column}>
-                              <Typography className={classes.heading}>
-                                {project.projectTitle}
-                              </Typography>
-                            </div>
-                            <div className={classes.column}>
-                              <Typography className={classes.secondaryHeading}>
-                                {project.status}
-                              </Typography>
-                            </div>
-                            <div className={classes.column}>
-                              <Typography className={classes.secondaryHeading}>
-                                {project.mainKpi}
-                              </Typography>
-                            </div>
-                            <div className={classes.column}>
-                              <Typography className={classes.secondaryHeading}>
-                                {this.formatDate(project.startAt)}
-                              </Typography>
-                            </div>
-                            <div className={classes.column}>
-                              <Typography className={classes.secondaryHeading}>
-                                {this.formatDate(project.endAt)}
-                              </Typography>
-                            </div>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails className={classes.details}>
-                            <div>
-                              <Typography className={classes.secondaryHeading}>
-                                Owners: {project.owners}<br/>
-                                Tasks: {project.tasks}
-                              </Typography>
-                            </div>
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                      );
-                    })}
-                    <br/>
-                    <br/>
-                    <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
-                      <AddIcon />
-                    </Fab>
-                  </div>
+                    );
+                  })}
+                  <br/>
+                  <br/>
+                  <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
+                    <AddIcon />
+                  </Fab>
                 </Grid>
               </Grid>
-            </Grid>
           </Grid>
         </div>
       </React.Fragment>

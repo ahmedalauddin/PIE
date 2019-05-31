@@ -278,12 +278,16 @@ module.exports = {
     let statusList = "";
     let startYearClause = "";
     let endYearClause = "";
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard------------------------`);
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> orgId: ${orgId}, filter: ${status}`);
 
     // Build clause to filter by client organization.
     if (req.body.orgId) {
       orgClause = " where P.orgId = " + orgId;
       firstClause = false;
     }
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past orgId`);
 
     // Build clause to filter on status.
     if (status.length >= 1) {
@@ -299,10 +303,12 @@ module.exports = {
       }
       statusClause += " PS.label in (" + statusList + ")";
     }
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past status`);
 
     // Build clause to filter on project start year.
     let first = true;
     if (startYears.length >= 1) {
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, startYears.length: ${startYears.length}`);
       for (i = 0; i < startYears.length; i++) {
         if (!first) {
           startYearClause += " or Year(P.startAt) = " + startYears[i] + " ";
@@ -312,13 +318,14 @@ module.exports = {
         }
       }
       if (firstClause) {
-        startYearClause = " where ";
+        logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, firstClause: ${firstClause}`);
+        startYearClause = " where (" + startYearClause + ")";
         firstClause = false;
       } else {
-        startYearClause = " and ";
+        startYearClause = " and (" + startYearClause + ")";
       }
-      startYearClause += " (" + startYearClause + ")";
     }
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past start year, startYearClause: ${startYearClause}`);
 
     // Build clause to filter on project start year.
     first = true;
@@ -332,15 +339,13 @@ module.exports = {
         }
       }
       if (firstClause) {
-        endYearClause = " where ";
+        endYearClause = " where (" + endYearClause + ")";
         firstClause = false;
       } else {
-        endYearClause = " and ";
+        endYearClause = " and (" + endYearClause + ")";
       }
-      endYearClause += " (" + endYearClause + ")";
     }
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard`);
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> orgId: ${orgId}, filter: ${status}`);
+    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past end year, endYearClause: ${endYearClause}`);
 
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
       P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \

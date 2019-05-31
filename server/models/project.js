@@ -108,8 +108,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "projectId"
     });
 
-    logger.debug(`${callerType} Project belongsTo TaskStatus`);
-    Project.belongsTo(models.TaskStatus, {
+    logger.debug(`${callerType} Project belongsTo ProjectStatus`);
+    Project.belongsTo(models.ProjectStatus, {
       as: "status",
       foreignKey: "statusId"
     });

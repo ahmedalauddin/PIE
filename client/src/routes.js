@@ -6,7 +6,6 @@ import OrgDashboard from "./components/organization/OrgDashboard";
 import Cards from "./components/cards/Cards";
 import ScrollToTop from "./components/ScrollTop";
 import EditPerson from "./components/person/EditPerson";
-import ListProjects from "./components/project/ListProjects";
 import ListPersons from "./components/person/ListPersons";
 import ListActions from "./components/actions/ListActions";
 import ListKpis from "./components/kpi/ListKpis";
@@ -61,13 +60,12 @@ export default props => (
         <Route path="/project/:id" component={withAuth(Project)} />
         <Route path="/projectpersons/:id" component={withAuth(ProjectPersons)} />
         <Route path="/departmentcard/:id" component={withAuth(DepartmentCard)} />
-        <Route path="/listprojects/:id" component={withAuth(ListProjects)} />
         <Route path="/organization/:id" component={withAuth(Organization)} />
         <Route path="/editperson/:id" component={withAuth(EditPerson)} />
         <Route path="/listkpis/:id" component={withAuth(ListKpis)} />
         <Route path="/listdepts/:id" component={withAuth(ListDepts)} />
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
-        <Route exact path="/listprojects" component={withAuth(ListProjects)} />
+        <Route exact path="/projectdashboard" component={withAuth(ProjectDashboard)} />
         <Route exact path="/newproject" component={withAuth(NewProject)} />
         <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
         <Route exact path="/kpicard" component={withAuth(KpiCard)} />

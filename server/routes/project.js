@@ -32,13 +32,21 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/projects-recent`);
   router.get("/api/projects-recent", projController.getMostRecent);
 
-  // list most recently updated projects
+  // list projects for an org for our dashboard
   logger.debug(`${callerType} GET -> path: /api/projects-dashboard/:orgId`);
   router.get("/api/projects-dashboard/:orgId", projController.getProjectDashboard);
 
-  // list most recently updated projects
+  // list all projects for our dashboard
+  logger.debug(`${callerType} GET -> path: /api/projects-all`);
+  router.get("/api/projects-all", projController.getAllProjects);
+
+  // list earliest and latest years associated with projects
   logger.debug(`${callerType} GET -> path: /api/projects-years/:orgId`);
   router.get("/api/projects-years/:orgId", projController.getProjectYears);
+
+  // list earliest and latest years associated with projects
+  logger.debug(`${callerType} GET -> path: /api/projects-years`);
+  router.get("/api/projects-years", projController.getProjectYears);
 
   // list most recently updated projects
   logger.debug(`${callerType} POST -> path: /api/projects-filtered`);

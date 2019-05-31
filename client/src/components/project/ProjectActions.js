@@ -38,7 +38,7 @@ const rows = [
     label: "Description"
   },
   {
-    id: "taskstatus.js",
+    id: "taskstatus",
     numeric: false,
     disablePadding: false,
     label: "Status"

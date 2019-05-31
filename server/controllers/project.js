@@ -15,7 +15,7 @@ const Organization = require("../models").Organization;
 const Project = require("../models").Project;
 const KPI = require("../models").Kpi;
 const Task = require("../models").Task;
-const TaskStatus = require("../models").TaskStatus;
+const ProjectStatus = require("../models").ProjectStatus;
 const Person = require("../models").Person;
 const Milestone = require("../models").Milestone;
 const models = require("../models");
@@ -146,7 +146,7 @@ module.exports = {
           as: "kpis"
         },
         {
-          model: TaskStatus,
+          model: ProjectStatus,
           as: "status"
         },
         {
@@ -235,10 +235,17 @@ module.exports = {
 
 
   getProjectYears(req, res) {
+    let orgId = 0;
+    let sql = "";
     logger.debug(`${callerType} getProjectYears -> id = ${req.params.orgId}`);
-    let orgId = req.params.orgId;
-    let sql = "select min(Year(P.startAt)) as beginYear, max(Year(P.endAt)) as endYear \
-      from Projects P  where P.orgId = " + orgId + " limit 1";
+    if (req.params.orgId) {
+      orgId = req.params.orgId;
+      sql = "select min(Year(P.startAt)) as beginYear, max(Year(P.endAt)) as endYear \
+        from Projects P  where P.orgId = " + orgId + " limit 1";
+    } else {
+      sql = "select min(Year(P.startAt)) as beginYear, max(Year(P.endAt)) as endYear \
+        from Projects P";
+    }
     return models.sequelize
       .query(
         sql,
@@ -263,43 +270,86 @@ module.exports = {
     let i = 0;
     let orgId = req.body.orgId;
     let status = req.body.status;
-    let years = req.body.projectYear;
+    let startYears = req.body.startYear;
+    let endYears = req.body.endYear;
+    let firstClause = true;
+    let orgClause = "";
     let statusClause = "";
     let statusList = "";
-    let yearClause = "";
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> status.length: ${status.length}`);
+    let startYearClause = "";
+    let endYearClause = "";
+
+    // Build clause to filter by client organization.
+    if (req.body.orgId) {
+      orgClause = " where P.orgId = " + orgId;
+      firstClause = false;
+    }
+
+    // Build clause to filter on status.
     if (status.length >= 1) {
       for (i = 0; i < status.length; i++) {
         status[i] = "'" + status[i] + "'";
       }
       statusList = status.join();
-      statusClause = " and TS.label in (" + statusList + ")";
+      if (firstClause) {
+        statusClause = " where ";
+        firstClause = false;
+      } else {
+        statusClause = " and ";
+      }
+      statusClause += " PS.label in (" + statusList + ")";
     }
 
+    // Build clause to filter on project start year.
     let first = true;
-    if (years.length >= 1) {
-      for (i = 0; i < years.length; i++) {
+    if (startYears.length >= 1) {
+      for (i = 0; i < startYears.length; i++) {
         if (!first) {
-          yearClause += " or (Year(P.startAt) <= " + years[i] + " and Year(P.endAt) >= " + years[i] + ")";
+          startYearClause += " or Year(P.startAt) = " + startYears[i] + " ";
         } else {
           first = false;
-          yearClause += " (Year(P.startAt) <= " + years[i] + " and Year(P.endAt) >= " + years[i] + ")";
+          startYearClause = " Year(P.startAt) = " + startYears[i] + " ";
         }
       }
-      yearClause = " and (" + yearClause + ")";
+      if (firstClause) {
+        startYearClause = " where ";
+        firstClause = false;
+      } else {
+        startYearClause = " and ";
+      }
+      startYearClause += " (" + startYearClause + ")";
     }
 
+    // Build clause to filter on project start year.
+    first = true;
+    if (endYears.length >= 1) {
+      for (i = 0; i < endYears.length; i++) {
+        if (!first) {
+          endYearClause += " or Year(P.endAt) = " + endYears[i] + " ";
+        } else {
+          first = false;
+          endYearClause = " Year(P.endAt) = " + endYears[i] + " ";
+        }
+      }
+      if (firstClause) {
+        endYearClause = " where ";
+        firstClause = false;
+      } else {
+        endYearClause = " and ";
+      }
+      endYearClause += " (" + endYearClause + ")";
+    }
     logger.debug(`${callerType} Project: getProjectFilteredDashboard`);
     logger.debug(`${callerType} Project: getProjectFilteredDashboard -> orgId: ${orgId}, filter: ${status}`);
 
-
-    let sql = "select P.id, P.orgId, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`,\
+    let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
       P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
       Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
       (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
-      from Projects P left outer join TaskStatuses TS on P.statusId = TS.id \
-      left outer join Kpis K on P.mainKpiId = K.id \
-      where P.orgId = " + orgId + statusClause + yearClause + " order by P.title";
+      from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
+      left outer join Organizations O on P.orgId = O.id  \
+      left outer join Kpis K on P.mainKpiId = K.id "
+      + orgClause + statusClause + startYearClause + endYearClause + " order by P.title";
 
     logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
     return models.sequelize
@@ -320,19 +370,18 @@ module.exports = {
 
   // get projects by organization
   getProjectDashboard(req, res) {
-    // TODO - need to pass in org id
-    let sql = "select P.id, P.orgId, P.title as `projectTitle`, TS.label as `status`, K.title as `mainKpi`,\
-      P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
+    let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`,\
+      P.progress, P.startAt, P.endAt, (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
       Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
       (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
-      from Projects P left outer join TaskStatuses TS on P.statusId = TS.id \
+      from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
       left outer join Kpis K on P.mainKpiId = K.id  \
       where P.orgId = " + req.params.orgId + " order by P.title";
     return models.sequelize
       .query(sql,
         {
           type: models.sequelize.QueryTypes.SELECT,
-          limit: 20
+          limit: 100
         }
       )
       .then(projects => {
@@ -343,6 +392,33 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+
+  // get projects
+  getAllProjects(req, res) {
+    let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
+      P.progress, P.startAt, P.endAt, (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
+      Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+      (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
+      from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
+      left outer join Organizations O on P.orgId = O.id  \
+      left outer join Kpis K on P.mainKpiId = K.id  \
+      order by P.title";
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT,
+          limit: 100
+        }
+      )
+      .then(projects => {
+        res.status(200).send(projects);
+      })
+      .catch(error => {
+        logger.error(error.stack);
+        res.status(400).send(error);
+      });
+  },
+
 
   // List most recent projects
   getMostRecent(req, res) {

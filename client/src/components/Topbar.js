@@ -64,60 +64,80 @@ const styles = theme => ({
   }
 });
 
-const Menu = [
+const AdminMenu = [
   {
     label: "Dashboard",
-    pathname: "/paneldashboard",
-    admin: false,
-    intro: false
+    pathname: "/paneldashboard"
   },
   {
     label: "Login",
-    pathname: "/login",
-    admin: false,
-    intro: true
+    pathname: "/login"
   },
   {
     label: "Mind Map",
-    pathname: "/mindmap",
-    admin: true,
-    intro: false
+    pathname: "/mindmap"
   },
   {
     label: "Projects",
-    pathname: "/listprojects",
-    admin: true,
-    intro: false
+    pathname: "/projectdashboard"
   },
   {
     label: "Organizations",
-    pathname: "/orgdashboard",
-    admin: true,
-    intro: false
+    pathname: "/orgdashboard"
   },
   {
     label: "Analytics",
-    pathname: "/analytics",
-    admin: true,
-    intro: false
+    pathname: "/analytics"
   },
   {
     label: "Client Filter",
-    pathname: "/clientorg",
-    admin: true,
-    intro: false
+    pathname: "/clientorg"
   },
   {
     label: "Logout",
-    pathname: "/logout",
-    admin: false,
-    intro: false
+    pathname: "/logout"
   },
   {
     label: "About",
-    pathname: "/about",
-    admin: false,
-    intro: true
+    pathname: "/about"
+  }
+];
+
+const UserMenu = [
+  {
+    label: "Dashboard",
+    pathname: "/paneldashboard"
+  },
+  {
+    label: "Login",
+    pathname: "/login"
+  },
+  {
+    label: "Mind Map",
+    pathname: "/mindmap"
+  },
+  {
+    label: "Analytics",
+    pathname: "/analytics"
+  },
+  {
+    label: "Logout",
+    pathname: "/logout"
+  },
+  {
+    label: "About",
+    pathname: "/about"
+  }
+];
+
+const IntroMenu = [
+  {
+    label: "Login",
+    pathname: "/login"
+  },
+  {
+    label: "About",
+    pathname: "/about"
   }
 ];
 
@@ -154,26 +174,23 @@ class Topbar extends Component {
     if (this.props.currentPath === "/mindmap") {
       value = 2;
     }
-    if (this.props.currentPath === "/listprojects") {
+    if (this.props.currentPath === "/projectdashboard") {
       value = 3;
     }
     if (this.props.currentPath === "/listorgs") {
       value = 4;
     }
-    if (this.props.currentPath === "/listpersons") {
+    if (this.props.currentPath === "/analytics") {
       value = 5;
     }
-    if (this.props.currentPath === "/analytics") {
+    if (this.props.currentPath === "/clientorg") {
       value = 6;
     }
-    if (this.props.currentPath === "/clientorg") {
+    if (this.props.currentPath === "/logout") {
       value = 7;
     }
-    if (this.props.currentPath === "/logout") {
-      value = 9;
-    }
     if (this.props.currentPath === "/about") {
-      value = 10;
+      value = 8;
     }
     return value;
   };
@@ -183,7 +200,6 @@ class Topbar extends Component {
     const currentPath = location ? location.pathname : "/";
     let loggedIn = isLoggedIn();
     let isAdmin =  isAdministrator();
-
 
     return (
       <AppBar position="absolute" color="default" className={classes.appBar}>
@@ -205,7 +221,7 @@ class Topbar extends Component {
                     textColor="primary"
                     onChange={this.handleChange}
                   >
-                    {Menu.map((item, index) => ((isAdmin || item.intro || loggedIn) &&
+                    {AdminMenu.map((item, index) => (
                       <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                     ))}
                   </Tabs>

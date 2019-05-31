@@ -1,10 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/ListProjects.js
+ * File:     /client/src/components/PanelDashboard.js
+ * Descr:    Lists projects for an organization using expansion panels.
  * Created:  2019-01-16
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-18
+ * Modified: 2019-05-30
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -19,7 +20,6 @@ import moment from "moment/moment";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions/index";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";
@@ -28,11 +28,11 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import ListItemText from "@material-ui/core/ListItemText";
 import Select from "@material-ui/core/Select";
-import Checkbox from "@material-ui/core/Checkbox";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
+import EditIcon from "@material-ui/icons/Edit";
+import IconButton from "@material-ui/core/IconButton";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,9 +46,11 @@ const MenuProps = {
 };
 
 const statuses = [
-  "Pending",
+  "Approved",
+  "Not Approved",
   "In Progress",
-  "Completed"
+  "Completed",
+  "Postponed"
 ];
 
 const rows = [
@@ -68,10 +70,10 @@ const styles = theme => ({
     margin: 2,
   },
   filterSelect: {
-    alignItems: "baseline",
+    alignItems: "flex-end",
   },
   filters: {
-    alignItems: "baseline",
+    alignItems: "flex-end",
   },
   noLabel: {
     marginTop: theme.spacing.unit * 3,
@@ -107,8 +109,8 @@ const styles = theme => ({
   },
   formControl: {
     margin: theme.spacing.unit,
-    minWidth: 150,
-    maxWidth: 400,
+    minWidth: 170,
+    maxWidth: 450,
   },
   chips: {
     display: "flex",
@@ -148,9 +150,12 @@ class PanelDashboard extends Component {
     selected: [],
     selectedYrs: [],
     projects: [],
+    projectId: null,
+    readyToEdit: false,
     yearList: [],
     status: [],
-    projectYear: [],
+    startYear: [],
+    endYear: [],
     readyToRedirect: false,
     selectChips: null,
     user: "",
@@ -218,7 +223,6 @@ class PanelDashboard extends Component {
 
   formatDate(dateInput) {
     let dateOut = "";
-
     if (dateInput !== null) {
       dateOut = moment(dateInput).format("YYYY-MM-DD");
     }
@@ -235,9 +239,26 @@ class PanelDashboard extends Component {
     this.setState({ status: event.target.value });
   };
 
-  handleYearChange = event => {
-    this.setState({ projectYear: event.target.value });
+  handleStartYearChange = event => {
+    this.setState({ startYear: event.target.value });
   };
+
+  handleEndYearChange = event => {
+    this.setState({ endYear: event.target.value });
+  };
+
+  setEditRedirect = (projectId) => {
+    this.setState({
+      readyToEdit: true,
+      projectId: projectId
+    });
+  }
+
+  renderEditRedirect = () => {
+    if (this.state.readyToEdit) {
+      return <Redirect to={`/project/${this.state.projectId}`} />;
+    }
+  }
 
   handleUpdate = (event) => {
     event.preventDefault();
@@ -271,6 +292,7 @@ class PanelDashboard extends Component {
         <CssBaseline />
         <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
+          {this.renderEditRedirect()}
           <Grid container justify="center">
             <Grid
               spacing={24}
@@ -314,12 +336,35 @@ class PanelDashboard extends Component {
                         </Select>
                       </FormControl>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="yearFilter">Filter by project year</InputLabel>
+                        <InputLabel htmlFor="yearStartFilter">Filter by projects beginning in year</InputLabel>
                         <Select
                           multiple
-                          value={this.state.projectYear}
-                          onChange={this.handleYearChange}
-                          input={<Input id="yearFilter" />}
+                          value={this.state.startYear}
+                          onChange={this.handleStartYearChange}
+                          input={<Input id="yearStartFilter" />}
+                          renderValue={selectedYrs => (
+                            <div className={classes.chips}>
+                              {selectedYrs.map(value =>
+                                <Chip key={value} label={value} className={classes.chip} />
+                              )}
+                            </div>
+                          )}
+                          MenuProps={MenuProps}
+                        >
+                          {this.state.yearList.map(year => (
+                            <MenuItem key={year} value={year}>
+                              {year}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="yearEndFilter">Filter by projects ending in year</InputLabel>
+                        <Select
+                          multiple
+                          value={this.state.endYear}
+                          onChange={this.handleEndYearChange}
+                          input={<Input id="yearEndFilter" />}
                           renderValue={selectedYrs => (
                             <div className={classes.chips}>
                               {selectedYrs.map(value =>
@@ -339,7 +384,6 @@ class PanelDashboard extends Component {
                       <Button
                         variant="contained"
                         color="primary"
-                        vertical-align="bottom"
                         onClick={this.handleUpdate}
                         className={classes.secondary}
                       >
@@ -349,10 +393,12 @@ class PanelDashboard extends Component {
                     <ExpansionPanel expanded={false}>
                       <ExpansionPanelSummary>
                         <div className={classes.column}>
-                          <Typography className={classes.heading}>
-                            Project title
-                          </Typography>
                         </div>
+                        <div className={classes.column}>
+                        <Typography className={classes.heading}>
+                          Project title
+                        </Typography>
+                      </div>
                         <div className={classes.column}>
                           <Typography className={classes.secondaryHeading}>
                             Status
@@ -380,10 +426,13 @@ class PanelDashboard extends Component {
                         <ExpansionPanel key={project.id}>
                           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <div className={classes.column}>
+                              <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
+                                <EditIcon color="primary" />
+                              </IconButton>
+                            </div>
+                            <div className={classes.column}>
                               <Typography className={classes.heading}>
-                                <Link to={`/project/${project.id}`}>
-                                  {project.projectTitle}
-                                </Link>
+                                {project.projectTitle}
                               </Typography>
                             </div>
                             <div className={classes.column}>

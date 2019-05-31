@@ -19,7 +19,7 @@ const Menu = [
   },
   {
     label: "Projects",
-    pathname: "/listprojects",
+    pathname: "/projectdashboard",
     admin: true,
     intro: false
   },

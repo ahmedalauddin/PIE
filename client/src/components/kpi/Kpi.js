@@ -265,7 +265,6 @@ class KpiCard extends React.Component {
             <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
               <Grid item lg={10}>
                 <Paper className={classes.paper}>
-
                   <Typography
                     style={{ textTransform: "uppercase" }}
                     color="secondary"

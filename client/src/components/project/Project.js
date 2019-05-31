@@ -282,6 +282,16 @@ class Project extends React.Component {
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
+                <Typography
+                  style={{ textTransform: "uppercase" }}
+                  color="secondary"
+                  gutterBottom
+                >
+                  Project Detail<br/>
+                </Typography>
+                <Typography variant="h7">
+                  Organization: {getOrgName()}
+                </Typography>
                 <ProjectDetail projectId={projId} messages={this.showMessages}/>
               </Paper>
             </Grid>

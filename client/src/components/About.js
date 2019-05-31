@@ -74,18 +74,14 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: May 29, 2019<br/><br/>
+                          Build date: May 30, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
                           <ul>
-                            <li>Add and edit milestones link fixed</li>
-                            <li>New list for organizations</li>
-                            <li>Add/edit milestone redirect to project on complete</li>
-                            <li>Milestones list on project: added milestone status</li>
-                            <li>Redirect back to the project after submitting a KPI add or update is working</li>
-                            <li>Analytics tab working, now displays Superset</li>
+                            <li>Added filters for project start and end dates and status for the project dashboards</li>
+                            <li>Updated list for organizations</li>
                           </ul>
                         </Typography>
                       </div>

@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-17
+ * Modified: 2019-05-30
  * Editor:   Brad Kaufman
  */
 const Auth = require("./auth");
@@ -19,6 +19,7 @@ const Organization = require("./organization");
 const Person = require("./person");
 const Project = require("./project");
 const ProjectPerson = require("./projectperson");
+const ProjectStatus = require("./projectstatus");
 const Task = require("./task");
 const TaskStatus = require("./taskstatus");
 const TaskPriority = require("./taskpriority");
@@ -36,6 +37,7 @@ module.exports = {
   Person,
   Project,
   ProjectPerson,
+  ProjectStatus,
   Task,
   TaskPriority,
   TaskStatus

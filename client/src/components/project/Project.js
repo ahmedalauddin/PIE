@@ -27,7 +27,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
-import KpiTable from "./KpiTable";
+import KpiTable from "../kpi/KpiTable";
 import ActionTable from "./ActionTable";
 import MilestoneList from "./MilestoneList";
 import AddIcon from "@material-ui/icons/Add";
@@ -341,12 +341,12 @@ class Project extends React.Component {
                       <Typography className={classes.secondaryHeading}>
                         Select owners and people assigned to the project
                       </Typography>
-                    <Fab component={Link} size="small" color="primary" aria-label="Add"
-                      to={{pathname: "/", state: {projectId: projId} }}
-                      className={classes.fab}>
-                      <AddIcon />
-                    </Fab>
-                    <ProjectPersons projectId={projId} />
+                      <Fab component={Link} size="small" color="primary" aria-label="Add"
+                        to={{pathname: "/", state: {projectId: projId} }}
+                        className={classes.fab}>
+                        <AddIcon />
+                      </Fab>
+                      <ProjectPersons projectId={projId} />
                     </Grid>
                   </Grid>
                 </ExpansionPanelDetails>

@@ -27,7 +27,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
-import KpiTable from "./KpiTable";
+import KpiTable from "../kpi/KpiTable";
 import ActionTable from "./ActionTable";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";

@@ -29,7 +29,10 @@ import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
 import PersonTable from "../person/PersonTable";
-import CardContent from "@material-ui/core/CardContent";
+import ListDepartments from "../department/ListDepartments";
+import SearchIcon from "@material-ui/icons/Search";
+import DepartmentTable from "../department/DepartmentTable";
+import KpiTable from "../kpi/KpiTable";
 
 const styles = theme => ({
   root: {
@@ -271,6 +274,18 @@ class Organization extends React.Component {
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
+              <ExpansionPanel expanded={expanded === "panelDepartments"} onChange={this.handlePanelChange("panelDepartments")}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>Departments</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container>
+                    <Grid item lg={10}>
+                      <DepartmentTable organizationId={orgId}/>
+                    </Grid>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
               <ExpansionPanel expanded={expanded === "panelKpis"} onChange={this.handlePanelChange("panelKpis")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography className={classes.heading}>KPIs</Typography>
@@ -278,7 +293,12 @@ class Organization extends React.Component {
               <ExpansionPanelDetails>
                 <Grid container>
                   <Grid item lg={10}>
-                    KPIs go here.
+                    <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                      aria-label="Add" to={{pathname: "/kpi", state: {organizationId: orgId} }} >
+                      Add New
+                      <AddIcon className={classes.rightIcon} />
+                    </Button>
+                    <KpiTable organizationId={orgId}/>
                   </Grid>
                 </Grid>
               </ExpansionPanelDetails>

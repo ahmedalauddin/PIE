@@ -59,7 +59,7 @@ const styles = theme => ({
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    flexBasis: '15%',
+    flexBasis: "15%",
     flexShrink: 0,
   },
   secondaryHeading: {
@@ -67,16 +67,19 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
   },
   details: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   column: {
-    flexBasis: '15%',
+    flexBasis: "15%",
+  },
+  wideColumn: {
+    flexBasis: "35%",
   },
   link: {
     color: theme.palette.primary.main,
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
     },
   }
 });
@@ -188,12 +191,12 @@ class OrgDashboard extends Component {
                             Client organization
                           </Typography>
                         </div>
-                        <div className={classes.column}>
+                        <div className={classes.wideColumn}>
                           <Typography className={classes.secondaryHeading}>
                             Projects
                           </Typography>
                         </div>
-                        <div className={classes.column}>
+                        <div className={classes.wideColumn}>
                           <Typography className={classes.secondaryHeading}>
                             KPIs
                           </Typography>
@@ -211,12 +214,12 @@ class OrgDashboard extends Component {
                                 </Link>
                               </Typography>
                             </div>
-                            <div className={classes.column}>
+                            <div className={classes.wideColumn}>
                               <Typography className={classes.secondaryHeading}>
                                 {organization.projects}
                               </Typography>
                             </div>
-                            <div className={classes.column}>
+                            <div className={classes.wideColumn}>
                               <Typography className={classes.secondaryHeading}>
                                 {organization.kpis}
                               </Typography>

@@ -1,6 +1,6 @@
-create schema if not exists mvp2 collate utf8mb4_0900_ai_ci;
+create schema mvp2 collate utf8mb4_0900_ai_ci;
 
-create table if not exists KpiTags
+create table KpiTags
 (
 	kpiId int not null,
 	tag varchar(60) not null,
@@ -12,7 +12,7 @@ create table if not exists KpiTags
 create index kpiId
 	on KpiTags (kpiId);
 
-create table if not exists Organizations
+create table Organizations
 (
 	id int auto_increment
 		primary key,
@@ -22,7 +22,7 @@ create table if not exists Organizations
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
 );
 
-create table if not exists DataSources
+create table DataSources
 (
 	id int auto_increment
 		primary key,
@@ -43,7 +43,7 @@ create index DataSources_organization_ind
 create index DataSources_title_ind
 	on DataSources (title);
 
-create table if not exists Departments
+create table Departments
 (
 	id int auto_increment
 		primary key,
@@ -61,7 +61,7 @@ comment 'Organization departments';
 create fulltext index name
 	on Departments (name, description);
 
-create table if not exists Kpis
+create table Kpis
 (
 	id int auto_increment
 		primary key,
@@ -94,7 +94,7 @@ create index kpis_title_ind
 create fulltext index title
 	on Kpis (title, description, formulaDescription, type);
 
-create table if not exists Mindmaps
+create table Mindmaps
 (
 	id int auto_increment
 		primary key,
@@ -110,7 +110,7 @@ create table if not exists Mindmaps
 create index Mindmaps_Organizations_ind
 	on Mindmaps (orgId);
 
-create table if not exists Persons
+create table Persons
 (
 	id int auto_increment
 		primary key,
@@ -144,28 +144,7 @@ create index Persons_Organizations_ind
 create index Persons_login_ind
 	on Persons (email, pwdhash, disabled);
 
-create table if not exists SequelizeMeta
-(
-	name varchar(255) not null,
-	constraint name
-		unique (name)
-)
-collate=utf8_unicode_ci;
-
-alter table SequelizeMeta
-	add primary key (name);
-
-create table if not exists TaskPriorities
-(
-	id int not null
-		primary key,
-	label varchar(30) null,
-	priority int null,
-	createdAt datetime default CURRENT_TIMESTAMP null,
-	updatedAt datetime default CURRENT_TIMESTAMP null
-);
-
-create table if not exists TaskStatuses
+create table ProjectStatuses
 (
 	id int not null
 		primary key,
@@ -173,9 +152,9 @@ create table if not exists TaskStatuses
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null
 )
-comment 'List of task statuses';
+comment 'List of project statuses';
 
-create table if not exists Projects
+create table Projects
 (
 	id int auto_increment
 		primary key,
@@ -201,10 +180,10 @@ create table if not exists Projects
 		foreign key (mainKpiId) references Kpis (id)
 			on delete cascade,
 	constraint Projects_ibfk_3
-		foreign key (statusId) references TaskStatuses (id)
+		foreign key (statusId) references ProjectStatuses (id)
 );
 
-create table if not exists DataSets
+create table DataSets
 (
 	id int auto_increment
 		primary key,
@@ -232,7 +211,7 @@ create index DataSets_Projects_ind
 create index DataSets_title_ind
 	on DataSets (title);
 
-create table if not exists KpiProjects
+create table KpiProjects
 (
 	projectId int not null,
 	kpiId int not null,
@@ -251,29 +230,7 @@ create table if not exists KpiProjects
 create index kpiId
 	on KpiProjects (kpiId);
 
-create table if not exists Milestones
-(
-	id int auto_increment
-		primary key,
-	title varchar(255) not null,
-	targetDate date null,
-	description varchar(255) null,
-	orgId int not null,
-	statusId int default 1 null,
-	active tinyint default 1 null,
-	projectId int null,
-	createdAt datetime default CURRENT_TIMESTAMP null,
-	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
-	constraint Milestones_Projects_id_fk
-		foreign key (projectId) references Projects (id),
-	constraint Milestones_TaskStatuses_id_fk
-		foreign key (statusId) references TaskStatuses (id)
-);
-
-create fulltext index title
-	on Milestones (title, description);
-
-create table if not exists ProjectPersons
+create table ProjectPersons
 (
 	projectId int not null,
 	personId int not null,
@@ -308,7 +265,60 @@ create index Projects_title_ind
 create fulltext index title
 	on Projects (title, description, summary, businessGoal);
 
-create table if not exists Tasks
+create table SequelizeMeta
+(
+	name varchar(255) not null,
+	constraint name
+		unique (name)
+)
+collate=utf8_unicode_ci;
+
+alter table SequelizeMeta
+	add primary key (name);
+
+create table TaskPriorities
+(
+	id int not null
+		primary key,
+	label varchar(30) null,
+	priority int null,
+	createdAt datetime default CURRENT_TIMESTAMP null,
+	updatedAt datetime default CURRENT_TIMESTAMP null
+);
+
+create table TaskStatuses
+(
+	id int not null
+		primary key,
+	label varchar(30) null,
+	createdAt datetime default CURRENT_TIMESTAMP null,
+	updatedAt datetime default CURRENT_TIMESTAMP null
+)
+comment 'List of task statuses';
+
+create table Milestones
+(
+	id int auto_increment
+		primary key,
+	title varchar(255) not null,
+	targetDate date null,
+	description varchar(255) null,
+	orgId int not null,
+	statusId int default 1 null,
+	active tinyint default 1 null,
+	projectId int null,
+	createdAt datetime default CURRENT_TIMESTAMP null,
+	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
+	constraint Milestones_Projects_id_fk
+		foreign key (projectId) references Projects (id),
+	constraint Milestones_TaskStatuses_id_fk
+		foreign key (statusId) references TaskStatuses (id)
+);
+
+create fulltext index title
+	on Milestones (title, description);
+
+create table Tasks
 (
 	id int auto_increment
 		primary key,
@@ -316,9 +326,10 @@ create table if not exists Tasks
 	assignedTo int not null,
 	title varchar(255) not null,
 	description varchar(255) null,
-	priorityId int null,
+	comments varchar(255) null,
+	priorityId int default 3 null,
 	milestoneId int null,
-	statusId int null,
+	statusId int default 1 null,
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Tasks_ibfk_1
@@ -350,8 +361,8 @@ create index Tasks_assignedTo_ind
 create fulltext index title
 	on Tasks (title, description);
 
-create or replace definer = viadmin@`%` view vw_Kpis as select `K`.`id`                                                                                                   AS `id`,
-       `K`.`orgId`                                                                                                AS `orgId`,
+create definer = viadmin@`%` view vw_Kpis as select `K`.`id`                                                                                                   AS `id`,
+       `P`.`orgId`                                                                                                AS `orgId`,
        `K`.`deptId`                                                                                               AS `deptId`,
        `K`.`title`                                                                                                AS `title`,
        `K`.`description`                                                                                          AS `description`,
@@ -371,13 +382,13 @@ from ((`mvp2`.`Projects` `P` join `mvp2`.`Organizations` `O`)
          join `mvp2`.`Kpis` `K`)
 where ((`K`.`projectId` = `P`.`id`) and (`P`.`orgId` = `O`.`id`));
 
-create or replace definer = viadmin@`%` view vw_ProjectPersonsTemp as select `Pe`.`id` AS `personId`, `Pr`.`id` AS `projectId`, `O`.`id` AS `orgId`
+create definer = viadmin@`%` view vw_ProjectPersonsTemp as select `Pe`.`id` AS `personId`, `Pr`.`id` AS `projectId`, `O`.`id` AS `orgId`
 from `mvp2`.`Persons` `Pe`
          join `mvp2`.`Organizations` `O`
          join `mvp2`.`Projects` `Pr`
 where ((`Pe`.`orgId` = `O`.`id`) and (`Pr`.`orgId` = `O`.`id`));
 
-create or replace definer = viadmin@`%` view vw_Tasks as select `T`.`id`                                     AS `id`,
+create definer = viadmin@`%` view vw_Tasks as select `T`.`id`                                     AS `id`,
        `T`.`projectId`                              AS `projectId`,
        `T`.`assignedTo`                             AS `assignedTo`,
        `T`.`title`                                  AS `title`,

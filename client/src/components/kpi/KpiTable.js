@@ -1,20 +1,29 @@
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/kpi/KpiTable.js
+ * Descr:    Provide a list of KPIs in a table.
+ * Created:  2019-02-25
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-05-31
+ * Editor:   Brad Kaufman
+ */
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
+import { withStyles } from "@material-ui/core/styles/index";
+import Table from "@material-ui/core/Table/index";
+import TableBody from "@material-ui/core/TableBody/index";
+import TableCell from "@material-ui/core/TableCell/index";
+import TableHead from "@material-ui/core/TableHead/index";
+import TablePagination from "@material-ui/core/TablePagination/index";
+import TableRow from "@material-ui/core/TableRow/index";
+import TableSortLabel from "@material-ui/core/TableSortLabel/index";
+import Tooltip from "@material-ui/core/Tooltip/index";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 import {Link, Redirect} from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@material-ui/core/IconButton/index";
 
 
 function desc(a, b, orderBy) {
@@ -125,13 +134,13 @@ const styles = theme => ({
         backgroundColor: theme.palette.secondary.dark,
       },
   spacer: {
-    flex: '1 1 100%',
+    flex: "1 1 100%",
   },
   actions: {
     color: theme.palette.text.secondary,
   },
   title: {
-    flex: '0 0 auto',
+    flex: "0 0 auto",
   },
 });
 
@@ -156,11 +165,17 @@ class KpiTable extends React.Component {
   componentDidMount() {
     // KpiTable is expected to take a param of project ID, and fetch the KPIs
     // associated only with that project.
-    let projectid = parseInt(this.props.projectId);
+    let projectId = parseInt(this.props.projectId);
+    let organizationId = parseInt(this.props.organizationId);
 
-    if (projectid) {
+    if (projectId > 0) {
       // Fetch the KPIs only for a single project
-      fetch(`/api/kpis-project/${projectid}`)
+      fetch(`/api/kpis-project/${projectId}`)
+        .then(res => res.json())
+        .then(kpis => this.setState({ data: kpis }));
+    } else if (organizationId > 0) {
+      // Fetch the KPIs only for an organization
+      fetch(`/api/kpis-organization/${organizationId}`)
         .then(res => res.json())
         .then(kpis => this.setState({ data: kpis }));
     }
@@ -176,7 +191,7 @@ class KpiTable extends React.Component {
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
       return <Redirect to={{
-        pathname: '/kpi',
+        pathname: "/kpi",
         state: {
           projectId: this.props.projectId,
           kpiId: this.state.kpiId

@@ -382,6 +382,7 @@ module.exports = {
       from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
       left outer join Kpis K on P.mainKpiId = K.id  \
       where P.orgId = " + req.params.orgId + " order by P.title";
+    logger.debug(`${callerType} Project: getProjectDashboard -> sql: ${sql}`);
     return models.sequelize
       .query(sql,
         {

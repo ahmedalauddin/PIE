@@ -104,7 +104,6 @@ class Login extends React.Component {
         });
       })
       .catch(err => {
-        // TODO - set error login on form.
         this.setState({
           isFailedLogin: true,
           msgText: "Login failed, please try again."
@@ -152,9 +151,8 @@ class Login extends React.Component {
                         or signup <Link to={`/signup`}>here</Link>
                       </Typography>
                       <Typography
-                        variant="h5"
+                        variant="h6"
                         component="h2"
-                        style={{ textTransform: "uppercase" }}
                         color="secondary"
                         gutterBottom
                       >

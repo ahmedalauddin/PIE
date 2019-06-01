@@ -1,6 +1,6 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/ListDepts.js
+ * File:     /client/src/components/ListDepartments.js
  * Descr:    List departments for an organization.
  * Created:  2019-04-12
  * Author:   Brad Kaufman
@@ -81,7 +81,7 @@ class MyTableHead extends React.Component {
 }
 var msg = "";
 
-class ListDepts extends Component {
+class ListDepartments extends Component {
   state = {
     order: "asc",
     orderBy: "",
@@ -104,8 +104,7 @@ class ListDepts extends Component {
   };
 
   componentDidMount() {
-    let orgId = 0;
-    orgId = this.props.match.params.id;
+    let orgId = parseInt(this.props.organizationId);
 
     if (parseInt(orgId) > 0) {
       // If there is an organization, select only the departments for that org.
@@ -130,12 +129,11 @@ class ListDepts extends Component {
     }
   };
 
-  // Using technique described here, https://tylermcginnis.com/react-router-programmatically-navigate/.
   handleClick = (event, id) => {};
 
   render() {
     const { classes } = this.props;
-    const currentPath = this.props.location.pathname;
+    // const currentPath = this.props.location.pathname;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -144,7 +142,7 @@ class ListDepts extends Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar currentPath={currentPath}/>
+        <Topbar/>
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid
@@ -171,7 +169,7 @@ class ListDepts extends Component {
                                 component={Link}
                                 variant="contained"
                                 color="primary"
-                                to={`/DepartmentCard`}
+                                to={`/Department`}
                               >
                                 New Department
                               </Button>
@@ -179,8 +177,6 @@ class ListDepts extends Component {
                           </TableCell>
                         </TableRow>
                       </Table>
-
-
                     </div>
                     <div>
                       <Typography variant="body1" gutterBottom>
@@ -209,7 +205,7 @@ class ListDepts extends Component {
                                         {department.id}
                                       </TableCell>
                                       <TableCell align="left">
-                                        <Link to={`/departmentcard/${department.id}`}>
+                                        <Link to={`/department/${department.id}`}>
                                           {department.name}
                                         </Link>
                                       </TableCell>
@@ -236,4 +232,4 @@ class ListDepts extends Component {
   }
 }
 
-export default withStyles(styles)(ListDepts);
+export default withStyles(styles)(ListDepartments);

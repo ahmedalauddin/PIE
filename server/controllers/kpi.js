@@ -346,6 +346,27 @@ module.exports = {
       });
   },
 
+  // List all KPIs for a single organization
+  listByOrganization(req, res) {
+    let sql = "select * from vw_Kpis " +
+      "where orgId = " + req.params.orgid + " and active = 1";
+    logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(_k => {
+        logger.debug(`${callerType} listByOrganization -> successful, count: ${_k.length}`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} listByOrganization -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // List all KPIs
   list(req, res) {
     return models.Kpi.findAll({

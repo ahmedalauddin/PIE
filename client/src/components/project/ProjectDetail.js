@@ -49,6 +49,7 @@ class ProjectDetail extends React.Component {
     orgId: "",
     orgName: "",
     description: "",
+    summary: "",
     mainKpiId: null,
     hasError: "",
     kpis: [],
@@ -143,6 +144,7 @@ class ProjectDetail extends React.Component {
             description: project.description,
             org: project.organization.name,
             orgId: project.orgId,
+            summary: project.summary,
             mainKpiId: project.mainKpiId,
             kpis: project.kpis,
             progress: project.progress,
@@ -204,6 +206,21 @@ class ProjectDetail extends React.Component {
               rowsMax="6"
               value={this.state.description}
               onChange={this.handleChange("description")}
+              fullWidth
+              margin="normal"
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="summary"
+              label="Summary"
+              multiline
+              rowsMax="8"
+              value={this.state.summary}
+              onChange={this.handleChange("summary")}
               fullWidth
               margin="normal"
               InputLabelProps={{

@@ -37,6 +37,7 @@ module.exports = {
       businessGoal: req.body.businessGoal,
       mindmapId: req.body.mindmapId,
       nodeId: req.body.nodeId,
+      summary: req.body.summary,
       progress: parseInt(req.body.progress),
       startAt: req.params.startDate,
       endAt: req.params.endDate
@@ -74,6 +75,7 @@ module.exports = {
           title: req.body.title,
           description: req.body.description,
           businessGoal: req.body.businessGoal,
+          summary: req.body.summary,
           mainKpiId: req.body.mainKpiId,
           progress: req.body.progress,
           startAt: req.body.startAt,

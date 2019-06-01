@@ -25,7 +25,6 @@ import ProjectDashboard from "./components/dashboard/ProjectDashboard";
 import PanelDashboard from "./components/dashboard/PanelDashboard";
 import About from "./components/About";
 import Organization from "./components/organization/Organization";
-import KpiCard from "./components/kpi/KpiCard";
 import Person from "./components/person/Person";
 import MyDraft from "./components/project/MyDraft";
 import Kpi from "./components/kpi/Kpi";
@@ -66,10 +65,9 @@ export default props => (
         <Route path="/listactions/:id" component={withAuth(ListActions)} />
         <Route exact path="/projectdashboard" component={withAuth(ProjectDashboard)} />
         <Route exact path="/newproject" component={withAuth(NewProject)} />
-        <Route exact path="/kpicard/:id" component={withAuth(KpiCard)} />
-        <Route exact path="/kpicard" component={withAuth(KpiCard)} />
         <Route exact path="/person/:id" component={withAuth(Person)} />
         <Route exact path="/person" component={withAuth(Person)} />
+        <Route exact path="/kpi/:id" component={withAuth(Kpi)} />
         <Route exact path="/kpi" component={withAuth(Kpi)} />
         <Route exact path="/milestone" component={withAuth(Milestone)} />
         <Route exact path="/action/:id" component={withAuth(Action)} />

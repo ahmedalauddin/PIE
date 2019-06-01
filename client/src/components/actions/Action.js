@@ -14,7 +14,6 @@ import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Typography from "@material-ui/core/Typography/index";
 import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
-import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField/index";
 import Paper from "@material-ui/core/Paper/index";
 import Button from "@material-ui/core/Button/index";
@@ -23,8 +22,7 @@ import FormControl from "@material-ui/core/FormControl/index";
 import MenuItem from "@material-ui/core/MenuItem/index";
 import InputLabel from "@material-ui/core/InputLabel/index";
 import Select from "@material-ui/core/Select/index";
-import {red} from "@material-ui/core/colors";
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 const styles = theme => ({
   root: {
@@ -127,9 +125,6 @@ const styles = theme => ({
   },
   expandOpen: {
     transform: "rotate(180deg)"
-  },
-  avatar: {
-    backgroundColor: red[500]
   },
   container: {
     display: "flex",

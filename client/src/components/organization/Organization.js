@@ -322,7 +322,6 @@ class Organization extends React.Component {
               </ExpansionPanel>
             </Grid>
           </Grid>
-          <Button onClick={this.handleClick(TransitionUp)}>Up</Button>
         </div>
         <Snackbar
           open={this.state.openSnackbar}

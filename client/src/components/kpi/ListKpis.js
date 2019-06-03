@@ -83,6 +83,7 @@ class ListKpis extends Component {
     orderBy: "",
     selected: [],
     kpis: [],
+    fromProject: null,
     projectTitle: "",
     toProject: "false",
     toProjectId: ""
@@ -98,16 +99,22 @@ class ListKpis extends Component {
       // Fetch the KPIs only for a single project
       fetch(`/api/kpis/project/${projectid}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ kpis: kpis }));
+        .then(kpis => this.setState({
+            kpis: kpis,
+            fromProject: true
+          }));
       // Use this temporarily to get the project name
       fetch(`/api/projects/${projectid}`)
         .then(res => res.json())
         .then(project => this.setState({ projectTitle: project.title }));
     } else {
-      // Get all KPIs
+      // Get all KPIs for an entire organization
       fetch("/api/kpis")
         .then(res => res.json())
-        .then(kpis => this.setState({ kpis: kpis }));
+        .then(kpis => this.setState({
+            kpis: kpis,
+            fromProject: false
+          }));
     }
   }
 

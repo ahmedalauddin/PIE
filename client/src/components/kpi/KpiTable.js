@@ -21,10 +21,9 @@ import TableSortLabel from "@material-ui/core/TableSortLabel/index";
 import Tooltip from "@material-ui/core/Tooltip/index";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
-import {Link, Redirect} from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton/index";
-
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -47,19 +46,40 @@ function stableSort(array, cmp) {
 }
 
 function getSorting(order, orderBy) {
-  return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+  return order === "desc"
+    ? (a, b) => desc(a, b, orderBy)
+    : (a, b) => -desc(a, b, orderBy);
 }
-
-// TODO - convert rows into KPI data.
 
 const rows = [
   { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
-  { id: "description", numeric: false, disablePadding: false, label: "Description" },
+  {
+    id: "description",
+    numeric: false,
+    disablePadding: false,
+    label: "Description"
+  },
   { id: "type", numeric: false, disablePadding: false, label: "Type" },
   { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
   { id: "delete", numeric: false, disablePadding: false, label: "" }
 ];
+
+const rowsWithProject = [
+  { id: "edit", numeric: false, disablePadding: false, label: "" },
+  { id: "title", numeric: false, disablePadding: false, label: "Title" },
+  {
+    id: "description",
+    numeric: false,
+    disablePadding: false,
+    label: "Description"
+  },
+  { id: "project", numeric: false, disablePadding: false, label: "Project" },
+  { id: "type", numeric: false, disablePadding: false, label: "Type" },
+  { id: "tags", numeric: false, disablePadding: false, label: "Tags" },
+  { id: "delete", numeric: false, disablePadding: false, label: "" }
+];
+
 
 class EnhancedTableHead extends React.Component {
   createSortHandler = property => event => {
@@ -67,22 +87,23 @@ class EnhancedTableHead extends React.Component {
   };
 
   render() {
-    const { order, orderBy, numSelected, rowCount } = this.props;
+    const { order, orderBy, numSelected, rowCount, showProject } = this.props;
+    const rowArray = showProject ? rowsWithProject : rows;
 
     return (
       <TableHead>
         <TableRow>
-          {rows.map(
+          {rowArray.map(
             row => (
               <TableCell
                 key={row.id}
-                align={row.numeric ? 'right' : 'left'}
-                padding={row.disablePadding ? 'none' : 'default'}
+                align={row.numeric ? "right" : "left"}
+                padding={row.disablePadding ? "none" : "default"}
                 sortDirection={orderBy === row.id ? order : false}
               >
                 <Tooltip
                   title="Sort"
-                  placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                  placement={row.numeric ? "bottom-end" : "bottom-start"}
                   enterDelay={300}
                 >
                   <TableSortLabel
@@ -95,7 +116,7 @@ class EnhancedTableHead extends React.Component {
                 </Tooltip>
               </TableCell>
             ),
-            this,
+            this
           )}
         </TableRow>
       </TableHead>
@@ -109,39 +130,40 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
+  showProject: PropTypes.number.isRequired
 };
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    width: "100%",
     marginTop: theme.spacing.unit * 3,
-    paddingRight: theme.spacing.unit,
+    paddingRight: theme.spacing.unit
   },
   table: {
-    minWidth: 1020,
+    minWidth: 1020
   },
   tableWrapper: {
-    overflowX: 'auto',
+    overflowX: "auto"
   },
   highlight:
-    theme.palette.type === 'light'
+    theme.palette.type === "light"
       ? {
         color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85)
       }
       : {
         color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
+        backgroundColor: theme.palette.secondary.dark
       },
   spacer: {
-    flex: "1 1 100%",
+    flex: "1 1 100%"
   },
   actions: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary
   },
   title: {
-    flex: "0 0 auto",
-  },
+    flex: "0 0 auto"
+  }
 });
 
 class KpiTable extends React.Component {
@@ -151,15 +173,16 @@ class KpiTable extends React.Component {
   }
 
   state = {
-    order: 'asc',
-    orderBy: 'title',
+    order: "asc",
+    orderBy: "title",
     selected: [],
-    data:[],
+    data: [],
     kpiId: null,
     readyToEdit: false,
+    fromOrganization: null,
     submitted: null,
     page: 0,
-    rowsPerPage: 5,
+    rowsPerPage: 5
   };
 
   componentDidMount() {
@@ -172,33 +195,43 @@ class KpiTable extends React.Component {
       // Fetch the KPIs only for a single project
       fetch(`/api/kpis-project/${projectId}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ data: kpis }));
+        .then(kpis => this.setState({
+          data: kpis,
+          fromOrganization: false
+          }));
     } else if (organizationId > 0) {
       // Fetch the KPIs only for an organization
       fetch(`/api/kpis-organization/${organizationId}`)
         .then(res => res.json())
-        .then(kpis => this.setState({ data: kpis }));
+        .then(kpis => this.setState({
+            data: kpis,
+            fromOrganization: true
+          }));
     }
   }
 
-  setEditRedirect = (kpiId) => {
+  setEditRedirect = kpiId => {
     this.setState({
       readyToEdit: true,
       kpiId: kpiId
     });
-  }
+  };
 
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
-      return <Redirect to={{
-        pathname: "/kpi",
-        state: {
-          projectId: this.props.projectId,
-          kpiId: this.state.kpiId
-        }
-      }} />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/kpi",
+            state: {
+              projectId: this.props.projectId,
+              kpiId: this.state.kpiId
+            }
+          }}
+        />
+      );
     }
-  }
+  };
 
   deactivateKpi(id) {
     setTimeout(() => {
@@ -218,14 +251,14 @@ class KpiTable extends React.Component {
           });
       }
     }, 2000);
-  };
+  }
 
   handleRequestSort = (event, property) => {
     const orderBy = property;
-    let order = 'desc';
+    let order = "desc";
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
-      order = 'asc';
+    if (this.state.orderBy === property && this.state.order === "desc") {
+      order = "asc";
     }
 
     this.setState({ order, orderBy });
@@ -253,7 +286,7 @@ class KpiTable extends React.Component {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
 
@@ -264,6 +297,46 @@ class KpiTable extends React.Component {
     this.setState({ page });
   };
 
+  /*
+  renderRow = (kpi, isMultpleProjectMode) =>  {
+    const cells = (
+      <TableRow
+        hover
+        aria-checked={isSelected}
+        tabIndex={-1}
+        key={kpi.id}
+        selected={isSelected}
+      >
+        <TableCell component="th" scope="row" padding="none">
+          <IconButton
+            onClick={() => {
+              this.setEditRedirect(kpi.id);
+            }}
+          >
+            <EditIcon color="primary" />
+          </IconButton>
+        </TableCell>
+        <TableCell align="left">{kpi.title}</TableCell>
+        <TableCell align="left">{kpi.description}</TableCell>
+        <TableCell align="left">{kpi.type}</TableCell>
+        {this.state.fromOrganization
+          ? <TableCell align="left">{kpi.project}</TableCell>
+          : {}
+        }
+        <TableCell align="left">{kpi.tags}</TableCell>
+        <TableCell padding="none">
+          <IconButton
+            onClick={() => {
+              this.deactivateKpi(kpi.id);
+            }}
+          >
+            <DeleteIcon color="primary" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
+    );
+  }; */
+
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
@@ -273,7 +346,8 @@ class KpiTable extends React.Component {
   render() {
     const { classes } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+    const emptyRows =
+      rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     return (
       <div>
@@ -285,6 +359,7 @@ class KpiTable extends React.Component {
               order={order}
               orderBy={orderBy}
               onRequestSort={this.handleRequestSort}
+              showProject={this.state.fromOrganization}
               rowCount={data.length}
             />
             <TableBody>
@@ -301,18 +376,28 @@ class KpiTable extends React.Component {
                       selected={isSelected}
                     >
                       <TableCell component="th" scope="row" padding="none">
-                        <IconButton onClick={() => {this.setEditRedirect(kpi.id);}}>
+                        <IconButton
+                          onClick={() => {
+                            this.setEditRedirect(kpi.id);
+                          }}
+                        >
                           <EditIcon color="primary" />
                         </IconButton>
                       </TableCell>
-                      <TableCell align="left">
-                        {kpi.title}
-                      </TableCell>
+                      <TableCell align="left">{kpi.title}</TableCell>
                       <TableCell align="left">{kpi.description}</TableCell>
+                      {this.state.fromOrganization
+                        ? <TableCell align="left">{kpi.projectTitle}</TableCell>
+                        : null
+                      }
                       <TableCell align="left">{kpi.type}</TableCell>
                       <TableCell align="left">{kpi.tags}</TableCell>
                       <TableCell padding="none">
-                        <IconButton onClick={() => {this.deactivateKpi(kpi.id);}}>
+                        <IconButton
+                          onClick={() => {
+                            this.deactivateKpi(kpi.id);
+                          }}
+                        >
                           <DeleteIcon color="primary" />
                         </IconButton>
                       </TableCell>
@@ -334,10 +419,10 @@ class KpiTable extends React.Component {
           rowsPerPage={rowsPerPage}
           page={page}
           backIconButtonProps={{
-            'aria-label': 'Previous Page',
+            "aria-label": "Previous Page"
           }}
           nextIconButtonProps={{
-            'aria-label': 'Next Page',
+            "aria-label": "Next Page"
           }}
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
@@ -348,7 +433,7 @@ class KpiTable extends React.Component {
 }
 
 KpiTable.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(KpiTable);

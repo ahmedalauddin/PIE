@@ -262,18 +262,6 @@ class Organization extends React.Component {
               </Paper>
             </Grid>
             <Grid item lg={10}>
-              <ExpansionPanel expanded={expanded === "panelProjects"} onChange={this.handlePanelChange("panelProjects")}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.heading}>Projects</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container>
-                    <Grid item lg={10}>
-                      List of projects go here.
-                    </Grid>
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
               <ExpansionPanel expanded={expanded === "panelDepartments"} onChange={this.handlePanelChange("panelDepartments")}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>Departments</Typography>

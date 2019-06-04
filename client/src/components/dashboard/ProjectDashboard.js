@@ -121,6 +121,9 @@ const styles = theme => ({
   column: {
     flexBasis: "15%",
   },
+  narrowColumn: {
+    flexBasis: "5%",
+  },
   link: {
     color: theme.palette.primary.main,
     textDecoration: "none",
@@ -391,7 +394,7 @@ class ProjectDashboard extends Component {
             <Grid lg={10} item spacing={3}>
               <ExpansionPanel expanded={false}>
                 <ExpansionPanelSummary>
-                  <div className={classes.column}>
+                  <div className={classes.narrowColumn}>
                   </div>
                   <div className={classes.column}>
                   <Typography className={classes.heading}>
@@ -429,7 +432,7 @@ class ProjectDashboard extends Component {
                   return (
                     <ExpansionPanel key={project.id}>
                       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                        <div className={classes.column}>
+                        <div className={classes.narrowColumn}>
                           <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
                             <EditIcon color="primary" />
                           </IconButton>

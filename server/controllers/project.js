@@ -235,7 +235,8 @@ module.exports = {
       });
   },
 
-
+  // Get a range of the years of projects for an organization.  We'll use this to create a dropdown list for
+  // a filter in React.
   getProjectYears(req, res) {
     let orgId = 0;
     let sql = "";
@@ -271,9 +272,9 @@ module.exports = {
     //logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
     let i = 0;
     let orgId = req.body.orgId;
-    let status = req.body.status;
-    let startYears = req.body.startYear;
-    let endYears = req.body.endYear;
+    let status = req.body.statusFilter;
+    let startYears = req.body.startYearFilter;
+    let endYears = req.body.endYearFilter;
     let firstClause = true;
     let orgClause = "";
     let statusClause = "";

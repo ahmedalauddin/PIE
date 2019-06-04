@@ -1,11 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/PanelDashboard.js
+ * File:     /client/src/components/ProjectPanelList.js
  * Descr:    Lists projects for an organization using expansion panels.
- * Created:  2019-01-16
+ * Created:  2019-06-02
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-30
+ * Modified: 2019-06-02
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -27,8 +27,8 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import DashboardFilter from "./DashboardFilter";
-import ProjectPanelList from "./ProjectPanelList";
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
@@ -109,9 +109,10 @@ const styles = theme => ({
     },
   }
 });
+
 var msg = "";
 
-class PanelDashboard extends Component {
+class ProjectPanelList extends Component {
   constructor(props) {
     super(props);
     this.addProject = this.addProject.bind(this);
@@ -124,11 +125,16 @@ class PanelDashboard extends Component {
     orgId: "",
     organization:"",
     orgName: "",
+    selected: [],
+    selectedYrs: [],
+    statusFilter: this.props.statusFilter,
+    startYearFilter: this.props.startYearFilter,
+    endYearFilter: this.props.endYearFilter,
     projects: [],
     projectId: null,
-    statusFilter: [],
-    startYearFilter: [],
-    endYearFilter:[],
+    status: [],
+    startYear: [],
+    endYear: [],
     readyToEdit: false,
     readyToRedirect: false,
     user: "",
@@ -149,6 +155,8 @@ class PanelDashboard extends Component {
     let orgId = getOrgId();
 
     if (parseInt(orgId) > 0) {
+      // Try to use the filter api for everything for now.
+      /*
       fetch("/api/projects-dashboard/" + orgId)
         .then(res => {
           return res.json();
@@ -159,8 +167,22 @@ class PanelDashboard extends Component {
             orgName: orgName,
             orgId: orgId
           });
+        });   */
+
+      fetch("/api/projects-filtered", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(projects => {
+          this.setState({
+            projects: projects
+          });
         });
-    }
+      }
   };
 
   formatDate(dateInput) {
@@ -177,18 +199,30 @@ class PanelDashboard extends Component {
     return <Redirect to="/newproject" />;
   };
 
+  handleChange = event => {
+    this.setState({ status: event.target.value });
+  };
+
+  handleStartYearChange = event => {
+    this.setState({ startYear: event.target.value });
+  };
+
+  handleEndYearChange = event => {
+    this.setState({ endYear: event.target.value });
+  };
+
   setEditRedirect = (projectId) => {
     this.setState({
       readyToEdit: true,
       projectId: projectId
     });
-  };
+  }
 
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
       return <Redirect to={`/project/${this.state.projectId}`} />;
     }
-  };
+  }
 
   handleUpdate = (event) => {
     event.preventDefault();
@@ -209,46 +243,104 @@ class PanelDashboard extends Component {
     }, 2000);
   };
 
-  updateFilter = ({statusFilter, startYearFilter, endYearFilter}) => {
-    this.setState({
-      statusFilter: statusFilter,
-      startYearFilter: startYearFilter,
-      endYearFilter: endYearFilter,
-    });
-    console.log(JSON.stringify(statusFilter));
-    console.log(JSON.stringify(startYearFilter));
-    console.log(JSON.stringify(endYearFilter));
-  };
-
   render() {
     const { classes } = this.props;
-    const currentPath = this.props.location.pathname;
+
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
 
     return (
       <React.Fragment>
-        <CssBaseline />
-        <Topbar currentPath={currentPath}/>
-        <div className={classes.root}>
-          {this.renderEditRedirect()}
-          <Grid container justify="center">
-            <Grid container spacing={24} alignItems="center" justify="flex-start" className={classes.grid}>
-              <Typography variant="subtitle1" color="secondary" gutterBottom>
-                Projects listed for {getOrgName()}
-              </Typography>
-            </Grid>
+        <Grid container lg={10} justify="center" spacing={3}>
+          <Grid lg={10} item spacing={3}>
+            <ExpansionPanel expanded={false}>
+              <ExpansionPanelSummary>
+                <div className={classes.narrowColumn}>
+                </div>
+                <div className={classes.column}>
+                  <Typography className={classes.heading}>
+                    Project title
+                  </Typography>
+                </div>
+                <div className={classes.column}>
+                  <Typography className={classes.secondaryHeading}>
+                    Status
+                  </Typography>
+                </div>
+                <div className={classes.column}>
+                  <Typography className={classes.secondaryHeading}>
+                    Targeted KPI
+                  </Typography>
+                </div>
+                <div className={classes.column}>
+                  <Typography className={classes.secondaryHeading}>
+                    Start date
+                  </Typography>
+                </div>
+                <div className={classes.column}>
+                  <Typography className={classes.secondaryHeading}>
+                    End date
+                  </Typography>
+                </div>
+              </ExpansionPanelSummary>
+            </ExpansionPanel>
+            {this.state.projects.map(project => {
+              return (
+                <ExpansionPanel key={project.id}>
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <div className={classes.narrowColumn}>
+                      <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
+                        <EditIcon color="primary" />
+                      </IconButton>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.heading}>
+                        {project.projectTitle}
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        {project.status}
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        {project.mainKpi}
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        {this.formatDate(project.startAt)}
+                      </Typography>
+                    </div>
+                    <div className={classes.column}>
+                      <Typography className={classes.secondaryHeading}>
+                        {this.formatDate(project.endAt)}
+                      </Typography>
+                    </div>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails className={classes.details}>
+                    <div>
+                      <Typography className={classes.secondaryHeading}>
+                        Owners: {project.owners}<br/>
+                        Tasks: {project.tasks}
+                      </Typography>
+                    </div>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              );
+            })}
+            <br/>
+            <br/>
+            <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
+              <AddIcon />
+            </Fab>
           </Grid>
-          <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <DashboardFilter filter={this.updateFilter}/>
-            <ProjectPanelList statusFilter={this.state.statusFilter} startYearFilter={this.state.startYearFilter}
-              endYearFilter={this.state.endYearFilter}/>
-          </Grid>
-        </div>
+        </Grid>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(PanelDashboard);
+export default withStyles(styles)(ProjectPanelList);

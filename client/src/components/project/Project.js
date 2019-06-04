@@ -252,16 +252,16 @@ class Project extends React.Component {
     }
   }
 
+  componentDidCatch() {
+    return <Redirect to="/Login" />;
+  }
+
   showMessages = (message) => {
     // alert(message);
     this.setState( {
       openSnackbar: true,
       message: message
     });
-  }
-
-  componentDidCatch() {
-    return <Redirect to="/Login" />;
   }
 
   render() {

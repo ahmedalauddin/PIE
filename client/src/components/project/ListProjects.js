@@ -229,7 +229,6 @@ class ListProjects extends Component {
                         </div>
                       </Typography>
                     </div>
-
                   </Paper>
                 </Grid>
               </Grid>

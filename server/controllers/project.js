@@ -268,8 +268,6 @@ module.exports = {
 
   // get projects by organization
   getProjectFilteredDashboard(req, res) {
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body.status: ${req.body.status}`);
-    //logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
     let i = 0;
     let orgId = req.body.orgId;
     let status = req.body.statusFilter;
@@ -293,7 +291,7 @@ module.exports = {
     logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past orgId`);
 
     // Build clause to filter on status.
-    if (status.length >= 1) {
+    if (status && status.length >= 1) {
       for (i = 0; i < status.length; i++) {
         status[i] = "'" + status[i] + "'";
       }
@@ -310,7 +308,7 @@ module.exports = {
 
     // Build clause to filter on project start year.
     let first = true;
-    if (startYears.length >= 1) {
+    if (startYears && startYears.length >= 1) {
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, startYears.length: ${startYears.length}`);
       for (i = 0; i < startYears.length; i++) {
         if (!first) {
@@ -332,7 +330,7 @@ module.exports = {
 
     // Build clause to filter on project start year.
     first = true;
-    if (endYears.length >= 1) {
+    if (endYears && endYears.length >= 1) {
       for (i = 0; i < endYears.length; i++) {
         if (!first) {
           endYearClause += " or Year(P.endAt) = " + endYears[i] + " ";

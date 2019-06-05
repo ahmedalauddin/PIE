@@ -22,9 +22,15 @@ import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
 import TextField from "@material-ui/core/TextField/index";
 import Button from "@material-ui/core/Button/index";
-import { store, setUser, setOrg, isAdministrator } from "../../redux";
-import TableCell from "@material-ui/core/TableCell/index";
-import { unstable_Box as Box } from '@material-ui/core/Box';
+import {
+  store,
+  setUser,
+  setOrg,
+  setProjectFilter,
+  isAdministrator,
+  setProjectStatusFilter,
+  setProjectStartYearFilter, setProjectEndYearFilter
+} from "../../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -84,7 +90,18 @@ class Login extends React.Component {
       .then(user => {
         // Use Redux to save the user information.
         store.dispatch(setUser(JSON.stringify(user)));
-        console.log("Login.js, user:" + JSON.stringify(user));
+        // TODO: change this init code later.
+        // init project filters
+        let statusFilter = [];
+        let startYearFilter = [];
+        let endYearFilter = [];
+
+        // Reset filters in Redux.
+        let filters = { statusFilter, startYearFilter, endYearFilter };
+        store.dispatch(setProjectStatusFilter(statusFilter));
+        store.dispatch(setProjectStartYearFilter(startYearFilter));
+        store.dispatch(setProjectEndYearFilter(endYearFilter));
+        console.log("Login.js, user:" + JSON.stringify(""));
         if (!isAdministrator()) {
           store.dispatch(setOrg(JSON.stringify(user.organization)));
           console.log("Login.js, non-admin, organization:" + JSON.stringify(user).organization);

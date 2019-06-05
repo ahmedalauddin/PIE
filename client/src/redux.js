@@ -32,6 +32,35 @@ export const setOrg = orgData => ({
   payload: orgData
 });
 
+
+/**
+ * *setProjectFilter*
+ * redux action to set the project filters
+ *
+ * @param {*} setProjectFilter
+ */
+/*
+export const setProjectFilter = projectFilterData => ({
+  type: "PROJECTFILTER",
+  payload: projectFilterData
+});
+
+ */
+export const setProjectStartYearFilter = projectStartYearFilterData => ({
+  type: "PROJECT_START_YEAR_FILTER",
+  payload: projectStartYearFilterData
+});
+
+export const setProjectEndYearFilter = projectEndYearFilterData => ({
+  type: "PROJECT_END_YEAR_FILTER",
+  payload: projectEndYearFilterData
+});
+
+export const setProjectStatusFilter = projectStatusFilter => ({
+  type: "PROJECT_STATUS_FILTER",
+  payload: projectStatusFilter
+});
+
 /**
  * *setProject*
  * redux action to set the organization
@@ -69,6 +98,21 @@ export const reducers = (state = defaultState, action) => {
         ...state,
         organization: action.payload
       };
+    case "PROJECT_STATUS_FILTER":
+      return {
+        ...state,
+        projectStatusFilter: action.payload
+      };
+    case "PROJECT_START_YEAR_FILTER":
+      return {
+        ...state,
+        projectStartYearFilter: action.payload
+      };
+    case "PROJECT_END_YEAR_FILTER":
+      return {
+        ...state,
+        projectEndYearFilter: action.payload
+      };
     case "PROJECT":
       return {
         ...state,
@@ -86,10 +130,14 @@ export const reducers = (state = defaultState, action) => {
  * @export
  */
 // TODO set conditional load for redux devtools extension
+  /*
 export const store = createStore(
   combineReducers({
     state: reducers
   }),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);  */
+export const store = createStore(reducers,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
@@ -101,7 +149,7 @@ export const store = createStore(
  * @returns user object
  */
 export function getUser() {
-  return JSON.parse(store.getState().state.user);
+  return JSON.parse(store.getState().user);
 }
 
 /**
@@ -112,7 +160,7 @@ export function getUser() {
  * @returns org object
  */
 export function getOrg() {
-  return JSON.parse(store.getState().state.organization);
+  return JSON.parse(store.getState().organization);
 }
 
 /**
@@ -125,7 +173,7 @@ export function getOrg() {
 export function getOrgId() {
   let value = "";
   try {
-    value = JSON.parse(store.getState().state.organization).id;
+    value = JSON.parse(store.getState().organization).id;
   } catch (error) {
     console.log("error: " + error);
   }
@@ -142,7 +190,7 @@ export function getOrgId() {
 export function getOrgName() {
   let value = "";
   try {
-    value = JSON.parse(store.getState().state.organization).name;
+    value = JSON.parse(store.getState().organization).name;
   } catch (error) {
     console.log("error: " + error);
   }
@@ -157,7 +205,7 @@ export function getOrgName() {
  * @returns string with the organization name
  */
 export function getUserOrgName() {
-  return JSON.parse(store.getState().state.user).organization.name;
+  return JSON.parse(store.getState().user).organization.name;
 }
 
 /**
@@ -169,7 +217,7 @@ export function getUserOrgName() {
  * specified when the user sets the client filter.
  */
 export function getOrgDepartments() {
-  return JSON.parse(store.getState().state.organization).departments;
+  return JSON.parse(store.getState().organization).departments;
 }
 
 /**
@@ -180,7 +228,18 @@ export function getOrgDepartments() {
  * @returns JSON with the information from the active project being used.
  */
 export function getProject() {
-  return JSON.parse(store.getState().state.project);
+  return JSON.parse(store.getState().project);
+}
+
+/**
+ * *getProjectFilter*
+ * Retrieve the active project filter from redux.  This is intended to be used for filtering project lists.
+ *
+ * @export
+ * @returns JSON with the information from the active project filter.
+ */
+export function getProjectFilter() {
+  return JSON.parse(store.getState().projectFilter);
 }
 
 /**
@@ -191,7 +250,7 @@ export function getProject() {
  * @returns JSON with the information from the active project being used.
  */
 export function getProjectName() {
-  return JSON.parse(store.getState().state.project).title;
+  return JSON.parse(store.getState().project).title;
 }
 
 /**
@@ -204,8 +263,8 @@ export function getProjectName() {
 export function isAdministrator() {
   let isAdmin = false;
   try {
-    isAdmin = JSON.parse(store.getState().state.user).organization.owningOrg;
-    console.log("isAdministrator: user: " + JSON.parse(store.getState().state.user).email + ", is admin: " + isAdmin.toString());
+    isAdmin = JSON.parse(store.getState().user).organization.owningOrg;
+    console.log("isAdministrator: user: " + JSON.parse(store.getState().user).email + ", is admin: " + isAdmin.toString());
   } catch (error) {
     console.log("isAdministrator: error");
   }
@@ -213,17 +272,17 @@ export function isAdministrator() {
 }
 
 /**
- * *isAdministrator*
+ * *isLoggedIn*
  * Is the logged in user an administrator
  *
  * @export
  * @returns boolean if the user is an administrator.
  */
 export function isLoggedIn() {
-  let user = null;
+  let user = "";
   let loggedIn = false;
   try {
-    user = JSON.parse(store.getState().state.user);
+    user = JSON.parse(store.getState().user);
     loggedIn = true;
   } catch (error) {
     console.log("user not logged in");

@@ -14,19 +14,9 @@ import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
-import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName } from "../../redux";
+import { Redirect } from "react-router-dom";
+import { getOrgName, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
 import moment from "moment/moment";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Fab from "@material-ui/core/Fab/index";
-import AddIcon from "@material-ui/icons/Add";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
 import DashboardFilter from "./DashboardFilter";
 import ProjectPanelList from "./ProjectPanelList";
 
@@ -115,7 +105,6 @@ class PanelDashboard extends Component {
   constructor(props) {
     super(props);
     this.addProject = this.addProject.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
   };
 
   state = {
@@ -144,23 +133,15 @@ class PanelDashboard extends Component {
   };
 
   componentDidMount() {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
+    let statusFilter = [];
+    let startYearFilter = [];
+    let endYearFilter = [];
 
-    if (parseInt(orgId) > 0) {
-      fetch("/api/projects-dashboard/" + orgId)
-        .then(res => {
-          return res.json();
-        })
-        .then(projects => {
-          this.setState({
-            projects: projects,
-            orgName: orgName,
-            orgId: orgId
-          });
-        });
-    }
+    // Reset filters in Redux.
+    let filters = { statusFilter, startYearFilter, endYearFilter };
+    store.dispatch(setProjectStatusFilter(statusFilter));
+    store.dispatch(setProjectStartYearFilter(startYearFilter));
+    store.dispatch(setProjectEndYearFilter(endYearFilter));
   };
 
   formatDate(dateInput) {
@@ -190,35 +171,14 @@ class PanelDashboard extends Component {
     }
   };
 
-  handleUpdate = (event) => {
-    event.preventDefault();
-    setTimeout(() => {
-      fetch("/api/projects-filtered", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(projects => {
-          this.setState({
-            projects: projects
-          });
-        });
-    }, 2000);
-  };
-
+  /*
   updateFilter = ({statusFilter, startYearFilter, endYearFilter}) => {
-    this.setState({
-      statusFilter: statusFilter,
-      startYearFilter: startYearFilter,
-      endYearFilter: endYearFilter,
-    });
-    console.log(JSON.stringify(statusFilter));
-    console.log(JSON.stringify(startYearFilter));
-    console.log(JSON.stringify(endYearFilter));
+    // We'll use Redux to update the filter
+    let filters = {statusFilter, startYearFilter, endYearFilter};
+    store.dispatch(setProjectFilter(JSON.stringify(filters)));
+    console.log("PanelDashboard, project filter:" + JSON.stringify(data));
   };
+   */
 
   render() {
     const { classes } = this.props;
@@ -226,6 +186,7 @@ class PanelDashboard extends Component {
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
+    console.log("PanelDashboard render");
 
     return (
       <React.Fragment>
@@ -240,10 +201,9 @@ class PanelDashboard extends Component {
               </Typography>
             </Grid>
           </Grid>
-          <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <DashboardFilter filter={this.updateFilter}/>
-            <ProjectPanelList statusFilter={this.state.statusFilter} startYearFilter={this.state.startYearFilter}
-              endYearFilter={this.state.endYearFilter}/>
+          <Grid container direction="row" justify="center" alignItems="flex-end">
+            <DashboardFilter />
+            <ProjectPanelList />
           </Grid>
         </div>
       </React.Fragment>

@@ -9,21 +9,9 @@
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline/index";
-import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography/index";
-import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName } from "../../redux";
-import moment from "moment/moment";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Fab from "@material-ui/core/Fab/index";
-import AddIcon from "@material-ui/icons/Add";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import {getOrgId, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -31,8 +19,6 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
-import EditIcon from "@material-ui/icons/Edit";
-import IconButton from "@material-ui/core/IconButton";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
 const ITEM_HEIGHT = 48;
@@ -124,7 +110,8 @@ const statuses = [
 class DashboardFilter extends Component {
   constructor(props) {
     super(props);
-  };
+    this.updateFilterValues = this.updateFilterValues.bind(this);
+  }
 
   state = {
     order: "asc",
@@ -160,11 +147,17 @@ class DashboardFilter extends Component {
     this.setState({ endYear: event.target.value });
   };
 
-  filterValues = () => {
-    let statusFilter = this.state.status;
-    let startYearFilter = this.state.startYear;
-    let endYearFilter = this.state.endYear;
-    this.props.filter({statusFilter, startYearFilter, endYearFilter});
+  updateFilterValues() {
+    // We'll use Redux to update the filter
+    let status = this.state.status;
+    let startYear = this.state.startYear;
+    let endYear = this.state.endYear;
+
+    let filters = {status, startYear, endYear};
+    store.dispatch(setProjectStatusFilter(status));
+    store.dispatch(setProjectStartYearFilter(startYear));
+    store.dispatch(setProjectEndYearFilter(endYear));
+    console.log("PanelDashboard, project filter:" + JSON.stringify(filters));
   };
 
   componentDidMount() {
@@ -200,7 +193,7 @@ class DashboardFilter extends Component {
 
     return (
       <React.Fragment>
-        <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
+        <Grid container lg={10} direction="row" justify="center" alignItems="flex-end">
           <Grid item>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="selectChips">Status</InputLabel>
@@ -284,7 +277,7 @@ class DashboardFilter extends Component {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={this.filterValues}
+                onClick={this.updateFilterValues}
                 className={classes.secondary}
               >
                 Update Results

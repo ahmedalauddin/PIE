@@ -13,8 +13,8 @@ import "./stylesheets/App.css";
 import "typeface-roboto";
 import Routes from "./routes";
 import { blue, indigo } from "@material-ui/core/colors";
-import { bindActionCreators } from "redux";
-import { setUser, setOrg } from "./redux";
+import {bindActionCreators} from "redux";
+import { setUser, setOrg, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter } from "./redux";
 import { connect } from "react-redux";
 
 const theme = createMuiTheme({
@@ -43,7 +43,7 @@ export class App extends Component {
     return (
       <div>
         <MuiThemeProvider theme={theme}>
-          <Routes/>
+          <Routes />
         </MuiThemeProvider>
       </div>
     );
@@ -53,13 +53,13 @@ export class App extends Component {
 const mapStateToProps = state => ({
   user: state.user,
   organization: state.organization,
+  projectFilter: state.projectFilter
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({setUser, setOrg}, dispatch);
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ setUser, setOrg, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
 
 

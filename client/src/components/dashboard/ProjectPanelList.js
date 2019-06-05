@@ -9,13 +9,11 @@
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
-import CssBaseline from "@material-ui/core/CssBaseline/index";
-import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getProjectFilter } from "../../redux";
 import moment from "moment/moment";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
@@ -23,24 +21,10 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import DashboardFilter from "./DashboardFilter";
+import { connect } from "react-redux";
 
-const rows = [
-  { id: "name", numeric: false, disablePadding: true, label: "Project Name" },
-  { id: "status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "task", numeric: false, disablePadding: true, label: "Pending Action" },
-  { id: "owners", numeric: false, disablePadding: true, label: "Owners" },
-  { id: "audience", numeric: false, disablePadding: true, label: "Audience" },
-  { id: "mainKpi", numeric: false, disablePadding: true, label: "Targeted KPI" },
-  { id: "progress", numeric: true, disablePadding: false, label: "Progress" },
-  { id: "start", numeric: false, disablePadding: true, label: "Start Date" },
-  { id: "end", numeric: false, disablePadding: true, label: "End Date" }
-];
 const styles = theme => ({
   chip: {
     margin: 2,
@@ -116,7 +100,7 @@ class ProjectPanelList extends Component {
   constructor(props) {
     super(props);
     this.addProject = this.addProject.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
+    this.fetchProjects = this.fetchProjects.bind(this);
   };
 
   state = {
@@ -125,16 +109,8 @@ class ProjectPanelList extends Component {
     orgId: "",
     organization:"",
     orgName: "",
-    selected: [],
-    selectedYrs: [],
-    statusFilter: this.props.statusFilter,
-    startYearFilter: this.props.startYearFilter,
-    endYearFilter: this.props.endYearFilter,
     projects: [],
     projectId: null,
-    status: [],
-    startYear: [],
-    endYear: [],
     readyToEdit: false,
     readyToRedirect: false,
     user: "",
@@ -149,40 +125,46 @@ class ProjectPanelList extends Component {
     return <Redirect to="/Login" />;
   };
 
-  componentDidMount() {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
+  fetchProjects = () => {
     let orgId = getOrgId();
+    let statusFilter = this.props.statusFilter;
+    let startYearFilter = this.props.startYearFilter;
+    let endYearFilter = this.props.endYearFilter;
 
     if (parseInt(orgId) > 0) {
-      // Try to use the filter api for everything for now.
-      /*
-      fetch("/api/projects-dashboard/" + orgId)
-        .then(res => {
-          return res.json();
-        })
-        .then(projects => {
-          this.setState({
-            projects: projects,
-            orgName: orgName,
-            orgId: orgId
-          });
-        });   */
+      console.log("ProjectPanelList, before setState for filter values");
+      // Use the props for the body of the fetch request.
+      const reqBody = {statusFilter, startYearFilter, endYearFilter, orgId};
 
       fetch("/api/projects-filtered", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
+        body: JSON.stringify(reqBody)
       })
         .then(res => {
+          console.log("ProjectPanelList, after fetch");
           return res.json();
         })
         .then(projects => {
           this.setState({
             projects: projects
           });
+          console.log("fetch: complete");
         });
-      }
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if ((this.props.statusFilter !== prevProps.statusFilter)
+      || (this.props.startYearFilter !== prevProps.startYearFilter)
+      || (this.props.endYearFilter !== prevProps.endYearFilter)) {
+      this.fetchProjects();
+    }
+  };
+
+  componentDidMount() {
+    console.log("componentDidMount this.props: " + JSON.stringify(this.props));
+    this.fetchProjects();
   };
 
   formatDate(dateInput) {
@@ -199,18 +181,6 @@ class ProjectPanelList extends Component {
     return <Redirect to="/newproject" />;
   };
 
-  handleChange = event => {
-    this.setState({ status: event.target.value });
-  };
-
-  handleStartYearChange = event => {
-    this.setState({ startYear: event.target.value });
-  };
-
-  handleEndYearChange = event => {
-    this.setState({ endYear: event.target.value });
-  };
-
   setEditRedirect = (projectId) => {
     this.setState({
       readyToEdit: true,
@@ -224,25 +194,6 @@ class ProjectPanelList extends Component {
     }
   }
 
-  handleUpdate = (event) => {
-    event.preventDefault();
-    setTimeout(() => {
-      fetch("/api/projects-filtered", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
-      })
-        .then(res => {
-          return res.json();
-        })
-        .then(projects => {
-          this.setState({
-            projects: projects
-          });
-        });
-    }, 2000);
-  };
-
   render() {
     const { classes } = this.props;
 
@@ -252,8 +203,8 @@ class ProjectPanelList extends Component {
 
     return (
       <React.Fragment>
-        <Grid container lg={10} justify="center" spacing={3}>
-          <Grid lg={10} item spacing={3}>
+        <Grid container lg={10} justify="center">
+          <Grid lg={10} item>
             <ExpansionPanel expanded={false}>
               <ExpansionPanelSummary>
                 <div className={classes.narrowColumn}>
@@ -343,4 +294,12 @@ class ProjectPanelList extends Component {
   }
 }
 
-export default withStyles(styles)(ProjectPanelList);
+const mapStateToProps = (state) => {
+  return {
+    statusFilter: state.projectStatusFilter,
+    startYearFilter: state.projectStartYearFilter,
+    endYearFilter: state.projectEndYearFilter
+  };
+};
+
+export default withStyles(styles)(connect(mapStateToProps)(ProjectPanelList));

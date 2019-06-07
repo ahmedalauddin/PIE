@@ -78,6 +78,10 @@ const AdminMenu = [
     pathname: "/mindmap"
   },
   {
+    label: "Search",
+    pathname: "/search"
+  },
+  {
     label: "Projects",
     pathname: "/projectdashboard"
   },
@@ -174,23 +178,26 @@ class Topbar extends Component {
     if (this.props.currentPath === "/mindmap") {
       value = 2;
     }
-    if (this.props.currentPath === "/projectdashboard") {
+    if (this.props.currentPath === "/search") {
       value = 3;
     }
-    if (this.props.currentPath === "/listorgs") {
+    if (this.props.currentPath === "/projectdashboard") {
       value = 4;
     }
-    if (this.props.currentPath === "/analytics") {
+    if (this.props.currentPath === "/listorgs") {
       value = 5;
     }
-    if (this.props.currentPath === "/clientorg") {
+    if (this.props.currentPath === "/analytics") {
       value = 6;
     }
-    if (this.props.currentPath === "/logout") {
+    if (this.props.currentPath === "/clientorg") {
       value = 7;
     }
-    if (this.props.currentPath === "/about") {
+    if (this.props.currentPath === "/logout") {
       value = 8;
+    }
+    if (this.props.currentPath === "/about") {
+      value = 9;
     }
     return value;
   };

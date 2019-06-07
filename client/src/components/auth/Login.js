@@ -29,7 +29,7 @@ import {
   setProjectFilter,
   isAdministrator,
   setProjectStatusFilter,
-  setProjectStartYearFilter, setProjectEndYearFilter
+  setProjectStartYearFilter, setProjectEndYearFilter, setProjectListFilter
 } from "../../redux";
 
 class Login extends React.Component {
@@ -90,17 +90,13 @@ class Login extends React.Component {
       .then(user => {
         // Use Redux to save the user information.
         store.dispatch(setUser(JSON.stringify(user)));
-        // TODO: change this init code later.
-        // init project filters
-        let statusFilter = [];
-        let startYearFilter = [];
-        let endYearFilter = [];
+        // Initialize project filters for the Redux store.
+        let status = [];
+        let startYear = [];
+        let endYear = [];
+        let filters = { status, startYear, endYear };
+        store.dispatch(setProjectListFilter(filters));
 
-        // Reset filters in Redux.
-        let filters = { statusFilter, startYearFilter, endYearFilter };
-        store.dispatch(setProjectStatusFilter(statusFilter));
-        store.dispatch(setProjectStartYearFilter(startYearFilter));
-        store.dispatch(setProjectEndYearFilter(endYearFilter));
         console.log("Login.js, user:" + JSON.stringify(""));
         if (!isAdministrator()) {
           store.dispatch(setOrg(JSON.stringify(user.organization)));

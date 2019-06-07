@@ -34,6 +34,7 @@ import Test1 from "./components/project/Test1";
 import withAuth from "./components/withAuth.jsx";
 import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
+import Search from "./components/search/Search";
 
 export default props => (
   <BrowserRouter>
@@ -46,6 +47,7 @@ export default props => (
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
+        <Route exact path="/search" component={withAuth(Search)} />
         <Route exact path="/about" component={About} />
         <Route exact path="/draft" component={MyDraft} />
         <Route exact path="/" component={Main} />

@@ -34,7 +34,7 @@
         <button onclick="createNew(); return false;">New</button>
         <button onclick="loadFreeMind('test.mm'); return false;">FreeMind (test.mm)</button>
         <button onclick="loadJSON('flare.json'); return false;">Flare (flare.json)</button>
-        <button onclick="loadJSON('data.json'); return false;">JSON (test.json)</button>
+        <button onclick="loadJSON('data.json'); return false;">JSON (data.json)</button>
         <button onclick="addNodes('right'); return false;">Add nodes right</button>
         <button onclick="addNodes('left'); return false;">Add nodes left</button>
         <button onclick="saveJson(''); return false;">Save</button>
@@ -248,7 +248,8 @@ update(root);
       });
 
       var addNodes = function(dir){
-        var currentNode = d3.select(this);
+        // var currentNode = d3.select(this);
+        var currentNode = d3.select(".selected");
         currentNode.push({name: 'new node', position: dir});
         update(currentNode);
       };
@@ -261,8 +262,7 @@ update(root);
       };
 
       var saveJson = function() {
-        var tmp = root[from].shift();
-        // TODO: implement saveJson to project in MySQL.
+        createJson();
       };
 
       var setConnector = function(type){
@@ -322,6 +322,55 @@ update(root);
           .attr("transform", "translate(" + (w/2+m[3]) + "," + m[0] + ")")
           ;
 
+
+var loadJSON = function(fileName){
+  //d3.json("/data/data.json", function(json) {
+  d3.json(fileName, function(json) {
+    var i=0, l=json.children.length;
+    window.data = root = json;
+    root.x0 = h / 2;
+    root.y0 = 0;
+
+    json.left = [];
+    json.right = [];
+    for(; i<l; i++){
+      if(i%2){
+        json.left.push(json.children[i]);
+        json.children[i].position = 'left';
+      }else{
+        json.right.push(json.children[i]);
+        json.children[i].position = 'right';
+      }
+    }
+
+    update(root, true);
+    selectNode(root);
+  });
+};
+
+var getChildrenJson = function(node) {
+  var i = 0;
+  var json = '';
+  if (node.children) {
+    json = ', "children": [';
+    var len = node.children.length;
+    for (i=0; i < len; i++) {
+      json += '{"name": "' + node.children[i].name + '"}, ';
+      json += getChildrenJson(node.children[i]);
+    }
+    json += ']';
+  }
+  return json;
+};
+
+var createJson = function() {
+  var json = "{";
+  json += '"name": "' + root.name + '", ';
+  json += getChildrenJson(root);
+  json += "}";
+  console.log("JSON: " + json);
+  return json;
+};
 
 
       var toArray = function(item, arr, d){

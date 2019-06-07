@@ -127,9 +127,9 @@ class ProjectPanelList extends Component {
 
   fetchProjects = () => {
     let orgId = getOrgId();
-    let statusFilter = this.props.statusFilter;
-    let startYearFilter = this.props.startYearFilter;
-    let endYearFilter = this.props.endYearFilter;
+    let statusFilter = this.props.projectListFilter.status;
+    let startYearFilter = this.props.projectListFilter.startYear;
+    let endYearFilter = this.props.projectListFilter.endYear;
 
     if (parseInt(orgId) > 0) {
       console.log("ProjectPanelList, before setState for filter values");
@@ -155,9 +155,7 @@ class ProjectPanelList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if ((this.props.statusFilter !== prevProps.statusFilter)
-      || (this.props.startYearFilter !== prevProps.startYearFilter)
-      || (this.props.endYearFilter !== prevProps.endYearFilter)) {
+    if (this.props.projectListFilter !== prevProps.projectListFilter) {
       this.fetchProjects();
     }
   };
@@ -296,9 +294,7 @@ class ProjectPanelList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    statusFilter: state.projectStatusFilter,
-    startYearFilter: state.projectStartYearFilter,
-    endYearFilter: state.projectEndYearFilter
+    projectListFilter: state.projectListFilter
   };
 };
 

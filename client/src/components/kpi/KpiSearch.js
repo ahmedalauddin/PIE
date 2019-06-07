@@ -26,7 +26,11 @@ import KpiSearchResults from "./KpiSearchResults";
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    flexGrow: 1,
+    backgroundColor: theme.palette.grey["100"],
+    overflow: "hidden",
+    backgroundSize: "cover",
+    paddingBottom: 200
   },
   grow: {
     flexGrow: 1,

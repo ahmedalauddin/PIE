@@ -32,20 +32,17 @@ export const setOrg = orgData => ({
   payload: orgData
 });
 
-
 /**
- * *setProjectFilter*
- * redux action to set the project filters
+ * *setProjectListFilter*
+ * redux action to set the project filters, including filters for status, and begin and end years.
  *
- * @param {*} setProjectFilter
+ * @param {*} setProjectListFilter
  */
-/*
-export const setProjectFilter = projectFilterData => ({
-  type: "PROJECTFILTER",
-  payload: projectFilterData
+export const setProjectListFilter = projectListFilterData => ({
+  type: "PROJECT_LIST_FILTER",
+  payload: projectListFilterData
 });
 
- */
 export const setProjectStartYearFilter = projectStartYearFilterData => ({
   type: "PROJECT_START_YEAR_FILTER",
   payload: projectStartYearFilterData
@@ -97,6 +94,11 @@ export const reducers = (state = defaultState, action) => {
       return {
         ...state,
         organization: action.payload
+      };
+    case "PROJECT_LIST_FILTER":
+      return {
+        ...state,
+        projectListFilter: action.payload
       };
     case "PROJECT_STATUS_FILTER":
       return {

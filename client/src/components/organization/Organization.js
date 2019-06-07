@@ -299,7 +299,7 @@ class Organization extends React.Component {
                   <Grid container>
                     <Grid item lg={10}>
                       <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
-                          aria-label="Add" to={{pathname: "/person", state: {organizationId: orgId} }} >
+                        aria-label="Add" to={{pathname: "/person", state: {organizationId: orgId} }} >
                         Add New
                         <AddIcon className={classes.rightIcon} />
                       </Button>

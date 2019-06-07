@@ -60,6 +60,37 @@ module.exports = {
       });
   },
 
+  // fulltext search by organization against the SearchData table.
+  fulltextSearch(req, res) {
+    let searchTerm = req.headers.term;
+    let orgId = req.headers.orgid;
+    logger.debug(`Organization fulltextSearch, params: ` + JSON.stringify(req.headers));
+    logger.debug(`Organization fulltextSearch -> orgId: ${orgId}`);
+
+    let sql = "SELECT S.id, S.orgId, O.name as OrgName, S.title, S.description, S.project, S.source, " +
+      "MATCH(title, description, summary) AGAINST ('" + searchTerm + "' IN NATURAL LANGUAGE MODE) AS score " +
+      "FROM SearchData S, Organizations O " +
+      "where MATCH(title, description, summary) AGAINST ('" + searchTerm + "' IN NATURAL LANGUAGE MODE) > 0.0 " +
+      "and O.id = S.orgId " +
+      "and orgId = " + orgId + " " +
+      "order by score desc";
+    logger.debug(`Organization fulltextSearch -> sql: ${sql}`);
+    return models.sequelize
+      .query(
+        sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(s => {
+        res.status(200).send(s);
+      })
+      .catch(error => {
+        logger.error(`Organization fulltextSearch -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // select all organizations
   list(req, res) {
     if (req.query.format === "select") {

@@ -11,7 +11,7 @@
 import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {getOrgId, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
+import {getOrgId, setProjectListFilter, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -148,16 +148,13 @@ class DashboardFilter extends Component {
   };
 
   updateFilterValues() {
-    // We'll use Redux to update the filter
+    // We'll use Redux to update the filter.  These are arrays of filter values for status, etc.
     let status = this.state.status;
     let startYear = this.state.startYear;
     let endYear = this.state.endYear;
 
     let filters = {status, startYear, endYear};
-    store.dispatch(setProjectStatusFilter(status));
-    store.dispatch(setProjectStartYearFilter(startYear));
-    store.dispatch(setProjectEndYearFilter(endYear));
-    console.log("PanelDashboard, project filter:" + JSON.stringify(filters));
+    store.dispatch(setProjectListFilter(filters));
   };
 
   componentDidMount() {

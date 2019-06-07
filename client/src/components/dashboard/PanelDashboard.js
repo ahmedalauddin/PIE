@@ -15,7 +15,14 @@ import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
 import { Redirect } from "react-router-dom";
-import { getOrgName, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
+import {
+  getOrgName,
+  setProjectStatusFilter,
+  setProjectStartYearFilter,
+  setProjectEndYearFilter,
+  store,
+  setProjectListFilter
+} from "../../redux";
 import moment from "moment/moment";
 import DashboardFilter from "./DashboardFilter";
 import ProjectPanelList from "./ProjectPanelList";
@@ -133,15 +140,13 @@ class PanelDashboard extends Component {
   };
 
   componentDidMount() {
-    let statusFilter = [];
-    let startYearFilter = [];
-    let endYearFilter = [];
+    let status = [];
+    let startYear = [];
+    let endYear = [];
 
     // Reset filters in Redux.
-    let filters = { statusFilter, startYearFilter, endYearFilter };
-    store.dispatch(setProjectStatusFilter(statusFilter));
-    store.dispatch(setProjectStartYearFilter(startYearFilter));
-    store.dispatch(setProjectEndYearFilter(endYearFilter));
+    let filters = { status, startYear, endYear };
+    store.dispatch(setProjectListFilter(filters));
   };
 
   formatDate(dateInput) {

@@ -149,7 +149,7 @@ class Search extends React.Component {
         <CssBaseline />
         <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
-          {this.renderEditRedirect()}
+
           <Grid container direction="row" justify="center" alignItems="flex-end">
             <Grid item xs={12} md={8}>
               <Paper className={classes.paper}>

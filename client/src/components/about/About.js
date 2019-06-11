@@ -12,13 +12,13 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-import Topbar from "./Topbar";
-import { styles } from "./styles/MaterialSense";
+import Topbar from "../Topbar";
+import { styles } from "../styles/MaterialSense";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
-import SectionHeader from "./typo/SectionHeader";
-import Package from "../../package.json";
+import SectionHeader from "../typo/SectionHeader";
+import Package from "../../../package.json";
 
 class About extends React.Component {
   constructor(props) {
@@ -56,7 +56,7 @@ class About extends React.Component {
                 container
                 className={classes.grid}
               >
-                <Grid item xs={4}>
+                <Grid item xs={8}>
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
@@ -74,14 +74,20 @@ class About extends React.Component {
                       </div>
                       <div>
                         <Typography variant="body2">
-                          Build date: May 30, 2019<br/><br/>
+                          Build date: June 6, 2019<br/><br/>
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
                           <ul>
-                            <li>Added filters for project start and end dates and status for the project dashboards</li>
+                            <li>Search: fulltext search for a single client organization, searching text for
+                            projects, actions, milestones, departments, and KPIs.  Minor bug in having to click the
+                            search button twice.</li>
+                            <li>Action tracker and action items: includes text for tracking the progress of action items
+                              in a separate field</li>
+                            <li>Project component: includes project summary</li>
                             <li>Updated list for organizations</li>
+                            <li>D3 mind map: expected with the next build</li>
                           </ul>
                         </Typography>
                       </div>

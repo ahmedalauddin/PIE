@@ -1,13 +1,30 @@
 {
-  "name": "Root",
-  "children": [
+  name: "Root",
+  children: [
     {
-      "name": "Branch 1",
-      "children": [
-        {"name": "Leaf 3"},
-        {"name": "Leaf 4"}
+      name: "Reduce operating costs",
+      children: [
+        {
+          name: "Reduce inventory",
+          children: [
+            {
+              name: "Review part models"
+            },
+            {
+              name: "Optimize supply chain"
+            }
+          ]
+        },
+        {
+          name: "Operating procedures"
+        }
       ]
     },
-    {"name": "Branch 2"}
+    {
+      name: "Review supply chain processes"
+    },
+    {
+      name: "Introduce automation"
+    }
   ]
 }

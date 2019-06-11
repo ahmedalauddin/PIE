@@ -75,23 +75,14 @@ class Signup extends React.Component {
         body: JSON.stringify(this.state)
       })
         .then(data => {
-          //console.log(data);
+          console.log("Signup success: " + data);
         })
         .catch(err => {
-          //console.log(err);
+          console.log("Signup error: " + err);
         });
       //}
       //setSubmitting(false);
     }, 2000);
-  }
-
-  // Return boolean for whether the project exists.
-  projectExists() {
-    if (parseInt(this.props.match.params.id) > 0) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   componentDidMount() {

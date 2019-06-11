@@ -19,10 +19,6 @@ module.exports = router => {
   logger.debug(`${callerClass} POST -> path: /api/auth/authenticate`);
   router.post("/api/auth/authenticate", auth.authenticate);
 
-  // get client org for ValueInfinity users
-  logger.debug(`${callerClass} POST -> path: /api/getTokenOrganizationId`);
-  router.get("/api/getTokenOrganizationId", auth.getTokenOrganizationId);
-
   // logout
   logger.debug(`${callerClass} GET -> path: /api/auth/logout`);
   router.get("/api/auth/logout", auth.logout);

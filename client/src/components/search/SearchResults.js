@@ -269,6 +269,7 @@ class SearchResults extends React.Component {
 
     return (
       <React.Fragment>
+        {this.renderEditRedirect()}
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead

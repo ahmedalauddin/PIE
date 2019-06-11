@@ -94,108 +94,10 @@ module.exports = {
       });
   },
 
-  /*
-  // For ValueInfinity users, set the client being used in the JWT token.  At this
-  // point the user should already be logged in.
-  setClient(req, res) {
-    logger.debug(`${mvcType} setClient -> start`);
-    // Get the organization submitted.
-    let clientId = req.body.orgId;
-    logger.debug(`${mvcType} setClient -> client ID: ${req.body.orgId}`);
-
-    // First, get information from the token.
-    logger.debug(`${mvcType} validateToken -> enter`);
-
-    const token =
-      req.cookies.token ||
-      req.body.token ||
-      req.params.token ||
-      req.headers["X-Access-Token"] ||
-      req.headers["Authorization"];
-
-    //const token = req.headers["authorization"];
-    logger.debug(`${mvcType} setClient -> token = ${token}`);
-
-    var _code = 403;
-    var _body = {};
-
-    // decode token
-    if (token) {
-      logger.debug(`${mvcType} setClient -> before jwt.verify`);
-      // verifies secret and checks exp
-      jwt.verify(token, config.get("security.jwtSecret"), function(
-        err,
-        decoded
-      ) {
-        if (err) {
-          logger.error(
-            `${mvcType} setClient -> error, failed to authenticate token`
-          );
-          _code = 200;
-          _body = {
-            success: false,
-            message: "Failed to authenticate token"
-          };
-        } else {
-          logger.debug(`${mvcType} setClient -> Using jwt, decoded token is, email: ${decoded.email}, org: ${decoded.organization}`);
-
-          logger.debug(`${mvcType} setClient -> client ID: ${clientId}`);
-          // Write the token again, this time with the client ID.
-          let token2 = writeJwt(decoded.email, decoded.organization, clientId);
-
-          _code = 200;
-          res.cookie(cookieName, token2, { httpOnly: true }).sendStatus(200);
-        }
-      });
-    } else {
-      // if there is no token
-      // return an error
-      logger.error(`${mvcType} validateToken -> error: no token`);
-      _body = {
-        success: false,
-        message: "No token provided."
-      };
-    }
-  },
-  */
-
   logout(req, res) {
     logger.debug(`${mvcType} logout -> clearing cookie ${cookieName}`);
     res.clearCookie(cookieName, { httpOnly: true }).sendStatus(200);
   },
-
-  // Get the organization ID for the user from the JSON Web Token.
-  getTokenOrganizationId(req) {
-    const token =
-      req.cookies.token ||
-      req.body.token ||
-      req.params.token ||
-      req.headers["X-Access-Token"] ||
-      req.headers["Authorization"];
-
-    var clientId = 0;
-
-    // decode token
-    if (token) {
-      logger.debug(`${mvcType} getTokenOrganizationId -> before jwt.verify`);
-      // verifies secret and checks exp
-      jwt.verify(token, config.get("security.jwtSecret"), function(
-        err,
-        decoded
-      ) {
-        if (!err) {
-          logger.debug(`${mvcType} getTokenOrganizationId -> organization ID is: ${decoded.clientId}`);
-          clientId = decoded.clientId;
-        }
-      });
-    }
-
-    // send the result
-    // check header or url parameters or post parameters for token
-    logger.debug(`${mvcType} getTokenOrganizationId -> clientId: ${clientId}`);
-    return clientId;
-  },
-
 
   validateToken(req, res) {
     // check header or url parameters or post parameters for token

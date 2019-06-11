@@ -98,31 +98,8 @@ const AdminMenu = [
     pathname: "/clientorg"
   },
   {
-    label: "Logout",
-    pathname: "/logout"
-  },
-  {
-    label: "About",
-    pathname: "/about"
-  }
-];
-
-const UserMenu = [
-  {
-    label: "Dashboard",
-    pathname: "/paneldashboard"
-  },
-  {
-    label: "Login",
-    pathname: "/login"
-  },
-  {
-    label: "Mind Map",
-    pathname: "/mindmap"
-  },
-  {
-    label: "Analytics",
-    pathname: "/analytics"
+    label: "Tree Map",
+    pathname: "/treemap"
   },
   {
     label: "Logout",
@@ -131,18 +108,11 @@ const UserMenu = [
   {
     label: "About",
     pathname: "/about"
-  }
-];
-
-const IntroMenu = [
-  {
-    label: "Login",
-    pathname: "/login"
   },
   {
-    label: "About",
-    pathname: "/about"
-  }
+    label: "D3 Mind Map",
+    pathname: "/treemindmap"
+  },
 ];
 
 class Topbar extends Component {
@@ -198,6 +168,12 @@ class Topbar extends Component {
     }
     if (this.props.currentPath === "/about") {
       value = 9;
+    }
+    if (this.props.currentPath === "/dmap") {
+      value = 10;
+    }
+    if (this.props.currentPath === "/treemindmap") {
+      value = 10;
     }
     return value;
   };

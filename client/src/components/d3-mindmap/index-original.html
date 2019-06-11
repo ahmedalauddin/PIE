@@ -191,7 +191,6 @@
         }
         return false;
     });
-
     Mousetrap.bind('ins', function(){
         var selection = d3.select(".node.selected")[0][0];
         if(selection){
@@ -211,7 +210,6 @@
             }
         }
     });
-
     Mousetrap.bind('del', function(){
         var selection = d3.select(".node.selected")[0][0];
         if(selection){
@@ -239,7 +237,6 @@
             update(root);
         }
     });
-
     Mousetrap.bind('enter', function(){
         var selection = d3.select(".node.selected")[0][0];
         if(selection){
@@ -317,11 +314,16 @@
         //.attr("transform", "translate(" + m[3] + "," + m[0] + ")")
         .attr("transform", "translate(" + (w/2+m[3]) + "," + m[0] + ")")
     ;
+    const jsonData = "{\"name\": \"Root\", \"children\": [{" +
+      "\"name\": \"Branch 1\", " +
+      "\"children\": [{\"name\": \"Leaf 3\"}, {\"name\": \"Leaf 4\"}]}, " +
+      "{\"name\": \"Branch 2\"}]}";
 
     //*
     var loadJSON = function(fileName){
-        //d3.json("/data/data.json", function(json) {
-        d3.json(fileName, function(json) {
+        d3.json(jsonData, function(json) {
+        // d3.json(fileName, function(json) {
+            json = JSON.parse(jsonData);
             var i=0, l=json.children.length;
             window.data = root = json;
             root.x0 = h / 2;

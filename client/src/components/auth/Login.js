@@ -12,25 +12,17 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import withStyles from "@material-ui/core/styles/withStyles";
-import CssBaseline from "@material-ui/core/CssBaseline/index";
-import Typography from "@material-ui/core/Typography/index";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { styles } from "../styles/MaterialSense";
 import Card from "@material-ui/core/Card/index";
-import CardContent from "@material-ui/core/CardContent/index";
+import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
-import TextField from "@material-ui/core/TextField/index";
-import Button from "@material-ui/core/Button/index";
-import {
-  store,
-  setUser,
-  setOrg,
-  setProjectFilter,
-  isAdministrator,
-  setProjectStatusFilter,
-  setProjectStartYearFilter, setProjectEndYearFilter, setProjectListFilter
-} from "../../redux";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { store, setUser, setOrg, isAdministrator, setProjectListFilter } from "../../redux";
 
 class Login extends React.Component {
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
@@ -206,6 +198,10 @@ class Login extends React.Component {
                             Submit
                           </Button>
                         </div>
+                      </Typography>
+                      <Typography component="div">
+                        <br/><br/>
+                        Click <Link to={`/password`}>here</Link> to change your password.
                       </Typography>
                     </CardContent>
                   </Card>

@@ -98,9 +98,15 @@ const AdminMenu = [
     pathname: "/clientorg"
   },
   {
+    label: "D3 Mind Map",
+    pathname: "/treemindmap"
+  },
+  /*
+  {
     label: "Tree Map",
     pathname: "/treemap"
   },
+   */
   {
     label: "Logout",
     pathname: "/logout"
@@ -109,10 +115,7 @@ const AdminMenu = [
     label: "About",
     pathname: "/about"
   },
-  {
-    label: "D3 Mind Map",
-    pathname: "/treemindmap"
-  },
+
 ];
 
 class Topbar extends Component {
@@ -173,7 +176,7 @@ class Topbar extends Component {
       value = 10;
     }
     if (this.props.currentPath === "/treemindmap") {
-      value = 10;
+      value = 7;
     }
     return value;
   };

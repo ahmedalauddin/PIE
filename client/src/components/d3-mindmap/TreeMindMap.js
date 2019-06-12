@@ -5,7 +5,7 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-10
+ * Modified: 2019-06-12
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -15,6 +15,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import { red, grey } from "@material-ui/core/colors";
 import "./tree-styles.scss";
+import Grid from "@material-ui/core/Grid/index";
+import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
   grid: {
@@ -137,7 +139,7 @@ const styles = theme => ({
     marginTop: 50
   }
 });
-const jsonData = {
+const jsonDataX = {
   "id": "_ns1nvi0ai",
   "name": "Root",
   "children": [
@@ -172,6 +174,11 @@ const jsonData = {
       "name": "Introduce automation"
     }
   ]};
+// Use this alternate JSON data to test a new mind map, starting only with root.
+const jsonData = {
+  "id": "_ns1nvi0ai",
+  "name": "Root"
+  };
 const dx = 80;
 const dy = 243.75;
 const width = 1000;
@@ -241,7 +248,7 @@ class TreeMindMap extends React.Component {
   };
 
   ID = () => {
-    '_' + Math.random().toString(36).substr(2, 9);
+    return '_' + Math.random().toString(36).substr(2, 9);
   }
 
   appendChildToSelectedNode = (svg) => {
@@ -277,7 +284,7 @@ class TreeMindMap extends React.Component {
 
     let child = {
       name: "",
-      id: ID()
+      id: this.ID()
     };
 
     if (parent.children) parent.children.push(child);
@@ -311,12 +318,12 @@ class TreeMindMap extends React.Component {
       }
       if (nodeFound) break;
       else {
-        parentNodes = allNextLevelParents
+        parentNodes = allNextLevelParents;
       }
     }
 
     let child = {
-      id: this.ID();
+      id: this.ID()
     };
     parent.children.push(child);
     this.update(svg);
@@ -361,6 +368,8 @@ class TreeMindMap extends React.Component {
     this.update(svg);
     let appendChildToSelectedNode = this.appendChildToSelectedNode;
     let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
+    let removeSelectedNode = this.removeSelectedNode;
+    let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
     d3.select("body")
@@ -375,16 +384,13 @@ class TreeMindMap extends React.Component {
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
           addSiblingToSelectedNode(svg);
-        };
-        /*
-        else if(d3.event.keyCode == 8 && !nodeIsBeingEdited) {
+        } else if(d3.event.keyCode == 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
           removeSelectedNode(svg);
         } else if(d3.event.keyCode == 27) {
           console.log("esc - deselect node");
           handleKeypressEsc(svg);
         }
-         */
       });
 
     return this.state.svg.node();
@@ -431,10 +437,10 @@ class TreeMindMap extends React.Component {
 
   removeSelectedNode = (svg) => {
     let idOfSelectedNode = svg
-      .selectAll('g.node')
+      .selectAll("g.node")
       .filter(".node-selected")
-      .attr('id');
-    let parentNodes = [treeData];
+      .attr("id");
+    let parentNodes = [jsonData];
     let nodeFound = false;
     let parent;
 
@@ -455,12 +461,10 @@ class TreeMindMap extends React.Component {
       }
     }
     parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
-
     parent.children.length === 0 && delete parent.children;
 
-    update(svg);
-
-    updateJSONOnServer();
+    this.update(svg);
+    // updateJSONOnServer();
   };
 
   editNode = (node) => {
@@ -485,7 +489,7 @@ class TreeMindMap extends React.Component {
   deselectNode = (d,i,nodes) => {
     let idOfSelectedNode =
       d3.select(nodes[i])
-        .attr("name");
+        .attr("id");
 
     let newValue =
       d3.select(nodes[i])
@@ -660,10 +664,36 @@ class TreeMindMap extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
-        D3 Tree Mind Map goes here
-        <svg width="800" height="1000"
-          ref={ svg => this.svg = svg }
-        />
+        <Grid container alignItems="center" justify="center" spacing={24} sm={12}>
+          <Grid item sm={12}>
+            <Button
+              variant="contained"
+              color="grey"
+              className={classes.outlinedButton}
+            >
+              Add Sibling Node
+            </Button>
+            <Button
+            variant="contained"
+            color="grey"
+            className={classes.outlinedButton}
+            >
+              Add Child Node
+            </Button>
+            <Button
+              variant="contained"
+              color="grey"
+              className={classes.outlinedButton}
+            >
+              Rename Node
+            </Button>
+          </Grid>
+          <Grid item sm={12}>
+            <svg width="800" height="1000"
+              ref={ svg => this.svg = svg }
+            />
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
   }

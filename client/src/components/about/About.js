@@ -70,6 +70,8 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           Version: {Package.version}
+                        </Typography>
+                      </div>
                       <div>
                         <Typography variant="body2">
                           <ul>

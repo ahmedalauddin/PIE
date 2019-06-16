@@ -17,6 +17,7 @@ const callerType = "controller";
 
 module.exports = {
   create(req, res) {
+    logger.debug(`${callerType} create -> mapData: ${req.body.mapData}`);
     return models.Mindmap.create({
       orgId: req.body.orgId,
       mapData: req.body.mapData
@@ -86,7 +87,29 @@ module.exports = {
       });
   },
 
-  // FInd all mindmaps
+  // Find a mindmap by id
+  findByOrgId(req, res) {
+    logger.debug(`${callerType} findByOrgId -> orgId: ${req.params.orgId}`);
+    let sql = "select id, orgId, mapData, updatedAt from Mindmaps " +
+      "where orgId = " + req.params.orgId + " " +
+      "and updatedAt = (select max(updatedAt) from Mindmaps)";
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(mms => {
+        // logger.debug(`${callerType} findById -> count: ${mms.length}`);
+        res.status(200).send(mms);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findById -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // Find all mindmaps
   list(req, res) {
     if (req.query.orgId) {
       return models.Mindmap.findOne({

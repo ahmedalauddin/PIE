@@ -28,6 +28,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/mindmaps/:id`);
   router.get("/api/mindmaps/:id", mindmap.findById);
 
+  // get a mindmap by organization id
+  logger.debug(`${callerType} GET -> path: /api/mindmaps-org/:orgId`);
+  router.get("/api/mindmaps-org/:orgId", mindmap.findByOrgId);
+
   // update a mindmap
   logger.debug(`${callerType} PUT -> path: /api/mindmaps/:id`);
   router.put("/api/mindmaps/:id", mindmap.update);

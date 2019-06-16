@@ -27,19 +27,15 @@ import PanelDashboard from "./components/dashboard/PanelDashboard";
 import About from "./components/about/About";
 import Organization from "./components/organization/Organization";
 import Person from "./components/person/Person";
-import MyDraft from "./components/project/MyDraft";
 import Kpi from "./components/kpi/Kpi";
 import Milestone from "./components/milestone/Milestone";
 import Analytics from "./components/analytics/Analytics";
-import Test1 from "./components/project/Test1";
 import withAuth from "./components/withAuth.jsx";
 import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
-import TreeMap from "./components/d3-mindmap/TreeMap";
 import TreeMindMap from "./components/d3-mindmap/TreeMindMap";
+import TreeMindMapPrev from "./components/d3-mindmap/TreeMindMapPrev";
 import Search from "./components/search/Search";
-import Dmap from "./components/d3-mindmap/Dmap";
-import TreeChart from "./components/d3-mindmap/TreeChart";
 
 export default props => (
   <BrowserRouter>
@@ -52,17 +48,13 @@ export default props => (
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
-        <Route exact path="/treechart" component={TreeChart} />
-        <Route exact path="/treemap" component={TreeMap} />
         <Route exact path="/treemindmap" component={TreeMindMap} />
+        <Route exact path="/treemindmapold" component={TreeMindMapPrev} />
         <Route exact path="/password" component={ChangePassword} />
         <Route exact path="/search" component={withAuth(Search)} />
         <Route exact path="/about" component={About} />
-        <Route exact path="/draft" component={MyDraft} />
-        <Route exact path="/dmap" component={Dmap} />
         <Route exact path="/" component={Main} />
         <Route exact path="/userinfo" component={UserInfo} />
-        <Route exact path="/test" component={Test1} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/project" component={withAuth(Project)} />

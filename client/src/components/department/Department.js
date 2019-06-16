@@ -5,7 +5,7 @@
  * Created:  2019-05-17
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-20
+ * Modified: 2019-06-15
  * Editor:   Brad Kaufman
  * Notes:
  */
@@ -17,17 +17,11 @@ import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Select from "@material-ui/core/Select";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName, getOrgDepartments, getProjectName, getProject } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
 import {red} from "@material-ui/core/colors";
 import Snackbar from "@material-ui/core/Snackbar";
-import Slide from "@material-ui/core/Slide";
 
 const styles = theme => ({
   root: {
@@ -161,8 +155,6 @@ const styles = theme => ({
 class Department extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
@@ -267,7 +259,7 @@ class Department extends React.Component {
         .catch(err => {
           this.setState({ message: "Error occurred." });
         });
-      }, 2000);
+    }, 2000);
   };
 
   componentDidMount() {

@@ -9,9 +9,9 @@ import * as d3 from "d3";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import { red, grey } from "@material-ui/core/colors";
-import "./tree-styles.scss";
+import "../tree-styles.scss";
 import * as Mousetrap from "mousetrap";
 
 const styles = theme => ({

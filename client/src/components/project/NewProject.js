@@ -5,7 +5,7 @@
  * Created:  2019-04-30
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-04-30
+ * Modified: 2019-06-15
  * Editor:   Brad Kaufman
  * Notes:
  */
@@ -21,12 +21,8 @@ import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import "../../stylesheets/Draft.css";
 import ProjectDetail from "./ProjectDetail";
 import Grid from "@material-ui/core/Grid";
-import SectionHeader from "../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Paper from "@material-ui/core/Paper";
 
 const styles = theme => ({
   root: {
@@ -204,8 +200,6 @@ class NewProject extends React.Component {
   render() {
     const { classes } = this.props;
     const { value } = this.state;
-    const currentPath = this.props.location.pathname;
-    let projId = this.props.match.params.id;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;

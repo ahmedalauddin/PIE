@@ -5,7 +5,7 @@
  * Created:  2019-05-23
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-27
+ * Modified: 2019-06-15
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -20,13 +20,12 @@ import Select from "@material-ui/core/Select";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getOrgId, getOrgName, getOrgDepartments, getProjectName, getProject } from "../../redux";
+import { getOrgName } from "../../redux";
 import { Redirect } from "react-router-dom";
 import "../styles/ReactTags.css";
 import Paper from "@material-ui/core/Paper";
-import {red} from "@material-ui/core/colors";
+import { red } from "@material-ui/core/colors";
 import Snackbar from "@material-ui/core/Snackbar";
-import Slide from "@material-ui/core/Slide";
 
 const styles = theme => ({
   root: {
@@ -160,12 +159,9 @@ const styles = theme => ({
 class Person extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
-    // this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
   }
 
   // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various

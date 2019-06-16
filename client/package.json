@@ -1,6 +1,6 @@
 {
   "name": "valueinfinity-mvp-client",
-  "version": "0.7.05",
+  "version": "0.7.25",
   "private": true,
   "engines": {
     "node": ">=6"

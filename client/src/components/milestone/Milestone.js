@@ -161,43 +161,38 @@ const styles = theme => ({
 class Milestone extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
+    this.state = {
+      project: {},
+      projectId: 0,
+      title: "",
+      id: 0,
+      description: "",
+      orgId: 0,
+      projectName: "",
+      projectStartAt: null,
+      projectEndAt: null,
+      msg: "",
+      statusId: 0,
+      buttonText: "Create",
+      readyToRedirect: false,
+      validationError: false,
+      openSnackbar: false,
+      message: "",
+      isEditing: false,
+      redirect: false,
+      isNew: false,
+      expanded: false,
+      statusList: [],
+      hasError: false,
+      labelWidth: 0,
+      focus: false,
+      nextItem: ""
+    };
   }
-
-  // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
-  // fields.
-  state = {
-    project: {},
-    projectId: 0,
-    title: "",
-    id: 0,
-    description: "",
-    orgId: 0,
-    projectName: "",
-    projectStartAt: null,
-    projectEndAt: null,
-    msg: "",
-    statusId: 0,
-    buttonText: "Create",
-    readyToRedirect: false,
-    validationError: false,
-    openSnackbar: false,
-    message: "",
-    isEditing: false,
-    redirect: false,
-    isNew: false,
-    expanded: false,
-    statusList: [],
-    hasError: false,
-    labelWidth: 0,
-    focus: false,
-    nextItem: ""
-  };
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });

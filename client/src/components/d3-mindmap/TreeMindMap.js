@@ -5,7 +5,8 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-12
+ * Modified: 2019-06-17
+ * Changes:  Moving state into constructor.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -186,7 +187,7 @@ const jsonNew = {
   "name": "Root"
   };
 const dx = 80;
-const dy = 180;
+const dy = 500;
 const width = 1000;
 const margin = ({top: 40, right: 120, bottom: 40, left: 80});
 
@@ -212,9 +213,24 @@ class TreeMindMap extends React.Component {
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.ID = this.ID.bind(this);
-    console.log("Hit TreeMindMap constructor.");
+
+    this.state = {
+      width: 1000,
+      height: 1000,
+      svg: d3.select(this.svg),
+      orgName: getOrgName(),
+      orgId: getOrgId(),
+      jsonData: "",
+      isNewMap: false,
+      openSnackbar: false,
+      message: "",
+      diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
+      tree: d3.tree().nodeSize([dx, dy])
+    };
+    console.log("End TreeMindMap constructor.");
   }
 
+  /*
   state = {
     width: 1000,
     height: 1000,
@@ -228,6 +244,7 @@ class TreeMindMap extends React.Component {
     diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
     tree: d3.tree().nodeSize([dx, dy])
   };
+   */
 
   ID = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
@@ -248,22 +265,14 @@ class TreeMindMap extends React.Component {
         body: JSON.stringify(postData)
       })
         .then((response) => {
-          if (response.status === 400) {
-            /*
-            // Error: for now, we'll assume it's with the milestone not being within the project start and end dates.
-            this.setState({
-              readyToRedirect: false,
-              message: "Error",
-              openSnackbar: true
-            });
-          }
-             */
-          } else {
+          if (response.status !== 400) {
             // Success - open the snackbar
             this.setState({
               openSnackbar: true,
               message: "Mind map saved."
             });
+          } else {
+            // TODO: consider handling a 400 response.
           }
         })
         .catch(err => {
@@ -620,6 +629,7 @@ class TreeMindMap extends React.Component {
       root = d3.hierarchy(jsonNew);
     }
 
+    // Set position for the root
     root.x0 = dy / 2;
     root.y0 = 0;
 
@@ -698,7 +708,6 @@ class TreeMindMap extends React.Component {
       .attr("transform", d => `translate(${root.y},${root.x})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
-
 
     // Update the links…
     const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);

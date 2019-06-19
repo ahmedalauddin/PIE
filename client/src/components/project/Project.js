@@ -4,7 +4,7 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-02
+ * Modified: 2019-06-17
  * Editor:   Brad Kaufman
  * Notes:    Uses Material UI controls, including simple select, see https://material-ui.com/demos/selects/.
  */
@@ -188,6 +188,24 @@ class Project extends React.Component {
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
     // state values.
     this.setOrganizationInfo = this.setOrganizationInfo.bind(this);
+    this.state = {
+      project: {},
+      organizations: [],
+      departments: [],
+      projid: 0,
+      title: "",
+      businessGoal: "",
+      org: "",
+      orgId: "",
+      orgName: "",
+      description: "",
+      value: 0,
+      hasError: "",
+      expanded: null,
+      openSnackbar: false,
+      snackbarMessage: "",
+      message: ""
+    };
   }
 
   handlePanelChange = panel => (event, expanded) => {
@@ -198,25 +216,6 @@ class Project extends React.Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
-  };
-
-  state = {
-    project: {},
-    organizations: [],
-    departments: [],
-    projid: 0,
-    title: "",
-    businessGoal: "",
-    org: "",
-    orgId: "",
-    orgName: "",
-    description: "",
-    value: 0,
-    hasError: "",
-    expanded: null,
-    openSnackbar: false,
-    snackbarMessage: "",
-    message: ""
   };
 
   setOrganizationInfo = () => {
@@ -262,7 +261,7 @@ class Project extends React.Component {
       openSnackbar: true,
       message: message
     });
-  }
+  };
 
   render() {
     const { classes } = this.props;

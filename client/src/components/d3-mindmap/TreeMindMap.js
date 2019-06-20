@@ -187,7 +187,7 @@ const jsonNew = {
   "name": "Root"
   };
 const dx = 80;
-const dy = 500;
+const dy = -180;
 const width = 1000;
 const margin = ({top: 40, right: 120, bottom: 40, left: 80});
 
@@ -225,7 +225,7 @@ class TreeMindMap extends React.Component {
       openSnackbar: false,
       message: "",
       diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
-      tree: d3.tree().nodeSize([dx, dy])
+      tree: d3.tree().nodeSize([dx, dy]).size([800, 750])
     };
     console.log("End TreeMindMap constructor.");
   }
@@ -631,7 +631,7 @@ class TreeMindMap extends React.Component {
 
     // Set position for the root
     root.x0 = dy / 2;
-    root.y0 = 0;
+    root.y0 = 600;
 
     root.descendants().forEach((d, i) => {
       // console.log(d)
@@ -671,7 +671,6 @@ class TreeMindMap extends React.Component {
 
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
-    // TODO: check if adding name worked.
     const newNodeContainers = existingNodeContainers.enter().append("g")
       .attr("id", (d, i) => `${d.id}`)
       .attr("name", (d, i) => `${d.data.name}`)

@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>D3 Mind Map Test</title>
 </head>
 <body>
 <div>
     <svg width="800" height="1000" />
     <script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.rawgit.com/download/picolog/1.0.4/dist/picolog.min.js"></script>
     <script type="text/javascript">
       var treeData = {
         "id": "_ns1nvi0ai",
@@ -15,36 +16,52 @@
         "children": [{
           "name": "Check this",
           "id": "_o4r47dq71",
-          "children": [{"name": "Sour", "id": "_ntwl2sk1h"}, {"name": "maroon", "id": "_deg0e0a7q"}, {
-            "name": "",
-            "id": "_ma3e6bdsh"
-          }, {"name": "green", "id": "_qv0dy0v8n"},
-            {"name": "orange", "id": "_w2v06wwan"},
-            {
-            "name": "x3",
-            "id": "_al6om6znz",
-            "children": [{"name": "yellow", "id": "_r46knsls0"}]
-          }, {"name": "gray", "id": "_7uf3wuu6z"}, {"name": "ecru", "id": "_hhj5294tg"}]
-        }, {
+          "children": [
+            { "name": "Sour", "id": "_ntwl2sk1h" },
+            { "name": "maroon", "id": "_deg0e0a7q" },
+            { "name": "checking", "id": "_ma3e6bdsh" },
+            { "name": "green", "id": "_qv0dy0v8n" },
+            { "name": "orange", "id": "_w2v06wwan" },
+            { "name": "x3", "id": "_al6om6znz",
+              "children": [
+                {"name": "yellow", "id": "_r46knsls0"}
+                ]
+            },
+            {"name": "gray", "id": "_7uf3wuu6z"},
+            {"name": "ecru", "id": "_hhj5294tg"}]
+        },
+        {
           "name": "Aromas",
           "id": "_46ct4o4oy",
-          "children": [{
-            "name": "peach",
-            "id": "_gasoodmjs",
-            "children": [{"name": "black", "id": "_gj1v51emb"}, {"name": "brown", "id": "_b0dvexp77"}]
-          }, {"name": "tan", "id": "_mzpk2x77k"}, {
-            "name": "light blue",
-            "id": "_fhxng92of",
-            "children": [{"name": "dark brown", "id": "_2xtrznvc9"}]
-          }]
-        }, {
+          "children": [
+            {
+              "name": "peach",
+              "id": "_gasoodmjs",
+              "children": [
+                {"name": "black", "id": "_gj1v51emb"},
+                {"name": "brown", "id": "_b0dvexp77"}
+                ]
+            },
+            {"name": "tan", "id": "_mzpk2x77k"},
+            { "name": "light blue", "id": "_fhxng92of",
+              "children": [
+                {"name": "dark brown", "id": "_2xtrznvc9"}
+                ]
+            }]
+        },
+        {
           "name": "Red",
           "id": "_ea00nojwy",
           "children": [{"name": "blue", "id": "_y1wteasyx"}]
         },
-           {"name": "hello", "id": "_z3uk0721f"},
-           {"name": "white", "id": "_vkwj53r0p"}
-           ]
+          {"name": "hello", "id": "_z3uk0721f"},
+          {"name": "white", "id": "_vkwj53r0p"},
+          {
+            "name": "Purple",
+            "id": "_ea235ojvy",
+            "children": [{"name": "lavender", "id": "_p1wtrtfyx"}]
+          },
+        ]
       };
 
       chart = () => {
@@ -80,7 +97,7 @@
 
         // 4. Register other event handlers
         d3.select('body')
-        .on("keydown", function (e) {
+            .on("keydown", function (e) {
           console.log(`keydown: ${d3.event.keyCode}`);
           // Check to see if a node is being edited
           let nodeIsBeingEdited = gNode.select('g.node-editing').size();
@@ -100,7 +117,7 @@
           }
         });
 
-      return svg.node();
+        return svg.node();
       };
 
       printNodes = (msg, root) => {
@@ -118,39 +135,307 @@
       // var tree = d3.tree().nodeSize([dx, dy]);
       var tree = d3.tree().size([height, width]);
 
-      update = (svg) => {
+      // draw single tree
+      drawTree = (svg, root, pos) => {
+        var SWITCH_CONST = 1;
+        if (pos === "left") {
+          SWITCH_CONST = -1;
+        }
 
-        // d3.hierarchy object is a data structure that represents a hierarchy
-        // It has a number of functions defined on it for retrieving things like
-        // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+        // don't need this for now.  We will pass in svg.
+        /*
+        var svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height")
+        */
+
+        // Shift the entire tree by half it's width
+        var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+        // Create new default tree layout
+        var tree = d3.tree()
+        // Set the size
+        // Remember the tree is rotated
+        // so the height is used as the width
+        // and the width as the height
+          .size([height, SWITCH_CONST * (width - 150) / 2]);
+
+        tree(root);
+        printNodes("After tree", root);
+
+        var nodes = root.descendants();
+        var links = root.links();
+        // Set both root nodes to be dead center vertically
+        nodes[0].x = height / 2;
+
+        // Create links
+        var link = g.selectAll(".link")
+          .data(links)
+          .enter();
+
+        link.append("path")
+          .attr("class", "link")
+          .attr("fill", "none")
+          .attr("stroke", "grey")
+          .attr("d", function(d) {
+            var val = "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " " +
+            (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
+            console.log("appending path: " + val);
+            return val;
+          });
+          /*
+          // This also works and is clearer syntax.
+          .attr("d", d => {
+            const o = {x: d.source.x, y: d.source.y};
+            const t = {x: d.target.x, y: d.target.y};
+            return diagonal({source: o, target: t});
+          });  */
+
+        // Create nodes
+        var node = g.selectAll(".node")
+          .data(nodes)
+          .enter()
+          .append("g")
+          .attr("class", function(d) {
+            return "node" + (d.children ? " node--internal" : " node--leaf");
+          })
+          .attr("transform", function(d) {
+            return "translate(" + d.y + "," + d.x + ")";
+          })
+
+        node.append("circle")
+          .attr("r", function(d, i) {
+            return 5;
+          });
+        printNodes("After create nodes", root);
+
+        node.append("foreignObject")
+          .attr("x", -50)
+          .attr("y", -35)
+          .attr("width", 80)
+          .attr("height", 40)
+          .append("xhtml:p")
+          .text(d => d.data.name);
+
+        // Update the nodes
+        const nodeContainers = svg.select("#nodes").selectAll("g").data(nodes, d => d.id);
+
+        // Enter any new nodes at the parent's previous position.
+        // Create new node containers that each contains a circle and a text label
+        const newContainers = nodeContainers.enter().append("g")
+          .attr('id', (d, i) => `${d.id}`)
+          .attr('class', 'node')
+          .attr("transform", d => `translate(${root.y0},${root.x0})`)
+          .attr("fill-opacity", 0)
+          .attr("stroke-opacity", 0);
+
+        newContainers.append("circle")
+          .attr("r", 2)
+          .attr("fill", d => d._children ? "#555" : "#999");
+
+        newContainers.append("foreignObject")
+          .attr("x", -50)
+          .attr("y", -35)
+          .attr("width", 80)
+          .attr("height", 40)
+          .append("xhtml:p")
+          .text(d => d.data.name);
+        // printNodes("After newNodeContainers", root);
+
+        nodeContainers.merge(node)
+          .on("click", handleClickOnNode);
+
+        // define transition
+        const duration = 100;
+
+        // TODO - margin left is undefined, need to correct.
+        const transition =
+          svg
+            .transition()
+            .duration(duration)
+            .attr("height", height)
+            .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+            .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+        printNodes("After transition", root);
+
+        // Transition nodes to their new position.
+        // Increase opacity from 0 to 1 during transition
+        const nodeUpdate = nodeContainers.merge(newContainers).transition(transition)
+          .attr("transform", d => `translate(${d.y},${d.x})`)
+          .attr("fill-opacity", 1)
+          .attr("stroke-opacity", 1);
+
+        /*
+        node.append("text")
+          .attr("dy", 3)
+          .style("text-anchor", "middle")
+          .text(function(d) {
+            return d.data.name;
+          }); */
+      };
+
+      drawTree2 = (svg, root, pos) => {
+        var SWITCH_CONST = 1;
+        if (pos === "left") {
+          SWITCH_CONST = -1;
+        }
+
+        // don't need this for now.  We will pass in svg.
+
+        //var svg = d3.select("svg"),
+        var width = svg.attr("width");
+        var height = svg.attr("height");
+
+
+        // Shift the entire tree by half it's width
+        var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+        // Create new default tree layout
+        var tree = d3.tree()
+        // Set the size
+        // Remember the tree is rotated
+        // so the height is used as the width
+        // and the width as the height
+          .size([height, SWITCH_CONST * (width - 150) / 2]);
+
+        tree(root);
+        printNodes("After tree", root);
+
+        root.descendants().forEach((d, i) => {
+          console.log("node i: " + i + ", d.depth:" + d.depth + ", d.data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
+          // console.log(i)
+          d.id = d.data.id;
+          d._children = d.children;
+        });
+        printNodes("After root descendants", root);
+
+
+        const nodes = root.descendants();
+        const links = root.links();
+
+        // Set both root nodes to be dead center vertically
+        nodes[0].x = height / 2;
+
+
+        let left = root;
+        let right = root;
+        root.eachBefore(node => {
+          if (node.x < left.x) left = node;
+          if (node.x > right.x) right = node;
+        });
+
+        //const height = right.x - left.x + margin.top + margin.bottom;
+
+        // May uncomment later
+        // const height = right.x - left.x + margin.top + margin.bottom;
+
+        const transition =
+            svg
+              .transition()
+              .duration(duration)
+              .attr("height", height)
+              .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+              .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+          printNodes("After transition", root);
+
+          // Update the nodes
+          const existingNodeContainers = svg.select('#nodes').selectAll("g").data(nodes, d => d.id);
+
+          // Enter any new nodes at the parent's previous position.
+          // Create new node containers that each contains a circle and a text label
+          const newNodeContainers = existingNodeContainers.enter().append("g")
+            .attr('id', (d, i) => `${d.id}`)
+            .attr('class', 'node')
+            .attr("transform", d => `translate(${root.y0},${root.x0})`)
+            .attr("fill-opacity", 0)
+            .attr("stroke-opacity", 0);
+
+          newNodeContainers.append("circle")
+            .attr("r", 2)
+            .attr("fill", d => d._children ? "#555" : "#999");
+
+          newNodeContainers.append('foreignObject')
+            .attr('x', -50)
+            .attr('y', -35)
+            .attr('width', 80)
+            .attr('height', 40)
+            .append("xhtml:p")
+            .text(d => d.data.name);
+          // printNodes("After newNodeContainers", root);
+
+          existingNodeContainers.merge(newNodeContainers)
+            .on("click", handleClickOnNode);
+          // Transition nodes to their new position.
+          // Increase opacity from 0 to 1 during transition
+          const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+            .attr("transform", d => `translate(${d.y},${d.x})`)
+            .attr("fill-opacity", 1)
+            .attr("stroke-opacity", 1);
+
+          // Transition exiting nodes to the parent's new position.
+          // Reduce opacity from 1 to 0 during transition
+          const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+            .attr("transform", d => `translate(${root.y},${root.x})`)
+            .attr("fill-opacity", 0)
+            .attr("stroke-opacity", 0);
+
+          // Update the links…
+          const existingLinkPaths = svg.select('#links').selectAll("path").data(links, d => d.target.id);
+
+          // Enter any new links at the parent's previous position.
+          const newLinkPaths = existingLinkPaths.enter().append("path")
+            .attr("d", d => {
+              const o = {x: root.x0, y: root.y0};
+              return diagonal({source: o, target: o});
+            });
+
+          // Transition links to their new position.
+          existingLinkPaths.merge(newLinkPaths).transition(transition)
+            .attr("d", diagonal);
+
+          // Transition exiting nodes to the parent's new position.
+          existingLinkPaths.exit().transition(transition).remove()
+            .attr("d", d => {
+              const o = {x: root.x, y: root.y};
+              return diagonal({source: o, target: o});
+            });
+          printNodes("After existingLinkPaths", root);
+
+          // Stash the old positions for transition.
+          root.eachBefore(d => {
+            d.x0 = d.x;
+            d.y0 = d.y;
+          });
+          printNodes("Update complete", root);
+      };
+
+      loadData = () => {
+        const root = treeData;
+
+        var split_index = Math.round( treeData.children.length/2 )
+        treeData.left = [];
+        treeData.right = [];
+
+        // Left data
+        treeData.left = {
+          "name": treeData.name,
+          "id": treeData.id,
+          "children": JSON.parse( JSON.stringify( treeData.children.slice( 0, split_index ) ) )
+        };
+
+        // Right data
+        treeData.right = {
+          "name": treeData.name,
+          "id": treeData.id,
+          "children": JSON.parse( JSON.stringify( treeData.children.slice( split_index ) ) )
+        };
+
+      };
+
+      updateNodeContainers = () => {
+        // TODO: would have to change this to set root.
         // const root = d3.hierarchy(treeData);
-        const root = d3.hierarchy(treeData);
 
-        root.x0 = width - dy / 2 ;
-        root.y0 = 0;
-
-        // Compute the new tree layout.
-        var nodesLeft = tree
-          .size([height, (width/2)-20])
-          .children(function(d){
-            return (d.depth===0)?d.left:d.children;
-          })
-          .nodes(root)
-          .reverse();
-        var nodesRight = tree
-          .size([height, width/2])
-          .children(function(d){
-            return (d.depth===0)?d.right:d.children;
-          })
-          .nodes(root)
-          .reverse();
-        root.children = root.left.concat(root.right);
-        root._children = null;
-
-        // console.log(root)
-        // console.log(root.descendants())
-
-        /* uncomment this later
         root.descendants().forEach((d, i) => {
           console.log("node i: " + i + ", d.depth:" + d.depth + ", d.data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
           // console.log(i)
@@ -164,11 +449,12 @@
         const links = root.links();
 
         // Compute the new tree layout.
-        //tree(root);
-        */
+        // tree(treedata.left);
+        // tree(treedata.right);
 
         printNodes("After tree(root)", root);
 
+        /*
         let left = root;
         let right = root;
         root.eachBefore(node => {
@@ -182,6 +468,7 @@
           }
         });
         printNodes("After left, right process", root);
+        */
 
         // May uncomment later
         // const height = right.x - left.x + margin.top + margin.bottom;
@@ -211,7 +498,7 @@
           .attr("r", 2)
           .attr("fill", d => d._children ? "#555" : "#999");
 
-        newNodeContainers.append('foreignObject')
+        newNodeContainers.append("foreignObject")
           .attr('x', -50)
           .attr('y', -35)
           .attr('width', 80)
@@ -264,6 +551,28 @@
           d.y0 = d.y;
         });
         printNodes("Update complete", root);
+      };
+
+      update = (svg) => {
+        // d3.hierarchy object is a data structure that represents a hierarchy
+        // It has a number of functions defined on it for retrieving things like
+        // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+        // const root = d3.hierarchy(treeData);
+        // root.x0 = width - dy / 2 ;
+        // root.y0 = 0;
+
+        // ------------------------------------------------------------------
+        loadData();
+        var left =  d3.hierarchy(treeData.left);
+        var right = d3.hierarchy(treeData.right);
+
+        drawTree(svg, left, "left");
+        drawTree(svg, right, "right");
+
+        // updateNodeContainers(svg);
+
+        // console.log(root)
+        // console.log(root.descendants())
       };
 
       removeSelectedNode = (svg) => {
@@ -348,6 +657,7 @@
 
         updateJSONOnServer();
       };
+
       addSiblingToSelectedNode = (svg) => {
 
         let idOfSelectedNode = svg

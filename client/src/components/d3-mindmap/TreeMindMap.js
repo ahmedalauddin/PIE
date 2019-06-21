@@ -202,6 +202,7 @@ class TreeMindMap extends React.Component {
     this.addSibling = this.addSibling.bind(this);
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
+    this.deleteNode = this.deleteNode.bind(this);
     this.rename = this.rename.bind(this);
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
@@ -229,22 +230,6 @@ class TreeMindMap extends React.Component {
     };
     console.log("End TreeMindMap constructor.");
   }
-
-  /*
-  state = {
-    width: 1000,
-    height: 1000,
-    svg: d3.select(this.svg),
-    orgName: getOrgName(),
-    orgId: getOrgId(),
-    jsonData: "",
-    isNewMap: false,
-    openSnackbar: false,
-    message: "",
-    diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
-    tree: d3.tree().nodeSize([dx, dy])
-  };
-   */
 
   ID = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
@@ -288,8 +273,13 @@ class TreeMindMap extends React.Component {
 
   addSibling = () => {
     let svg = d3.select(this.svg);
-    this.addSiblingToSelectedNode(this.state.svg);
+    this.addSiblingToSelectedNode(svg);
   };
+
+  deleteNode = () => {
+    let svg = d3.select(this.svg);
+    this.removeSelectedNode(svg);
+  }
 
   newMap = () => {
     this.setState({
@@ -440,9 +430,10 @@ class TreeMindMap extends React.Component {
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
           addSiblingToSelectedNode(svg);
+        /*
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
-          removeSelectedNode(svg);
+          removeSelectedNode(svg); */
         } else if(d3.event.keyCode === 27) {
           console.log("esc - deselect node");
           handleKeypressEsc(svg);
@@ -465,8 +456,8 @@ class TreeMindMap extends React.Component {
       d3.selectAll(nodes)
         .filter(".node-selected");
 
-    const clickedNodeIndex = i
-    const clickedNode = nodes[clickedNodeIndex]
+    const clickedNodeIndex = i;
+    const clickedNode = nodes[clickedNodeIndex];
     const clickedNodeID = d3.select(clickedNode).attr("name");
     const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
 
@@ -529,8 +520,9 @@ class TreeMindMap extends React.Component {
           }
         }
       }
-      if (nodeFound) break;
-      else {
+      if (nodeFound) {
+        break;
+      } else {
         parentNodes = allNextLevelParents;
       }
     }
@@ -538,7 +530,6 @@ class TreeMindMap extends React.Component {
     parent.children.length === 0 && delete parent.children;
 
     this.update(svg);
-    // updateJSONOnServer();
   };
 
   editNode = (node) => {
@@ -831,10 +822,18 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
+              onClick={this.deleteNode}
+              className={classes.outlinedButton}
+            >
+              Delete Node
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
               onClick={this.saveJson}
               className={classes.outlinedButton}
             >
-              Save
+              Save Mind Map
             </Button>
           </Grid>
           <Grid item sm={12}>

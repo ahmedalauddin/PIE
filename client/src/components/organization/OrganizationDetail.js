@@ -152,6 +152,7 @@ class OrganizationDetail extends React.Component {
     // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.openMindmap = this.openMindmap.bind(this);
     this.onChange = editorState => this.setState({ editorState });
   }
 
@@ -191,11 +192,11 @@ class OrganizationDetail extends React.Component {
     this.setState(state => ({ expanded: !state.expanded }));
   };
 
-  /*
-  anotherFunction = () => {
-    this.props.showMessages(this.state.message);
+
+  openMindmap = () => {
+    return <Redirect to="/treemindmap" />;
   };
-  */
+
 
   handleSubmit(event) {
     event.preventDefault();
@@ -293,9 +294,17 @@ class OrganizationDetail extends React.Component {
               variant="contained"
               color="primary"
               onClick={this.handleSubmit}
-              className={classes.secondary}
+              className={classes.outlinedButton}
             >
               {this.state.buttonText}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.outlinedButton}
+              onClick={this.openMindmap}
+            >
+              Edit Mind Map
             </Button>
             <br />
           </Grid>

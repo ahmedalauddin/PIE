@@ -505,6 +505,11 @@ class TreeMindMap extends React.Component {
       .selectAll("g.node")
       .filter(".node-selected")
       .attr("id");
+
+    const selectedNode = svg
+        .selectAll("g.node")
+        .filter(".node-selected");
+
     let parentNodes = [this.state.jsonData];
     let nodeFound = false;
     let parent;
@@ -526,8 +531,17 @@ class TreeMindMap extends React.Component {
         parentNodes = allNextLevelParents;
       }
     }
-    parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
-    parent.children.length === 0 && delete parent.children;
+
+    if (parent && parent.children) {
+      // This deletes from the JSON.
+      parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
+      parent.children.length === 0 && delete parent.children;
+    }
+
+    if (selectedNode) {
+      let childNodes = selectedNode.selectAll("*");
+      childNodes.remove();
+    }
 
     this.update(svg);
   };

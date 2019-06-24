@@ -214,7 +214,6 @@ class TreeMindMap extends React.Component {
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.ID = this.ID.bind(this);
-
     this.state = {
       width: 1000,
       height: 1000,
@@ -317,6 +316,7 @@ class TreeMindMap extends React.Component {
     let nodeFound = false;
     let parent = null;
 
+    // Find the node in the JSON.
     while (nodeInTree.length != 0) {
       let allCurrentLevelChildren = [];
       for (let node of nodeInTree) {
@@ -382,7 +382,7 @@ class TreeMindMap extends React.Component {
   };
 
   chart = () => {
-    // Create the SVG
+    // Create the SVG and attach keystroke events to it.
     // The svg is initialized with height = dx.
     // This will be updated later when the rest of the nodes in the tree are entered.
 
@@ -500,16 +500,28 @@ class TreeMindMap extends React.Component {
     d3.event.stopPropagation();
   };
 
-  removeSelectedNode = (svg) => {
+  removeSelectedNodeNew = (svg) => {
+    // updated version to remove nodes.  See https://bl.ocks.org/cmgiven/32d4c53f19aea6e528faf10bfe4f3da9 on the
+    // approach to use enter() and exit().
+    this.removeFromData(svg);
+    let update = svg.selectAll("circle")
+      .data(this.state.jsonData, function (d) { return d; });
+    let enter = update.enter()
+      .append("circle");
+    let exit = update.exit();
+    update.style("fill", "green");
+    exit.style("fill", "red").remove();
+
+    console.log("elements removed");
+  };
+
+  removeFromData = (svg) => {
+    // Removes selected node from the JSON data, stored in state.
     let idOfSelectedNode = svg
       .selectAll("g.node")
       .filter(".node-selected")
       .attr("id");
-
-    const selectedNode = svg
-        .selectAll("g.node")
-        .filter(".node-selected");
-
+    let jsonData = [this.state.jsonData];
     let parentNodes = [this.state.jsonData];
     let nodeFound = false;
     let parent;
@@ -537,11 +549,53 @@ class TreeMindMap extends React.Component {
       parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
       parent.children.length === 0 && delete parent.children;
     }
+    console.log("JSON for parentNodes now is:" + JSON.stringify(parentNodes));
+    console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
+    this.setState({
+      jsonData: jsonData
+    });
+  };
 
+  removeSelectedNode = (svg) => {
+    const selectedNode = svg
+        .selectAll("g.node")
+        .filter(".node-selected");
+    const idOfSelectedNode = selectedNode.attr("id");
+
+    this.removeFromData(svg);
+
+    // Commenting this after updating state.  May need to add back.
+    // Need to delete the child nodes of the selected node, which include the text box and the circle.
     if (selectedNode) {
       let childNodes = selectedNode.selectAll("*");
-      childNodes.remove();
+      // childNodes.exit().remove();
+      if (childNodes) {
+        childNodes.remove();
+      }
+      selectedNode.remove();
+    };
+
+    /*
+    // Find the link and try to remove it separately.
+    let linkFound = false;
+    let links = d3.hierarchy(this.state.jsonData).links();
+
+    let thisLink = null;
+
+    for (let i=0; i < links.length; i++) {
+      let link = links[i];
+      if ((link.source.data.id === idOfSelectedNode) || (link.target.data.id === idOfSelectedNode)) {
+        linkFound = true;
+        thisLink = link;
+        if (linkFound) break;
+      }
     }
+
+    if (thisLink) {
+      thisLink.exit().remove();
+      console.log("Link removed.");
+    }
+    */
 
     this.update(svg);
   };
@@ -688,6 +742,7 @@ class TreeMindMap extends React.Component {
       .attr("r", 10)
       .attr("fill", d => d._children ? "#555" : "#999");
 
+    // The "foreignObject" object will display the name text on the node.
     newNodeContainers.append("foreignObject")
       .attr("x", -80)
       .attr("y", -35)

@@ -34,7 +34,7 @@ import withAuth from "./components/withAuth.jsx";
 import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
 import TreeMindMap from "./components/d3-mindmap/TreeMindMap";
-import TreeMindMapPrev from "./components/d3-mindmap/TreeMindMapPrev";
+import TreeMindMapPrev from "./components/d3-mindmap/save/TreeMindMapPrev";
 import Search from "./components/search/Search";
 
 export default props => (

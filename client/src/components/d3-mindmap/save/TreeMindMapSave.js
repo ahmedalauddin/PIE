@@ -10,11 +10,11 @@
  */
 import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import { red, grey } from "@material-ui/core/colors";
-import "./tree-styles.scss";
+import "../tree-styles.scss";
 
 const styles = theme => ({
   grid: {

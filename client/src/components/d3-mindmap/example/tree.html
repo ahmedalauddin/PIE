@@ -124,7 +124,7 @@
         // Log where the nodes are.
         console.log(msg);
         root.descendants().forEach((d, i) => {
-          console.log("node i: " + i + ", d.depth:" + d.depth + ", d.data.name: " + d.data.name + ", d.x:" + d.x + ", d.y: " + d.y);
+          console.log("node i: " + i + ", d.depth:" + d.depth + "data.name: " + d.data.name + ", d.x:" + d.x + ", d.y: " + d.y);
         });
       };
 
@@ -302,7 +302,7 @@
         printNodes("After tree", root);
 
         root.descendants().forEach((d, i) => {
-          console.log("node i: " + i + ", d.depth:" + d.depth + ", d.data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
+          console.log("node i: " + i + ", d.depth:" + d.depth + "data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
           // console.log(i)
           d.id = d.data.id;
           d._children = d.children;
@@ -436,8 +436,9 @@
         // TODO: would have to change this to set root.
         // const root = d3.hierarchy(treeData);
 
+
         root.descendants().forEach((d, i) => {
-          console.log("node i: " + i + ", d.depth:" + d.depth + ", d.data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
+          console.log("node i: " + i + ", d.depth:" + d.depth + "data.name: " + d.data.name + ", d.x0:" + d.x0 + ", d.y0: " + d.y0);
           // console.log(i)
           d.id = d.data.id;
           d._children = d.children;

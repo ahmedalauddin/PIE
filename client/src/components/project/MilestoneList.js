@@ -19,7 +19,7 @@ import Grid from "@material-ui/core/Grid";
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    width: "100%",
     marginTop: theme.spacing.unit * 3,
     paddingRight: theme.spacing.unit,
   },
@@ -43,16 +43,16 @@ const styles = theme => ({
     paddingLeft: theme.spacing.unit * 6,
   },
   inline: {
-    display: 'inline',
+    display: "inline"
   },
   spacer: {
-    flex: '1 1 100%',
+    flex: "1 1 100%"
   },
   actions: {
     color: theme.palette.text.secondary,
   },
   title: {
-    flex: '0 0 auto',
+    flex: "0 0 auto"
   },
 });
 

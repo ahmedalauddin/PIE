@@ -17,6 +17,10 @@ const styles = theme => ({
     borderBottom: `1px solid ${theme.palette.grey["100"]}`,
     backgroundColor: "white"
   },
+  image: {
+    backgroundSize: "cover",
+    backgroundPosition: "center"
+  },
   inline: {
     display: "inline"
   },
@@ -75,7 +79,7 @@ const AdminMenu = [
   },
   {
     label: "Mind Map",
-    pathname: "/treemindmap"
+    pathname: "/mindmap"
   },
   {
     label: "Search",
@@ -137,7 +141,7 @@ class Topbar extends Component {
     if (this.props.currentPath === "/login") {
       value = 1;
     }
-    if (this.props.currentPath === "/treemindmap") {
+    if (this.props.currentPath === "/mindmap") {
       value = 2;
     }
     if (this.props.currentPath === "/search") {
@@ -175,13 +179,7 @@ class Topbar extends Component {
         <Toolbar>
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
-              <div className={classes.inline}>
-                <Typography variant="h6" color="inherit" noWrap>
-                  <Link to="/" className={classes.link}>
-                    <img width={125} src={logo} alt="ValueInfinity"/>
-                  </Link>
-                </Typography>
-              </div>
+
               <React.Fragment>
                 <div className={classes.tabContainer}>
                   <Tabs

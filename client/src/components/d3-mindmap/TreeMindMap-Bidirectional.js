@@ -10,6 +10,8 @@
  * Editor:   Brad Kaufman
  */
 import React from "react";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Topbar from "../Topbar";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import { red, grey } from "@material-ui/core/colors";
@@ -19,7 +21,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import PropTypes from 'prop-types';
 
 const styles = theme => ({
   grid: {
@@ -64,14 +65,6 @@ const styles = theme => ({
   box: {
     marginBottom: 40,
     height: 65
-  },
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.grey["100"],
-    overflow: "hidden",
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
   },
   inlining: {
     display: "inline-block",
@@ -150,21 +143,61 @@ const styles = theme => ({
     marginTop: 50
   }
 });
+// JSON data for initial testing
+/*
+const jsonDataZ = {
+  "id": "_ns1nvi0ai",
+  "name": "Root",
+  "children": [
+    {
+      "id": "_o4r47dq71",
+      "name": "Reduce operating costs",
+      "children":
+        [
+          {
+            "id": "_al6om6znz",
+            "name": "Reduce inventory",
+            "children": [
+              {
+                "id": "_46ct4o4oy",
+                "name": "Review part models"
+              },
+              {
+                "id": "_ea00nojwy",
+                "name": "Optimize supply chain"
+              }
+            ]
+          }, {
+          "id": "_z3uk0721f",
+          "name": "Operating procedures"
+        }
+        ]
+    }, {
+      "id": "_uajrljib9",
+      "name": "Review supply chain processes"
+    }, {
+      "id": "_uguzpgdta",
+      "name": "Introduce automation"
+    }
+  ]};
+*/
 // Use this JSON data to test a new mind map, starting only with root.
 const jsonNew = {
-  "id": "_ns1nvi0ai",
-  "name": "Root"
-  };
+  id: "_ns1nvi0ai",
+  name: "Root"
+};
 const dx = 80;
 const dy = -180;
 const width = 1000;
-const margin = ({top: 40, right: 120, bottom: 40, left: 80});
+const margin = { top: 40, right: 120, bottom: 40, left: 80 };
 
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
+    this.loadJson = this.loadJson.bind(this);
+    this.updateNodes = this.updateNodes.bind(this);
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
     this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
@@ -172,6 +205,7 @@ class TreeMindMap extends React.Component {
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
+    this.drawTree = this.drawTree.bind(this);
     this.rename = this.rename.bind(this);
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
@@ -194,14 +228,21 @@ class TreeMindMap extends React.Component {
       isNewMap: false,
       openSnackbar: false,
       message: "",
-      diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
-      tree: d3.tree().nodeSize([dx, dy]).size([800, 750])
+      diagonal: d3
+        .linkHorizontal()
+        .x(d => d.y)
+        .y(d => d.x)
     };
     console.log("End TreeMindMap constructor.");
   }
 
   ID = () => {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return (
+      "_" +
+      Math.random()
+        .toString(36)
+        .substr(2, 9)
+    );
   };
 
   saveJson = () => {
@@ -209,16 +250,16 @@ class TreeMindMap extends React.Component {
     let postData = {
       orgId: this.state.orgId,
       mapData: this.state.jsonData
-    }
+    };
     console.log("JSON to post:" + JSON.stringify(postData));
 
     setTimeout(() => {
       fetch("/api/mindmaps", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData)
       })
-        .then((response) => {
+        .then(response => {
           if (response.status !== 400) {
             // Success - open the snackbar
             this.setState({
@@ -235,6 +276,32 @@ class TreeMindMap extends React.Component {
     }, 2000);
   };
 
+  loadJson = () => {
+    let data = this.state.jsonData;
+
+    let split_index = Math.round(data.children.length / 2);
+
+    // Left data
+    let dataRight = {
+      name: data.name,
+      children: JSON.parse(JSON.stringify(data.children.slice(0, split_index)))
+    };
+
+    // Right data
+    let dataLeft = {
+      name: data.name,
+      children: JSON.parse(JSON.stringify(data.children.slice(split_index)))
+    };
+
+    // Create d3 hierarchies
+    // var right = d3.hierarchy(data1);
+    // var left = d3.hierarchy(data2);
+    this.setState({
+      right: dataRight,
+      left: dataLeft
+    });
+  };
+
   appendChild = () => {
     let svg = d3.select(this.svg);
     this.appendChildToSelectedNode(svg);
@@ -248,31 +315,34 @@ class TreeMindMap extends React.Component {
   deleteNode = () => {
     let svg = d3.select(this.svg);
     this.removeSelectedNode(svg);
-  }
+  };
 
   newMap = () => {
-    this.setState({
-      isNewMap: true
-    }, () => {
-      console.log("newMap, updated state this.state.isNewMap = " + this.state.isNewMap);
-      let svg = d3.select(this.svg);
-      this.update(svg);
-    });
+    this.setState(
+      {
+        isNewMap: true
+      },
+      () => {
+        console.log(
+          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
+        );
+        let svg = d3.select(this.svg);
+        this.update(svg);
+      }
+    );
   };
 
   rename = () => {
     let svg = d3.select(this.svg);
     console.log("rename node");
-    let selectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected");
+    let selectedNode = svg.selectAll("g.node").filter(".node-selected");
 
     let idOfSelectedNode = selectedNode.attr("id");
     console.log("idOfSelectedNode: " + idOfSelectedNode);
     this.editNode(selectedNode);
   };
 
-  appendChildToSelectedNode = (svg) => {
+  appendChildToSelectedNode = svg => {
     console.log("appendChildToSelectedNode");
     let idOfSelectedNode = svg
       .selectAll("g.node")
@@ -291,7 +361,9 @@ class TreeMindMap extends React.Component {
       let allCurrentLevelChildren = [];
       for (let node of nodeInTree) {
         if (node.children) {
-          allCurrentLevelChildren = allCurrentLevelChildren.concat(node.children);
+          allCurrentLevelChildren = allCurrentLevelChildren.concat(
+            node.children
+          );
         }
         if (node.id === idOfSelectedNode) {
           nodeFound = true;
@@ -315,7 +387,7 @@ class TreeMindMap extends React.Component {
     this.update(svg);
   };
 
-  addSiblingToSelectedNode = (svg) => {
+  addSiblingToSelectedNode = svg => {
     let idOfSelectedNode = svg
       .selectAll("g.node")
       .filter(".node-selected")
@@ -358,7 +430,8 @@ class TreeMindMap extends React.Component {
 
     // const svg = d3.create("svg");
     // append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
-    let svg = d3.select(this.svg)
+    let svg = d3
+      .select(this.svg)
       .attr("width", width)
       .attr("height", dx)
       .style("font", "14px sans-serif")
@@ -387,83 +460,82 @@ class TreeMindMap extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
-    d3.select("body")
-      .on("keydown", function(e) {
-        // eslint-disable-next-line no-console
-        console.log(`keydown: ${d3.event.keyCode}`);
-        // Check to see if a node is being edited
-        let nodeIsBeingEdited = gNode.select("g.node-editing").size();
+    d3.select("body").on("keydown", function(e) {
+      // eslint-disable-next-line no-console
+      console.log(`keydown: ${d3.event.keyCode}`);
+      // Check to see if a node is being edited
+      let nodeIsBeingEdited = gNode.select("g.node-editing").size();
 
-        if (d3.event.keyCode === 9) {
-          console.log("tab - append child to selected node");
-          appendChildToSelectedNode(svg);
-        } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
-          console.log("enter - add sibling to selected node");
-          addSiblingToSelectedNode(svg);
+      if (d3.event.keyCode === 9) {
+        console.log("tab - append child to selected node");
+        appendChildToSelectedNode(svg);
+      } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
+        console.log("enter - add sibling to selected node");
+        addSiblingToSelectedNode(svg);
         /*
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
           removeSelectedNode(svg); */
-        } else if(d3.event.keyCode === 27) {
-          console.log("esc - deselect node");
-          handleKeypressEsc(svg);
-        }
-      });
+      } else if (d3.event.keyCode === 27) {
+        console.log("esc - deselect node");
+        handleKeypressEsc(svg);
+      }
+    });
 
     return this.state.svg.node();
   };
 
-  handleKeypressEsc = (svg) => {
+  handleKeypressEsc = svg => {
     svg
       .selectAll("g.node")
       .filter(".node-selected")
       .each(this.deselectNode);
   };
 
-  renameNode = (d,i,nodes) => {
+  renameNode = (d, i, nodes) => {
     console.log("renameNode");
-    const currentlySelectedNode =
-      d3.selectAll(nodes)
-        .filter(".node-selected");
+    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
     const clickedNodeID = d3.select(clickedNode).attr("name");
-    const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
+    const otherNodes = d3
+      .selectAll(nodes)
+      .filter((d, i) => i !== clickedNodeIndex);
 
-    if (currentlySelectedNode.size() > 0 && currentlySelectedNode.attr("name") === clickedNodeID) {
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedNodeID
+    ) {
       console.log("renameNode: going into editing mode!");
       d3.select(clickedNode).call(this.editNode);
     }
   };
 
-  getSelectedNodeId = (selectedNodeId) => {
-    this.props.callback(selectedNodeId);
-  };
-
-  handleClickOnNode = (d,i,nodes) => {
+  handleClickOnNode = (d, i, nodes) => {
     console.log("handleClickOnNode: clicked on a node.");
-    const currentlySelectedNode =
-      d3.selectAll(nodes)
-        .filter(".node-selected")
+    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
     const clickedNodeID = d3.select(clickedNode).attr("name");
-    const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
+    const otherNodes = d3
+      .selectAll(nodes)
+      .filter((d, i) => i !== clickedNodeIndex);
 
-    if (currentlySelectedNode.size() > 0 && currentlySelectedNode.attr("name") === clickedNodeID) {
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedNodeID
+    ) {
       console.log("going into editing mode!");
       d3.select(clickedNode)
         //.call(this.editNode)
         .call(this.selectNode);
     } else {
-      d3.select(clickedNode)
-        .call(this.selectNode);
+      d3.select(clickedNode).call(this.selectNode);
 
       // If not already selected, mark as selected
-      otherNodes
-        .each(this.deselectNode);
+      otherNodes.each(this.deselectNode);
     }
 
     // d.children = d.children ? null : d._children;
@@ -474,14 +546,14 @@ class TreeMindMap extends React.Component {
     d3.event.stopPropagation();
   };
 
-  removeSelectedNodeNew = (svg) => {
+  removeSelectedNodeNew = svg => {
     // updated version to remove nodes.  See https://bl.ocks.org/cmgiven/32d4c53f19aea6e528faf10bfe4f3da9 on the
     // approach to use enter() and exit().
     this.removeFromData(svg);
-    let update = svg.selectAll("circle")
-      .data(this.state.jsonData, function (d) { return d; });
-    let enter = update.enter()
-      .append("circle");
+    let update = svg.selectAll("circle").data(this.state.jsonData, function(d) {
+      return d;
+    });
+    let enter = update.enter().append("circle");
     let exit = update.exit();
     update.style("fill", "green");
     exit.style("fill", "red").remove();
@@ -489,7 +561,7 @@ class TreeMindMap extends React.Component {
     console.log("elements removed");
   };
 
-  removeSelectedNodeFromData = (svg) => {
+  removeSelectedNodeFromData = svg => {
     // Removes selected node from the JSON data, stored in state.
     let idOfSelectedNode = svg
       .selectAll("g.node")
@@ -520,7 +592,9 @@ class TreeMindMap extends React.Component {
 
     if (parent && parent.children) {
       // This deletes from the JSON.
-      parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
+      parent.children = parent.children.filter(
+        child => child.id !== idOfSelectedNode
+      );
       parent.children.length === 0 && delete parent.children;
     }
     console.log("JSON for parentNodes now is:" + JSON.stringify(parentNodes));
@@ -530,10 +604,8 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  removeSelectedNode = (svg) => {
-    const selectedNode = svg
-        .selectAll("g.node")
-        .filter(".node-selected");
+  removeSelectedNode = svg => {
+    const selectedNode = svg.selectAll("g.node").filter(".node-selected");
     const idOfSelectedNode = selectedNode.attr("id");
 
     this.removeSelectedNodeFromData(svg);
@@ -547,7 +619,7 @@ class TreeMindMap extends React.Component {
         childNodes.remove();
       }
       selectedNode.remove();
-    };
+    }
 
     /*
     // Find the link and try to remove it separately.
@@ -574,7 +646,7 @@ class TreeMindMap extends React.Component {
     this.update(svg);
   };
 
-  editNode = (node) => {
+  editNode = node => {
     node
       .classed("node-editing", true)
       .select("foreignObject")
@@ -583,7 +655,7 @@ class TreeMindMap extends React.Component {
     console.log(`${node.attr("name")} is being edited`);
   };
 
-  selectNode = (node) => {
+  selectNode = node => {
     node
       .classed("node-selected", true)
       .select("foreignObject")
@@ -594,27 +666,21 @@ class TreeMindMap extends React.Component {
       .classed("node-selected", true)
       .select("circle")
       .style("fill", "green");
-
-    const idOfSelectedNode = node.attr("id");
-
-    this.getSelectedNodeId(idOfSelectedNode);
     console.log(`${node.attr("name")} selected`);
   };
 
-  deselectNode = (d,i,nodes) => {
-    let idOfSelectedNode =
-      d3.select(nodes[i])
-        .attr("id");
+  deselectNode = (d, i, nodes) => {
+    let idOfSelectedNode = d3.select(nodes[i]).attr("id");
 
-    let newValue =
-      d3.select(nodes[i])
-        .select("foreignObject")
-        .select("p")
-        .html();
+    let newValue = d3
+      .select(nodes[i])
+      .select("foreignObject")
+      .select("p")
+      .html();
 
     d3.select(nodes[i])
-        .select("circle")
-        .style("fill", d => d._children ? "#555" : "#999");
+      .select("circle")
+      .attr("fill", d => (d._children ? "#555" : "#999"));
 
     d3.select(nodes[i])
       .classed("node-editing", false)
@@ -634,10 +700,12 @@ class TreeMindMap extends React.Component {
     let parent = null;
 
     while (nodeInTree.length != 0) {
-      let allCurrentLevelChildren = []
+      let allCurrentLevelChildren = [];
       for (let node of nodeInTree) {
         if (node.children) {
-          allCurrentLevelChildren = allCurrentLevelChildren.concat(node.children);
+          allCurrentLevelChildren = allCurrentLevelChildren.concat(
+            node.children
+          );
         }
         if (node.id === idOfSelectedNode) {
           nodeFound = true;
@@ -652,7 +720,7 @@ class TreeMindMap extends React.Component {
     parent.name = newValue;
   };
 
-  handleClickOnCanvas = (d,i,nodes) => {
+  handleClickOnCanvas = (d, i, nodes) => {
     /*
     let { d3 } = this.state;
     console.log("handleClickOnCanvas, nodes: " + nodes[i]);
@@ -665,30 +733,132 @@ class TreeMindMap extends React.Component {
   toArray = (item, arr, d) => {
     arr = arr || [];
     var dr = d || 1;
-    var i = 0, l = item.children?item.children.length:0;
+    var i = 0,
+      l = item.children ? item.children.length : 0;
     arr.push(item);
-    if(item.position && item.position==='left'){
+    if (item.position && item.position === "left") {
       dr = -1;
     }
     item.y = dr * item.y;
-    for(; i < l; i++){
+    for (; i < l; i++) {
       this.toArray(item.children[i], arr, dr);
     }
     return arr;
   };
 
-  update = (svg) => {
-    // d3.hierarchy object is a data structure that represents a hierarchy
-    // It has a number of functions defined on it for retrieving things like
-    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    // const root = d3.hierarchy(treeData);
-    const duration = 100;
-    let root = "";
-    if (!this.state.isNewMap) {
-      root = d3.hierarchy(this.state.jsonData);
-    } else {
-      root = d3.hierarchy(jsonNew);
+  updateNodes = (svg, root, transition, nodes, links) => {
+    // Update the nodes and their containers with the text (as foreign object) and circles.
+    const existingNodeContainers = svg
+      .select("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id)
+      .data(nodes, d => d.name);
+
+    // Enter any new nodes at the parent's previous position.
+    // Create new node containers that each contains a circle and a text label
+    const newNodeContainers = existingNodeContainers
+      .enter()
+      .append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", "node")
+      .attr("transform", d => `translate(${root.y0},${root.x0})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    newNodeContainers
+      .append("circle")
+      .attr("r", 10)
+      .attr("fill", d => (d._children ? "#555" : "#999"));
+
+    // The "foreignObject" object will display the name text on the node.
+    newNodeContainers
+      .append("foreignObject")
+      .attr("x", -80)
+      .attr("y", -35)
+      .attr("width", 150)
+      .attr("height", 40)
+      .append("xhtml:p")
+      .text(d => d.data.name);
+
+    existingNodeContainers
+      .merge(newNodeContainers)
+      .on("click", this.handleClickOnNode);
+
+    // Transition nodes to their new position.
+    // Increase opacity from 0 to 1 during transition
+    const nodeUpdate = existingNodeContainers
+      .merge(newNodeContainers)
+      .transition(transition)
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+    const nodeExit = existingNodeContainers
+      .exit()
+      .transition(transition)
+      .remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    // Update the links…
+    const existingLinkPaths = svg
+      .select("#links")
+      .selectAll("path")
+      .data(links, d => d.target.id);
+
+    // Enter any new links at the parent's previous position.
+    const newLinkPaths = existingLinkPaths
+      .enter()
+      .append("path")
+      .attr("d", d => {
+        const o = { x: root.x0, y: root.y0 };
+        return this.state.diagonal({ source: o, target: o });
+      });
+
+    // Transition links to their new position.
+    existingLinkPaths
+      .merge(newLinkPaths)
+      .transition(transition)
+      .attr("d", this.state.diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    existingLinkPaths
+      .exit()
+      .transition(transition)
+      .remove()
+      .attr("d", d => {
+        const o = { x: root.x, y: root.y };
+        return this.state.diagonal({ source: o, target: o });
+      });
+
+    // Stash the old positions for transition.
+    root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  drawTree = (svg, root, direction) => {
+    const duration = 500;
+    const height = 1000;
+
+    // Direction of tree
+    let SWITCH_CONST = 1;
+    if (direction === "left") {
+      SWITCH_CONST = -1;
     }
+
+    // Shift the entire tree by half it's width
+    // var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+    // Call d3.tree.  Set the size. Remember the tree is rotated, so the height is used as the width
+    // and the width is the height.
+    let tree = d3.tree()
+      .size([height, SWITCH_CONST * (width - 150) / 2]);
 
     // Set position for the root
     root.x0 = dy / 2;
@@ -702,99 +872,77 @@ class TreeMindMap extends React.Component {
       d._children = d.children;
     });
 
-    const nodes = root.descendants().reverse();
-    const links = root.links();
+    // const nodes = root.descendants().reverse();
+    // const links = root.links();
+
+    // Shift the entire tree by half it's width
+    var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
 
     // Compute the new tree layout.
-    this.state.tree(root);
+    tree(root);
 
-    let left = root;
-    let right = root;
-    root.eachBefore(node => {
-      if (node.x < left.x) left = node;
-      if (node.x > right.x) right = node;
-    });
+    let nodes = root.descendants().reverse();
+    let links = root.links();
+    // Set both root nodes to be dead center vertically
+    nodes[0].x = height / 2;
 
-    const height = right.x - left.x + margin.top + margin.bottom;
-    const transition = svg
-      .transition()
-      .duration(duration)
-      .attr("height", height)
-      .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
-      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+    // Create links
+    var link = g.selectAll(".link")
+      .data(links)
+      .enter();
 
-    // Update the nodes
-    const existingNodeContainers = svg.select("#nodes")
-      .selectAll("g")
-      .data(nodes, d => d.id)
-      .data(nodes, d => d.name);
-
-    // Enter any new nodes at the parent's previous position.
-    // Create new node containers that each contains a circle and a text label
-    const newNodeContainers = existingNodeContainers.enter().append("g")
-      .attr("id", (d, i) => `${d.id}`)
-      .attr("name", (d, i) => `${d.data.name}`)
-      .attr("class", "node")
-      .attr("transform", d => `translate(${root.y0},${root.x0})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    newNodeContainers.append("circle")
-      .attr("r", 10)
-      .attr("fill", d => d._children ? "#555" : "#999");
-
-    // The "foreignObject" object will display the name text on the node.
-    newNodeContainers.append("foreignObject")
-      .attr("x", -80)
-      .attr("y", -35)
-      .attr("width", 150)
-      .attr("height", 40)
-      .append("xhtml:p")
-      .text(d => d.data.name);
-
-    existingNodeContainers.merge(newNodeContainers)
-      .on("click", this.handleClickOnNode);
-
-    // Transition nodes to their new position.
-    // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
-      .attr("transform", d => `translate(${d.y},${d.x})`)
-      .attr("fill-opacity", 1)
-      .attr("stroke-opacity", 1);
-
-    // Transition exiting nodes to the parent's new position.
-    // Reduce opacity from 1 to 0 during transition
-    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
-      .attr("transform", d => `translate(${root.y},${root.x})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    // Update the links…
-    const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
-
-    // Enter any new links at the parent's previous position.
-    const newLinkPaths = existingLinkPaths.enter().append("path")
-      .attr("d", d => {
-        const o = {x: root.x0, y: root.y0};
-        return this.state.diagonal({source: o, target: o});
+    link.append("path")
+      .attr("class", "link")
+      .attr("d", function (d) {
+        return "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " " + (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
       });
 
-    // Transition links to their new position.
-    existingLinkPaths.merge(newLinkPaths).transition(transition)
-      .attr("d", this.state.diagonal);
-
-    // Transition exiting nodes to the parent's new position.
-    existingLinkPaths.exit().transition(transition).remove()
-      .attr("d", d => {
-        const o = {x: root.x, y: root.y};
-        return this.state.diagonal({source: o, target: o});
+    // Create nodes
+    var node = g.selectAll(".node")
+      .data(nodes)
+      .enter()
+      .append("g")
+      .attr("class", function (d) {
+        return "node" + (d.children ? " node--internal" : " node--leaf");
+      })
+      .attr("transform", function (d) {
+        return "translate(" + d.y + "," + d.x + ")";
       });
 
-    // Stash the old positions for transition.
-    root.eachBefore(d => {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
+    node.append("circle")
+      .attr("r", function (d, i) {
+        return 2.5;
+      });
+
+    node.append("text")
+      .attr("dy", 3)
+      .style("text-anchor", "middle")
+      .text(function (d) {
+        return d.data.name;
+      });
+  };
+
+  update = svg => {
+    // d3.hierarchy object is a data structure that represents a hierarchy
+    // It has a number of functions defined on it for retrieving things like
+    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+    // const root = d3.hierarchy(treeData);
+    let rootLeft = "";
+    let rootRight = "";
+    let root = "";
+    this.loadJson();
+
+    if (!this.state.isNewMap) {
+      // root = d3.hierarchy(this.state.jsonData);
+      rootRight = d3.hierarchy(this.state.right);
+      rootLeft = d3.hierarchy(this.state.left);
+    } else {
+      rootRight = d3.hierarchy(jsonNew);
+      rootLeft = d3.hierarchy(jsonNew);
+    }
+
+    this.drawTree(svg, rootRight, "right");
+    this.drawTree(svg, rootLeft, "left");
 
     this.setState({
       jsonData: root.data,
@@ -852,7 +1000,12 @@ class TreeMindMap extends React.Component {
 
     return (
       <React.Fragment>
-        <Grid container alignItems="center" justify="center" spacing={24} className={classes.root}>
+        <Grid container alignItems="center" justify="center" spacing={24}>
+          <Grid item sm={12}>
+            <Typography variant="h6">
+              Mind Map for {this.state.orgName}
+            </Typography>
+          </Grid>
           <Grid item sm={12}>
             <Button
               variant="contained"
@@ -904,14 +1057,7 @@ class TreeMindMap extends React.Component {
             </Button>
           </Grid>
           <Grid item sm={12}>
-            <Typography variant="h6">
-              Mind Map for {this.state.orgName}
-            </Typography>
-          </Grid>
-          <Grid item sm={12}>
-            <svg width="1000" height="1200"
-              ref={ svg => this.svg = svg }
-            />
+            <svg width="1000" height="1200" ref={svg => (this.svg = svg)} />
           </Grid>
         </Grid>
         <Grid item sm={12}>
@@ -920,12 +1066,12 @@ class TreeMindMap extends React.Component {
             onClose={this.handleClose}
             TransitionComponent={this.state.Transition}
             ContentProps={{
-              'aria-describedby': 'message-id',
+              "aria-describedby": "message-id"
             }}
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
-     </React.Fragment>
+      </React.Fragment>
     );
   }
 }

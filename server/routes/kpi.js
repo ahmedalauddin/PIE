@@ -36,6 +36,10 @@ module.exports = router => {
   logger.debug(`${callerClass} GET -> path: /api/kpis-project/:projid`);
   router.get("/api/kpis-project/:projid", kpi.listByProject);
 
+  // get KPIs by matching its mindmap node ID.
+  logger.debug(`${callerClass} GET -> path: /api/kpis-mindmapnode/:mindmapNodeId`);
+  router.get("/api/kpis-mindmapnode/:mindmapNodeId", kpi.getByMindmapNode);
+
   // get KPIs by organization
   logger.debug(`${callerClass} GET -> path: /api/kpis-organization/:orgid`);
   router.get("/api/kpis-organization/:orgid", kpi.listByOrganization);

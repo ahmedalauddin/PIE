@@ -256,7 +256,6 @@ class Project extends React.Component {
   }
 
   showMessages = (message) => {
-    // alert(message);
     this.setState( {
       openSnackbar: true,
       message: message

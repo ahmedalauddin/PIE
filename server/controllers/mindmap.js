@@ -90,9 +90,10 @@ module.exports = {
   // Find a mindmap by id
   findByOrgId(req, res) {
     logger.debug(`${callerType} findByOrgId -> orgId: ${req.params.orgId}`);
+    // Get the lastest mind map for an organization.
     let sql = "select id, orgId, mapData, updatedAt from Mindmaps " +
       "where orgId = " + req.params.orgId + " " +
-      "and updatedAt = (select max(updatedAt) from Mindmaps)";
+      "order by updatedAt desc limit 1";
     return models.sequelize
       .query(sql,
         {

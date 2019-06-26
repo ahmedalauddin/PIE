@@ -22,6 +22,12 @@ module.exports = {
     let kpiId = null;
     logger.debug(`${callerType} create -> projectId: ${projectId}`);
     logger.debug(`${callerType} create -> JSON: req.body: ${JSON.stringify(req.body)}`);
+    let nodeId = "";
+    if (req.body.mindmapNodeId) {
+      nodeId = req.body.mindmapNodeId;
+    } else {
+      nodeId = "";
+    }
     return models.Kpi.create({
       title: req.body.title,
       description: req.body.description,
@@ -29,6 +35,7 @@ module.exports = {
       type: req.body.type,
       active: 1,
       projectId: req.body.projectId,
+      mindmapNodeId: nodeId,
       level: req.body.level,
       status: req.body.taskstatus,
       orgId: req.body.orgId
@@ -342,6 +349,26 @@ module.exports = {
       })
       .catch(error => {
         logger.error(`${callerType} listByProject -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // Get KPI by matching its mindmap node ID.
+  getByMindmapNode(req, res) {
+    let sql = "select * from Kpis where mindmapNodeId = '" + req.params.mindmapNodeId + "' limit 1";
+    logger.debug(`${callerType} getByMindmapNode -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(_k => {
+        logger.debug(`${callerType} getByMindmapNode -> successful, count: ${_k.length}`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} getByMindmapNode -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },

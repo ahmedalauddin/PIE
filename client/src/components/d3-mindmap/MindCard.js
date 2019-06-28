@@ -1,11 +1,11 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/d3-mindmap/NodeDetail.js
- * Created:  2019-06-24
- * Descr:    Provides ability to create KPI and project from mindmap node.
+ * File:     /client/src/components/d3-mindmap/MindCard.js
+ * Created:  2019-06-26
+ * Descr:    Card to capture ideas in the mind map, the idea of post-it notes.
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-24
+ * Modified: 2019-06-27
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -22,6 +22,10 @@ import { getOrgId } from "../../redux";
 import {red} from "@material-ui/core/colors";
 import Checkbox from "@material-ui/core/Checkbox";
 import TableCell from "@material-ui/core/TableCell";
+import Paper from "@material-ui/core/Paper";
+import Avatar from "@material-ui/core/Avatar";
+import DescriptionIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import ButtonBar from "../buttons/ButtonBar";
 
 const styles = theme => ({
   grid: {
@@ -314,90 +318,52 @@ class NodeDetail extends React.Component {
     }
 
     return (
-
-      <div className={classes.paper}>
-        <form onSubmit={this.handleSubmit} noValidate>
-          <Grid container spacing={24}>
-            <Grid item xs={12}>
-              <TextField
-                id="title"
-                label="KPI Title"
-                onChange={this.handleChange("title")}
-                value={this.state.title}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <TextField
-                id="title"
-                label="Description"
-                onChange={this.handleChange("description")}
-                value={this.state.description}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <TextField
-                id="formula"
-                label="KPI Formula"
-                multiline
-                rowsMax="4"
-                value={this.state.formula}
-                onChange={this.handleChange("formula")}
-                fullWidth
-                className={classes.textFieldWide}
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              /><br />
-              <Checkbox
-                key={this.state.projectId}
-                checked={!!+this.state.projectId}
-                tabIndex={-1}
-                onChange={this.handleToggle(this.state.projectId)}
-              />Add Project<br />
-              <TextField
-                id="title"
-                label="Project Title"
-                onChange={this.handleChange("project")}
-                value={this.state.project}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <TextField
-                id="projectDescription"
-                label="Project Description"
-                onChange={this.handleChange("projectDescription")}
-                value={this.state.description}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <br /><br />
-              <Typography component="p">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleSubmit}
-                  className={classes.secondary}
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <div className={classes.itemContainer}>
+            <div className={classes.avatarContainer}>
+              <Avatar className={classes.avatar}>
+                <DescriptionIcon />
+              </Avatar>
+            </div>
+            <div className={classes.baseline}>
+              <div className={classes.inline}>
+                <Typography
+                  style={{ textTransform: "uppercase" }}
+                  color="secondary"
+                  gutterBottom
                 >
-                  {this.state.buttonText}
-                </Button>
+                  Capture Idea
+                </Typography>
+                <Typography variant="h6" gutterBottom>
+                  {this.props.nodeName}
+                </Typography>
+              </div>
+              <div className={classes.inline}>
+                <Typography
+                  style={{ textTransform: "uppercase" }}
+                  color="secondary"
+                  gutterBottom
+                >
+                  Text goes here, text goes here, text goes here, text goes here.
+                </Typography>
+              </div>
+            </div>
+            <div className={classes.inlineRight}>
+              <Typography
+                style={{ textTransform: "uppercase" }}
+                color="secondary"
+                gutterBottom
+              >
+                > Other Amount
               </Typography>
-              <br />
-            </Grid>
-          </Grid>
-        </form>
+              <Typography variant="h4" gutterBottom>
+                Once a month
+              </Typography>
+              <ButtonBar />
+            </div>
+          </div>
+        </Paper>
       </div>
     );
   }

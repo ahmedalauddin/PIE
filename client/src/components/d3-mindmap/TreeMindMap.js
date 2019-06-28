@@ -169,6 +169,7 @@ class TreeMindMap extends React.Component {
     this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
     this.addSibling = this.addSibling.bind(this);
+    this.addNote = this.addNote.bind(this);
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
@@ -243,6 +244,12 @@ class TreeMindMap extends React.Component {
   addSibling = () => {
     let svg = d3.select(this.svg);
     this.addSiblingToSelectedNode(svg);
+  };
+
+  addNote = () => {
+    // Add a post-it note style card to an idea on the mind map.
+    let svg = d3.select(this.svg);
+
   };
 
   deleteNode = () => {
@@ -881,10 +888,10 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.rename}
+              onClick={this.addNote}
               className={classes.outlinedButton}
             >
-              Rename Node
+              Add Note
             </Button>
             <Button
               variant="contained"

@@ -355,7 +355,8 @@ module.exports = {
 
   // Get KPI by matching its mindmap node ID.
   getByMindmapNode(req, res) {
-    let sql = "select * from Kpis where mindmapNodeId = '" + req.params.mindmapNodeId + "' limit 1";
+    let sql = "select K.*, P.title as project, P.description as projectDescription from Kpis K " +
+      "left outer join Projects P on K.projectId = P.id where mindmapNodeId = '" + req.params.mindmapNodeId + "' limit 1;"
     logger.debug(`${callerType} getByMindmapNode -> sql: ${sql}`);
     return models.sequelize
       .query(sql,

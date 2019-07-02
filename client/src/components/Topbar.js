@@ -82,6 +82,10 @@ const AdminMenu = [
     pathname: "/mindmap"
   },
   {
+    label: "Mind Map Old",
+    pathname: "/mindmapold"
+  },
+  {
     label: "Search",
     pathname: "/search"
   },

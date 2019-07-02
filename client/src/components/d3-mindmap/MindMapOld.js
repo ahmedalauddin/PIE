@@ -20,8 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import TreeMindMap from "./TreeMindMap";
-import D3Tree from "./D3Tree";
+import TreeMindMapOld from "./TreeMindMapOld";
 import NodeDetail from "./NodeDetail";
 
 const styles = theme => ({
@@ -159,7 +158,7 @@ const styles = theme => ({
   }
 });
 
-class MindMap extends React.Component {
+class MindMapOld extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -225,7 +224,7 @@ class MindMap extends React.Component {
         <div className={classes.root}>
           <Grid container className={classes.root} spacing={24}>
           <Grid item xs={false} sm={10} md={10} >
-            <TreeMindMap callback={this.sendSelectedNode.bind(this)}/>
+            <TreeMindMapOld callback={this.sendSelectedNode.bind(this)}/>
           </Grid>
           <Snackbar
             open={this.state.openSnackbar}
@@ -243,4 +242,4 @@ class MindMap extends React.Component {
   }
 }
 
-export default withStyles(styles)(MindMap);
+export default withStyles(styles)(MindMapOld);

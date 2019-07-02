@@ -1,14 +1,13 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /client/src/components/common/TableFunctions.js
- * Created:  2019-05-27
+ * Created:  2019-06-29
  * Descr:    Table functions for sorting and ordering used in our tables.
  * Author:   Brad Kaufman
  * -----
  * Modified:
  * Editor:   Brad Kaufman
  */
-import React from 'react';
 
 export function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {

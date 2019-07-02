@@ -19,11 +19,11 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import "./mindmap.scss";
+import PropTypes from 'prop-types';
 
 const styles = theme => ({
   grid: {
-    width: 1500,
+    width: 1200,
     marginTop: 40,
     [theme.breakpoints.down("sm")]: {
       width: "calc(100% - 20px)"
@@ -151,56 +151,16 @@ const styles = theme => ({
   }
 });
 // Use this JSON data to test a new mind map, starting only with root.
-// eslint-disable-next-line no-unused-vars
 const jsonNew = {
   "id": "_ns1nvi0ai",
   "name": "Root"
   };
-const treeData = {
-  "id": "_ns1nvi0ai",
-  "name": "Increase plant availability",
-  "children": [{
-    "id": "_o4r47dq71",
-    "name": "Reduce operating costs",
-    "children": [{
-      "id": "_al6om6znz",
-      "name": "Reduce inventory",
-      "children": [{"id": "_46ct4o4oy", "name": "Increase parts availability"}, {
-        "id": "_ea00nojwy",
-        "name": "Optimize supply chain"
-      }]
-    }, {
-      "id": "_z3uk0721f",
-      "name": "Operating procedures",
-      "children": [{"id": "_je49rrvdq", "name": "TBD"}, {
-        "id": "_riy5iihy9",
-        "name": "yellow"
-      }, {"id": "_sy8zlb7vz", "name": "blue"}]
-    }]
-  }, {"id": "_uajrljib9", "name": "Review supply chain processes"}, {
-    "id": "_uguzpgdta",
-    "name": "Introduce automation",
-    "children": [{
-      "id": "_t8ln1vlwa",
-      "name": "white",
-      "children": [
-        {"id": "_qzltyy8rn", "name": "green"},
-        {"id": "_92xtmt66p", "name": "maroon"}
-      ]
-    }]
-  }]
-};
-const dx = 200;   // what is dx?
-const dy = 125;
-const width = 1200;
-const height = 1000;
+const dx = 80;
+const dy = -180;
+const width = 1000;
 const margin = ({top: 40, right: 120, bottom: 40, left: 80});
-const logCreateNode = true;
-const logAppendPaths = true;
-const logAppendCircle = true;
-const logAppendText = true;
 
-class TreeMindMap extends React.Component {
+class TreeMindMapOld extends React.Component {
   constructor(props) {
     super(props);
     this.update = this.update.bind(this);
@@ -217,6 +177,7 @@ class TreeMindMap extends React.Component {
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
     this.deselectNode = this.deselectNode.bind(this);
+    this.toArray = this.toArray.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.saveJson = this.saveJson.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
@@ -230,15 +191,12 @@ class TreeMindMap extends React.Component {
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      //jsonData: "{\"id\": \"_ns1nvi0ai\", \"name\": \"Increase plant availability\", \"children\": [{\"id\": \"_o4r47dq71\", \"name\": \"Reduce operating costs\", \"children\": [{\"id\": \"_al6om6znz\", \"name\": \"Reduce inventory\", \"children\": [{\"id\": \"_46ct4o4oy\", \"name\": \"Increase parts availability\"}, {\"id\": \"_ea00nojwy\", \"name\": \"Optimize supply chain\"}]}, {\"id\": \"_z3uk0721f\", \"name\": \"Operating procedures\", \"children\": [{\"id\": \"_je49rrvdq\", \"name\": \"TBD\"}, {\"id\": \"_riy5iihy9\", \"name\": \"yellow\"}, {\"id\": \"_sy8zlb7vz\", \"name\": \"blue\"}]}]}, {\"id\": \"_uajrljib9\", \"name\": \"Review supply chain processes\"}, {\"id\": \"_uguzpgdta\", \"name\": \"Introduce automation\", \"children\": [{\"id\": \"_t8ln1vlwa\", \"name\": \"white\", \"children\": [{\"id\": \"_qzltyy8rn\", \"name\": \"green\"}, {\"id\": \"_92xtmt66p\", \"name\": \"maroon\"}]}]}]}",
       jsonData: "",
       isNewMap: false,
       openSnackbar: false,
       message: "",
-      d3DataLeft: undefined,
-      d3DataRight: undefined,
       diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
-      tree: d3.tree().nodeSize([dx, dy]).size([800, 600])
+      tree: d3.tree().nodeSize([dx, dy]).size([800, 750])
     };
     console.log("End TreeMindMap constructor.");
   }
@@ -279,6 +237,7 @@ class TreeMindMap extends React.Component {
   };
 
   appendChild = () => {
+    debugger;
     let svg = d3.select(this.svg);
     this.appendChildToSelectedNode(svg);
   };
@@ -291,6 +250,7 @@ class TreeMindMap extends React.Component {
   addNote = () => {
     // Add a post-it note style card to an idea on the mind map.
     let svg = d3.select(this.svg);
+
   };
 
   deleteNode = () => {
@@ -335,7 +295,7 @@ class TreeMindMap extends React.Component {
     let parent = null;
 
     // Find the node in the JSON.
-    while (nodeInTree.length !== 0) {
+    while (nodeInTree.length != 0) {
       let allCurrentLevelChildren = [];
       for (let node of nodeInTree) {
         if (node.children) {
@@ -408,7 +368,7 @@ class TreeMindMap extends React.Component {
     // append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
     let svg = d3.select(this.svg)
       .attr("width", width)
-      .attr("height", height)
+      .attr("height", dx)
       .style("font", "14px sans-serif")
       .on("click", this.handleClickOnCanvas);
 
@@ -458,7 +418,7 @@ class TreeMindMap extends React.Component {
         }
       });
 
-    return svg.node();
+    return this.state.svg.node();
   };
 
   handleKeypressEsc = (svg) => {
@@ -477,7 +437,7 @@ class TreeMindMap extends React.Component {
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
     const clickedNodeID = d3.select(clickedNode).attr("name");
-    // const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
+    const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
 
     if (currentlySelectedNode.size() > 0 && currentlySelectedNode.attr("name") === clickedNodeID) {
       console.log("renameNode: going into editing mode!");
@@ -548,7 +508,7 @@ class TreeMindMap extends React.Component {
     let nodeFound = false;
     let parent;
 
-    while (parentNodes.length !== 0) {
+    while (parentNodes.length != 0) {
       let allNextLevelParents = [];
       for (let node of parentNodes) {
         if (node.children) {
@@ -650,7 +610,6 @@ class TreeMindMap extends React.Component {
   };
 
   deselectNode = (d,i,nodes) => {
-    console.log("deselectNode called.");
     let idOfSelectedNode =
       d3.select(nodes[i])
         .attr("id");
@@ -682,7 +641,7 @@ class TreeMindMap extends React.Component {
     let nodeFound = false;
     let parent = null;
 
-    while (nodeInTree.length !== 0) {
+    while (nodeInTree.length != 0) {
       let allCurrentLevelChildren = []
       for (let node of nodeInTree) {
         if (node.children) {
@@ -711,204 +670,148 @@ class TreeMindMap extends React.Component {
       .each(this.deselectNode); */
   };
 
-  appendText = (nodeContainers) => {
-    // The "foreignObject" object will display the name text on the node.
-    nodeContainers.append("foreignObject")
-      .attr("x", -80)
-      .attr("y", -35)
-      .attr("width", 200)
-      .attr("height", 40)
-      .append("xhtml:p")
-      .text(d => {
-        if (logAppendText) {
-          console.log("Append text " + d.name +
-            " , at (" + parseFloat(d.x).toFixed(2)
-            + ", " + parseFloat(d.y).toFixed(2) + ")");
-        }
-        return d.data.name;
-      });
-  };
-
-  appendCircle = (nodeContainers, direction) => {
-    //.attr("fill", d => d._children ? "#555" : "#999");
-    let color = "#900";
-    nodeContainers.append("circle")
-      .attr("r", 10)
-      .attr("fill", function (d) {
-        if (logAppendCircle) {
-          console.log("Append circle " + d.name +
-            " , at (" + parseFloat(d.x).toFixed(2)
-            + ", " + parseFloat(d.y).toFixed(2) + ")");
-        }
-        return color;
-      });
-  };
-
-  createLinks = (g, links) => {
-    let link = g.selectAll(".link")
-      .data(links)
-      .enter();
-
-    link.append("path")
-      .attr("class", "link")
-      .attr("d", function (d) {
-        if (logAppendPaths) {
-          console.log("Appending D3 link from " + d.source.data.name +
-            " at (" + parseFloat(d.source.x).toFixed(2)
-            + ", " + parseFloat(d.source.y).toFixed(2) + ") to " +
-            d.target.data.name +
-            " at (" + parseFloat(d.target.x).toFixed(2) +
-            ", " + parseFloat(d.target.y).toFixed(2) + ")");
-        }
-        return "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " "
-          + (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
-      });
-  };
-
-  createNodes = (g, nodes) => {
-    // This should be like line 741 in TreMindMap-629.js
-    // const newNodeContainers = existingNodeContainers.enter().append("g")
-    // Add the the id and name and attributes here.
-    let node = g.selectAll(".node")
-      .data(nodes)
-      .enter()
-      .append("g")
-      .attr("id", (d, i) => `${d.id}`)
-      .attr("name", (d, i) => `${d.data.name}`)
-      .attr("class", function (d) {
-        return "node" + (d.children ? " node--internal" : " node--leaf");
-      })
-      .attr("transform", function (d) {
-        if (logCreateNode) {
-          console.log("Creating node " + d.name +
-            " , translating to (" + parseFloat(d.y).toFixed(2)
-            + ", " + parseFloat(d.x).toFixed(2) + ")");
-        }
-        return "translate(" + d.y + "," + d.x + ")";
-      });
-    return node;
-  };
-
-  shiftTree = (svg) => {
-    let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ",0)");
-    return g;
-  };
-
-  drawTree = (root, direction) => {
-    // eslint-disable-next-line no-unused-vars
-    const duration = 2000;
-
-    let SWITCH_CONST = 1;
-    if (direction === "left") {
-      SWITCH_CONST = -1;
+  toArray = (item, arr, d) => {
+    arr = arr || [];
+    var dr = d || 1;
+    var i = 0, l = item.children?item.children.length:0;
+    arr.push(item);
+    if(item.position && item.position==='left'){
+      dr = -1;
     }
-
-    let svg = d3.select("svg");
-
-    // Shift the entire tree by half it's width
-    let g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
-    let tree = d3.tree()
-      .size([height, SWITCH_CONST * (width - 150) / 2]);
-
-    tree(root);
-
-    const nodes = root.descendants();
-    const links = root.links();
-
-    nodes.forEach((d, i) => {
-      console.log(d)
-      console.log(i)
-      d.id = d.data.id;
-      d.name = d.data.name;
-      d._children = d.children;
-    });
-    // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
-
-    // Create links
-    var link = this.createLinks(g, links);
-
-    // Create nodes
-    var node = this.createNodes(g, nodes);
-
-    // Append circle
-    this.appendCircle(node, direction);
-
-    // Append text
-    this.appendText(node);
-    // this.printNodes("After appendText", root);
-    // Update the nodes
-    node.on("click", this.handleClickOnNode);
-  };
-
-  printNodes = (msg, root) => {
-    // Log where the nodes are.
-    console.log(msg);
-    root.descendants().forEach((d, i) => {
-      console.log("node i: " + i + ", d.depth:" + d.depth + ", data.name: " +
-        d.data.name + ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
-    });
-  };
-
-  loadData = (direction) => {
-    // Loads JSOn data into a D3 tree hierarchy.
-    let d3Data = "";
-    /*
-    if (!this.state.isNewMap) {
-      data = this.state.jsonData;
-    } else {
-      data = jsonNew;
+    item.y = dr * item.y;
+    for(; i < l; i++){
+      this.toArray(item.children[i], arr, dr);
     }
-    */
-    let jsonData = treeData;
-    let split_index = Math.round(jsonData.children.length / 2);
-
-    if (direction === "left") {
-      // Left data
-      d3Data = {
-        name: jsonData.name,
-        children: JSON.parse(JSON.stringify(jsonData.children.slice(split_index)))
-      };
-    } else {
-      // Right data
-      d3Data = {
-        name: jsonData.name,
-        children: JSON.parse(JSON.stringify(jsonData.children.slice(0, split_index)))
-      };
-    }
-    let d3HierarchyData = d3.hierarchy(d3Data);
-    return d3HierarchyData;
-    // Create d3 hierarchies
-    /*
-    this.setState({
-      d3DataRight: d3.hierarchy(dataRight),
-      d3DataLeft: d3.hierarchy(dataLeft)
-    });
-    console.log("setState for left and right trees.");
-     */
+    return arr;
   };
 
   update = (svg) => {
     // d3.hierarchy object is a data structure that represents a hierarchy
     // It has a number of functions defined on it for retrieving things like
     // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    let leftTree = this.loadData("left");
-    let rightTree = this.loadData("right");
+    // const root = d3.hierarchy(treeData);
+    const duration = 100;
+    let root = "";
+    if (!this.state.isNewMap) {
+      root = d3.hierarchy(this.state.jsonData);
+    } else {
+      root = d3.hierarchy(jsonNew);
+    }
 
-    this.drawTree(leftTree, "left");
-    this.drawTree(rightTree, "right");
+    // Set position for the root
+    root.x0 = dy / 2;
+    root.y0 = 600;
 
-    // TODO - may need to save JSON data to state later.
+    root.descendants().forEach((d, i) => {
+      // console.log(d)
+      // console.log(i)
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    const nodes = root.descendants().reverse();
+    const links = root.links();
+
+    // Compute the new tree layout.
+    this.state.tree(root);
+
+    let left = root;
+    let right = root;
+    root.eachBefore(node => {
+      if (node.x < left.x) left = node;
+      if (node.x > right.x) right = node;
+    });
+
+    const height = right.x - left.x + margin.top + margin.bottom;
+    const transition = svg
+      .transition()
+      .duration(duration)
+      .attr("height", height)
+      .attr("viewBox", [-margin.left, left.x - margin.top, width, height])
+      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+    // Update the nodes
+    const existingNodeContainers = svg.select("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id)
+      .data(nodes, d => d.name);
+
+    // Enter any new nodes at the parent's previous position.
+    // Create new node containers that each contains a circle and a text label
+    const newNodeContainers = existingNodeContainers.enter().append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", "node")
+      .attr("transform", d => `translate(${root.y0},${root.x0})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    newNodeContainers.append("circle")
+      .attr("r", 10)
+      .attr("fill", d => d._children ? "#555" : "#999");
+
+    // The "foreignObject" object will display the name text on the node.
+    newNodeContainers.append("foreignObject")
+      .attr("x", -80)
+      .attr("y", -35)
+      .attr("width", 150)
+      .attr("height", 40)
+      .append("xhtml:p")
+      .text(d => d.data.name);
+
+    existingNodeContainers.merge(newNodeContainers)
+      .on("click", this.handleClickOnNode);
+
+    // Transition nodes to their new position.
+    // Increase opacity from 0 to 1 during transition
+    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    // Update the links…
+    const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
+
+    // Enter any new links at the parent's previous position.
+    const newLinkPaths = existingLinkPaths.enter().append("path")
+      .attr("d", d => {
+        const o = {x: root.x0, y: root.y0};
+        return this.state.diagonal({source: o, target: o});
+      });
+
+    // Transition links to their new position.
+    existingLinkPaths.merge(newLinkPaths).transition(transition)
+      .attr("d", this.state.diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    existingLinkPaths.exit().transition(transition).remove()
+      .attr("d", d => {
+        const o = {x: root.x, y: root.y};
+        return this.state.diagonal({source: o, target: o});
+      });
+
+    // Stash the old positions for transition.
+    root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
 
     this.setState({
-      jsonData: treeData,
+      jsonData: root.data,
       isNewMap: false
     });
   };
 
   componentDidMount() {
     // Try to fetch data.
-    /*
     if (this.state.orgId > 0) {
       fetch(`/api/mindmaps-org/${this.state.orgId}`)
         .then(response => {
@@ -918,7 +821,6 @@ class TreeMindMap extends React.Component {
               // process your JSON data further
               if (map[0]) {
                 this.setState({
-                  // jsonData: JSON.stringify(map[0].mapData)
                   jsonData: map[0].mapData
                 });
               } else {
@@ -942,8 +844,6 @@ class TreeMindMap extends React.Component {
         isNewMap: true
       });
     }
-     */
-    this.chart();
   }
 
   // Functions for the snackbar
@@ -1038,4 +938,4 @@ class TreeMindMap extends React.Component {
   }
 }
 
-export default withStyles(styles)(TreeMindMap);
+export default withStyles(styles)(TreeMindMapOld);

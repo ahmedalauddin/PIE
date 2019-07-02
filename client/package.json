@@ -37,6 +37,7 @@
     "react": "^16.8.6",
     "react-bootstrap-dropdown-menu": "^1.1.15",
     "react-chips": "^0.8.0",
+    "react-d3-tree": "^1.13.0",
     "react-dnd": "^7.6.1",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.6",

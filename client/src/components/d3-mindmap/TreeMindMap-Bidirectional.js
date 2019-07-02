@@ -187,8 +187,8 @@ const jsonNew = {
   name: "Root"
 };
 const dx = 80;
-const dy = -180;
-const width = 1000;
+const dy = -140;
+const width = 1400;
 const margin = { top: 40, right: 120, bottom: 40, left: 80 };
 
 class TreeMindMap extends React.Component {

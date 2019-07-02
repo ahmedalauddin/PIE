@@ -11,7 +11,7 @@
 import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {getOrgId, setProjectListFilter, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter, store} from "../../redux";
+import {getOrgId, setProjectListFilter, store} from "../../redux";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -190,7 +190,7 @@ class DashboardFilter extends Component {
 
     return (
       <React.Fragment>
-        <Grid container lg={10} direction="row" justify="center" alignItems="flex-end">
+        <Grid container direction="row" justify="center" alignItems="flex-end">
           <Grid item>
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="selectChips">Status</InputLabel>

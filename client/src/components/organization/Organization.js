@@ -13,7 +13,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Topbar from "../Topbar";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
 import "../../stylesheets/Draft.css";
 import OrganizationDetail from "./OrganizationDetail";
 import Grid from "@material-ui/core/Grid";
@@ -23,14 +22,11 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
 import PersonTable from "../person/PersonTable";
-import ListDepartments from "../department/ListDepartments";
-import SearchIcon from "@material-ui/icons/Search";
 import DepartmentTable from "../department/DepartmentTable";
 import KpiTable from "../kpi/KpiTable";
 
@@ -164,6 +160,7 @@ const styles = theme => ({
 });
 
 // Transition for the snackbar
+// eslint-disable-next-line no-unused-vars
 function TransitionUp(props) {
   return <Slide {...props} direction="up" />;
 }

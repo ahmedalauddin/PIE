@@ -8,7 +8,7 @@
  * Editor:   Brad Kaufman
  */
 
-import { combineReducers, createStore } from "redux";
+import { createStore } from "redux";
 
 /**
  * *setUser*
@@ -281,6 +281,7 @@ export function isAdministrator() {
  * @returns boolean if the user is an administrator.
  */
 export function isLoggedIn() {
+  // eslint-disable-next-line no-unused-vars
   let user = "";
   let loggedIn = false;
   try {

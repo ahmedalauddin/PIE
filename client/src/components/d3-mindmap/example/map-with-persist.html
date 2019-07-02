@@ -161,7 +161,7 @@
           .attr('class', 'node')
           .attr("transform", d => `translate(${root.y0},${root.x0})`)
           .attr("fill-opacity", 0)
-          .attr("stroke-opacity", 0);   
+          .attr("stroke-opacity", 0);
 
 
         newNodeContainers.append("circle")
@@ -482,8 +482,8 @@
       diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 
       var width = 1000;
-      var dx = 200;
-      var dy = width / 4;
+      var dx = 35;
+      var dy = width / 6;
       var tree = d3.tree().nodeSize([dx, dy]);
 
       var margin = ({top: 40, right: 120, bottom: 40, left: 80});

@@ -807,14 +807,20 @@ class TreeMindMap extends React.Component {
 
     // Shift the entire tree by half it's width
     let g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
+
     let tree = d3.tree()
       .size([height, SWITCH_CONST * (width - 150) / 2]);
 
     tree(root);
 
+    const transition = svg
+      .transition()
+      .duration(duration);
+
     const nodes = root.descendants();
     const links = root.links();
 
+    // todo - maybe remove this
     nodes.forEach((d, i) => {
       console.log(d)
       console.log(i)

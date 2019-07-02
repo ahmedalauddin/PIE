@@ -283,6 +283,8 @@
         appendText(node);
         // this.printNodes("After appendText", root);
 
+        node.on("click", this.handleClickOnNode);
+
       }
 
       createLinks = (g, links) => {
@@ -485,7 +487,7 @@
       };
 
       handleClickOnNode = (d, i, nodes) => {
-
+        debugger;
         const currentlySelectedNode =
           d3.selectAll(nodes)
             .filter('.node-selected');

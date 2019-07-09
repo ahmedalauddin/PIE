@@ -21,7 +21,6 @@ import Paper from '@material-ui/core/Paper';
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import TreeMindMap from "./TreeMindMap";
-import D3Tree from "./D3Tree";
 import NodeDetail from "./NodeDetail";
 
 const styles = theme => ({

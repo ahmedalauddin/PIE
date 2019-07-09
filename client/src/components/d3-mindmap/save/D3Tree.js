@@ -14,7 +14,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import Tree from 'react-d3-tree';
 import { red, grey } from "@material-ui/core/colors";
-import "./tree-styles.scss";
+import "../tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";

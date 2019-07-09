@@ -231,7 +231,7 @@ class TreeMindMap extends React.Component {
       orgName: getOrgName(),
       orgId: getOrgId(),
       //jsonData: "{\"id\": \"_ns1nvi0ai\", \"name\": \"Increase plant availability\", \"children\": [{\"id\": \"_o4r47dq71\", \"name\": \"Reduce operating costs\", \"children\": [{\"id\": \"_al6om6znz\", \"name\": \"Reduce inventory\", \"children\": [{\"id\": \"_46ct4o4oy\", \"name\": \"Increase parts availability\"}, {\"id\": \"_ea00nojwy\", \"name\": \"Optimize supply chain\"}]}, {\"id\": \"_z3uk0721f\", \"name\": \"Operating procedures\", \"children\": [{\"id\": \"_je49rrvdq\", \"name\": \"TBD\"}, {\"id\": \"_riy5iihy9\", \"name\": \"yellow\"}, {\"id\": \"_sy8zlb7vz\", \"name\": \"blue\"}]}]}, {\"id\": \"_uajrljib9\", \"name\": \"Review supply chain processes\"}, {\"id\": \"_uguzpgdta\", \"name\": \"Introduce automation\", \"children\": [{\"id\": \"_t8ln1vlwa\", \"name\": \"white\", \"children\": [{\"id\": \"_qzltyy8rn\", \"name\": \"green\"}, {\"id\": \"_92xtmt66p\", \"name\": \"maroon\"}]}]}]}",
-      jsonData: "",
+      jsonData: treeData,
       isNewMap: false,
       openSnackbar: false,
       message: "",
@@ -489,11 +489,22 @@ class TreeMindMap extends React.Component {
     this.props.callback(selectedNodeId);
   };
 
-  handleClickOnNode = (d,i,nodes) => {
-    console.log("handleClickOnNode: clicked on a node.");
+  getSelectedNode = (nodes, i) => {
+    // Had to change the implementation of this to use the index instead of using
+    // a filter on ".node-selected". Come back and see why that didn't work if there is time.
+    /*
     const currentlySelectedNode =
       d3.selectAll(nodes)
-        .filter(".node-selected")
+        .filter(".node-selected");
+     */
+    const currentlySelectedNode =
+      d3.select(nodes[i]);
+    return currentlySelectedNode;
+  };
+
+  handleClickOnNode = (d,i,nodes) => {
+    console.log("handleClickOnNode: clicked on a node.");
+    const currentlySelectedNode = this.getSelectedNode(nodes, i);
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
@@ -582,6 +593,7 @@ class TreeMindMap extends React.Component {
     const selectedNode = svg
         .selectAll("g.node")
         .filter(".node-selected");
+
     const idOfSelectedNode = selectedNode.attr("id");
 
     this.removeSelectedNodeFromData(svg);
@@ -857,16 +869,9 @@ class TreeMindMap extends React.Component {
   };
 
   loadData = (direction) => {
-    // Loads JSOn data into a D3 tree hierarchy.
+    // Loads JSON data into a D3 tree hierarchy.
     let d3Data = "";
-    /*
-    if (!this.state.isNewMap) {
-      data = this.state.jsonData;
-    } else {
-      data = jsonNew;
-    }
-    */
-    let jsonData = treeData;
+    let jsonData = this.state.jsonData;
     let split_index = Math.round(jsonData.children.length / 2);
 
     if (direction === "left") {
@@ -882,6 +887,11 @@ class TreeMindMap extends React.Component {
         children: JSON.parse(JSON.stringify(jsonData.children.slice(0, split_index)))
       };
     }
+
+    /***********
+     * TODO: somehow have to save both trees into state data.
+     */
+
     let d3HierarchyData = d3.hierarchy(d3Data);
     return d3HierarchyData;
     // Create d3 hierarchies
@@ -904,7 +914,7 @@ class TreeMindMap extends React.Component {
     this.drawTree(leftTree, "left");
     this.drawTree(rightTree, "right");
 
-    // TODO - may need to save JSON data to state later.
+    // TODO - may need to split the JSON into right and left too.
 
     this.setState({
       jsonData: treeData,
@@ -949,7 +959,9 @@ class TreeMindMap extends React.Component {
       });
     }
      */
+
     this.chart();
+
   }
 
   // Functions for the snackbar

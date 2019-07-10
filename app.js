@@ -82,6 +82,7 @@ models.sequelize
     require("./server/routes/task")(router);
     require("./server/routes/taskpriority")(router);
     require("./server/routes/taskstatus")(router);
+    require("./server/routes/idea")(router);
     require("./server/routes/kpitag")(router);
     require("./server/routes/auth")(router);
   })

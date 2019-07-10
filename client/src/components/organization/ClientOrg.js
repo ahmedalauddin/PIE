@@ -137,7 +137,6 @@ class ClientOrg extends React.Component {
                       <Typography variant="h5" component="h2">
                         <FormControl className={classes.formControl}>
                           <InputLabel shrink htmlFor="org-simple">
-                            Organization
                           </InputLabel>
                           <Select
                             value={this.state.orgId}

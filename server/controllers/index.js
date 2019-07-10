@@ -13,6 +13,7 @@ const Datasource = require("./datasource");
 const Department = require("./department");
 const Kpi = require("./kpi");
 const KpiTag = require("./kpitag");
+const Idea = require("./idea");
 const Milestone = require("./milestone");
 const Mindmap = require("./mindmap");
 const Organization = require("./organization");
@@ -31,6 +32,7 @@ module.exports = {
   Department,
   Kpi,
   KpiTag,
+  Idea,
   Milestone,
   Mindmap,
   Organization,

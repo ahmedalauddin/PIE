@@ -22,6 +22,19 @@ import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import TreeMindMap from "./TreeMindMap";
 import NodeDetail from "./NodeDetail";
+import ListIdeas from "./ListIdeas";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import AppBar from "@material-ui/core/AppBar";
+import Typography from "@material-ui/core/Typography";
+
+function TabContainer(props) {
+  return (
+    <Typography component="div" style={{ padding: 8 * 3 }}>
+      {props.children}
+    </Typography>
+  );
+}
 
 const styles = theme => ({
   grid: {
@@ -161,12 +174,14 @@ const styles = theme => ({
 class MindMap extends React.Component {
   constructor(props) {
     super(props);
+    this.handleTabChange = this.handleTabChange.bind(this);
     this.state = {
       orgName: getOrgName(),
       orgId: getOrgId(),
       selectedNodeId: "",
       openSnackbar: false,
-      message: ""
+      message: "",
+      tabValue: 0
     };
   }
 
@@ -214,6 +229,12 @@ class MindMap extends React.Component {
     }
   };
 
+  handleTabChange = (event, newValue) => {
+    this.setState({
+      tabValue: newValue
+    });
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -223,18 +244,36 @@ class MindMap extends React.Component {
         <Topbar />
         <div className={classes.root}>
           <Grid container className={classes.root} spacing={24}>
-          <Grid item xs={false} sm={10} md={10} >
-            <TreeMindMap callback={this.sendSelectedNode.bind(this)}/>
-          </Grid>
-          <Snackbar
-            open={this.state.openSnackbar}
-            onClose={this.handleClose}
-            TransitionComponent={this.state.Transition}
-            ContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">{this.state.message}</span>}
-          />
+            <Grid item xs={false} sm={8} md={8} >
+              <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
+            </Grid>
+            <Grid item xs={false} sm={4} md={4} >
+              <div className={classes.root}>
+                <AppBar position="static">
+                  <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
+                    <Tab label="Node" />
+                    <Tab label="Ideas" />
+                  </Tabs>
+                </AppBar>
+                {this.state.tabValue === 0 && (
+                  <TabContainer>
+                    <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+                  </TabContainer>)}
+                {this.state.tabValue === 1 && (
+                  <TabContainer>
+                    <ListIdeas />
+                  </TabContainer>)}
+              </div>
+            </Grid>
+            <Snackbar
+              open={this.state.openSnackbar}
+              onClose={this.handleClose}
+              TransitionComponent={this.state.Transition}
+              ContentProps={{
+                "aria-describedby": "message-id"
+              }}
+              message={<span id="message-id">{this.state.message}</span>}
+            />
           </Grid>
         </div>
       </React.Fragment>

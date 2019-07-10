@@ -394,6 +394,8 @@ class TreeMindMapOld extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
+    // Don't need key event handlers for now.
+    /*
     d3.select("body")
       .on("keydown", function(e) {
         // eslint-disable-next-line no-console
@@ -407,15 +409,16 @@ class TreeMindMapOld extends React.Component {
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
           addSiblingToSelectedNode(svg);
-        /*
+
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
-          removeSelectedNode(svg); */
+          removeSelectedNode(svg);
         } else if(d3.event.keyCode === 27) {
           console.log("esc - deselect node");
           handleKeypressEsc(svg);
         }
       });
+     */
 
     return this.state.svg.node();
   };

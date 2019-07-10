@@ -20,6 +20,12 @@ import Typography from "@material-ui/core/Typography";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 const styles = theme => ({
   grid: {
@@ -124,9 +130,6 @@ const styles = theme => ({
   expandOpen: {
     transform: "rotate(180deg)"
   },
-  avatar: {
-    backgroundColor: red[500]
-  },
   container: {
     display: "flex",
     flexWrap: "wrap"
@@ -209,7 +212,6 @@ class TreeMindMap extends React.Component {
     this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
     this.addSibling = this.addSibling.bind(this);
-    this.addNote = this.addNote.bind(this);
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
@@ -223,6 +225,7 @@ class TreeMindMap extends React.Component {
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
+    this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
     this.ID = this.ID.bind(this);
     this.state = {
       width: 1000,
@@ -238,7 +241,10 @@ class TreeMindMap extends React.Component {
       d3DataLeft: undefined,
       d3DataRight: undefined,
       diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
-      tree: d3.tree().nodeSize([dx, dy]).size([800, 600])
+      tree: d3.tree().nodeSize([dx, dy]).size([800, 600]),
+      open: false,
+      setOpen: false,
+      idea: ""
     };
     console.log("End TreeMindMap constructor.");
   }
@@ -286,11 +292,6 @@ class TreeMindMap extends React.Component {
   addSibling = () => {
     let svg = d3.select(this.svg);
     this.addSiblingToSelectedNode(svg);
-  };
-
-  addNote = () => {
-    // Add a post-it note style card to an idea on the mind map.
-    let svg = d3.select(this.svg);
   };
 
   deleteNode = () => {
@@ -435,6 +436,7 @@ class TreeMindMap extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
+    /*
     d3.select("body")
       .on("keydown", function(e) {
         // eslint-disable-next-line no-console
@@ -448,15 +450,15 @@ class TreeMindMap extends React.Component {
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
           addSiblingToSelectedNode(svg);
-        /*
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
-          removeSelectedNode(svg); */
+          removeSelectedNode(svg);
         } else if(d3.event.keyCode === 27) {
           console.log("esc - deselect node");
           handleKeypressEsc(svg);
         }
       });
+     */
 
     return svg.node();
   };
@@ -743,7 +745,8 @@ class TreeMindMap extends React.Component {
 
   appendCircle = (nodeContainers, direction) => {
     //.attr("fill", d => d._children ? "#555" : "#999");
-    let color = "#900";
+    // let color = "#900";
+    let color = "#555";
     nodeContainers.append("circle")
       .attr("r", 10)
       .attr("fill", function (d) {
@@ -793,8 +796,8 @@ class TreeMindMap extends React.Component {
       .attr("transform", function (d) {
         if (logCreateNode) {
           console.log("Creating node " + d.name +
-            " , translating to (" + parseFloat(d.y).toFixed(2)
-            + ", " + parseFloat(d.x).toFixed(2) + ")");
+            " , translating to (" + parseFloat(d.y).toFixed(2) +
+            ", " + parseFloat(d.x).toFixed(2) + ")");
         }
         return "translate(" + d.y + "," + d.x + ")";
       });
@@ -924,7 +927,7 @@ class TreeMindMap extends React.Component {
 
   componentDidMount() {
     // Try to fetch data.
-    /*
+
     if (this.state.orgId > 0) {
       fetch(`/api/mindmaps-org/${this.state.orgId}`)
         .then(response => {
@@ -958,7 +961,6 @@ class TreeMindMap extends React.Component {
         isNewMap: true
       });
     }
-     */
 
     this.chart();
 
@@ -972,6 +974,64 @@ class TreeMindMap extends React.Component {
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
+
+  handleClickOpen = () => {
+    this.setState({
+      open: true
+    });
+  };
+
+  handleDialogClose = () => {
+    this.setState({
+      open: false
+    });
+  };
+
+  handleIdeaChange = name => event => {
+    this.setState({ idea: event.target.value });
+  };
+
+
+  handleSubmitIdea = (event) => {
+    event.preventDefault();
+    // Save idea
+    const orgId = getOrgId();
+    const ideaId = 0;   // may need this later for editing ideas.
+    let apiPath = "";
+    let successMessage = "";
+    let method = "";
+
+    if (ideaId > 0) {
+      // For edit
+      apiPath = "/api/ideas/" + orgId;
+      successMessage = "Idea updated."
+      method = "PUT";
+    } else {
+      // For create
+      apiPath = "/api/ideas/";
+      successMessage = "Idea created."
+      method = "POST";
+    }
+
+    setTimeout(() => {
+      fetch(apiPath, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then(() => {
+          this.setState({
+            message: successMessage,
+            openSnackbar: true,
+            open: false
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }, 2000);
+  };
+
 
   render() {
     const { classes } = this.props;
@@ -1007,7 +1067,7 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.addNote}
+              onClick={this.handleClickOpen}
               className={classes.outlinedButton}
             >
               Add Note
@@ -1046,11 +1106,38 @@ class TreeMindMap extends React.Component {
             onClose={this.handleClose}
             TransitionComponent={this.state.Transition}
             ContentProps={{
-              'aria-describedby': 'message-id',
+              "aria-describedby": "message-id"
             }}
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
+        <Dialog open={this.state.open} onClose={this.handleDialogClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Capture idea</DialogTitle>
+          <DialogContent>
+            <TextField
+              id="idea"
+              multiline
+              autofocus
+              rowsMax="6"
+              value={this.state.idea}
+              onChange={this.handleIdeaChange("idea")}
+              className={classes.textFieldWide}
+              fullWidth
+              margin="dense"
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleDialogClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleSubmitIdea} color="primary">
+              Save Idea
+            </Button>
+          </DialogActions>
+        </Dialog>
      </React.Fragment>
     );
   }

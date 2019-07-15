@@ -193,15 +193,18 @@ const treeData = {
     }]
   }]
 };
+const duration = 1000;
 const dx = 200;   // what is dx?
 const dy = 125;
-const width = 1200;
+const width = 1000;
 const height = 1000;
+const DEBUG = true;
+//const renderLink = d3.linkVertical().x(d => d.x).y(d => d.y);
+const Node = d3.hierarchy.prototype.constructor;
 const margin = ({top: 40, right: 120, bottom: 40, left: 80});
-const logCreateNode = true;
-const logAppendPaths = true;
-const logAppendCircle = true;
-const logAppendText = true;
+// See https://bl.ocks.org/mbostock/3184089
+const renderLink = d3.linkHorizontal().x(d => d.x).y(d => d.y);
+const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 
 class TreeMindMap extends React.Component {
   constructor(props) {
@@ -221,12 +224,21 @@ class TreeMindMap extends React.Component {
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.saveJson = this.saveJson.bind(this);
+    this.findNode = this.findNode.bind(this);
+    this.findParentNode = this.findParentNode.bind(this);
+    this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
+    this.findSelectedNode = this.findSelectedNode.bind(this);
+    this.logCreateNode = this.logCreateNode.bind(this);
+    this.logAppendPaths = this.logAppendPaths.bind(this);
+    this.logAppendText = this.logAppendText.bind(this);
+    this.logAppendCircle = this.logAppendCircle.bind(this);
+    this.generateLinkPath = this.generateLinkPath.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
-    this.ID = this.ID.bind(this);
+    this.createId = this.createId.bind(this);
     this.state = {
       width: 1000,
       height: 1000,
@@ -240,7 +252,6 @@ class TreeMindMap extends React.Component {
       message: "",
       d3DataLeft: undefined,
       d3DataRight: undefined,
-      diagonal: d3.linkHorizontal().x(d => d.y).y(d => d.x),
       tree: d3.tree().nodeSize([dx, dy]).size([800, 600]),
       open: false,
       setOpen: false,
@@ -249,7 +260,7 @@ class TreeMindMap extends React.Component {
     console.log("End TreeMindMap constructor.");
   }
 
-  ID = () => {
+  createId = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
   };
 
@@ -310,32 +321,22 @@ class TreeMindMap extends React.Component {
   };
 
   rename = () => {
+    // Renames a node.
     let svg = d3.select(this.svg);
+    let selectedNode =
     console.log("rename node");
-    let selectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected");
-
-    let idOfSelectedNode = selectedNode.attr("id");
-    console.log("idOfSelectedNode: " + idOfSelectedNode);
+    console.log("idOfSelectedNode: " + this.findSelectedNodeId(svg));
     this.editNode(selectedNode);
   };
 
-  appendChildToSelectedNode = (svg) => {
-    console.log("appendChildToSelectedNode");
-    let idOfSelectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .attr("id");
-
+  findNode = (idOfSelectedNode) => {
+    // Find the node in the JSON data.
     console.log("idOfSelectedNode: " + idOfSelectedNode);
 
     let nodeInTree = [this.state.jsonData];
-
     let nodeFound = false;
-    let parent = null;
+    let parentNode = null;
 
-    // Find the node in the JSON.
     while (nodeInTree.length !== 0) {
       let allCurrentLevelChildren = [];
       for (let node of nodeInTree) {
@@ -344,7 +345,7 @@ class TreeMindMap extends React.Component {
         }
         if (node.id === idOfSelectedNode) {
           nodeFound = true;
-          parent = node;
+          parentNode = node;
         }
       }
       if (nodeFound) break;
@@ -353,23 +354,15 @@ class TreeMindMap extends React.Component {
       }
     }
 
-    let child = {
-      name: "",
-      id: this.ID()
-    };
-
-    if (parent.children) parent.children.push(child);
-    else parent.children = [child];
-
-    this.update(svg);
+    // TODO: Shouldn't be called parentNode probably.
+    if (!parentNode) {
+      console.log("findNode, error: parentNode not found");
+    }
+    return parentNode;
   };
 
-  addSiblingToSelectedNode = (svg) => {
-    let idOfSelectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .attr("id");
-
+  findParentNode = (idOfSelectedNode) => {
+    // Find the parent of the node in the JSON data.
     console.log("idOfSelectedNode: " + idOfSelectedNode);
 
     let parentNodes = [this.state.jsonData];
@@ -393,10 +386,52 @@ class TreeMindMap extends React.Component {
       }
     }
 
+    if (!parent) {
+      console.log("findNode, error: parentNode not found");
+    }
+    return parent;
+  };
+
+  findSelectedNodeId = (svg) => {
+    let idOfSelectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .attr("id");
+    return idOfSelectedNode;
+  };
+
+  findSelectedNode = (svg) => {
+    let nodeSelected = svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+    return nodeSelected;
+  };
+
+  appendChildToSelectedNode = (svg) => {
+    console.log("appendChildToSelectedNode");
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let parent = this.findNode(idOfSelectedNode);
+
+    // Create the child.
     let child = {
-      id: this.ID()
+      name: "",
+      id: this.createId()
     };
-    parent.children.push(child);
+
+    if (parent.children) parent.children.push(child);
+    else parent.children = [child];
+
+    this.update(svg);
+  };
+
+  addSiblingToSelectedNode = (svg) => {
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let parent = this.findParentNode(idOfSelectedNode);
+
+    let child = {
+      id: this.createId()
+    };
+    parent.push(child);
     this.update(svg);
   };
 
@@ -552,39 +587,15 @@ class TreeMindMap extends React.Component {
 
   removeSelectedNodeFromData = (svg) => {
     // Removes selected node from the JSON data, stored in state.
-    let idOfSelectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .attr("id");
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
     let jsonData = [this.state.jsonData];
-    let parentNodes = [this.state.jsonData];
-    let nodeFound = false;
-    let parent;
-
-    while (parentNodes.length !== 0) {
-      let allNextLevelParents = [];
-      for (let node of parentNodes) {
-        if (node.children) {
-          allNextLevelParents = allNextLevelParents.concat(node.children);
-          if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
-            nodeFound = true;
-            parent = node;
-          }
-        }
-      }
-      if (nodeFound) {
-        break;
-      } else {
-        parentNodes = allNextLevelParents;
-      }
-    }
+    let parent =this.findParentNode(idOfSelectedNode);
 
     if (parent && parent.children) {
       // This deletes from the JSON.
       parent.children = parent.children.filter(child => child.id !== idOfSelectedNode);
       parent.children.length === 0 && delete parent.children;
     }
-    console.log("JSON for parentNodes now is:" + JSON.stringify(parentNodes));
     console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
     this.setState({
       jsonData: jsonData
@@ -592,11 +603,7 @@ class TreeMindMap extends React.Component {
   };
 
   removeSelectedNode = (svg) => {
-    const selectedNode = svg
-        .selectAll("g.node")
-        .filter(".node-selected");
-
-    const idOfSelectedNode = selectedNode.attr("id");
+    let selectedNode = this.findSelectedNode(svg);
 
     this.removeSelectedNodeFromData(svg);
 
@@ -694,24 +701,7 @@ class TreeMindMap extends React.Component {
     let nodeInTree = [this.state.jsonData];
 
     let nodeFound = false;
-    let parent = null;
-
-    while (nodeInTree.length !== 0) {
-      let allCurrentLevelChildren = []
-      for (let node of nodeInTree) {
-        if (node.children) {
-          allCurrentLevelChildren = allCurrentLevelChildren.concat(node.children);
-        }
-        if (node.id === idOfSelectedNode) {
-          nodeFound = true;
-          parent = node;
-        }
-      }
-      if (nodeFound) break;
-      else {
-        nodeInTree = allCurrentLevelChildren;
-      }
-    }
+    let parent = this.findNode(idOfSelectedNode);
     parent.name = newValue;
   };
 
@@ -734,11 +724,7 @@ class TreeMindMap extends React.Component {
       .attr("height", 40)
       .append("xhtml:p")
       .text(d => {
-        if (logAppendText) {
-          console.log("Append text " + d.name +
-            " , at (" + parseFloat(d.x).toFixed(2)
-            + ", " + parseFloat(d.y).toFixed(2) + ")");
-        }
+        // this.logAppendText(d, true);
         return d.data.name;
       });
   };
@@ -750,11 +736,7 @@ class TreeMindMap extends React.Component {
     nodeContainers.append("circle")
       .attr("r", 10)
       .attr("fill", function (d) {
-        if (logAppendCircle) {
-          console.log("Append circle " + d.name +
-            " , at (" + parseFloat(d.x).toFixed(2)
-            + ", " + parseFloat(d.y).toFixed(2) + ")");
-        }
+        // this.logAppendCircle(d, true);
         return color;
       });
   };
@@ -767,23 +749,52 @@ class TreeMindMap extends React.Component {
     link.append("path")
       .attr("class", "link")
       .attr("d", function (d) {
-        if (logAppendPaths) {
-          console.log("Appending D3 link from " + d.source.data.name +
-            " at (" + parseFloat(d.source.x).toFixed(2)
-            + ", " + parseFloat(d.source.y).toFixed(2) + ") to " +
-            d.target.data.name +
-            " at (" + parseFloat(d.target.x).toFixed(2) +
-            ", " + parseFloat(d.target.y).toFixed(2) + ")");
-        }
         return "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " "
           + (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
       });
+  };
+
+  logAppendCircle = (d, ifLogging) => {
+    if (ifLogging) {
+      console.log("Append circle " + d.name +
+        " , at (" + parseFloat(d.x).toFixed(2)
+        + ", " + parseFloat(d.y).toFixed(2) + ")");
+    }
+  };
+
+  logAppendText = (d, ifLogging) => {
+    if (ifLogging) {
+      console.log("Append text " + d.name +
+        " , at (" + parseFloat(d.x).toFixed(2)
+        + ", " + parseFloat(d.y).toFixed(2) + ")");
+    }
+  };
+
+  logCreateNode = (d, ifLogging) => {
+    if (ifLogging) {
+      console.log("Creating node " + d.name +
+        " , translating to (" + parseFloat(d.y).toFixed(2) +
+        ", " + parseFloat(d.x).toFixed(2) + ")");
+    }
+  };
+
+  logAppendPaths = (d, ifLogging) => {
+    if (ifLogging) {
+      console.log("Appending D3 link from " + d.source.data.name +
+        " at (" + parseFloat(d.source.x).toFixed(2)
+        + ", " + parseFloat(d.source.y).toFixed(2) + ") to " +
+        d.target.data.name +
+        " at (" + parseFloat(d.target.x).toFixed(2) +
+        ", " + parseFloat(d.target.y).toFixed(2) + ")");
+    }
   };
 
   createNodes = (g, nodes) => {
     // This should be like line 741 in TreMindMap-629.js
     // const newNodeContainers = existingNodeContainers.enter().append("g")
     // Add the the id and name and attributes here.
+
+    // .enter() is for the new nodes.
     let node = g.selectAll(".node")
       .data(nodes)
       .enter()
@@ -794,11 +805,6 @@ class TreeMindMap extends React.Component {
         return "node" + (d.children ? " node--internal" : " node--leaf");
       })
       .attr("transform", function (d) {
-        if (logCreateNode) {
-          console.log("Creating node " + d.name +
-            " , translating to (" + parseFloat(d.y).toFixed(2) +
-            ", " + parseFloat(d.x).toFixed(2) + ")");
-        }
         return "translate(" + d.y + "," + d.x + ")";
       });
     return node;
@@ -809,10 +815,313 @@ class TreeMindMap extends React.Component {
     return g;
   };
 
+  drawTreev2 = (root, direction) => {
+    let svg = d3.select("svg");
+    let i = 0;
+    let SWITCH_CONST = 1;
+    if (direction === "left") {
+      SWITCH_CONST = -1;
+    }
+    // Compute the layout.
+    let tree = d3.tree()
+      .size([height, SWITCH_CONST * (width - 150) / 2]);
+
+
+    // Shift the entire tree by half it's width
+    var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
+    tree(root);
+    let nodes = root.descendants();
+    var links = root.links();
+    // Set both root nodes to be dead center vertically
+    nodes[0].x = height / 2;
+
+    nodes.forEach((d, i) => {
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    // Create the link lines.
+    var link = g.selectAll(".link")
+      .data(links)
+      .enter();
+
+    link.append("path")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        return "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " " +
+          (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
+      });
+
+    // Create the node circles.
+    var node = g.selectAll(".node")
+      .data(nodes)
+      .enter()
+      .append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", function(d) {
+        return "node" + (d.children ? " node--internal" : " node--leaf");
+      })
+      .attr("transform", function(d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      });
+
+    node.append("circle")
+      .attr("r", function(d, i) {
+        return 10;
+      });
+
+    // Update the nodes
+    node.on("click", this.handleClickOnNode);
+
+
+  };
+
+  generateLinkPath = (source, target) => {
+    let path = d3.path();
+    path.moveTo(target.y, target.x);
+    path.bezierCurveTo((target.y+source.y)/2, target.x,
+      (target.y+source.y)/2, source.x, source.y, source.x);
+    return path.toString();
+  };
+
   drawTree = (root, direction) => {
+    let svg = d3.select("svg");
+    let i = 0;
+    let SWITCH_CONST = 1;
+    if (direction === "left") {
+      SWITCH_CONST = -1;
+    }
+    // Compute the layout.
+    let tree = d3.tree()
+      .size([height, SWITCH_CONST * (width - 150) / 2]);
+
+    // Shift the entire tree by half it's width
+    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+    root.descendants().forEach((d, i) => {
+      // console.log(d)
+      // console.log(i)
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    const nodes = root.descendants();
+    const nodes1 = root.descendants().slice(1);
+
+    // Compute the new tree layout.
+    tree(root);
+
+    // Set both root nodes to be dead center vertically
+    nodes[0].x = height / 2;
+
+    const transition = svg
+      .transition()
+      .duration(duration)
+      .attr("height", height)
+      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+    // Update the nodes
+    const existingNodeContainers = svg.select("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id)
+      .data(nodes, d => d.name);
+
+    // Enter any new nodes at the parent's previous position.
+    // Create new node containers that each contains a circle and a text label
+    const newNodeContainers = existingNodeContainers.enter().append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", "node")
+      .attr("transform", d => `translate(${root.y0},${root.x0})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    newNodeContainers.append("circle")
+      .attr("r", 10)
+      .attr("fill", d => d._children ? "#555" : "#999");
+
+    // The "foreignObject" object will display the name text on the node.
+    newNodeContainers.append("foreignObject")
+      .attr("x", -80)
+      .attr("y", -35)
+      .attr("width", 150)
+      .attr("height", 40)
+      .append("xhtml:p")
+      .text(d => d.data.name);
+
+    existingNodeContainers.merge(newNodeContainers)
+      .on("click", this.handleClickOnNode);
+
+    // Transition nodes to their new position.
+    // Increase opacity from 0 to 1 during transition
+    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    // Update the links…
+    let link = svg.selectAll("path.link")
+      .data(nodes1, d => {
+        return d.id || (d.id = ++i);
+      })
+
+    link.enter().insert("path", "g")
+      .attr("class", "link")
+      .merge(link)
+      .transition().duration(duration)
+      .attr("d", d => {
+        return this.generateLinkPath(d, d.parent);
+      });
+
+    link.exit().remove();
+
+    // Stash the old positions for transition.
+    root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  drawTreev3 = (root, direction) => {
+
+    let svg = d3.select("svg");
+    let i = 0;
+    let SWITCH_CONST = 1;
+    if (direction === "left") {
+      SWITCH_CONST = -1;
+    }
+    // Compute the layout.
+    let tree = d3.tree()
+      .size([height, SWITCH_CONST * (width - 150) / 2]);
+
+    // Shift the entire tree by half it's width
+    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+
+    root.descendants().forEach((d, i) => {
+      // console.log(d)
+      // console.log(i)
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    const nodes = root.descendants();
+    const links = root.links();
+
+
+    // Compute the new tree layout.
+    tree(root);
+
+    // Set both root nodes to be dead center vertically
+    nodes[0].x = height / 2;
+
+    const transition = svg
+      .transition()
+      .duration(duration)
+      .attr("height", height)
+      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+    // Update the nodes
+    const existingNodeContainers = svg.select("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id)
+      .data(nodes, d => d.name);
+
+    // Enter any new nodes at the parent's previous position.
+    // Create new node containers that each contains a circle and a text label
+    const newNodeContainers = existingNodeContainers.enter().append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", "node")
+      .attr("transform", d => `translate(${root.y0},${root.x0})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    newNodeContainers.append("circle")
+      .attr("r", 10)
+      .attr("fill", d => d._children ? "#555" : "#999");
+
+    // The "foreignObject" object will display the name text on the node.
+    newNodeContainers.append("foreignObject")
+      .attr("x", -80)
+      .attr("y", -35)
+      .attr("width", 150)
+      .attr("height", 40)
+      .append("xhtml:p")
+      .text(d => d.data.name);
+
+    existingNodeContainers.merge(newNodeContainers)
+      .on("click", this.handleClickOnNode);
+
+    // Transition nodes to their new position.
+    // Increase opacity from 0 to 1 during transition
+    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    // Update the links…
+    // const existingLinkPaths1 = svg.select("#links").selectAll("path").data(links, d => d.target.id);
+    const existingLinkPaths = svg.select("#links")
+      .selectAll("path")
+      .data(links);
+
+
+    // Enter any new links at the parent's previous position.
+    /*
+    const newLinkPaths1 = existingLinkPaths.enter().append("path")
+      .attr("d", d => {
+        const o = {x: root.x0, y: root.y0};
+        return diagonal({source: o, target: o});
+      });
+    */
+
+    const newLinkPaths = existingLinkPaths
+      .data(links)
+      .enter()
+      .append("path");
+
+
+    // Transition links to their new position.
+    existingLinkPaths.merge(newLinkPaths).transition(transition)
+      .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    existingLinkPaths.exit().transition(transition).remove()
+      .attr("d", d => {
+        const o = {x: root.x, y: root.y};
+        return diagonal({source: o, target: o});
+      });
+
+    // Stash the old positions for transition.
+    root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  drawTreev1 = (root, direction) => {
     // eslint-disable-next-line no-unused-vars
     const duration = 2000;
-
+    let i = 0;
     let SWITCH_CONST = 1;
     if (direction === "left") {
       SWITCH_CONST = -1;
@@ -846,18 +1155,29 @@ class TreeMindMap extends React.Component {
     // Set both root nodes to be dead center vertically
     nodes[0].x = height / 2;
 
+    // Update the nodes…
+    // Just added, 7/12
+    var node = svg.selectAll("g.node")
+      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
     // Create links
-    var link = this.createLinks(g, links);
+    let link = this.createLinks(g, links);
 
     // Create nodes
-    var node = this.createNodes(g, nodes);
+    node = this.createNodes(g, nodes);
+
+    // Transition exiting nodes to the parent's new position.
+    var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+      .remove();
 
     // Append circle
     this.appendCircle(node, direction);
 
     // Append text
     this.appendText(node);
-    // this.printNodes("After appendText", root);
+
     // Update the nodes
     node.on("click", this.handleClickOnNode);
   };
@@ -914,7 +1234,7 @@ class TreeMindMap extends React.Component {
     let leftTree = this.loadData("left");
     let rightTree = this.loadData("right");
 
-    this.drawTree(leftTree, "left");
+    // this.drawTree(leftTree, "left");
     this.drawTree(rightTree, "right");
 
     // TODO - may need to split the JSON into right and left too.
@@ -926,40 +1246,48 @@ class TreeMindMap extends React.Component {
   };
 
   componentDidMount() {
-    // Try to fetch data.
-
-    if (this.state.orgId > 0) {
-      fetch(`/api/mindmaps-org/${this.state.orgId}`)
-        .then(response => {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json().then(map => {
-              // process your JSON data further
-              if (map[0]) {
-                this.setState({
-                  // jsonData: JSON.stringify(map[0].mapData)
-                  jsonData: map[0].mapData
-                });
-              } else {
-                this.setState({
-                  isNewMap: true
-                });
-              }
-            });
-          } else {
-            this.setState({
-              isNewMap: true
-            });
-          }
-        })
-        .then(() => {
-          // Then call chart().
-          this.chart();
-        });
-    } else {
+    // DEBUG
+    if (DEBUG) {
       this.setState({
-        isNewMap: true
+        // jsonData: JSON.stringify(map[0].mapData)
+        jsonData: treeData
       });
+    }
+    else {
+      // Try to fetch data.
+      if (this.state.orgId > 0) {
+        fetch(`/api/mindmaps-org/${this.state.orgId}`)
+          .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json().then(map => {
+                // process your JSON data further
+                if (map[0]) {
+                  this.setState({
+                    // jsonData: JSON.stringify(map[0].mapData)
+                    jsonData: map[0].mapData
+                  });
+                } else {
+                  this.setState({
+                    isNewMap: true
+                  });
+                }
+              });
+            } else {
+              this.setState({
+                isNewMap: true
+              });
+            }
+          })
+          .then(() => {
+            // Then call chart().
+            this.chart();
+          });
+      } else {
+        this.setState({
+          isNewMap: true
+        });
+      }
     }
 
     this.chart();
@@ -1095,8 +1423,7 @@ class TreeMindMap extends React.Component {
             </Typography>
           </Grid>
           <Grid item sm={12}>
-            <svg width="1000" height="1200"
-              ref={ svg => this.svg = svg }
+            <svg width="1200" height="1200" ref={ svg => this.svg = svg }
             />
           </Grid>
         </Grid>
@@ -1138,7 +1465,7 @@ class TreeMindMap extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-     </React.Fragment>
+      </React.Fragment>
     );
   }
 }

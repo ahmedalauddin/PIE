@@ -28,6 +28,8 @@ import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
 import Typography from "@material-ui/core/Typography";
 
+const DEBUG = true;
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -238,46 +240,71 @@ class MindMap extends React.Component {
   render() {
     const { classes } = this.props;
 
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <Topbar />
-        <div className={classes.root}>
-          <Grid container className={classes.root} spacing={24}>
-            <Grid item xs={false} sm={8} md={8} >
-              <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
+    if (DEBUG) {
+      return (
+        <React.Fragment>
+          <CssBaseline />
+          <Topbar />
+          <div className={classes.root}>
+            <Grid container className={classes.root} spacing={24}>
+              <Grid item xs={false} sm={12} md={12} >
+                <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
+              </Grid>
+              <Snackbar
+                open={this.state.openSnackbar}
+                onClose={this.handleClose}
+                TransitionComponent={this.state.Transition}
+                ContentProps={{
+                  "aria-describedby": "message-id"
+                }}
+                message={<span id="message-id">{this.state.message}</span>}
+              />
             </Grid>
-            <Grid item xs={false} sm={4} md={4} >
-              <div className={classes.root}>
-                <AppBar position="static">
-                  <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
-                    <Tab label="Node" />
-                    <Tab label="Ideas" />
-                  </Tabs>
-                </AppBar>
-                {this.state.tabValue === 0 && (
-                  <TabContainer>
-                    <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
-                  </TabContainer>)}
-                {this.state.tabValue === 1 && (
-                  <TabContainer>
-                    <ListIdeas />
-                  </TabContainer>)}
-              </div>
+          </div>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <CssBaseline />
+          <Topbar />
+          <div className={classes.root}>
+            <Grid container className={classes.root} spacing={24}>
+              <Grid item xs={false} sm={8} md={8} >
+                <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
+              </Grid>
+              <Grid item xs={false} sm={4} md={4} >
+                <div className={classes.root}>
+                  <AppBar position="static">
+                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
+                      <Tab label="Node" />
+                      <Tab label="Ideas" />
+                    </Tabs>
+                  </AppBar>
+                  {this.state.tabValue === 0 && (
+                    <TabContainer>
+                      <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+                    </TabContainer>)}
+                  {this.state.tabValue === 1 && (
+                    <TabContainer>
+                      <ListIdeas />
+                    </TabContainer>)}
+                </div>
+              </Grid>
+              <Snackbar
+                open={this.state.openSnackbar}
+                onClose={this.handleClose}
+                TransitionComponent={this.state.Transition}
+                ContentProps={{
+                  "aria-describedby": "message-id"
+                }}
+                message={<span id="message-id">{this.state.message}</span>}
+              />
             </Grid>
-            <Snackbar
-              open={this.state.openSnackbar}
-              onClose={this.handleClose}
-              TransitionComponent={this.state.Transition}
-              ContentProps={{
-                "aria-describedby": "message-id"
-              }}
-              message={<span id="message-id">{this.state.message}</span>}
-            />
-          </Grid>
-        </div>
-      </React.Fragment>
-    );
+          </div>
+        </React.Fragment>
+      );
+    }
   }
 }
 

@@ -909,7 +909,7 @@ class TreeMindMap extends React.Component {
     });
 
     const nodes = root.descendants();
-    const nodes1 = root.descendants().slice(1);
+    const links = root.links();
 
     // Compute the new tree layout.
     tree(root);
@@ -970,20 +970,35 @@ class TreeMindMap extends React.Component {
       .attr("stroke-opacity", 0);
 
     // Update the links…
-    let link = svg.selectAll("path.link")
-      .data(nodes1, d => {
-        return d.id || (d.id = ++i);
-      })
+    const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
 
-    link.enter().insert("path", "g")
+    // newLinkPaths
+    let newLinkPaths = g.selectAll(".link")
+      .data(links)
+      .enter();
+
+    // Enter any new links at the parent's previous position.
+    // Using this, http://thomasrickard.uk/articles/d3---mindmaps-%28v4%29-13-08-2016.html.
+    newLinkPaths.insert("path", "g")
       .attr("class", "link")
-      .merge(link)
-      .transition().duration(duration)
-      .attr("d", d => {
-        return this.generateLinkPath(d, d.parent);
-      });
+      .attr("d", diagonal);
 
-    link.exit().remove();
+    // existingLinkPaths.merge(newLinkPaths);
+
+    // Transition links to their new position.
+    existingLinkPaths.transition()
+      .duration(duration)
+      .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    existingLinkPaths.exit().transition()
+      .duration(duration)
+      .attr("d", diagonal)
+      .remove();
+  
+
+
+
 
     // Stash the old positions for transition.
     root.eachBefore(d => {

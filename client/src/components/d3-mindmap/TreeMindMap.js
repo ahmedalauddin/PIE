@@ -232,6 +232,7 @@ class TreeMindMap extends React.Component {
     this.logAppendPaths = this.logAppendPaths.bind(this);
     this.logAppendText = this.logAppendText.bind(this);
     this.logAppendCircle = this.logAppendCircle.bind(this);
+    this.getNodeById = this.getNodeById.bind(this);
     this.generateLinkPath = this.generateLinkPath.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
@@ -407,7 +408,19 @@ class TreeMindMap extends React.Component {
     return nodeSelected;
   };
 
-  appendChildToSelectedNode = (svg) => {
+  getNodeById = (id, node) => {
+    // This function works on the JSON data.
+    var reduce = [].reduce;
+    function runner(result, node){
+      if (result || !node) return result;
+      return node.id === id && node || //is this the proper node?
+        runner(null, node.children) || //process this nodes children
+        reduce.call(Object(node), runner, result);  //maybe this is some ArrayLike Structure
+    }
+    return runner(null, node);
+  }
+
+  appendChildToSelectedNode1 = (svg) => {
     console.log("appendChildToSelectedNode");
     let idOfSelectedNode = this.findSelectedNodeId(svg);
     let parent = this.findNode(idOfSelectedNode);
@@ -420,6 +433,31 @@ class TreeMindMap extends React.Component {
 
     if (parent.children) parent.children.push(child);
     else parent.children = [child];
+
+    this.update(svg);
+  };
+
+  appendChildToSelectedNode = (svg) => {
+    // This version appends a child to the JSON, not the svg.
+    console.log("appendChildToSelectedNode");
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let json = this.state.jsonData;
+    // 7/17/19
+    let parent = this.getNodeById(idOfSelectedNode, json);
+
+    // Create the child.
+    let child = {
+      name: "",
+      id: this.createId()
+    };
+
+    if (parent.children) parent.children.push(child);
+    else parent.children = [child];
+
+    // Save the JSON back to state.
+    this.setState({
+      jsonData: json
+    });
 
     this.update(svg);
   };
@@ -568,21 +606,6 @@ class TreeMindMap extends React.Component {
     // Prevent triggering clickOnCanvas handler
     // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
     d3.event.stopPropagation();
-  };
-
-  removeSelectedNodeNew = (svg) => {
-    // updated version to remove nodes.  See https://bl.ocks.org/cmgiven/32d4c53f19aea6e528faf10bfe4f3da9 on the
-    // approach to use enter() and exit().
-    this.removeFromData(svg);
-    let update = svg.selectAll("circle")
-      .data(this.state.jsonData, function (d) { return d; });
-    let enter = update.enter()
-      .append("circle");
-    let exit = update.exit();
-    update.style("fill", "green");
-    exit.style("fill", "red").remove();
-
-    console.log("elements removed");
   };
 
   removeSelectedNodeFromData = (svg) => {
@@ -957,7 +980,8 @@ class TreeMindMap extends React.Component {
 
     // Transition nodes to their new position.
     // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
+    const nodeUpdate = existingNodeContainers.merge(newNodeContainers)
+      //.transition(transition)
       .attr("transform", d => `translate(${d.y},${d.x})`)
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1);
@@ -973,158 +997,40 @@ class TreeMindMap extends React.Component {
     const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
 
     // newLinkPaths
+    // This seems to be the problem.
+    /*
     let newLinkPaths = g.selectAll(".link")
       .data(links)
       .enter();
 
-    // Enter any new links at the parent's previous position.
+          // Enter any new links at the parent's previous position.
     // Using this, http://thomasrickard.uk/articles/d3---mindmaps-%28v4%29-13-08-2016.html.
     newLinkPaths.insert("path", "g")
       .attr("class", "link")
       .attr("d", diagonal);
-
-    // existingLinkPaths.merge(newLinkPaths);
-
-    // Transition links to their new position.
-    existingLinkPaths.transition()
-      .duration(duration)
+     */
+    let newLinkPaths = existingLinkPaths.enter()
+      .insert("path", "g")
+      .attr("class", "link")
       .attr("d", diagonal);
 
+
+
+
+    let mergedLinks = existingLinkPaths.merge(newLinkPaths);
+
+    // Transition links to their new position.
+    mergedLinks.transition()
+      .duration(duration)
+      .attr("transform", "translate(" + width / 2 + ",0)")
+      .attr("d", diagonal);
+    
     // Transition exiting nodes to the parent's new position.
     existingLinkPaths.exit().transition()
       .duration(duration)
       .attr("d", diagonal)
       .remove();
-  
 
-
-
-
-    // Stash the old positions for transition.
-    root.eachBefore(d => {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
-  }
-
-  drawTreev3 = (root, direction) => {
-
-    let svg = d3.select("svg");
-    let i = 0;
-    let SWITCH_CONST = 1;
-    if (direction === "left") {
-      SWITCH_CONST = -1;
-    }
-    // Compute the layout.
-    let tree = d3.tree()
-      .size([height, SWITCH_CONST * (width - 150) / 2]);
-
-    // Shift the entire tree by half it's width
-    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
-
-
-    root.descendants().forEach((d, i) => {
-      // console.log(d)
-      // console.log(i)
-      d.id = d.data.id;
-      d.name = d.data.name;
-      d._children = d.children;
-    });
-
-    const nodes = root.descendants();
-    const links = root.links();
-
-
-    // Compute the new tree layout.
-    tree(root);
-
-    // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
-
-    const transition = svg
-      .transition()
-      .duration(duration)
-      .attr("height", height)
-      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
-
-    // Update the nodes
-    const existingNodeContainers = svg.select("#nodes")
-      .selectAll("g")
-      .data(nodes, d => d.id)
-      .data(nodes, d => d.name);
-
-    // Enter any new nodes at the parent's previous position.
-    // Create new node containers that each contains a circle and a text label
-    const newNodeContainers = existingNodeContainers.enter().append("g")
-      .attr("id", (d, i) => `${d.id}`)
-      .attr("name", (d, i) => `${d.data.name}`)
-      .attr("class", "node")
-      .attr("transform", d => `translate(${root.y0},${root.x0})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    newNodeContainers.append("circle")
-      .attr("r", 10)
-      .attr("fill", d => d._children ? "#555" : "#999");
-
-    // The "foreignObject" object will display the name text on the node.
-    newNodeContainers.append("foreignObject")
-      .attr("x", -80)
-      .attr("y", -35)
-      .attr("width", 150)
-      .attr("height", 40)
-      .append("xhtml:p")
-      .text(d => d.data.name);
-
-    existingNodeContainers.merge(newNodeContainers)
-      .on("click", this.handleClickOnNode);
-
-    // Transition nodes to their new position.
-    // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers.merge(newNodeContainers).transition(transition)
-      .attr("transform", d => `translate(${d.y},${d.x})`)
-      .attr("fill-opacity", 1)
-      .attr("stroke-opacity", 1);
-
-    // Transition exiting nodes to the parent's new position.
-    // Reduce opacity from 1 to 0 during transition
-    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
-      .attr("transform", d => `translate(${root.y},${root.x})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    // Update the links…
-    // const existingLinkPaths1 = svg.select("#links").selectAll("path").data(links, d => d.target.id);
-    const existingLinkPaths = svg.select("#links")
-      .selectAll("path")
-      .data(links);
-
-
-    // Enter any new links at the parent's previous position.
-    /*
-    const newLinkPaths1 = existingLinkPaths.enter().append("path")
-      .attr("d", d => {
-        const o = {x: root.x0, y: root.y0};
-        return diagonal({source: o, target: o});
-      });
-    */
-
-    const newLinkPaths = existingLinkPaths
-      .data(links)
-      .enter()
-      .append("path");
-
-
-    // Transition links to their new position.
-    existingLinkPaths.merge(newLinkPaths).transition(transition)
-      .attr("d", diagonal);
-
-    // Transition exiting nodes to the parent's new position.
-    existingLinkPaths.exit().transition(transition).remove()
-      .attr("d", d => {
-        const o = {x: root.x, y: root.y};
-        return diagonal({source: o, target: o});
-      });
 
     // Stash the old positions for transition.
     root.eachBefore(d => {
@@ -1486,3 +1392,4 @@ class TreeMindMap extends React.Component {
 }
 
 export default withStyles(styles)(TreeMindMap);
+

@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
+      nodeId: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       orgId: {
         type: DataTypes.INTEGER,
         allowNull: true

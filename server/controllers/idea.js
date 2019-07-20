@@ -78,7 +78,27 @@ module.exports = {
       });
   },
 
-    // List all ideas for a single organization
+  // Find an idea by the ID of a node on a mindmap.
+  findByNodeId(req, res) {
+    logger.error(`${callerType} Idea, findByNodeId `);
+    return models.Idea.findOne({
+      where: {
+        nodeId: req.params.nodeid
+      }
+    })
+      .then(_i => {
+        logger.debug(
+          `${callerType} findByNodeId -> successful, id: ${_i.id}`
+        );
+        res.status(201).send(_i);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByNodeId -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all ideas for a single organization
   listByOrganization(req, res) {
     //logger.info(`${callerType} Idea, req.params.orgid: ${req.params.orgid} `);
     return models.Idea.findAll({

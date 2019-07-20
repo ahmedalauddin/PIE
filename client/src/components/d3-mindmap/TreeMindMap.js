@@ -5,7 +5,7 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-17
+ * Modified: 2019-07-20
  * Changes:  Moving state into constructor.
  * Editor:   Brad Kaufman
  */
@@ -26,6 +26,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Modal from "@material-ui/core/Modal";
 
 const styles = theme => ({
   grid: {
@@ -36,9 +37,12 @@ const styles = theme => ({
     }
   },
   paper: {
-    padding: theme.spacing.unit * 3,
-    textAlign: "left",
-    color: theme.palette.text.secondary
+    position: "absolute",
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    outline: "none"
   },
   rangeLabel: {
     display: "flex",
@@ -199,12 +203,20 @@ const dy = 125;
 const width = 1000;
 const height = 1000;
 const DEBUG = true;
-//const renderLink = d3.linkVertical().x(d => d.x).y(d => d.y);
-const Node = d3.hierarchy.prototype.constructor;
 const margin = ({top: 40, right: 120, bottom: 40, left: 80});
-// See https://bl.ocks.org/mbostock/3184089
-const renderLink = d3.linkHorizontal().x(d => d.x).y(d => d.y);
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
+
+function getModalStyle() {
+  const top = 50 ;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
 
 class TreeMindMap extends React.Component {
   constructor(props) {
@@ -227,18 +239,25 @@ class TreeMindMap extends React.Component {
     this.findNode = this.findNode.bind(this);
     this.findParentNode = this.findParentNode.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
+    this.findSelectedNodeName = this.findSelectedNodeName.bind(this);
     this.findSelectedNode = this.findSelectedNode.bind(this);
     this.logCreateNode = this.logCreateNode.bind(this);
     this.logAppendPaths = this.logAppendPaths.bind(this);
     this.logAppendText = this.logAppendText.bind(this);
     this.logAppendCircle = this.logAppendCircle.bind(this);
     this.getNodeById = this.getNodeById.bind(this);
+    this.fullTree = this.fullTree.bind(this);
+    this.fetchIdea = this.fetchIdea.bind(this);
+    this.viewIdea = this.viewIdea.bind(this);
+    this.logNode = this.logNode.bind(this);
     this.generateLinkPath = this.generateLinkPath.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
+    this.handleModalOpen = this.handleModalOpen.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
     this.createId = this.createId.bind(this);
     this.state = {
       width: 1000,
@@ -256,6 +275,7 @@ class TreeMindMap extends React.Component {
       tree: d3.tree().nodeSize([dx, dy]).size([800, 600]),
       open: false,
       setOpen: false,
+      modalOpen: false,
       idea: ""
     };
     console.log("End TreeMindMap constructor.");
@@ -304,6 +324,12 @@ class TreeMindMap extends React.Component {
   addSibling = () => {
     let svg = d3.select(this.svg);
     this.addSiblingToSelectedNode(svg);
+  };
+
+  viewIdea = () => {
+    let svg = d3.select(this.svg);
+    this.fetchIdea();
+    this.handleModalOpen();
   };
 
   deleteNode = () => {
@@ -401,6 +427,14 @@ class TreeMindMap extends React.Component {
     return idOfSelectedNode;
   };
 
+  findSelectedNodeName = (svg) => {
+    let nameOfSelectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .attr("name");
+    return nameOfSelectedNode;
+  };
+
   findSelectedNode = (svg) => {
     let nodeSelected = svg
       .selectAll("g.node")
@@ -418,9 +452,10 @@ class TreeMindMap extends React.Component {
         reduce.call(Object(node), runner, result);  //maybe this is some ArrayLike Structure
     }
     return runner(null, node);
-  }
+  };
 
   appendChildToSelectedNode1 = (svg) => {
+    // old implementation
     console.log("appendChildToSelectedNode");
     let idOfSelectedNode = this.findSelectedNodeId(svg);
     let parent = this.findNode(idOfSelectedNode);
@@ -439,8 +474,8 @@ class TreeMindMap extends React.Component {
 
   appendChildToSelectedNode = (svg) => {
     // This version appends a child to the JSON, not the svg.
-    console.log("appendChildToSelectedNode");
     let idOfSelectedNode = this.findSelectedNodeId(svg);
+    this.logNode("appendChildToSelectedNode");
     let json = this.state.jsonData;
     // 7/17/19
     let parent = this.getNodeById(idOfSelectedNode, json);
@@ -509,7 +544,7 @@ class TreeMindMap extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
-    /*
+
     d3.select("body")
       .on("keydown", function(e) {
         // eslint-disable-next-line no-console
@@ -519,24 +554,25 @@ class TreeMindMap extends React.Component {
 
         if (d3.event.keyCode === 9) {
           console.log("tab - append child to selected node");
-          appendChildToSelectedNode(svg);
+          // appendChildToSelectedNode(svg);
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
-          addSiblingToSelectedNode(svg);
+          // addSiblingToSelectedNode(svg);
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
           removeSelectedNode(svg);
         } else if(d3.event.keyCode === 27) {
           console.log("esc - deselect node");
-          handleKeypressEsc(svg);
+          // handleKeypressEsc(svg);
         }
       });
-     */
+
 
     return svg.node();
   };
 
   handleKeypressEsc = (svg) => {
+    // TODO: this isn't getting called.
     svg
       .selectAll("g.node")
       .filter(".node-selected")
@@ -572,6 +608,7 @@ class TreeMindMap extends React.Component {
       d3.selectAll(nodes)
         .filter(".node-selected");
      */
+
     const currentlySelectedNode =
       d3.select(nodes[i]);
     return currentlySelectedNode;
@@ -579,12 +616,15 @@ class TreeMindMap extends React.Component {
 
   handleClickOnNode = (d,i,nodes) => {
     console.log("handleClickOnNode: clicked on a node.");
+    let svg = d3.select("svg");
     const currentlySelectedNode = this.getSelectedNode(nodes, i);
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
     const clickedNodeID = d3.select(clickedNode).attr("name");
-    const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
+    const otherNodes =
+      d3.selectAll(nodes)
+        .filter((d,i) => i!== clickedNodeIndex);
 
     if (currentlySelectedNode.size() > 0 && currentlySelectedNode.attr("name") === clickedNodeID) {
       console.log("going into editing mode!");
@@ -596,6 +636,9 @@ class TreeMindMap extends React.Component {
         .call(this.selectNode);
 
       // If not already selected, mark as selected
+      /**
+       *  TODO: check if this is working.  Does not seem to be.
+       */
       otherNodes
         .each(this.deselectNode);
     }
@@ -676,6 +719,9 @@ class TreeMindMap extends React.Component {
   };
 
   selectNode = (node) => {
+    d3.selectAll('g.node')
+      .filter(".node-selected")
+      .each(this.deselectNode);
     node
       .classed("node-selected", true)
       .select("foreignObject")
@@ -693,8 +739,15 @@ class TreeMindMap extends React.Component {
     console.log(`${node.attr("name")} selected`);
   };
 
+  logNode = (message) => {
+    let svg = d3.select("svg");
+    console.log(message, ": node ID = "
+      + this.findSelectedNodeId(svg) + ", name = "
+      + this.findSelectedNodeName(svg));
+  }
+
   deselectNode = (d,i,nodes) => {
-    console.log("deselectNode called.");
+    this.logNode("deselectNode");
     let idOfSelectedNode =
       d3.select(nodes[i])
         .attr("id");
@@ -729,13 +782,11 @@ class TreeMindMap extends React.Component {
   };
 
   handleClickOnCanvas = (d,i,nodes) => {
-    /*
-    let { d3 } = this.state;
     console.log("handleClickOnCanvas, nodes: " + nodes[i]);
     d3.select(nodes[i])
       .selectAll('g.node')
       .filter(".node-selected")
-      .each(this.deselectNode); */
+      .each(this.deselectNode);
   };
 
   appendText = (nodeContainers) => {
@@ -838,67 +889,17 @@ class TreeMindMap extends React.Component {
     return g;
   };
 
-  drawTreev2 = (root, direction) => {
+  fetchIdea = () => {
+    /*
     let svg = d3.select("svg");
-    let i = 0;
-    let SWITCH_CONST = 1;
-    if (direction === "left") {
-      SWITCH_CONST = -1;
-    }
-    // Compute the layout.
-    let tree = d3.tree()
-      .size([height, SWITCH_CONST * (width - 150) / 2]);
+    let selectedNodeId = this.findSelectedNodeId(svg);
 
-
-    // Shift the entire tree by half it's width
-    var g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
-    tree(root);
-    let nodes = root.descendants();
-    var links = root.links();
-    // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
-
-    nodes.forEach((d, i) => {
-      d.id = d.data.id;
-      d.name = d.data.name;
-      d._children = d.children;
-    });
-
-    // Create the link lines.
-    var link = g.selectAll(".link")
-      .data(links)
-      .enter();
-
-    link.append("path")
-      .attr("class", "link")
-      .attr("d", function(d) {
-        return "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x + " " +
-          (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x;
-      });
-
-    // Create the node circles.
-    var node = g.selectAll(".node")
-      .data(nodes)
-      .enter()
-      .append("g")
-      .attr("id", (d, i) => `${d.id}`)
-      .attr("name", (d, i) => `${d.data.name}`)
-      .attr("class", function(d) {
-        return "node" + (d.children ? " node--internal" : " node--leaf");
-      })
-      .attr("transform", function(d) {
-        return "translate(" + d.y + "," + d.x + ")";
-      });
-
-    node.append("circle")
-      .attr("r", function(d, i) {
-        return 10;
-      });
-
-    // Update the nodes
-    node.on("click", this.handleClickOnNode);
-
-
+    if (selectedNodeId !== "") {
+      fetch(`/api/ideas-node/${idOfSelectedNodeId}`)
+        .then(res => res.json())
+        .then(idea => this.setState({ idea }));
+    }  */
+    this.setState({ idea: "this is text." });
   };
 
   generateLinkPath = (source, target) => {
@@ -909,7 +910,135 @@ class TreeMindMap extends React.Component {
     return path.toString();
   };
 
-  drawTree = (root, direction) => {
+  fullTree = () => {
+    let svg = d3.select("svg");
+    let i = 0;
+
+    let leftTree = this.loadData("left");
+    let rightTree = this.loadData("right");
+
+    // debugger;
+    // Compute the layout.
+    let treeLeft = d3.tree()
+      .size([height, -1 * (width - 150) / 2]);
+    let treeRight = d3.tree()
+      .size([height, (width - 150) / 2]);
+
+    // Shift the entire tree by half it's width
+    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
+
+    // Compute the new tree layout.
+    treeLeft(leftTree);
+    treeRight(rightTree);
+    rightTree.x = 500;
+    leftTree.x = 500;
+
+    // Combine the outputs from D3 tree.
+    rightTree.children.forEach( (d,i) => {
+      leftTree.children.push(d);
+    });
+
+    // use leftTree as the root
+    let root = leftTree;
+    root.descendants().forEach((d, i) => {
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    const nodes = root.descendants();
+    const links = root.links();
+
+    // Set both root nodes to be dead center vertically
+    nodes[0].x = height / 2;
+
+    const transition = svg
+      .transition()
+      .duration(duration)
+      .attr("height", height)
+      .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"));
+
+    // Update the nodes
+    const existingNodeContainers = svg.select("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id)
+      .data(nodes, d => d.name);
+
+    // Enter any new nodes at the parent's previous position.
+    // Create new node containers that each contains a circle and a text label
+    const newNodeContainers = existingNodeContainers.enter().append("g")
+      .attr("id", (d, i) => `${d.id}`)
+      .attr("name", (d, i) => `${d.data.name}`)
+      .attr("class", "node")
+      .attr("transform", d => `translate(${root.y0},${root.x0})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    newNodeContainers.append("circle")
+      .attr("r", 10)
+      .attr("fill", d => d._children ? "#555" : "#999");
+
+    // The "foreignObject" object will display the name text on the node.
+    newNodeContainers.append("foreignObject")
+      .attr("x", -80)
+      .attr("y", -35)
+      .attr("width", 150)
+      .attr("height", 40)
+      .append("xhtml:p")
+      .text(d => d.data.name);
+
+    existingNodeContainers.merge(newNodeContainers)
+      .on("click", this.handleClickOnNode);
+
+    // Transition nodes to their new position.
+    // Increase opacity from 0 to 1 during transition
+    const nodeUpdate = existingNodeContainers.merge(newNodeContainers)
+      //.transition(transition)
+      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+    const nodeExit = existingNodeContainers.exit().transition(transition).remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+
+    // Update the links…
+    const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
+    // const existingLinkPaths = svg.select("#links").selectAll("g").data(links, d => d.target.id);
+
+    // newLinkPaths
+    let newLinkPaths = existingLinkPaths.enter()
+      .insert("path", "g")
+      .attr("class", "link")
+      .attr("d", diagonal);
+
+    let mergedLinks = existingLinkPaths.merge(newLinkPaths);
+
+    // Transition links to their new position.
+    mergedLinks
+      .transition()
+      .duration(duration)
+      .attr("transform", "translate(" + width / 2 + ",0)")
+      .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    existingLinkPaths.exit().transition()
+      .duration(duration)
+      .attr("d", diagonal)
+      .remove();
+
+    // Stash the old positions for transition.
+    root.eachBefore(d => {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  drawTreev2 = (root, direction) => {
+    // This was the latest working version.
     let svg = d3.select("svg");
     let i = 0;
     let SWITCH_CONST = 1;
@@ -981,7 +1110,7 @@ class TreeMindMap extends React.Component {
     // Transition nodes to their new position.
     // Increase opacity from 0 to 1 during transition
     const nodeUpdate = existingNodeContainers.merge(newNodeContainers)
-      //.transition(transition)
+    //.transition(transition)
       .attr("transform", d => `translate(${d.y},${d.x})`)
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1);
@@ -995,36 +1124,23 @@ class TreeMindMap extends React.Component {
 
     // Update the links…
     const existingLinkPaths = svg.select("#links").selectAll("path").data(links, d => d.target.id);
+    // const existingLinkPaths = svg.select("#links").selectAll("g").data(links, d => d.target.id);
 
     // newLinkPaths
-    // This seems to be the problem.
-    /*
-    let newLinkPaths = g.selectAll(".link")
-      .data(links)
-      .enter();
-
-          // Enter any new links at the parent's previous position.
-    // Using this, http://thomasrickard.uk/articles/d3---mindmaps-%28v4%29-13-08-2016.html.
-    newLinkPaths.insert("path", "g")
-      .attr("class", "link")
-      .attr("d", diagonal);
-     */
     let newLinkPaths = existingLinkPaths.enter()
       .insert("path", "g")
       .attr("class", "link")
       .attr("d", diagonal);
 
-
-
-
     let mergedLinks = existingLinkPaths.merge(newLinkPaths);
 
     // Transition links to their new position.
-    mergedLinks.transition()
+    mergedLinks
+      .transition()
       .duration(duration)
       .attr("transform", "translate(" + width / 2 + ",0)")
       .attr("d", diagonal);
-    
+
     // Transition exiting nodes to the parent's new position.
     existingLinkPaths.exit().transition()
       .duration(duration)
@@ -1133,7 +1249,7 @@ class TreeMindMap extends React.Component {
     }
 
     /***********
-     * TODO: somehow have to save both trees into state data.
+     * TODO: may have to save both trees into state data.
      */
 
     let d3HierarchyData = d3.hierarchy(d3Data);
@@ -1155,8 +1271,9 @@ class TreeMindMap extends React.Component {
     let leftTree = this.loadData("left");
     let rightTree = this.loadData("right");
 
+    // this.drawTree(rightTree, "right");
     // this.drawTree(leftTree, "left");
-    this.drawTree(rightTree, "right");
+    this.fullTree();
 
     // TODO - may need to split the JSON into right and left too.
 
@@ -1240,7 +1357,6 @@ class TreeMindMap extends React.Component {
     this.setState({ idea: event.target.value });
   };
 
-
   handleSubmitIdea = (event) => {
     event.preventDefault();
     // Save idea
@@ -1281,6 +1397,18 @@ class TreeMindMap extends React.Component {
     }, 2000);
   };
 
+  // Modal dialog for the idea functions
+  handleModalOpen = () => {
+    this.setState({
+      modalOpen: true
+    });
+  };
+
+  handleModalClose = () => {
+    this.setState({
+      modalOpen: false
+    });
+  };
 
   render() {
     const { classes } = this.props;
@@ -1324,6 +1452,14 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
+              onClick={this.viewIdea}
+              className={classes.outlinedButton}
+            >
+              View Note
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
               onClick={this.deleteNode}
               className={classes.outlinedButton}
             >
@@ -1347,6 +1483,19 @@ class TreeMindMap extends React.Component {
             <svg width="1200" height="1200" ref={ svg => this.svg = svg }
             />
           </Grid>
+          <Modal
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            open={this.state.modalOpen}
+            onClose={this.handleModalClose}
+          >
+            <div style={getModalStyle()} className={classes.paper}>
+              <h2 id="modal-title">Idea</h2>
+              <p id="simple-modal-description">
+                {this.state.idea}
+              </p>
+            </div>
+          </Modal>
         </Grid>
         <Grid item sm={12}>
           <Snackbar

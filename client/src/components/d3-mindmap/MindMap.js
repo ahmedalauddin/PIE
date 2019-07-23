@@ -28,7 +28,7 @@ import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
 import Typography from "@material-ui/core/Typography";
 
-const DEBUG = true;
+const DEBUG = false;
 
 function TabContainer(props) {
   return (
@@ -275,20 +275,7 @@ class MindMap extends React.Component {
               </Grid>
               <Grid item xs={false} sm={4} md={4} >
                 <div className={classes.root}>
-                  <AppBar position="static">
-                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
-                      <Tab label="Node" />
-                      <Tab label="Ideas" />
-                    </Tabs>
-                  </AppBar>
-                  {this.state.tabValue === 0 && (
-                    <TabContainer>
-                      <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
-                    </TabContainer>)}
-                  {this.state.tabValue === 1 && (
-                    <TabContainer>
-                      <ListIdeas />
-                    </TabContainer>)}
+                  <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
                 </div>
               </Grid>
               <Snackbar

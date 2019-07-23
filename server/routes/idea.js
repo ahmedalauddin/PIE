@@ -28,9 +28,13 @@ module.exports = router => {
   logger.debug(`${callerClass} GET -> path: /api/ideas/:id`);
   router.get("/api/ideas/:id", idea.findById);
 
-  // Update an idea with id
-  logger.debug(`${callerClass} PUT -> path: /api/ideas/:id`);
-  router.put("/api/ideas/:id", idea.update);
+  // select an idea by mindmap node ID
+  logger.debug(`${callerClass} GET -> path: /api/ideas-node/:nodeid`);
+  router.get("/api/ideas-node/:nodeid", idea.findByNodeId);
+
+  // Update an idea with a nodeid
+  logger.debug(`${callerClass} PUT -> path: /api/ideas/:nodeid`);
+  router.put("/api/ideas/:nodeid", idea.update);
 
   // TODO: add idea delete method.
 };

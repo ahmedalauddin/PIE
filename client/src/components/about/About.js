@@ -77,11 +77,8 @@ class About extends React.Component {
                           <ul>
                             <li>Mind map: bi-directional map now available.  Access the mind map from the top navigation bar.  Allows you to create a new mind
                             map and save.  Once saved, the saved mind map will open.</li>
-                            <li>Mind map ideas: use the Add Note feature on the mind map to capture notes and ideas.
+                            <li>Mind map ideas: use the Edit Idea feature on the mind map to capture notes and ideas.
                             </li>
-                            <li>Search: fulltext search for a single client organization, searching text for
-                            projects, actions, milestones, departments, and KPIs.  Minor bug in having to click the
-                            search button twice.</li>
                           </ul>
                         </Typography>
                       </div>

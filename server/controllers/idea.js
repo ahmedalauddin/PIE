@@ -14,7 +14,6 @@ const models = require("../models");
 const logger = require("../util/logger")(__filename);
 const Idea = require("../models").Idea;
 const callerType = "controller";
-const util = require("util");
 
 module.exports = {
   create(req, res) {
@@ -22,7 +21,8 @@ module.exports = {
     logger.debug(`${callerType} create idea -> orgId: ${orgId}`);
     logger.debug(`${callerType} create idea -> JSON: req.body: ${JSON.stringify(req.body)}`);
     return models.Idea.create({
-      name: req.body.name,
+      name: req.body.nodeTitle,
+      nodeId: req.body.nodeId,
       ideaText: req.body.idea,
       orgId: req.body.orgId
     })
@@ -37,26 +37,26 @@ module.exports = {
 
   // Update an idea
   update(req, res) {
-    const id = req.params.id;
+    const nodeid = req.params.nodeid;
     return models.Idea.update(
       {
-        name: req.body.name,
+        name: req.body.nodeTitle,
         ideaText: req.body.idea,
         orgId: req.body.orgId
       },
       {
         returning: true,
         where: {
-          id: id
+          nodeId: nodeid
         }
       }
     )
       .then(_i => {
-        logger.debug(`${callerType} update -> successful`);
+        logger.debug(`${callerType} Idea update -> successful`);
         res.status(201).send(_i);
       })
       .catch(error => {
-        logger.error(`${callerType} update -> error: ${error.stack}`);
+        logger.error(`${callerType} Idea update -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },
@@ -78,7 +78,27 @@ module.exports = {
       });
   },
 
-    // List all ideas for a single organization
+  // Find an idea by the ID of a node on a mindmap.
+  findByNodeId(req, res) {
+    logger.error(`${callerType} Idea, findByNodeId `);
+    return models.Idea.findOne({
+      where: {
+        nodeId: req.params.nodeid
+      }
+    })
+      .then(_i => {
+        logger.debug(
+          `${callerType} findByNodeId -> successful, id: ${_i.id}`
+        );
+        res.status(201).send(_i);
+      })
+      .catch(error => {
+        logger.error(`${callerType} findByNodeId -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all ideas for a single organization
   listByOrganization(req, res) {
     //logger.info(`${callerType} Idea, req.params.orgid: ${req.params.orgid} `);
     return models.Idea.findAll({

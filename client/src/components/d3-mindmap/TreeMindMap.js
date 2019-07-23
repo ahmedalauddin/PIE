@@ -227,7 +227,7 @@ const dx = 200; // what is dx?
 const dy = 125;
 const width = 1000;
 const height = 1000;
-const DEBUG = true;
+const DEBUG = false;
 const margin = { top: 40, right: 120, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 function getModalStyle() {
@@ -280,7 +280,6 @@ class TreeMindMap extends React.Component {
     this.logNode = this.logNode.bind(this);
     this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
     this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
-
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
@@ -297,9 +296,7 @@ class TreeMindMap extends React.Component {
       height: 1000,
       svg: d3.select(this.svg),
       orgName: getOrgName(),
-      // DEBUG
-      orgId: 2,
-      // orgId: getOrgId(),
+      orgId: getOrgId(),
       jsonData: treeData,
       isNewMap: false,
       openSnackbar: false,

@@ -23,13 +23,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { Typography } from "antd";
-import { Modal, Button } from "antd";
+// import { Typography } from "antd";
+import { Modal } from "antd";
 import "antd/dist/antd.css";
 import { Input } from "antd";
-// import Button from "@material-ui/core/Button";
+import Button from "@material-ui/core/Button";
 // import DialogContentText from "@material-ui/core/DialogContentText";
-// import Typography from "@material-ui/core/Typography";
+import Typography from "@material-ui/core/Typography";
+// import { Modal, Button } from "antd";
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -228,10 +229,7 @@ const width = 1000;
 const height = 1000;
 const DEBUG = true;
 const margin = { top: 40, right: 120, bottom: 40, left: 80 };
-const diagonal = d3
-  .linkHorizontal()
-  .x(d => d.y)
-  .y(d => d.x);
+const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 function getModalStyle() {
   const top = 50;
   const left = 50;
@@ -242,8 +240,6 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`
   };
 }
-const content =
-  "This is the content.  More content does here.  And some more content.";
 const modal = Modal;
 const MODAL_WIDTH = 500;
 
@@ -259,6 +255,7 @@ class TreeMindMap extends React.Component {
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
+    this.undoDeleteNode = this.undoDeleteNode.bind(this);
     this.rename = this.rename.bind(this);
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
@@ -266,6 +263,7 @@ class TreeMindMap extends React.Component {
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.d3Tree = this.d3Tree.bind(this);
     this.saveJson = this.saveJson.bind(this);
+    this.hasChildren = this.hasChildren.bind(this);
     this.findNode = this.findNode.bind(this);
     this.findParentNode = this.findParentNode.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
@@ -280,6 +278,9 @@ class TreeMindMap extends React.Component {
     this.fetchIdea = this.fetchIdea.bind(this);
     this.viewIdea = this.viewIdea.bind(this);
     this.logNode = this.logNode.bind(this);
+    this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
+    this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
+
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
@@ -296,8 +297,9 @@ class TreeMindMap extends React.Component {
       height: 1000,
       svg: d3.select(this.svg),
       orgName: getOrgName(),
-      orgId: getOrgId(),
-      //jsonData: "{\"id\": \"_ns1nvi0ai\", \"name\": \"Increase plant availability\", \"children\": [{\"id\": \"_o4r47dq71\", \"name\": \"Reduce operating costs\", \"children\": [{\"id\": \"_al6om6znz\", \"name\": \"Reduce inventory\", \"children\": [{\"id\": \"_46ct4o4oy\", \"name\": \"Increase parts availability\"}, {\"id\": \"_ea00nojwy\", \"name\": \"Optimize supply chain\"}]}, {\"id\": \"_z3uk0721f\", \"name\": \"Operating procedures\", \"children\": [{\"id\": \"_je49rrvdq\", \"name\": \"TBD\"}, {\"id\": \"_riy5iihy9\", \"name\": \"yellow\"}, {\"id\": \"_sy8zlb7vz\", \"name\": \"blue\"}]}]}, {\"id\": \"_uajrljib9\", \"name\": \"Review supply chain processes\"}, {\"id\": \"_uguzpgdta\", \"name\": \"Introduce automation\", \"children\": [{\"id\": \"_t8ln1vlwa\", \"name\": \"white\", \"children\": [{\"id\": \"_qzltyy8rn\", \"name\": \"green\"}, {\"id\": \"_92xtmt66p\", \"name\": \"maroon\"}]}]}]}",
+      // DEBUG
+      orgId: 2,
+      // orgId: getOrgId(),
       jsonData: treeData,
       isNewMap: false,
       openSnackbar: false,
@@ -317,7 +319,15 @@ class TreeMindMap extends React.Component {
       modalTop: 0,
       modalLeft: 0,
       modalVisible: false,
-      idea: ""
+      isEditingIdea: false,
+      nodeId: "",
+      nodeTitle: "",
+      idea: "",
+      deletedNodeId: "",
+      deletedNodeName: "",
+      deletedNodeParentId: "",
+      deleteDisabled: true,
+      undoDeleteDisabled: true
     };
     console.log("End TreeMindMap constructor.");
   }
@@ -383,6 +393,31 @@ class TreeMindMap extends React.Component {
     this.removeSelectedNode(svg);
   };
 
+  undoDeleteNode = () => {
+    // This is similar to appending a node.  We've saved the deleted node id and its parent to state.
+    let svg = d3.select(this.svg);
+    let parentNodeId = this.state.deletedNodeParentId;
+    let jsonData = this.state.jsonData;
+    let parent = this.getNodeById(parentNodeId, jsonData);
+
+    // Create the child -- this is the deleted node stored in state.
+    let child = {
+      name: this.state.deletedNodeName,
+      id: this.state.deletedNodeId
+    };
+
+    if (parent.children) parent.children.push(child);
+    else parent.children = [child];
+
+    // Save the JSON back to state.
+    this.setState({
+      jsonData: jsonData,
+      undoDeleteDisabled: true
+    });
+
+    this.update(svg);
+  };
+
   newMap = () => {
     this.setState(
       {
@@ -440,6 +475,39 @@ class TreeMindMap extends React.Component {
     return parentNode;
   };
 
+  hasChildren = idOfSelectedNode => {
+    // Check if the node has children in the JSON data.
+    let nodeInTree = [this.state.jsonData];
+    let nodeFound = false;
+    let parentNode = null;
+    let node = null;
+
+    while (nodeInTree.length !== 0) {
+      let allCurrentLevelChildren = [];
+      for (node of nodeInTree) {
+        if (node.children) {
+          allCurrentLevelChildren = allCurrentLevelChildren.concat(
+            node.children
+          );
+        }
+        if (node.id === idOfSelectedNode) {
+          nodeFound = true;
+          parentNode = node;
+        }
+      }
+      if (nodeFound) break;
+      else {
+        nodeInTree = allCurrentLevelChildren;
+      }
+    }
+
+    let hasChildren = false;
+    if (nodeFound && node.children) {
+      hasChildren = true;
+    }
+    return hasChildren;
+  };
+
   findParentNode = idOfSelectedNode => {
     // Find the parent of the node in the JSON data.
     console.log("idOfSelectedNode: " + idOfSelectedNode);
@@ -479,7 +547,8 @@ class TreeMindMap extends React.Component {
     return idOfSelectedNode;
   };
 
-  findSelectedNodeName = svg => {
+  findSelectedNodeName = () => {
+    let svg = d3.select(this.svg);
     let nameOfSelectedNode = svg
       .selectAll("g.node")
       .filter(".node-selected")
@@ -507,30 +576,11 @@ class TreeMindMap extends React.Component {
     return runner(null, node);
   };
 
-  appendChildToSelectedNode1 = svg => {
-    // old implementation
-    console.log("appendChildToSelectedNode");
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
-    let parent = this.findNode(idOfSelectedNode);
-
-    // Create the child.
-    let child = {
-      name: "",
-      id: this.createId()
-    };
-
-    if (parent.children) parent.children.push(child);
-    else parent.children = [child];
-
-    this.update(svg);
-  };
-
   appendChildToSelectedNode = svg => {
-    // This version appends a child to the JSON, not the svg.
+    // This version appends a child to the JSON, not the svg.  7/17/19.
     let idOfSelectedNode = this.findSelectedNodeId(svg);
     this.logNode("appendChildToSelectedNode");
     let json = this.state.jsonData;
-    // 7/17/19
     let parent = this.getNodeById(idOfSelectedNode, json);
 
     // Create the child.
@@ -597,13 +647,13 @@ class TreeMindMap extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
-
     d3.select("body").on("keydown", function(e) {
       // eslint-disable-next-line no-console
       console.log(`keydown: ${d3.event.keyCode}`);
       // Check to see if a node is being edited
       let nodeIsBeingEdited = gNode.select("g.node-editing").size();
 
+      /*
       if (d3.event.keyCode === 9) {
         console.log("tab - append child to selected node");
         // appendChildToSelectedNode(svg);
@@ -616,7 +666,7 @@ class TreeMindMap extends React.Component {
       } else if (d3.event.keyCode === 27) {
         console.log("esc - deselect node");
         // handleKeypressEsc(svg);
-      }
+      } */
     });
 
     return svg.node();
@@ -703,23 +753,41 @@ class TreeMindMap extends React.Component {
     d3.event.stopPropagation();
   };
 
+  isUndoDeleteDisabled = () => {
+    return this.state.undoDeleteDisabled;
+  };
+
+  isDeleteDisabled = () => {
+    return this.state.deleteDisabled;
+  };
+
+
   removeSelectedNodeFromData = svg => {
     // Removes selected node from the JSON data, stored in state.
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let selectedNodeId = this.findSelectedNodeId(svg);
+    let selectedNodeName = this.findSelectedNodeName();
     let jsonData = [this.state.jsonData];
-    let parent = this.findParentNode(idOfSelectedNode);
+    let parent = this.findParentNode(selectedNodeId);
 
     if (parent && parent.children) {
       // This deletes from the JSON.
       parent.children = parent.children.filter(
-        child => child.id !== idOfSelectedNode
+        child => child.id !== selectedNodeId
       );
       parent.children.length === 0 && delete parent.children;
     }
     console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
     this.setState({
-      jsonData: jsonData
+      jsonData: jsonData,
+      deletedNodeId: selectedNodeId,
+      deletedNodeName: selectedNodeName,
+      deletedNodeParentId: parent.id,
+      undoDeleteDisabled: false
     });
+
+    // Don't need this.update here.  Currently this will be covered in removeSelectedNode(), which calls
+    // this function.
+    // this.update(svg);
   };
 
   removeSelectedNode = svg => {
@@ -791,17 +859,23 @@ class TreeMindMap extends React.Component {
 
     this.getSelectedNodeId(idOfSelectedNode);
     console.log(`${node.attr("name")} selected`);
+
+    // Determine whether to disable the delete node button.
+    if (this.hasChildren(idOfSelectedNode)) {
+      this.setState({
+        deleteDisabled: true
+      });
+    } else {
+      this.setState({
+        deleteDisabled: false
+      });
+    }
   };
 
   logNode = message => {
     let svg = d3.select("svg");
-    console.log(
-      message,
-      ": node ID = " +
-        this.findSelectedNodeId(svg) +
-        ", name = " +
-        this.findSelectedNodeName(svg)
-    );
+    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
+        ", name = " + this.findSelectedNodeName());
   };
 
   deselectNode = (d, i, nodes) => {
@@ -884,85 +958,38 @@ class TreeMindMap extends React.Component {
       .attr("class", "link")
       .attr("d", function(d) {
         return (
-          "M" +
-          d.target.y +
-          "," +
-          d.target.x +
-          "C" +
-          (d.target.y + d.source.y) / 2.5 +
-          "," +
-          d.target.x +
-          " " +
-          (d.target.y + d.source.y) / 2 +
-          "," +
-          d.source.x +
-          " " +
-          d.source.y +
-          "," +
-          d.source.x
-        );
+          "M" + d.target.y + "," + d.target.x + "C" + (d.target.y + d.source.y) / 2.5 + "," + d.target.x +
+          " " + (d.target.y + d.source.y) / 2 + "," + d.source.x + " " + d.source.y + "," + d.source.x);
       });
   };
 
   logAppendCircle = (d, ifLogging) => {
     if (ifLogging) {
-      console.log(
-        "Append circle " +
-          d.name +
-          " , at (" +
-          parseFloat(d.x).toFixed(2) +
-          ", " +
-          parseFloat(d.y).toFixed(2) +
-          ")"
-      );
+      console.log("Append circle " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
+          ", " + parseFloat(d.y).toFixed(2) + ")");
     }
   };
 
   logAppendText = (d, ifLogging) => {
     if (ifLogging) {
-      console.log(
-        "Append text " +
-          d.name +
-          " , at (" +
-          parseFloat(d.x).toFixed(2) +
-          ", " +
-          parseFloat(d.y).toFixed(2) +
-          ")"
-      );
+      console.log("Append text " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
+          ", " + parseFloat(d.y).toFixed(2) + ")");
     }
   };
 
   logCreateNode = (d, ifLogging) => {
     if (ifLogging) {
-      console.log(
-        "Creating node " +
-          d.name +
-          " , translating to (" +
-          parseFloat(d.y).toFixed(2) +
-          ", " +
-          parseFloat(d.x).toFixed(2) +
-          ")"
-      );
+      console.log("Creating node " + d.name +" , translating to (" + parseFloat(d.y).toFixed(2) +
+          ", " + parseFloat(d.x).toFixed(2) + ")");
     }
   };
 
   logAppendPaths = (d, ifLogging) => {
     if (ifLogging) {
-      console.log(
-        "Appending D3 link from " +
-          d.source.data.name +
-          " at (" +
-          parseFloat(d.source.x).toFixed(2) +
-          ", " +
-          parseFloat(d.source.y).toFixed(2) +
-          ") to " +
-          d.target.data.name +
-          " at (" +
-          parseFloat(d.target.x).toFixed(2) +
-          ", " +
-          parseFloat(d.target.y).toFixed(2) +
-          ")"
-      );
+      console.log("Appending D3 link from " + d.source.data.name + " at (" + parseFloat(d.source.x).toFixed(2) +
+          ", " + parseFloat(d.source.y).toFixed(2) + ") to " + d.target.data.name + " at (" +
+          parseFloat(d.target.x).toFixed(2) + ", " + parseFloat(d.target.y).toFixed(2) +
+          ")");
     }
   };
 
@@ -989,30 +1016,40 @@ class TreeMindMap extends React.Component {
   };
 
   shiftTree = svg => {
-    let g = svg
-      .selectAll("g")
-      .attr("transform", "translate(" + width / 2 + ",0)");
+    let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ",0)");
     return g;
   };
 
   fetchIdea = () => {
     let svg = d3.select("svg");
     let selectedNodeId = this.findSelectedNodeId(svg);
+    let selectedNodeName = this.findSelectedNodeName();
 
     if (selectedNodeId !== "") {
       fetch(`/api/ideas-node/${selectedNodeId}`)
         .then(res => res.json())
         .then(idea => {
-          this.setState({
-            idea: idea.ideaText
-          });
+          if (idea.ideaText) {
+            this.setState({
+              idea: idea.ideaText,
+              nodeTitle: selectedNodeName,
+              nodeId: selectedNodeId,
+              isEditingIdea: true
+            });
+          } else {
+            this.setState({
+              idea: "",
+              nodeTitle: selectedNodeName,
+              nodeId: selectedNodeId,
+              isEditingIdea: false
+            });
+          }
         });
     }
   };
 
   fullTree = () => {
     let svg = d3.select("svg");
-    let i = 0;
 
     let leftTree = this.loadData("left");
     let rightTree = this.loadData("right");
@@ -1166,223 +1203,12 @@ class TreeMindMap extends React.Component {
     return tree(treeData);
   };
 
-  drawTreev2 = (root, direction) => {
-    // This was the latest working version.
-    let svg = d3.select("svg");
-    let i = 0;
-    let SWITCH_CONST = 1;
-    if (direction === "left") {
-      SWITCH_CONST = -1;
-    }
-    // Compute the layout.
-    let tree = d3.tree().size([height, (SWITCH_CONST * (width - 150)) / 2]);
-
-    // Shift the entire tree by half it's width
-    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
-
-    root.descendants().forEach((d, i) => {
-      // console.log(d)
-      // console.log(i)
-      d.id = d.data.id;
-      d.name = d.data.name;
-      d._children = d.children;
-    });
-
-    const nodes = root.descendants();
-    const links = root.links();
-
-    // Compute the new tree layout.
-    tree(root);
-
-    // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
-
-    const transition = svg
-      .transition()
-      .duration(duration)
-      .attr("height", height)
-      .tween(
-        "resize",
-        window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
-      );
-
-    // Update the nodes
-    const existingNodeContainers = svg
-      .select("#nodes")
-      .selectAll("g")
-      .data(nodes, d => d.id)
-      .data(nodes, d => d.name);
-
-    // Enter any new nodes at the parent's previous position.
-    // Create new node containers that each contains a circle and a text label
-    const newNodeContainers = existingNodeContainers
-      .enter()
-      .append("g")
-      .attr("id", (d, i) => `${d.id}`)
-      .attr("name", (d, i) => `${d.data.name}`)
-      .attr("class", "node")
-      .attr("transform", d => `translate(${root.y0},${root.x0})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    newNodeContainers
-      .append("circle")
-      .attr("r", 10)
-      .attr("fill", d => (d._children ? "#555" : "#999"));
-
-    // The "foreignObject" object will display the name text on the node.
-    newNodeContainers
-      .append("foreignObject")
-      .attr("x", -80)
-      .attr("y", -35)
-      .attr("width", 150)
-      .attr("height", 40)
-      .append("xhtml:p")
-      .text(d => d.data.name);
-
-    existingNodeContainers
-      .merge(newNodeContainers)
-      .on("click", this.handleClickOnNode);
-
-    // Transition nodes to their new position.
-    // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers
-      .merge(newNodeContainers)
-      //.transition(transition)
-      .attr("transform", d => `translate(${d.y},${d.x})`)
-      .attr("fill-opacity", 1)
-      .attr("stroke-opacity", 1);
-
-    // Transition exiting nodes to the parent's new position.
-    // Reduce opacity from 1 to 0 during transition
-    const nodeExit = existingNodeContainers
-      .exit()
-      .transition(transition)
-      .remove()
-      .attr("transform", d => `translate(${root.y},${root.x})`)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0);
-
-    // Update the links…
-    const existingLinkPaths = svg
-      .select("#links")
-      .selectAll("path")
-      .data(links, d => d.target.id);
-    // const existingLinkPaths = svg.select("#links").selectAll("g").data(links, d => d.target.id);
-
-    // newLinkPaths
-    let newLinkPaths = existingLinkPaths
-      .enter()
-      .insert("path", "g")
-      .attr("class", "link")
-      .attr("d", diagonal);
-
-    let mergedLinks = existingLinkPaths.merge(newLinkPaths);
-
-    // Transition links to their new position.
-    mergedLinks
-      .transition()
-      .duration(duration)
-      .attr("transform", "translate(" + width / 2 + ",0)")
-      .attr("d", diagonal);
-
-    // Transition exiting nodes to the parent's new position.
-    existingLinkPaths
-      .exit()
-      .transition()
-      .duration(duration)
-      .attr("d", diagonal)
-      .remove();
-
-    // Stash the old positions for transition.
-    root.eachBefore(d => {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
-  };
-
-  drawTreev1 = (root, direction) => {
-    // eslint-disable-next-line no-unused-vars
-    const duration = 2000;
-    let i = 0;
-    let SWITCH_CONST = 1;
-    if (direction === "left") {
-      SWITCH_CONST = -1;
-    }
-
-    let svg = d3.select("svg");
-
-    // Shift the entire tree by half it's width
-    let g = svg.append("g").attr("transform", "translate(" + width / 2 + ",0)");
-
-    let tree = d3.tree().size([height, (SWITCH_CONST * (width - 150)) / 2]);
-
-    tree(root);
-
-    const transition = svg.transition().duration(duration);
-
-    const nodes = root.descendants();
-    const links = root.links();
-
-    // todo - maybe remove this
-    nodes.forEach((d, i) => {
-      console.log(d);
-      console.log(i);
-      d.id = d.data.id;
-      d.name = d.data.name;
-      d._children = d.children;
-    });
-    // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
-
-    // Update the nodes…
-    // Just added, 7/12
-    var node = svg.selectAll("g.node").data(nodes, function(d) {
-      return d.id || (d.id = ++i);
-    });
-
-    // Create links
-    let link = this.createLinks(g, links);
-
-    // Create nodes
-    node = this.createNodes(g, nodes);
-
-    // Transition exiting nodes to the parent's new position.
-    var nodeExit = node
-      .exit()
-      .transition()
-      .duration(duration)
-      .attr("transform", function(d) {
-        return "translate(" + d.y + "," + d.x + ")";
-      })
-      .remove();
-
-    // Append circle
-    this.appendCircle(node, direction);
-
-    // Append text
-    this.appendText(node);
-
-    // Update the nodes
-    node.on("click", this.handleClickOnNode);
-  };
-
   printNodes = (msg, root) => {
     // Log where the nodes are.
     console.log(msg);
     root.descendants().forEach((d, i) => {
-      console.log(
-        "node i: " +
-          i +
-          ", d.depth:" +
-          d.depth +
-          ", data.name: " +
-          d.data.name +
-          ", d.x:" +
-          parseFloat(d.x).toFixed(2) +
-          ", d.y: " +
-          parseFloat(d.y).toFixed(2)
-      );
+      console.log("node i: " + i + ", d.depth:" + d.depth + ", data.name: " + d.data.name +
+          ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
     });
   };
 
@@ -1492,12 +1318,6 @@ class TreeMindMap extends React.Component {
     this.setState({ openSnackbar: true, Transition });
   };
 
-  handleClickOpen = () => {
-    this.setState({
-      open: true
-    });
-  };
-
   handleDialogClose = () => {
     this.setState({
       open: false
@@ -1508,25 +1328,28 @@ class TreeMindMap extends React.Component {
     this.setState({ idea: event.target.value });
   };
 
-  handleSubmitIdea = event => {
-    event.preventDefault();
-    // Save idea
+  handleSubmitIdea = () => {
+    // Save idea.  Selected node ID should already be in state, so will be submitted when we JSON.stringify state,
+    // which will be needed for create.
     const orgId = getOrgId();
-    const ideaId = 0; // may need this later for editing ideas.
+    let svg = d3.select("svg");
+    let selectedNodeId = this.findSelectedNodeId(svg);
     let apiPath = "";
     let successMessage = "";
     let method = "";
 
-    if (ideaId > 0) {
-      // For edit
-      apiPath = "/api/ideas/" + orgId;
-      successMessage = "Idea updated.";
-      method = "PUT";
-    } else {
-      // For create
-      apiPath = "/api/ideas/";
-      successMessage = "Idea created.";
-      method = "POST";
+    if (selectedNodeId !== "") {
+      if (this.state.isEditingIdea) {
+        // For edit
+        apiPath = "/api/ideas/" + selectedNodeId;
+        successMessage = "Idea updated.";
+        method = "PUT";
+      } else {
+        // For create
+        apiPath = "/api/ideas/";
+        successMessage = "Idea created.";
+        method = "POST";
+      }
     }
 
     setTimeout(() => {
@@ -1538,6 +1361,7 @@ class TreeMindMap extends React.Component {
         .then(() => {
           this.setState({
             message: successMessage,
+            modalVisible: false,
             openSnackbar: true,
             open: false
           });
@@ -1588,28 +1412,26 @@ class TreeMindMap extends React.Component {
     let data = null;
     if (node) {
       data = node._groups[0][0].__data__;
-    }
 
-    let modal_x = data.y - POS1 + MODAL_WIDTH / 2 + 15;
-    let modal_y = data.x + 200;
-    console.log(
-      "setModalVisible: x: " +
-        data.x +
-        ", y: " +
-        data.y +
-        ", window.innerWidth: " +
-        window.innerWidth +
-        ", window.innerHeight: " +
-        window.innerHeight +
-        ", modal_x: " +
-        modal_x +
-        ", modal_y: " +
-        modal_y
-    );
+      // Calculate the position where we want the modal dialog to appear.  For the x position, remember that we're
+      // rotating the tree by 90 degrees, so use data.y.  POS1 and half MODAL_WIDTH represent the offset needed.
+      let modal_x = data.y - POS1 + MODAL_WIDTH / 2 + 15;
+      let modal_y = data.x + 200;
+      console.log(
+        "setModalVisible: x: " + data.x + ", y: " + data.y + ", window.innerWidth: " +
+        window.innerWidth + ", window.innerHeight: " + window.innerHeight +
+        ", modal_x: " + modal_x + ", modal_y: " + modal_y);
+      this.setState({
+        modalVisible: modalVisible,
+        modalTop: modal_y,
+        modalLeft: modal_x
+      });
+    }
+  };
+
+  handleIdeaTextChange = name => event => {
     this.setState({
-      modalVisible: modalVisible,
-      modalTop: modal_y,
-      modalLeft: modal_x
+      [name]: event.target.value
     });
   };
 
@@ -1655,43 +1477,28 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.handleClickOpen}
+              onClick={() => this.setModalVisible(true)}
               className={classes.outlinedButton}
             >
-              Add Note
+              Edit Idea
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.handlePopoverClick}
-              className={classes.outlinedButton}
-            >
-              View Note
-            </Button>
-            <Button type="primary" onClick={() => this.setModalVisible(true)}>
-              VIEW IDEA
-            </Button>
-              <Modal
-                title="Idea"
-                width={MODAL_WIDTH}
-                style={{ top: top, left: left }}
-                visible={this.state.modalVisible}
-                onOk={() => this.setModalVisible(false)}
-                onCancel={() => this.setModalVisible(false)}
-              >
-                <TextArea
-                  placeholder="Autosize height with minimum and maximum number of lines"
-                  autosize={{ minRows: 6, maxRows: 12 }}
-                  value={this.state.idea}
-                />
-              </Modal>
-            <Button
-              variant="contained"
-              color="secondary"
+              disabled={this.state.deleteDisabled}
               onClick={this.deleteNode}
               className={classes.outlinedButton}
             >
               Delete Node
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.undoDeleteDisabled}
+              onClick={this.undoDeleteNode}
+              className={classes.outlinedButton}
+            >
+              Undo Delete
             </Button>
             <Button
               variant="contained"
@@ -1701,6 +1508,21 @@ class TreeMindMap extends React.Component {
             >
               Save Mind Map
             </Button>
+            <Modal
+              title={"Idea - " + this.state.nodeTitle}
+              width={MODAL_WIDTH}
+              style={{ top: top, left: left }}
+              visible={this.state.modalVisible}
+              onOk={() => this.handleSubmitIdea()}
+              onCancel={() => this.setModalVisible(false)}
+            >
+              <TextArea
+                id="idea"
+                autosize={{ minRows: 6, maxRows: 12 }}
+                onChange={this.handleIdeaTextChange("idea")}
+                value={this.state.idea}
+              />
+            </Modal>
           </Grid>
           <Grid item sm={12}>
             <Typography variant="h6">

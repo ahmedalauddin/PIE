@@ -627,6 +627,9 @@ class TreeMindMapOld extends React.Component {
   };
 
   selectNode = (node) => {
+    d3.selectAll("g.node")
+      .filter(".node-selected")
+      .each(this.deselectNode);
     node
       .classed("node-selected", true)
       .select("foreignObject")

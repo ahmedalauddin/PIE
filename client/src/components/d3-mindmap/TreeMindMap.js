@@ -5,8 +5,8 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-07-20
- * Changes:  Moving state into constructor.
+ * Modified: 2019-08-09
+ * Changes:  Changing height and width of mind map to use window inner height and width, minus some corrections.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -23,17 +23,12 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-// import { Typography } from "antd";
-import { Modal } from "antd";
+import { Modal, Input } from "antd";
 import "antd/dist/antd.css";
-import { Input } from "antd";
 import Button from "@material-ui/core/Button";
-// import DialogContentText from "@material-ui/core/DialogContentText";
 import Typography from "@material-ui/core/Typography";
-// import { Modal, Button } from "antd";
 
 const { TextArea } = Input;
-const { Text } = Typography;
 const styles = theme => ({
   grid: {
     width: 1500,
@@ -222,11 +217,11 @@ const treeData = {
     }
   ]
 };
-const duration = 1000;
-const dx = 200; // what is dx?
+const duration = 100;
+const dx = 200;
 const dy = 125;
-const width = 1000;
-const height = 1000;
+// const width = 800;
+// const height = 700;
 const DEBUG = false;
 const margin = { top: 40, right: 120, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
@@ -240,8 +235,37 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`
   };
 }
-const modal = Modal;
-const MODAL_WIDTH = 500;
+const MODAL_WIDTH = 400;
+
+function logAppendCircle(d, ifLogging) {
+  if (ifLogging) {
+    console.log("Append circle " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
+      ", " + parseFloat(d.y).toFixed(2) + ")");
+  }
+}
+
+function logAppendText(d, ifLogging)  {
+  if (ifLogging) {
+    console.log("Append text " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
+      ", " + parseFloat(d.y).toFixed(2) + ")");
+  }
+}
+
+function logCreateNode(d, ifLogging) {
+  if (ifLogging) {
+    console.log("Creating node " + d.name +" , translating to (" + parseFloat(d.y).toFixed(2) +
+      ", " + parseFloat(d.x).toFixed(2) + ")");
+  }
+}
+
+function logAppendPaths(d, ifLogging) {
+  if (ifLogging) {
+    console.log("Appending D3 link from " + d.source.data.name + " at (" + parseFloat(d.source.x).toFixed(2) +
+      ", " + parseFloat(d.source.y).toFixed(2) + ") to " + d.target.data.name + " at (" +
+      parseFloat(d.target.x).toFixed(2) + ", " + parseFloat(d.target.y).toFixed(2) +
+      ")");
+  }
+}
 
 class TreeMindMap extends React.Component {
   constructor(props) {
@@ -269,10 +293,6 @@ class TreeMindMap extends React.Component {
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
     this.findSelectedNodeName = this.findSelectedNodeName.bind(this);
     this.findSelectedNode = this.findSelectedNode.bind(this);
-    this.logCreateNode = this.logCreateNode.bind(this);
-    this.logAppendPaths = this.logAppendPaths.bind(this);
-    this.logAppendText = this.logAppendText.bind(this);
-    this.logAppendCircle = this.logAppendCircle.bind(this);
     this.getNodeById = this.getNodeById.bind(this);
     this.fullTree = this.fullTree.bind(this);
     this.fetchIdea = this.fetchIdea.bind(this);
@@ -292,8 +312,8 @@ class TreeMindMap extends React.Component {
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
     this.state = {
-      width: 1000,
-      height: 1000,
+      width:  window.innerWidth - 800,
+      height: window.innerHeight - 150,
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
@@ -326,7 +346,6 @@ class TreeMindMap extends React.Component {
       deleteDisabled: true,
       undoDeleteDisabled: true
     };
-    console.log("End TreeMindMap constructor.");
   }
 
   createId = () => {
@@ -616,8 +635,8 @@ class TreeMindMap extends React.Component {
     // append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
     let svg = d3
       .select(this.svg)
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", this.state.width)
+      .attr("height", this.state.height)
       .style("font", "14px sans-serif")
       .on("click", this.handleClickOnCanvas);
 
@@ -758,7 +777,6 @@ class TreeMindMap extends React.Component {
     return this.state.deleteDisabled;
   };
 
-
   removeSelectedNodeFromData = svg => {
     // Removes selected node from the JSON data, stored in state.
     let selectedNodeId = this.findSelectedNodeId(svg);
@@ -887,7 +905,7 @@ class TreeMindMap extends React.Component {
 
     d3.select(nodes[i])
       .select("circle")
-      .style("fill", d => (d._children ? "#555" : "#999"));
+      .style("fill", d => (d._children ? "#159" : "#159"));
 
     d3.select(nodes[i])
       .classed("node-editing", false)
@@ -926,7 +944,7 @@ class TreeMindMap extends React.Component {
       .attr("height", 40)
       .append("xhtml:p")
       .text(d => {
-        // this.logAppendText(d, true);
+        // logAppendText(d, true);
         return d.data.name;
       });
   };
@@ -960,36 +978,6 @@ class TreeMindMap extends React.Component {
       });
   };
 
-  logAppendCircle = (d, ifLogging) => {
-    if (ifLogging) {
-      console.log("Append circle " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
-          ", " + parseFloat(d.y).toFixed(2) + ")");
-    }
-  };
-
-  logAppendText = (d, ifLogging) => {
-    if (ifLogging) {
-      console.log("Append text " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
-          ", " + parseFloat(d.y).toFixed(2) + ")");
-    }
-  };
-
-  logCreateNode = (d, ifLogging) => {
-    if (ifLogging) {
-      console.log("Creating node " + d.name +" , translating to (" + parseFloat(d.y).toFixed(2) +
-          ", " + parseFloat(d.x).toFixed(2) + ")");
-    }
-  };
-
-  logAppendPaths = (d, ifLogging) => {
-    if (ifLogging) {
-      console.log("Appending D3 link from " + d.source.data.name + " at (" + parseFloat(d.source.x).toFixed(2) +
-          ", " + parseFloat(d.source.y).toFixed(2) + ") to " + d.target.data.name + " at (" +
-          parseFloat(d.target.x).toFixed(2) + ", " + parseFloat(d.target.y).toFixed(2) +
-          ")");
-    }
-  };
-
   createNodes = (g, nodes) => {
     // This should be like line 741 in TreMindMap-629.js
     // const newNodeContainers = existingNodeContainers.enter().append("g")
@@ -1013,6 +1001,7 @@ class TreeMindMap extends React.Component {
   };
 
   shiftTree = svg => {
+    let width = this.state.width;
     let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ",0)");
     return g;
   };
@@ -1053,11 +1042,11 @@ class TreeMindMap extends React.Component {
 
     // debugger;
     // Compute the layout.
-    let treeLeft = d3.tree().size([height, (-1 * (width - 150)) / 2]);
-    let treeRight = d3.tree().size([height, (width - 150) / 2]);
+    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 150)) / 2]);
+    let treeRight = d3.tree().size([this.state.height, (this.state.width - 150) / 2]);
 
     // Shift the entire tree by half it's width
-    let g = svg.select("g").attr("transform", "translate(" + width / 2 + ",0)");
+    let g = svg.select("g").attr("transform", "translate(" + this.state.width / 2 + ",0)");
 
     // Compute the new tree layouts.
     this.d3Tree(leftTree, "left");
@@ -1065,8 +1054,8 @@ class TreeMindMap extends React.Component {
 
     // Set the origins of each left and right tree to the same x position, which we use as the y position, given
     // we rotate the tree by 90 degrees.
-    rightTree.x = 500;
-    leftTree.x = 500;
+    rightTree.x = this.state.height/2;
+    leftTree.x = this.state.height/2;
 
     // Combine the outputs from D3 tree.
     rightTree.children.forEach((d, i) => {
@@ -1085,12 +1074,12 @@ class TreeMindMap extends React.Component {
     const links = root.links();
 
     // Set both root nodes to be dead center vertically
-    nodes[0].x = height / 2;
+    nodes[0].x = this.state.height / 2;
 
     const transition = svg
       .transition()
       .duration(duration)
-      .attr("height", height)
+      .attr("height", this.state.height)
       .tween(
         "resize",
         window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
@@ -1118,7 +1107,7 @@ class TreeMindMap extends React.Component {
     newNodeContainers
       .append("circle")
       .attr("r", 10)
-      .attr("fill", d => (d._children ? "#555" : "#999"));
+      .attr("fill", d => (d._children ? "#159" : "#159"));
 
     // The "foreignObject" object will display the name text on the node.
     newNodeContainers
@@ -1172,7 +1161,7 @@ class TreeMindMap extends React.Component {
     mergedLinks
       .transition()
       .duration(duration)
-      .attr("transform", "translate(" + width / 2 + ",0)")
+      .attr("transform", "translate(" + this.state.width / 2 + ",0)")
       .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
@@ -1196,7 +1185,7 @@ class TreeMindMap extends React.Component {
       SWITCH_CONST = -1;
     }
     // Compute the layout.
-    let tree = d3.tree().size([height, (SWITCH_CONST * (width - 150)) / 2]);
+    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
     return tree(treeData);
   };
 
@@ -1401,8 +1390,8 @@ class TreeMindMap extends React.Component {
 
     const SCREEN_WIDTH = window.innerWidth;
     const SCREEN_HEIGHT = window.innerHeight;
-    const SVG_WIDTH = width;
-    const SVG_HEIGHT = height;
+    const SVG_WIDTH = this.state.width;
+    const SVG_HEIGHT = this.state.height;
     const POS1 = SCREEN_WIDTH / 2 - SVG_WIDTH / 2;
     let svg = d3.select(this.svg);
     let node = this.findSelectedNode();
@@ -1527,7 +1516,7 @@ class TreeMindMap extends React.Component {
             </Typography>
           </Grid>
           <Grid item sm={12}>
-            <svg width="1200" height="1200" ref={svg => (this.svg = svg)} />
+            <svg width="900" height="600" ref={svg => (this.svg = svg)} />
           </Grid>
         </Grid>
         <Grid item sm={12}>

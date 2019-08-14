@@ -13,14 +13,14 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import { red, grey } from "@material-ui/core/colors";
-import "./tree-styles.scss";
+import "../tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getOrgName } from "../../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import PropTypes from 'prop-types';
 
+const DEBUG_USE_TEST_DATA = false;
 const styles = theme => ({
   grid: {
     width: 1200,
@@ -155,6 +155,40 @@ const jsonNew = {
   "id": "_ns1nvi0ai",
   "name": "Root"
   };
+const treeData = {
+  "id": "_ns1nvi0ai",
+  "name": "Increase plant availability",
+  "children": [{
+    "id": "_o4r47dq71",
+    "name": "Reduce operating costs",
+    "children": [{
+      "id": "_al6om6znz",
+      "name": "Reduce inventory",
+      "children": [{"id": "_46ct4o4oy", "name": "Increase parts availability"}, {
+        "id": "_ea00nojwy",
+        "name": "Optimize supply chain"
+      }]
+    }, {
+      "id": "_z3uk0721f",
+      "name": "Operating procedures",
+      "children": [{"id": "_je49rrvdq", "name": "TBD"}, {
+        "id": "_riy5iihy9",
+        "name": "yellow"
+      }, {"id": "_sy8zlb7vz", "name": "blue"}]
+    }]
+  }, {"id": "_uajrljib9", "name": "Review supply chain processes"}, {
+    "id": "_uguzpgdta",
+    "name": "Introduce automation",
+    "children": [{
+      "id": "_t8ln1vlwa",
+      "name": "white",
+      "children": [
+        {"id": "_qzltyy8rn", "name": "green"},
+        {"id": "_92xtmt66p", "name": "maroon"}
+      ]
+    }]
+  }]
+};
 const dx = 80;
 const dy = -180;
 const width = 1000;
@@ -394,8 +428,6 @@ class TreeMindMapOld extends React.Component {
     let handleKeypressEsc = this.handleKeypressEsc;
 
     // 4. Register other event handlers
-    // Don't need key event handlers for now.
-    /*
     d3.select("body")
       .on("keydown", function(e) {
         // eslint-disable-next-line no-console
@@ -409,16 +441,15 @@ class TreeMindMapOld extends React.Component {
         } else if(d3.event.keyCode === 13 && !nodeIsBeingEdited) {
           console.log("enter - add sibling to selected node");
           addSiblingToSelectedNode(svg);
-
+        /*
         } else if(d3.event.keyCode === 8 && !nodeIsBeingEdited) {
           console.log("delete - remove selected node");
-          removeSelectedNode(svg);
+          removeSelectedNode(svg); */
         } else if(d3.event.keyCode === 27) {
           console.log("esc - deselect node");
           handleKeypressEsc(svg);
         }
       });
-     */
 
     return this.state.svg.node();
   };
@@ -594,6 +625,9 @@ class TreeMindMapOld extends React.Component {
   };
 
   selectNode = (node) => {
+    d3.selectAll("g.node")
+      .filter(".node-selected")
+      .each(this.deselectNode);
     node
       .classed("node-selected", true)
       .select("foreignObject")
@@ -695,7 +729,7 @@ class TreeMindMapOld extends React.Component {
     const duration = 100;
     let root = "";
     if (!this.state.isNewMap) {
-      root = d3.hierarchy(this.state.jsonData);
+      root = d3.hierarchy(treeData);
     } else {
       root = d3.hierarchy(jsonNew);
     }
@@ -813,39 +847,48 @@ class TreeMindMapOld extends React.Component {
   };
 
   componentDidMount() {
-    // Try to fetch data.
-    if (this.state.orgId > 0) {
-      fetch(`/api/mindmaps-org/${this.state.orgId}`)
-        .then(response => {
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json().then(map => {
-              // process your JSON data further
-              if (map[0]) {
-                this.setState({
-                  jsonData: map[0].mapData
-                });
-              } else {
-                this.setState({
-                  isNewMap: true
-                });
-              }
-            });
-          } else {
-            this.setState({
-              isNewMap: true
-            });
-          }
-        })
-        .then(() => {
-          // Then call chart().
-          this.chart();
-        });
-    } else {
+    if (DEBUG_USE_TEST_DATA) {
       this.setState({
-        isNewMap: true
+        // jsonData: JSON.stringify(map[0].mapData)
+        jsonData: treeData
       });
+    } else {
+      // Try to fetch data.
+      if (this.state.orgId > 0) {
+        fetch(`/api/mindmaps-org/${this.state.orgId}`)
+          .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+              return response.json().then(map => {
+                // process your JSON data further
+                if (map[0]) {
+                  this.setState({
+                    // jsonData: JSON.stringify(map[0].mapData)
+                    jsonData: map[0].mapData
+                  });
+                } else {
+                  this.setState({
+                    isNewMap: true
+                  });
+                }
+              });
+            } else {
+              this.setState({
+                isNewMap: true
+              });
+            }
+          })
+          .then(() => {
+            // Then call chart().
+            this.chart();
+          });
+      } else {
+        this.setState({
+          isNewMap: true
+        });
+      }
     }
+    this.chart();
   }
 
   // Functions for the snackbar

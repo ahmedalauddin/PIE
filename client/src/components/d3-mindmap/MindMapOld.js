@@ -20,7 +20,7 @@ import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import TreeMindMapOld from "./TreeMindMapOld";
+import TreeMindMapOld from "./save/TreeMindMapOld";
 import NodeDetail from "./NodeDetail";
 
 const styles = theme => ({

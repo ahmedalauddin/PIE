@@ -34,7 +34,7 @@ import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
 import TreeMap from "./components/d3-mindmap/save/TreeMap";
 import TreeMindMap from "./components/d3-mindmap/TreeMindMap";
-import TreeMindMapOld from "./components/d3-mindmap/TreeMindMapOld";
+import TreeMindMapOld from "./components/d3-mindmap/save/TreeMindMapOld";
 import MindMap from "./components/d3-mindmap/MindMap";
 import MindMapOld from "./components/d3-mindmap/MindMapOld";
 import Search from "./components/search/Search";

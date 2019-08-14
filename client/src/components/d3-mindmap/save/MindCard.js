@@ -18,14 +18,14 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect } from "react-router-dom";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
-import { getOrgId } from "../../redux";
+import { getOrgId } from "../../../redux";
 import {red} from "@material-ui/core/colors";
 import Checkbox from "@material-ui/core/Checkbox";
 import TableCell from "@material-ui/core/TableCell";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
 import DescriptionIcon from "@material-ui/core/SvgIcon/SvgIcon";
-import ButtonBar from "../buttons/ButtonBar";
+import ButtonBar from "../../buttons/ButtonBar";
 
 const styles = theme => ({
   grid: {

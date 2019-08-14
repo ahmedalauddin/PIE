@@ -167,63 +167,11 @@ const jsonNew = {
   id: "_ns1nvi0ai",
   name: "Root"
 };
-const treeData = {
-  id: "_ns1nvi0ai",
-  name: "Increase plant availability",
-  children: [
-    {
-      id: "_o4r47dq71",
-      name: "Reduce operating costs",
-      children: [
-        {
-          id: "_al6om6znz",
-          name: "Reduce inventory",
-          children: [
-            { id: "_46ct4o4oy", name: "Increase parts availability" },
-            {
-              id: "_ea00nojwy",
-              name: "Optimize supply chain"
-            }
-          ]
-        },
-        {
-          id: "_z3uk0721f",
-          name: "Operating procedures",
-          children: [
-            { id: "_je49rrvdq", name: "TBD" },
-            {
-              id: "_riy5iihy9",
-              name: "yellow"
-            },
-            { id: "_sy8zlb7vz", name: "blue" }
-          ]
-        }
-      ]
-    },
-    { id: "_uajrljib9", name: "Review supply chain processes" },
-    {
-      id: "_uguzpgdta",
-      name: "Introduce automation",
-      children: [
-        {
-          id: "_t8ln1vlwa",
-          name: "white",
-          children: [
-            { id: "_qzltyy8rn", name: "green" },
-            { id: "_92xtmt66p", name: "maroon" }
-          ]
-        }
-      ]
-    }
-  ]
-};
 const duration = 100;
-const dx = 200;
-const dy = 125;
-// const width = 800;
-// const height = 700;
-const DEBUG = false;
-const margin = { top: 40, right: 120, bottom: 40, left: 80 };
+const dx = 175;
+const dy = 100;
+const DEBUG_USE_TEST_DATA = false;
+const margin = { top: 40, right: 100, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 function getModalStyle() {
   const top = 50;
@@ -235,37 +183,7 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`
   };
 }
-const MODAL_WIDTH = 400;
-
-function logAppendCircle(d, ifLogging) {
-  if (ifLogging) {
-    console.log("Append circle " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
-      ", " + parseFloat(d.y).toFixed(2) + ")");
-  }
-}
-
-function logAppendText(d, ifLogging)  {
-  if (ifLogging) {
-    console.log("Append text " + d.name + " , at (" + parseFloat(d.x).toFixed(2) +
-      ", " + parseFloat(d.y).toFixed(2) + ")");
-  }
-}
-
-function logCreateNode(d, ifLogging) {
-  if (ifLogging) {
-    console.log("Creating node " + d.name +" , translating to (" + parseFloat(d.y).toFixed(2) +
-      ", " + parseFloat(d.x).toFixed(2) + ")");
-  }
-}
-
-function logAppendPaths(d, ifLogging) {
-  if (ifLogging) {
-    console.log("Appending D3 link from " + d.source.data.name + " at (" + parseFloat(d.source.x).toFixed(2) +
-      ", " + parseFloat(d.source.y).toFixed(2) + ") to " + d.target.data.name + " at (" +
-      parseFloat(d.target.x).toFixed(2) + ", " + parseFloat(d.target.y).toFixed(2) +
-      ")");
-  }
-}
+const MODAL_WIDTH = 300;
 
 class TreeMindMap extends React.Component {
   constructor(props) {
@@ -312,12 +230,12 @@ class TreeMindMap extends React.Component {
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
     this.state = {
-      width:  window.innerWidth - 800,
-      height: window.innerHeight - 150,
+      width:  window.innerWidth - 750,
+      height: window.innerHeight - 100,
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      jsonData: treeData,
+      jsonData: jsonNew,
       isNewMap: false,
       openSnackbar: false,
       message: "",
@@ -326,7 +244,7 @@ class TreeMindMap extends React.Component {
       tree: d3
         .tree()
         .nodeSize([dx, dy])
-        .size([800, 600]),
+        .size([750, 600]),
       open: false,
       openPopover: false,
       placement: undefined,
@@ -747,7 +665,7 @@ class TreeMindMap extends React.Component {
       currentlySelectedNode.size() > 0 &&
       currentlySelectedNode.attr("name") === clickedNodeID
     ) {
-      console.log("going into editing mode!");
+      console.log("going into edit mode!");
       d3.select(clickedNode)
         //.call(this.editNode)
         .call(this.selectNode);
@@ -755,9 +673,6 @@ class TreeMindMap extends React.Component {
       d3.select(clickedNode).call(this.selectNode);
 
       // If not already selected, mark as selected
-      /**
-       *  TODO: check if this is working.  Does not seem to be.
-       */
       otherNodes.each(this.deselectNode);
     }
 
@@ -951,7 +866,6 @@ class TreeMindMap extends React.Component {
 
   appendCircle = (nodeContainers, direction) => {
     //.attr("fill", d => d._children ? "#555" : "#999");
-    // let color = "#900";
     let color = "#555";
     nodeContainers
       .append("circle")
@@ -1034,16 +948,16 @@ class TreeMindMap extends React.Component {
     }
   };
 
+  // Draw the full bidirectional tree.
   fullTree = () => {
     let svg = d3.select("svg");
 
     let leftTree = this.loadData("left");
     let rightTree = this.loadData("right");
 
-    // debugger;
     // Compute the layout.
-    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 150)) / 2]);
-    let treeRight = d3.tree().size([this.state.height, (this.state.width - 150) / 2]);
+    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 125)) / 2]);
+    let treeRight = d3.tree().size([this.state.height, (this.state.width - 125) / 2]);
 
     // Shift the entire tree by half it's width
     let g = svg.select("g").attr("transform", "translate(" + this.state.width / 2 + ",0)");
@@ -1186,6 +1100,8 @@ class TreeMindMap extends React.Component {
     }
     // Compute the layout.
     let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
+
+    // TODO: change this.
     return tree(treeData);
   };
 
@@ -1200,6 +1116,7 @@ class TreeMindMap extends React.Component {
 
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
+    debugger;
     let d3Data = "";
     let jsonData = this.state.jsonData;
     let split_index = Math.round(jsonData.children.length / 2);
@@ -1233,28 +1150,18 @@ class TreeMindMap extends React.Component {
     // d3.hierarchy object is a data structure that represents a hierarchy
     // It has a number of functions defined on it for retrieving things like
     // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    let leftTree = this.loadData("left");
-    let rightTree = this.loadData("right");
-
-    // this.drawTree(rightTree, "right");
-    // this.drawTree(leftTree, "left");
     this.fullTree();
-
-    // TODO - may need to split the JSON into right and left too.
-
     this.setState({
-      jsonData: treeData,
       isNewMap: false
     });
   };
 
   componentDidMount() {
-    // DEBUG
-    if (DEBUG) {
+    if (DEBUG_USE_TEST_DATA) {
       this.setState({
-        // jsonData: JSON.stringify(map[0].mapData)
-        jsonData: treeData
+        jsonData: jsonNew
       });
+      this.chart();
     } else {
       // Try to fetch data.
       if (this.state.orgId > 0) {
@@ -1289,10 +1196,9 @@ class TreeMindMap extends React.Component {
         this.setState({
           isNewMap: true
         });
+        this.chart();
       }
     }
-
-    this.chart();
   }
 
   // Functions for the snackbar

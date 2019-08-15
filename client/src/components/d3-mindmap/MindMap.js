@@ -5,8 +5,8 @@
  * Created:  2019-06-22
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-25
- * Changes:
+ * Modified: 2019-08-14
+ * Changes:  Tabs for node detail and prioritzing KPIs.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -22,7 +22,7 @@ import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import TreeMindMap from "./TreeMindMap";
 import NodeDetail from "./NodeDetail";
-import ListIdeas from "./ListIdeas";
+import PrioritizeKpis from "./PrioritizeKpis";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
@@ -275,7 +275,20 @@ class MindMap extends React.Component {
               </Grid>
               <Grid item xs={false} sm={4} md={4} >
                 <div className={classes.root}>
-                  <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+                  <AppBar position="static">
+                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
+                      <Tab label="Node" />
+                      <Tab label="Prioritized KPIs" />
+                    </Tabs>
+                  </AppBar>
+                  {this.state.tabValue === 0 && (
+                    <TabContainer>
+                      <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+                    </TabContainer>)}
+                  {this.state.tabValue === 1 && (
+                    <TabContainer>
+                      <PrioritizeKpis />
+                    </TabContainer>)}
                 </div>
               </Grid>
               <Snackbar

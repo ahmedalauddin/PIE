@@ -44,6 +44,14 @@ module.exports = router => {
   logger.debug(`${callerClass} GET -> path: /api/kpis-organization/:orgid`);
   router.get("/api/kpis-organization/:orgid", kpi.listByOrganization);
 
+  // get KPIs by organization and priority
+  logger.debug(`${callerClass} GET -> path: /api/kpis-orgpriority/:orgid`);
+  router.get("/api/kpis-orgpriority/:orgid", kpi.listByOrganizationAndPriority);
+
+  // save KPI priority list
+  logger.debug(`${callerClass} GET -> path: /api/kpis-save-priorities/:orgid`);
+  router.put("/api/kpis-save-priorities/:orgid", kpi.savePriorityOrder);
+
   // search KPIs
   logger.debug(`${callerClass} GET -> path: /api/kpis-search`);
   router.get("/api/kpis-search", kpi.search);

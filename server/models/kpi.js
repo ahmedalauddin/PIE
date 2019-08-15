@@ -35,6 +35,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true
       },
+      orgPriority: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
       projectId: {
         type: DataTypes.INTEGER,
         allowNull: true

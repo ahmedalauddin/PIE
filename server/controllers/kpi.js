@@ -108,6 +108,50 @@ module.exports = {
       });
   },
 
+  savePriorityOrder(req, res) {
+    /* Use a bulk update statement similar to this:
+        UPDATE students s
+        JOIN (
+            SELECT 1 as id, 5 as new_score1, 8 as new_score2
+            UNION ALL
+            SELECT 2, 10, 8
+            UNION ALL
+            SELECT 3, 8, 3
+            UNION ALL
+            SELECT 4, 10, 7
+        ) vals ON s.id = vals.id
+        SET score1 = new_score1, score2 = new_score2;
+     */
+    console.log("kpi -> savePriorityOrder");
+    const orgid = req.params.orgid;
+    const kpis = req.body.kpis;
+    let sql = "Update Kpis k join (";
+    let first = true;
+
+    for (var i = 0; i < kpis.length; i++) {
+      if (first === true) {
+        sql += "select " + kpis[i].id + " as id, " + (i+1) + " as newPriority ";
+        first = false;
+      } else {
+        sql += "union all select " + kpis[i].id + ", " + (i+1) + " ";
+      }
+      console.log("i = " + i + ", kpi id = " + kpis[i].id + ", kpi title = " + kpis[i].title);
+    }
+    sql += ") vals on k.id = vals.id set orgPriority = newPriority " +
+      "where orgId = " + orgid;
+    console.log("Update SQL: " + sql);
+    return models.sequelize
+      .query(sql)
+      .then(([results, metadata]) => {
+        // Results will be an empty array and metadata will contain the number of affected rows.
+        console.log("KPI savePriorityOrder -> update: successful");
+      })
+      .catch(error => {
+        logger.error(`${callerType} KPI savePriorityOrder -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // Deactivate a Kpi
   deactivate(req, res) {
     const id = req.params.id;
@@ -391,6 +435,27 @@ module.exports = {
       })
       .catch(error => {
         logger.error(`${callerType} listByOrganization -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all KPIs for a single organization by priority for the mind map screen.
+  listByOrganizationAndPriority(req, res) {
+    let sql = "select * from Kpis " +
+      "where orgId = " + req.params.orgid + " and active = 1 order by orgPriority asc";
+    logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(_k => {
+        logger.debug(`${callerType} listByOrganizationAndPriority -> successful, count: ${_k.length}`);
+        res.status(201).send(_k);
+      })
+      .catch(error => {
+        logger.error(`${callerType} listByOrganizationAndPriority -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },

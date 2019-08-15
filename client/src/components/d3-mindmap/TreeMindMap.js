@@ -230,7 +230,7 @@ class TreeMindMap extends React.Component {
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
     this.state = {
-      width:  window.innerWidth - 750,
+      width: window.innerWidth - 750,
       height: window.innerHeight - 100,
       svg: d3.select(this.svg),
       orgName: getOrgName(),
@@ -956,8 +956,8 @@ class TreeMindMap extends React.Component {
     let rightTree = this.loadData("right");
 
     // Compute the layout.
-    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 125)) / 2]);
-    let treeRight = d3.tree().size([this.state.height, (this.state.width - 125) / 2]);
+    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 50)) / 2]);
+    let treeRight = d3.tree().size([this.state.height, (this.state.width - 50) / 2]);
 
     // Shift the entire tree by half it's width
     let g = svg.select("g").attr("transform", "translate(" + this.state.width / 2 + ",0)");

@@ -270,10 +270,10 @@ class MindMap extends React.Component {
           <Topbar />
           <div className={classes.root}>
             <Grid container className={classes.root} spacing={24}>
-              <Grid item xs={false} sm={8} md={8} >
+              <Grid item xs={false} sm={9} md={9} >
                 <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
               </Grid>
-              <Grid item xs={false} sm={4} md={4} >
+              <Grid item xs={false} sm={3} md={3} >
                 <div className={classes.root}>
                   <AppBar position="static">
                     <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>

@@ -140,7 +140,7 @@ class Login extends React.Component {
                 container
                 className={classes.grid}
               >
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={6}>
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
@@ -168,6 +168,7 @@ class Login extends React.Component {
                           required
                           id="email"
                           label="Email"
+                          fullWidth
                           onChange={this.handleChange("email")}
                           value={this.state.email}
                           className={classes.textField}
@@ -177,6 +178,7 @@ class Login extends React.Component {
                       <Typography variant="h5" component="h2">
                         <TextField
                           required
+                          fullWidth
                           id="password"
                           label="Password"
                           type="Password"

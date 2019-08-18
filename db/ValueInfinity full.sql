@@ -1,6 +1,16 @@
-create schema mvp2 collate utf8mb4_0900_ai_ci;
-
-create table KpiTags
+/**
+* Project:  IBA Process Review
+* File:     valueinfinity-mvp/db/ValueInfinity full.sql
+* Descr:    Full SQL for creating tables, views, constraints, and indexes for the ValueInfinity Innovation Platform
+*           database.
+* Created:  2019-01-08
+* Author:   Brad Kaufman
+*------------------------------------------------
+* Revised:  2019-08-14
+* Changes:  Updated Kpis table to include orgPriority column, for prioritzing kpis.
+* 
+*/
+create table if not exists mvp2.KpiTags
 (
 	kpiId int not null,
 	tag varchar(60) not null,
@@ -10,9 +20,9 @@ create table KpiTags
 );
 
 create index kpiId
-	on KpiTags (kpiId);
+	on mvp2.KpiTags (kpiId);
 
-create table Organizations
+create table if not exists mvp2.Organizations
 (
 	id int auto_increment
 		primary key,
@@ -22,7 +32,7 @@ create table Organizations
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
 );
 
-create table DataSources
+create table if not exists mvp2.DataSources
 (
 	id int auto_increment
 		primary key,
@@ -33,17 +43,17 @@ create table DataSources
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint DataSources_ibfk_1
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade
 );
 
 create index DataSources_organization_ind
-	on DataSources (orgId);
+	on mvp2.DataSources (orgId);
 
 create index DataSources_title_ind
-	on DataSources (title);
+	on mvp2.DataSources (title);
 
-create table Departments
+create table if not exists mvp2.Departments
 (
 	id int auto_increment
 		primary key,
@@ -53,15 +63,29 @@ create table Departments
 	createdAt datetime null,
 	updatedAt datetime null,
 	constraint Departments_Organizations_id_fk
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade
 )
 comment 'Organization departments';
 
 create fulltext index name
-	on Departments (name, description);
+	on mvp2.Departments (name, description);
 
-create table Kpis
+create table if not exists mvp2.Ideas
+(
+	id int auto_increment
+		primary key,
+	name varchar(255) null,
+	ideaText text null,
+	nodeId varchar(20) null,
+	orgId int not null,
+	createdAt datetime default CURRENT_TIMESTAMP null,
+	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
+	constraint Ideas_Organizations_id_fk
+		foreign key (orgId) references mvp2.Organizations (id)
+);
+
+create table if not exists mvp2.Kpis
 (
 	id int auto_increment
 		primary key,
@@ -70,7 +94,9 @@ create table Kpis
 	title varchar(255) not null,
 	description varchar(255) null,
 	level int null,
+	mindmapNodeId varchar(20) null,
 	type varchar(255) null,
+	orgPriority int null,
 	status varchar(255) null,
 	active tinyint default 1 null,
 	projectId int null,
@@ -79,22 +105,22 @@ create table Kpis
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Kpis_Departments_id_fk
-		foreign key (deptId) references Departments (id),
+		foreign key (deptId) references mvp2.Departments (id),
 	constraint Kpis_ibfk_1
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade
 );
 
 create index Kpis_Organizations_ind
-	on Kpis (orgId);
+	on mvp2.Kpis (orgId);
 
 create index kpis_title_ind
-	on Kpis (title);
+	on mvp2.Kpis (title);
 
 create fulltext index title
-	on Kpis (title, description, formulaDescription, type);
+	on mvp2.Kpis (title, description, formulaDescription, type);
 
-create table Mindmaps
+create table if not exists mvp2.Mindmaps
 (
 	id int auto_increment
 		primary key,
@@ -103,14 +129,14 @@ create table Mindmaps
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Mindmaps_ibfk_1
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade
 );
 
 create index Mindmaps_Organizations_ind
-	on Mindmaps (orgId);
+	on mvp2.Mindmaps (orgId);
 
-create table Persons
+create table if not exists mvp2.Persons
 (
 	id int auto_increment
 		primary key,
@@ -132,19 +158,19 @@ create table Persons
 	constraint persons_email
 		unique (email),
 	constraint Persons_Departments_id_fk
-		foreign key (deptId) references Departments (id),
+		foreign key (deptId) references mvp2.Departments (id),
 	constraint Persons_ibfk_1
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade
 );
 
 create index Persons_Organizations_ind
-	on Persons (orgId);
+	on mvp2.Persons (orgId);
 
 create index Persons_login_ind
-	on Persons (email, pwdhash, disabled);
+	on mvp2.Persons (email, pwdhash, disabled);
 
-create table ProjectStatuses
+create table if not exists mvp2.ProjectStatuses
 (
 	id int not null
 		primary key,
@@ -154,7 +180,7 @@ create table ProjectStatuses
 )
 comment 'List of project statuses';
 
-create table Projects
+create table if not exists mvp2.Projects
 (
 	id int auto_increment
 		primary key,
@@ -174,16 +200,16 @@ create table Projects
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Projects_ibfk_1
-		foreign key (orgId) references Organizations (id)
+		foreign key (orgId) references mvp2.Organizations (id)
 			on delete cascade,
 	constraint Projects_ibfk_2
-		foreign key (mainKpiId) references Kpis (id)
+		foreign key (mainKpiId) references mvp2.Kpis (id)
 			on delete cascade,
 	constraint Projects_ibfk_3
-		foreign key (statusId) references ProjectStatuses (id)
+		foreign key (statusId) references mvp2.ProjectStatuses (id)
 );
 
-create table DataSets
+create table if not exists mvp2.DataSets
 (
 	id int auto_increment
 		primary key,
@@ -195,23 +221,23 @@ create table DataSets
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint DataSets_ibfk_1
-		foreign key (dataSourceId) references DataSources (id)
+		foreign key (dataSourceId) references mvp2.DataSources (id)
 			on delete cascade,
 	constraint DataSets_ibfk_2
-		foreign key (projectId) references Projects (id)
+		foreign key (projectId) references mvp2.Projects (id)
 			on delete cascade
 );
 
 create index DataSets_DataSources_ind
-	on DataSets (dataSourceId);
+	on mvp2.DataSets (dataSourceId);
 
 create index DataSets_Projects_ind
-	on DataSets (projectId);
+	on mvp2.DataSets (projectId);
 
 create index DataSets_title_ind
-	on DataSets (title);
+	on mvp2.DataSets (title);
 
-create table KpiProjects
+create table if not exists mvp2.KpiProjects
 (
 	projectId int not null,
 	kpiId int not null,
@@ -220,17 +246,17 @@ create table KpiProjects
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	primary key (projectId, kpiId),
 	constraint KpiProjects_ibfk_1
-		foreign key (kpiId) references Kpis (id)
+		foreign key (kpiId) references mvp2.Kpis (id)
 			on delete cascade,
 	constraint KpiProjects_ibfk_2
-		foreign key (projectId) references Projects (id)
+		foreign key (projectId) references mvp2.Projects (id)
 			on delete cascade
 );
 
 create index kpiId
-	on KpiProjects (kpiId);
+	on mvp2.KpiProjects (kpiId);
 
-create table ProjectPersons
+create table if not exists mvp2.ProjectPersons
 (
 	projectId int not null,
 	personId int not null,
@@ -240,32 +266,49 @@ create table ProjectPersons
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	primary key (projectId, personId),
 	constraint ProjectPersons_ibfk_1
-		foreign key (projectId) references Projects (id)
+		foreign key (projectId) references mvp2.Projects (id)
 			on delete cascade,
 	constraint ProjectPersons_ibfk_2
-		foreign key (personId) references Persons (id)
+		foreign key (personId) references mvp2.Persons (id)
 			on delete cascade
 );
 
 create index personId
-	on ProjectPersons (personId);
+	on mvp2.ProjectPersons (personId);
 
 create index Projects_Mindmap_ind
-	on Projects (mindmapId, nodeId);
+	on mvp2.Projects (mindmapId, nodeId);
 
 create index Projects_Organizations_ind
-	on Projects (orgId);
+	on mvp2.Projects (orgId);
 
 create index Projects_startAt_ind
-	on Projects (startAt);
+	on mvp2.Projects (startAt);
 
 create index Projects_title_ind
-	on Projects (title);
+	on mvp2.Projects (title);
 
 create fulltext index title
-	on Projects (title, description, summary, businessGoal);
+	on mvp2.Projects (title, description, summary, businessGoal);
 
-create table SequelizeMeta
+create table if not exists mvp2.SearchData
+(
+	id int auto_increment
+		primary key,
+	orgId int null,
+	foreignId int not null,
+	title varchar(100) null,
+	description varchar(255) null,
+	summary varchar(255) null,
+	project varchar(100) null,
+	source varchar(50) null
+)
+comment 'For building our fulltext search index.';
+
+create fulltext index title
+	on mvp2.SearchData (title, description, summary);
+
+create table if not exists mvp2.SequelizeMeta
 (
 	name varchar(255) not null,
 	constraint name
@@ -273,10 +316,10 @@ create table SequelizeMeta
 )
 collate=utf8_unicode_ci;
 
-alter table SequelizeMeta
+alter table mvp2.SequelizeMeta
 	add primary key (name);
 
-create table TaskPriorities
+create table if not exists mvp2.TaskPriorities
 (
 	id int not null
 		primary key,
@@ -286,7 +329,7 @@ create table TaskPriorities
 	updatedAt datetime default CURRENT_TIMESTAMP null
 );
 
-create table TaskStatuses
+create table if not exists mvp2.TaskStatuses
 (
 	id int not null
 		primary key,
@@ -296,7 +339,7 @@ create table TaskStatuses
 )
 comment 'List of task statuses';
 
-create table Milestones
+create table if not exists mvp2.Milestones
 (
 	id int auto_increment
 		primary key,
@@ -310,15 +353,15 @@ create table Milestones
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Milestones_Projects_id_fk
-		foreign key (projectId) references Projects (id),
+		foreign key (projectId) references mvp2.Projects (id),
 	constraint Milestones_TaskStatuses_id_fk
-		foreign key (statusId) references TaskStatuses (id)
+		foreign key (statusId) references mvp2.TaskStatuses (id)
 );
 
 create fulltext index title
-	on Milestones (title, description);
+	on mvp2.Milestones (title, description);
 
-create table Tasks
+create table if not exists mvp2.Tasks
 (
 	id int auto_increment
 		primary key,
@@ -333,98 +376,31 @@ create table Tasks
 	createdAt datetime default CURRENT_TIMESTAMP null,
 	updatedAt datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
 	constraint Tasks_ibfk_1
-		foreign key (projectId) references Projects (id)
+		foreign key (projectId) references mvp2.Projects (id)
 			on delete cascade,
 	constraint Tasks_ibfk_2
-		foreign key (assignedTo) references Persons (id)
+		foreign key (assignedTo) references mvp2.Persons (id)
 			on delete cascade,
 	constraint Tasks_ibfk_3
-		foreign key (statusId) references TaskStatuses (id)
+		foreign key (statusId) references mvp2.TaskStatuses (id)
 			on delete cascade,
 	constraint Tasks_ibfk_4
-		foreign key (priorityId) references TaskPriorities (id)
+		foreign key (priorityId) references mvp2.TaskPriorities (id)
 			on delete cascade,
 	constraint Tasks_ibfk_5
-		foreign key (milestoneId) references Milestones (id)
+		foreign key (milestoneId) references mvp2.Milestones (id)
 );
 
-alter table Projects
+alter table mvp2.Projects
 	add constraint Projects_ibfk_4
-		foreign key (currentTaskId) references Tasks (id);
+		foreign key (currentTaskId) references mvp2.Tasks (id);
 
 create index Tasks_Projects_ind
-	on Tasks (projectId);
+	on mvp2.Tasks (projectId);
 
 create index Tasks_assignedTo_ind
-	on Tasks (assignedTo);
+	on mvp2.Tasks (assignedTo);
 
 create fulltext index title
-	on Tasks (title, description);
-
-create definer = viadmin@`%` view vw_Kpis as select `K`.`id`                                                                                                   AS `id`,
-       `P`.`orgId`                                                                                                AS `orgId`,
-       `K`.`deptId`                                                                                               AS `deptId`,
-       `K`.`title`                                                                                                AS `title`,
-       `K`.`description`                                                                                          AS `description`,
-       `K`.`level`                                                                                                AS `level`,
-       `K`.`type`                                                                                                 AS `type`,
-       `K`.`active`                                                                                               AS `active`,
-       `K`.`status`                                                                                               AS `status`,
-       `K`.`projectId`                                                                                            AS `projectId`,
-       `K`.`formulaDescription`                                                                                   AS `formulaDescription`,
-       `K`.`departmentId`                                                                                         AS `departmentId`,
-       `P`.`title`                                                                                                AS `projectTitle`,
-       `O`.`name`                                                                                                 AS `orgName`,
-       (select group_concat(`KT`.`tag` separator ',')
-        from `mvp2`.`KpiTags` `KT`
-        where (`KT`.`kpiId` = `K`.`id`))                                                                          AS `tags`
-from ((`mvp2`.`Projects` `P` join `mvp2`.`Organizations` `O`)
-         join `mvp2`.`Kpis` `K`)
-where ((`K`.`projectId` = `P`.`id`) and (`P`.`orgId` = `O`.`id`));
-
-create definer = viadmin@`%` view vw_ProjectPersonsTemp as select `Pe`.`id` AS `personId`, `Pr`.`id` AS `projectId`, `O`.`id` AS `orgId`
-from `mvp2`.`Persons` `Pe`
-         join `mvp2`.`Organizations` `O`
-         join `mvp2`.`Projects` `Pr`
-where ((`Pe`.`orgId` = `O`.`id`) and (`Pr`.`orgId` = `O`.`id`));
-
-create definer = viadmin@`%` view vw_Tasks as select `T`.`id`                                     AS `id`,
-       `T`.`projectId`                              AS `projectId`,
-       `T`.`assignedTo`                             AS `assignedTo`,
-       `T`.`title`                                  AS `title`,
-       `T`.`description`                            AS `description`,
-       `T`.`status`                                 AS `status`,
-       `T`.`createdAt`                              AS `createdAt`,
-       `T`.`updatedAt`                              AS `updatedAt`,
-       concat(`P`.`firstName`, ' ', `P`.`lastName`) AS `fullName`
-from `mvp2`.`Tasks` `T`
-         join `mvp2`.`Persons` `P`
-where (`T`.`assignedTo` = `P`.`id`);
-
--- comment on view vw_Tasks not supported: View 'mvp2.vw_Tasks' references invalid table(s) or column(s) or function(s) or definer/invoker of view lack rights to use them
-
-create definer = viadmin@`%` procedure sp_MostRecentProjects()
-begin
-    select id, title as ProjTitle, Pdate as ProjectUpdated,
-          greatest(Pdate,
-                  COALESCE(Tdate, '2000-01-01'),
-                  COALESCE(TCdate, '2000-01-01'),
-                  COALESCE(Kdate, '2000-01-01'),
-                  COALESCE(KCdate, '2000-01-01')
-            ) as MostRecent from
-  (
-  select  P.id as id, P.title , P.updatedAt as Pdate ,
-       (select max(T.updatedAt) from Tasks T where
-         T.projectId = P.id) as Tdate,
-       (select max(T.createdAt) from Tasks T where
-         T.projectId = P.id) as TCdate,
-      (select max(K.updatedAt) from Kpis K, KpiProjects KP where
-          K.id = KP.kpiId
-          and P.id = KP.projectId) as Kdate,
-      (select max(K.createdAt) from Kpis K, KpiProjects KP where
-          K.id = KP.kpiId
-          and P.id = KP.projectId) as KCdate
-   from Projects P) as Proj
-  order by MostRecent desc;
-end;
+	on mvp2.Tasks (title, description);
 

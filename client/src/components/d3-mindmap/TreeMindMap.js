@@ -23,12 +23,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { Modal, Input } from "antd";
 import "antd/dist/antd.css";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import ReactStickies from 'react-stickies';
+import { Editor, EditorState, ContentState } from "draft-js";
+import moment from 'moment';
 
-const { TextArea } = Input;
+
 const styles = theme => ({
   grid: {
     width: 1500,
@@ -167,29 +169,87 @@ const jsonNew = {
   id: "_ns1nvi0ai",
   name: "Root"
 };
+const jsonTestData = {
+  "id": "_ns1nvi0ai",
+  "name": "Root",
+  "children": [{
+    "id": "_o4r47dq71",
+    "name": "Reduce operating costs",
+    "children": [{
+      "id": "_al6om6znz",
+      "name": "Reduce inventory",
+      "children": [{
+        "id": "_46ct4o4oy",
+        "name": "Review part models"
+      }, {
+        "id": "_ea00nojwy",
+        "name": "Optimize supply chain"
+      }]
+    },
+      {
+        "id": "_z3uk0721f",
+        "name": "Operating procedures"
+      }
+    ]
+  }, {
+    "id": "_uajrljib9",
+    "name": "Review supply chain processes"
+  },
+    {
+      "id": "_uguzpgdta",
+      "name": "Introduce automation",
+      "children": [{
+        "id": "_6e1egf02s",
+        "name": "Q"
+      },
+        {
+          "id": "_t8ln1vlwa",
+          "name": "Review supply chain",
+          "children": [{
+            "id": "_qzltyy8rn",
+            "name": "Optimize data flow"
+          }]
+        }
+      ]
+    }
+  ]
+};
 const duration = 100;
-const dx = 175;
+const dx = 100;
 const dy = 100;
-const DEBUG_USE_TEST_DATA = false;
+const DEBUG_USE_TEST_DATA = true;
 const margin = { top: 40, right: 100, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`
-  };
+/**
+ * @method: guid
+ * @desc: Generates unique guid
+ **/
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + "-" + s4() + "-" + s4() + "-" +
+    s4() + "-" + s4() + s4() + s4();
 }
-const MODAL_WIDTH = 300;
+
+function printNodes(msg, root) {
+  // Log where the nodes are.
+  console.log(msg);
+  root.descendants().forEach((d, i) => {
+    console.log("node i: " + i + ", d.depth:" + d.depth + ", data.name: " + d.data.name +
+      ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
+  });
+};
+
 
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
+    this.createTreeLayout = this.createTreeLayout.bind(this);
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
     this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
@@ -198,6 +258,7 @@ class TreeMindMap extends React.Component {
     this.renameNode = this.renameNode.bind(this);
     this.deleteNode = this.deleteNode.bind(this);
     this.undoDeleteNode = this.undoDeleteNode.bind(this);
+    this.getLastDeletedNode = this.getLastDeletedNode.bind(this);
     this.rename = this.rename.bind(this);
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
@@ -226,25 +287,24 @@ class TreeMindMap extends React.Component {
     this.handleModalOpen = this.handleModalOpen.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
-    this.setModalVisible = this.setModalVisible.bind(this);
+    this.createBlankNote = this.createBlankNote.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onSave = this.onSave.bind(this);
     this.state = {
-      width: window.innerWidth - 750,
-      height: window.innerHeight - 100,
+      width: window.innerWidth - 500,         // width for the mind map
+      height: window.innerHeight - 400,       // height for the mimd map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      jsonData: jsonNew,
+      jsonData: DEBUG_USE_TEST_DATA? jsonTestData : jsonNew,
       isNewMap: false,
       openSnackbar: false,
       message: "",
       d3DataLeft: undefined,
       d3DataRight: undefined,
-      tree: d3
-        .tree()
-        .nodeSize([dx, dy])
-        .size([750, 600]),
+      tree: d3.tree().nodeSize([dx, dy]).size([500, 600]),
       open: false,
       openPopover: false,
       placement: undefined,
@@ -258,11 +318,13 @@ class TreeMindMap extends React.Component {
       nodeId: "",
       nodeTitle: "",
       idea: "",
+      deletedNodes: [],     // start using an arrary for this.
       deletedNodeId: "",
       deletedNodeName: "",
       deletedNodeParentId: "",
       deleteDisabled: true,
-      undoDeleteDisabled: true
+      undoDeleteDisabled: true,
+      notes:[]
     };
   }
 
@@ -327,26 +389,41 @@ class TreeMindMap extends React.Component {
     this.removeSelectedNode(svg);
   };
 
+  getLastDeletedNode = () => {
+    let lastDeletedNode = null;
+    if (this.state.deletedNodes) {
+      let arrayLen = this.state.deletedNodes.length;
+      lastDeletedNode = this.state.deletedNodes[arrayLen - 1];
+    }
+    return lastDeletedNode;
+  };
+
   undoDeleteNode = () => {
     // This is similar to appending a node.  We've saved the deleted node id and its parent to state.
     let svg = d3.select(this.svg);
-    let parentNodeId = this.state.deletedNodeParentId;
+
+    // Get the last deleted node.
+    let deletedNode = this.getLastDeletedNode();
+
+    let parentNodeId = deletedNode.parentId;
     let jsonData = this.state.jsonData;
     let parent = this.getNodeById(parentNodeId, jsonData);
 
     // Create the child -- this is the deleted node stored in state.
-    let child = {
-      name: this.state.deletedNodeName,
-      id: this.state.deletedNodeId
-    };
+    if (parent.children) parent.children.push(deletedNode);
+    else parent.children = [deletedNode];
 
-    if (parent.children) parent.children.push(child);
-    else parent.children = [child];
+    // Pop the deleted node info from our array of deleted nodes in state.
+    let deletedNodes = this.state.deletedNodes;
+    deletedNodes.pop();
+
+    let undoDeleteDisabled = (deletedNodes.length === 0) ? true : false;
 
     // Save the JSON back to state.
     this.setState({
       jsonData: jsonData,
-      undoDeleteDisabled: true
+      deletedNodes: deletedNodes,
+      undoDeleteDisabled: undoDeleteDisabled
     });
 
     this.update(svg);
@@ -427,6 +504,7 @@ class TreeMindMap extends React.Component {
         if (node.id === idOfSelectedNode) {
           nodeFound = true;
           parentNode = node;
+          break;
         }
       }
       if (nodeFound) break;
@@ -458,11 +536,13 @@ class TreeMindMap extends React.Component {
           if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
             nodeFound = true;
             parent = node;
+            break;
           }
         }
       }
-      if (nodeFound) break;
-      else {
+      if (nodeFound) {
+        break;
+      } else {
         parentNodes = allNextLevelParents;
       }
     }
@@ -523,6 +603,10 @@ class TreeMindMap extends React.Component {
       id: this.createId()
     };
 
+
+    // TODO: change this to add child to the JSON, or get parent directly from the JSON.
+    // Should just be able to change the JSON element.  For instance, change this:
+    //
     if (parent.children) parent.children.push(child);
     else parent.children = [child];
 
@@ -541,16 +625,18 @@ class TreeMindMap extends React.Component {
     let child = {
       id: this.createId()
     };
-    parent.push(child);
+    parent.children.push(child);
     this.update(svg);
   };
 
+  /**
+   * Create the SVG and attach keystroke events to it.
+   * The svg is initialized with height = dx.
+   * This will be updated later when the rest of the nodes in the tree are entered.
+   * @returns {*}
+   */
   chart = () => {
-    // Create the SVG and attach keystroke events to it.
-    // The svg is initialized with height = dx.
-    // This will be updated later when the rest of the nodes in the tree are entered.
-
-    // append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
+    // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
     let svg = d3
       .select(this.svg)
       .attr("width", this.state.width)
@@ -707,17 +793,19 @@ class TreeMindMap extends React.Component {
       parent.children.length === 0 && delete parent.children;
     }
     console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
+    let deletedNode = {
+      id: selectedNodeId,
+      name: selectedNodeName,
+      parentId: parent.id
+    };
+    let deletedNodes = this.state.deletedNodes;
+    deletedNodes.push(deletedNode);
+
     this.setState({
       jsonData: jsonData,
-      deletedNodeId: selectedNodeId,
-      deletedNodeName: selectedNodeName,
-      deletedNodeParentId: parent.id,
+      deletedNodes: deletedNodes,   // Array of deleted nodes
       undoDeleteDisabled: false
     });
-
-    // Don't need this.update here.  Currently this will be covered in removeSelectedNode(), which calls
-    // this function.
-    // this.update(svg);
   };
 
   removeSelectedNode = svg => {
@@ -916,7 +1004,7 @@ class TreeMindMap extends React.Component {
 
   shiftTree = svg => {
     let width = this.state.width;
-    let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ",0)");
+    let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ", 0)");
     return g;
   };
 
@@ -948,18 +1036,22 @@ class TreeMindMap extends React.Component {
     }
   };
 
-  // Draw the full bidirectional tree.
-  fullTree = () => {
+  createTreeLayout = () => {
     let svg = d3.select("svg");
-
     let leftTree = this.loadData("left");
     let rightTree = this.loadData("right");
 
-    // Compute the layout.
-    let treeLeft = d3.tree().size([this.state.height, (-1 * (this.state.width - 50)) / 2]);
-    let treeRight = d3.tree().size([this.state.height, (this.state.width - 50) / 2]);
+    let d3TreeHeight = this.state.height;
+    let d3TreeWidth = (this.state.width - 50) / 2;      // Should be roughly half the SVG width, so divide by 2.
 
-    // Shift the entire tree by half it's width
+    // Compute the layout.
+    // tree.size() sets the available layout size, with x and y values.  Keep in mind we are rotating our
+    // tree by 90 degrees, so height is in the x position, and width in the y position.
+    // For the left tree, the y value is negative, meaning the tree is reversed, it goes to the left.
+    let treeLeft = d3.tree().size([d3TreeHeight, (-1 * d3TreeWidth)]);
+    let treeRight = d3.tree().size([d3TreeHeight, d3TreeWidth]);
+
+    // The shift the entire tree by half its width
     let g = svg.select("g").attr("transform", "translate(" + this.state.width / 2 + ",0)");
 
     // Compute the new tree layouts.
@@ -968,8 +1060,8 @@ class TreeMindMap extends React.Component {
 
     // Set the origins of each left and right tree to the same x position, which we use as the y position, given
     // we rotate the tree by 90 degrees.
-    rightTree.x = this.state.height/2;
-    leftTree.x = this.state.height/2;
+    rightTree.x = d3TreeHeight/2;
+    leftTree.x = d3TreeHeight/2;
 
     // Combine the outputs from D3 tree.
     rightTree.children.forEach((d, i) => {
@@ -978,6 +1070,14 @@ class TreeMindMap extends React.Component {
 
     // use leftTree as the root
     let root = leftTree;
+    return root;
+  };
+
+  // Draw the full bidirectional tree.
+  fullTree = () => {
+    let svg = d3.select("svg");
+    let root = this.createTreeLayout();
+
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
       d.name = d.data.name;
@@ -1105,18 +1205,8 @@ class TreeMindMap extends React.Component {
     return tree(treeData);
   };
 
-  printNodes = (msg, root) => {
-    // Log where the nodes are.
-    console.log(msg);
-    root.descendants().forEach((d, i) => {
-      console.log("node i: " + i + ", d.depth:" + d.depth + ", data.name: " + d.data.name +
-          ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
-    });
-  };
-
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
-    debugger;
     let d3Data = "";
     let jsonData = this.state.jsonData;
     let split_index = Math.round(jsonData.children.length / 2);
@@ -1125,6 +1215,7 @@ class TreeMindMap extends React.Component {
       // Left data
       d3Data = {
         name: jsonData.name,
+        id: jsonData.id,
         children: JSON.parse(
           JSON.stringify(jsonData.children.slice(split_index))
         )
@@ -1133,6 +1224,7 @@ class TreeMindMap extends React.Component {
       // Right data
       d3Data = {
         name: jsonData.name,
+        id: jsonData.id,
         children: JSON.parse(
           JSON.stringify(jsonData.children.slice(0, split_index))
         )
@@ -1159,7 +1251,7 @@ class TreeMindMap extends React.Component {
   componentDidMount() {
     if (DEBUG_USE_TEST_DATA) {
       this.setState({
-        jsonData: jsonNew
+        jsonData: jsonTestData
       });
       this.chart();
     } else {
@@ -1210,10 +1302,21 @@ class TreeMindMap extends React.Component {
     this.setState({ openSnackbar: true, Transition });
   };
 
-  handleDialogClose = () => {
-    this.setState({
-      open: false
-    });
+  // For post-it notes
+  onSave () {
+    // Make sure to delete the editorState before saving to backend
+    const notes = this.state.notes;
+    notes.map(note => {
+      delete note.editorState;
+    })
+    // Make service call to save notes
+    // Code goes here...
+  };
+
+  onChange (notes) {
+    this.setState({ // Update the notes state
+      notes
+    })
   };
 
   handleIdeaChange = name => event => {
@@ -1291,33 +1394,37 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  setModalVisible = modalVisible => {
-    this.fetchIdea();
-
-    const SCREEN_WIDTH = window.innerWidth;
-    const SCREEN_HEIGHT = window.innerHeight;
-    const SVG_WIDTH = this.state.width;
-    const SVG_HEIGHT = this.state.height;
-    const POS1 = SCREEN_WIDTH / 2 - SVG_WIDTH / 2;
-    let svg = d3.select(this.svg);
-    let node = this.findSelectedNode();
-    let data = null;
-    if (node) {
-      data = node._groups[0][0].__data__;
-
-      // Calculate the position where we want the modal dialog to appear.  For the x position, remember that we're
-      // rotating the tree by 90 degrees, so use data.y.  POS1 and half MODAL_WIDTH represent the offset needed.
-      let modal_x = data.y - POS1 + MODAL_WIDTH / 2 + 15;
-      let modal_y = data.x + 200;
-      console.log(
-        "setModalVisible: x: " + data.x + ", y: " + data.y + ", window.innerWidth: " +
-        window.innerWidth + ", window.innerHeight: " + window.innerHeight +
-        ", modal_x: " + modal_x + ", modal_y: " + modal_y);
-      this.setState({
-        modalVisible: modalVisible,
-        modalTop: modal_y,
-        modalLeft: modal_x
-      });
+  /**
+   * Create sticky note, for react-stickies.
+   */
+  createBlankNote() {
+    const dateFormat = this.state.dateFormat;
+    const grid = this.props.grid || {};
+    const uid = guid();
+    const note = {
+      grid: {
+        i: `${uid}`,
+        x: this.state.notes.length * 2 % (this.state.cols || 12),
+        y: Infinity, // puts it at the bottom
+        w: grid.w || 2,
+        h: grid.h || 2
+      },
+      id: uid,
+      editorState: EditorState.createEmpty(),
+      title: 'Title',
+      // color: this.generateRandomColors(),
+      // degree: this.generateRandomDegree(-2, 2),
+      timeStamp: moment().format(dateFormat),
+      contentEditable: true
+    };
+    this.setState({
+      // Add a new item. It must have a unique key!
+      notes: this.state.notes.concat(note),
+      // Increment the counter to ensure key is always unique.
+      newCounter: this.state.newCounter + 1
+    });
+    if (typeof this.props.onAdd === 'function') {
+      this.props.onAdd(note);
     }
   };
 
@@ -1329,11 +1436,10 @@ class TreeMindMap extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const top = this.state.modalTop;
-    const left = this.state.modalLeft;
 
     return (
       <React.Fragment>
+
         <Grid
           container
           alignItems="center"
@@ -1369,7 +1475,7 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => this.setModalVisible(true)}
+              onClick={() => this.createBlankNote()}
               className={classes.outlinedButton}
             >
               Edit Idea
@@ -1400,21 +1506,6 @@ class TreeMindMap extends React.Component {
             >
               Save Mind Map
             </Button>
-            <Modal
-              title={"Idea - " + this.state.nodeTitle}
-              width={MODAL_WIDTH}
-              style={{ top: top, left: left }}
-              visible={this.state.modalVisible}
-              onOk={() => this.handleSubmitIdea()}
-              onCancel={() => this.setModalVisible(false)}
-            >
-              <TextArea
-                id="idea"
-                autosize={{ minRows: 6, maxRows: 12 }}
-                onChange={this.handleIdeaTextChange("idea")}
-                value={this.state.idea}
-              />
-            </Modal>
           </Grid>
           <Grid item sm={12}>
             <Typography variant="h6">
@@ -1436,42 +1527,6 @@ class TreeMindMap extends React.Component {
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
-        <Dialog
-          open={this.state.open}
-          onClose={this.handleDialogClose}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Capture idea</DialogTitle>
-          <DialogContent>
-            <TextField
-              id="idea"
-              multiline
-              autofocus
-              anchorPosition={{ top: 1000, left: 1500 }}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "left"
-              }}
-              rowsMax="6"
-              value={this.state.idea}
-              onChange={this.handleIdeaChange("idea")}
-              className={classes.textFieldWide}
-              fullWidth
-              margin="dense"
-              InputLabelProps={{
-                shrink: true
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleDialogClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmitIdea} color="primary">
-              Save Idea
-            </Button>
-          </DialogActions>
-        </Dialog>
       </React.Fragment>
     );
   }

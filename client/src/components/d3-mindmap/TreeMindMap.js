@@ -5,8 +5,8 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-08-09
- * Changes:  Changing height and width of mind map to use window inner height and width, minus some corrections.
+ * Modified: 2019-08-29
+ * Changes:  Added editor folding.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -46,6 +46,8 @@ const styles = theme => ({
     },
   nodeTitle: {
     fontFamily: "Arial"
+  },
+  note: {
   },
   paper: {
     position: "absolute",
@@ -171,8 +173,10 @@ const styles = theme => ({
 // Use this JSON data to test a new mind map, starting only with root.
 // eslint-disable-next-line no-unused-vars
 const jsonNew = {
-  id: "_ns1nvi0ai",
-  name: "Root"
+  id: createId(),
+  name: "Root",
+  note: "",
+  children: []
 };
 const jsonTestData = {
   id: "_ns1nvi0ai",
@@ -326,7 +330,7 @@ function printNodes(msg, root) {
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
-    //<editor-fold desc="Constructor bindings">
+    //<editor-fold desc="// Constructor bindings">
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
     this.createTreeLayout = this.createTreeLayout.bind(this);
@@ -360,21 +364,21 @@ class TreeMindMap extends React.Component {
     this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
+    this.handleClickOnPostit = this.handleClickOnPostit.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
-    this.createId = this.createId.bind(this);
     this.onSaveNotes = this.onSaveNotes.bind(this);
     this.addNote = this.addNote.bind(this);
     this.openNote = this.openNote.bind(this);
     this.closeNote = this.closeNote.bind(this);
-    this.getNoteRect = this.getNoteRect.bind(this);
+    // this.getNoteRect = this.getNoteRect.bind(this);
     this.addNoteRects = this.addNoteRects.bind(this);
     this.update = this.update.bind(this);
     //</editor-fold>
-    //<editor-fold desc="Constructor set state">
+    //<editor-fold desc="// Constructor set state">
     this.state = {
       width: window.innerWidth - 500,         // width for the mind map
       height: window.innerHeight - 400,       // height for the mind map
@@ -402,7 +406,11 @@ class TreeMindMap extends React.Component {
       deletedNodeName: "",
       deletedNodeParentId: "",
       deleteDisabled: true,
+      addChildDisabled: true,
+      addSiblingDisabled: true,
       undoDeleteDisabled: true,
+      closeNoteDisabled: true,
+      openNoteDisabled: true,
       notesStringArray: []
     };
     //</editor-fold>
@@ -433,63 +441,81 @@ class TreeMindMap extends React.Component {
     let selectedNode = this.findSelectedNode();
 
     // This changes the note to a yellow square.
-    //selectedNode.selectAll("rect.main")
-    selectedNode.append("rect")
+    selectedNode.select("rect")
       .transition().duration(vDuration)
       .attr("rx", 0).attr("x", 10).attr("y", 8)
       .attr("width", vRad * 6).attr("height", vRad * 8)
       .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return noteColor[0]; })
       .style("opacity", 1);
+    selectedNode.raise();
 
     // Add <text> and labels
-    selectedNode
-      .append("foreignObject")
+    let selection = selectedNode.select("foreignObject.note");
+
+    selection
       .attr("x", 20)
       .attr("y", 10)
       .attr("width", vRad * 5)
       .attr("height", vRad * 8)
-      .append("xhtml:p")
+      // .append("xhtml:p")
       .text(d => d.data.note)
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
-    selectedNode.raise();
+
+    selectedNode.attr("note-state", "expanded");
+
+    this.setState({
+      closeNoteDisabled: false,
+      openNoteDisabled: true
+    });
   };
 
   closeNote = (nodeId) => {
     // This minimizes the note.
     let svg = d3.select("svg");
-    let selectionCriteria = "[id=" + nodeId + "]";
-    let thisNode = svg.select(selectionCriteria);
+    // let selectionCriteria = "[id=" + nodeId + "]";
+    // let thisNode = svg.select(selectionCriteria);
 
-    //thisNode.selectAll("rect.main")
-    thisNode.selectAll("rect")
-      .transition().duration(vDuration)
+    let selectedNode = this.findSelectedNode();
+
+    selectedNode.selectAll("rect")
       .attr("rx", 0).attr("x", 10).attr("y", 8)
-      .attr("width", vRad ).attr("height", vRad )
-      .style("fill", function(d) { return noteColor[0]; })
-      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+      .attr("width", vRad).attr("height", vRad)
+      .style("fill", function(d) {return noteColor[0]; })
+      .style("stroke", function(d) {return d.data.color; }).style("opacity", 1);
 
-    // Add <text>s and labels
-    thisNode
-      .select("foreignObject")
+    // Select <text>s and labels and minimize
+    let selection = selectedNode.select("foreignObject.note");
+
+    selection
+      .transition().duration(vDuration)
       .attr("x", 20)
       .attr("y", 10)
-      .attr("width", vRad )
-      .attr("height", vRad )
-      .select("xhtml:p")
+      .attr("width", vRad)
+      .attr("height", vRad)
+      //.select("xhtml:p")
       .text(d => "+")       // Use this to expand text later.  May have to save text first.
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
+
+    selectedNode.attr("note-state", "collapsed");
+
+    this.setState({
+      closeNoteDisabled: true,
+      openNoteDisabled: false
+    });
   };
 
+  /*
   getNoteRect = () => {
     let svg = d3.select("svg");
     const nodeContainers = svg.select("#nodes");
     let selectedNode = this.findSelectedNode();
   };
+   */
 
   addNoteRects = (nodeContainers) => {
     let g = d3.select("svg");
@@ -501,10 +527,17 @@ class TreeMindMap extends React.Component {
     nodeContainers.append("rect").attr("class","main")
       //.attr("width", 0).attr("height", 0)
       .attr("rx", 0).attr("x", 10).attr("y", 8)
-      .attr("width", vRad).attr("height", vRad)
+      .attr("width", 0).attr("height", 0)
+      .attr("id", d => d.id )
       .each(function(d) { d.data.color = noteColor[0];})
       .style("fill", noteColor[0])
-      .style("opacity", 1);
+      .style("opacity", 1)
+      .on("click", this.handleClickOnPostit);
+
+    // Add foreignObject for text
+    nodeContainers
+      .append("foreignObject")
+      .attr("class", "note");
 
     /*
     // This changes the note to a yellow square.
@@ -527,11 +560,10 @@ class TreeMindMap extends React.Component {
       .style("stroke", "none")
       .style("font-size", "13px");
      */
-
   };
   //</editor-fold>
 
-  //<editor-fold desc="// Functions invoked by buttons">
+  //<editor-fold desc="// Functions invoked by buttons and keystroke handlers">
   appendChild = () => {
     let svg = d3.select(this.svg);
     this.appendChildToSelectedNode(svg);
@@ -540,6 +572,14 @@ class TreeMindMap extends React.Component {
   addSibling = () => {
     let svg = d3.select(this.svg);
     this.addSiblingToSelectedNode(svg);
+  };
+
+  handleKeypressEsc = svg => {
+    // TODO: this isn't getting called.
+    svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .each(this.deselectNode);
   };
   //</editor-fold>
 
@@ -590,7 +630,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="Node functions">
+  //<editor-fold desc="// Node functions">
   rename = () => {
     // Renames a node.
     let svg = d3.select(this.svg);
@@ -747,7 +787,7 @@ class TreeMindMap extends React.Component {
     // Create the child.
     let child = {
       name: "",
-      id: this.createId()
+      id: createId()
     };
 
 
@@ -770,7 +810,8 @@ class TreeMindMap extends React.Component {
     let parent = this.findParentNode(idOfSelectedNode);
 
     let child = {
-      id: this.createId()
+      name: "",
+      id: createId()
     };
     parent.children.push(child);
     this.update(svg);
@@ -835,8 +876,11 @@ class TreeMindMap extends React.Component {
     ) {
       console.log("going into edit mode!");
       d3.select(clickedNode)
-      //.call(this.editNode)
-        .call(this.selectNode);
+      // TODO: review if this needs to be edit.
+      this.editNode();
+      // ********************************************8
+      // changed from .call(this.editNode);
+      this.selectNode();
     } else {
       d3.select(clickedNode).call(this.selectNode);
 
@@ -846,6 +890,54 @@ class TreeMindMap extends React.Component {
 
     // d.children = d.children ? null : d._children;
     // update(d);
+
+    // Prevent triggering clickOnCanvas handler
+    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+    d3.event.stopPropagation();
+  };
+
+  handleClickOnPostit = (d, i, nodes) => {
+    console.log("handleClickOnPostit: clicked on a post-it note.");
+    let svg = d3.select("svg");
+    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+
+    const clickedNodeIndex = i;
+    const clickedNode = nodes[clickedNodeIndex];
+    const clickedId = d3.select(clickedNode).attr("id");
+
+    let selectionCriteria = "[id=" + clickedId + "]";
+    let thisNode = svg.selectAll("g.node").select(selectionCriteria);
+
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedId
+    ) {
+      // *** TODO: Need to go into edit mode here.
+      // This changes the note to a yellow square.
+      currentlySelectedNode.select("rect")
+        .transition().duration(vDuration)
+        .attr("rx", 0).attr("x", 10).attr("y", 8)
+        .attr("width", vRad * 6).attr("height", vRad * 8)
+        .style("fill", function(d) { return noteColor[0]; })
+        .style("stroke", function(d) { return noteColor[0]; })
+        .style("opacity", 1);
+
+      // Add <text> and labels
+      currentlySelectedNode
+        .select("foreignObject.note")
+        .attr("x", 20)
+        .attr("y", 10)
+        .attr("width", vRad * 5)
+        .attr("height", vRad * 8)
+        .append("xhtml:p")
+        .text(d => d.data.note)
+        .style("font-family", "Arial")
+        .style("stroke", "none")
+        .style("font-size", "13px");
+      currentlySelectedNode.raise();;
+    } else {
+      d3.select(clickedNode).call(this.selectNode);
+    }
 
     // Prevent triggering clickOnCanvas handler
     // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
@@ -922,14 +1014,6 @@ class TreeMindMap extends React.Component {
     });
 
     return svg.node();
-  };
-
-  handleKeypressEsc = svg => {
-    // TODO: this isn't getting called.
-    svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .each(this.deselectNode);
   };
 
   //<editor-fold desc="// Select and edit node functions">
@@ -1032,17 +1116,17 @@ class TreeMindMap extends React.Component {
 
     this.getSelectedNodeId(idOfSelectedNode);
     console.log(`${node.attr("name")} selected`);
+    let collapsed = (node.attr("note-state") === "collapsed");
+    let hasChilden = this.hasChildren(idOfSelectedNode);
 
-    // Determine whether to disable the delete node button.
-    if (this.hasChildren(idOfSelectedNode)) {
-      this.setState({
-        deleteDisabled: true
-      });
-    } else {
-      this.setState({
-        deleteDisabled: false
-      });
-    }
+    // Set button states.
+    this.setState({
+      closeNoteDisabled: collapsed,
+      openNoteDisabled: !collapsed,
+      deleteDisabled: hasChilden,
+      addChildDisabled: false,
+      addSiblingDisabled: false
+    });
   };
 
   deselectNode = (d, i, nodes) => {
@@ -1050,7 +1134,8 @@ class TreeMindMap extends React.Component {
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
 
     // new code
-    this.closeNote(idOfSelectedNode);
+    // TODO: don't have to close node right away.
+    // this.closeNote(idOfSelectedNode);
 
     let newValue = d3
       .select(nodes[i])
@@ -1191,10 +1276,12 @@ class TreeMindMap extends React.Component {
     rightTree.x = d3TreeHeight/2;
     leftTree.x = d3TreeHeight/2;
 
-    // Combine the outputs from D3 tree.
-    rightTree.children.forEach((d, i) => {
-      leftTree.children.push(d);
-    });
+    // Combine the outputs from D3 tree.  Check if children exist first, as a new map won't have children.
+    if (rightTree.children) {
+      rightTree.children.forEach((d, i) => {
+        leftTree.children.push(d);
+      });
+    }
 
     // use leftTree as the root
     let root = leftTree;
@@ -1244,6 +1331,7 @@ class TreeMindMap extends React.Component {
       .attr("id", (d, i) => `${d.id}`)
       .attr("name", (d, i) => `${d.data.name}`)
       .attr("note", (d, i) => `${d.data.note}`)
+      .attr("note-state", "collapsed")
       .attr("class", "node")
       .attr("transform", d => `translate(${root.y0},${root.x0})`)
       .attr("fill-opacity", 0)
@@ -1257,6 +1345,7 @@ class TreeMindMap extends React.Component {
     // The "foreignObject" object will display the name text on the node.
     newNodeContainers
       .append("foreignObject")
+      .attr("class", "title")
       .attr("x", -80)
       .attr("y", -35)
       .attr("width", 150)
@@ -1340,7 +1429,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="JSON and load data functions">
+  //<editor-fold desc="// JSON and load data functions">
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
     let d3Data = "";
@@ -1375,9 +1464,11 @@ class TreeMindMap extends React.Component {
   };
 
   newMap = () => {
+    // Create new JSON data as defined in the global const, then set state.
     this.setState(
       {
-        isNewMap: true
+        isNewMap: true,
+        jsonData: jsonNew
       },
       () => {
         console.log(
@@ -1476,7 +1567,7 @@ class TreeMindMap extends React.Component {
     }
   }
 
-  //<editor-fold desc="Functions for the snackbar">
+  //<editor-fold desc="// Functions for the snackbar">
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
@@ -1486,7 +1577,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="Post-it note functions">
+  //<editor-fold desc="// Post-it note functions">
   fetchIdea = () => {
     let svg = d3.select("svg");
     let selectedNodeId = this.findSelectedNodeId(svg);
@@ -1573,7 +1664,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="Popover functions">
+  //<editor-fold desc="// Popover functions">
   handlePopoverClick = event => {
     this.setState({
       anchorEl: event.currentTarget,
@@ -1614,26 +1705,38 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
+              disabled={this.state.addChildDisabled}
               onClick={this.appendChild}
               className={classes.outlinedButton}
             >
-              Add Child Node
+              Add Child
             </Button>
             <Button
               variant="contained"
               color="secondary"
+              disabled={this.state.addSiblingDisabled}
               onClick={this.addSibling}
               className={classes.outlinedButton}
             >
-              Add Sibling Node
+              Add Sibling
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.addNote}
+              disabled={this.state.openNoteDisabled}
+              onClick={this.openNote}
               className={classes.outlinedButton}
             >
-              Add Note
+              Open Note
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.closeNoteDisabled}
+              onClick={this.closeNote}
+              className={classes.outlinedButton}
+            >
+              Close Note
             </Button>
             <Button
               variant="contained"

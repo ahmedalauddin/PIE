@@ -173,6 +173,7 @@ const jsonNew = {
 const jsonTestData = {
   "id": "_ns1nvi0ai",
   "name": "Root",
+  "note": "Prioritization",
   "children": [{
     "id": "_o4r47dq71",
     "name": "Reduce operating costs",
@@ -180,6 +181,7 @@ const jsonTestData = {
     "children": [{
       "id": "_al6om6znz",
       "name": "Reduce inventory",
+      "note": "Look to reduce inventory after review of parts.",
       "children": [{
         "id": "_46ct4o4oy",
         "name": "Review part models"
@@ -196,11 +198,13 @@ const jsonTestData = {
     ]
   }, {
     "id": "_uajrljib9",
-    "name": "Review supply chain processes"
+    "name": "Review supply chain processes",
+    "note": "Perform supply chain review of all steps."
   },
     {
       "id": "_uguzpgdta",
       "name": "Introduce automation",
+      "note": "Begin to use automation at all locations and sites.",
       "children": [{
         "id": "_6e1egf02s",
         "name": "Q"
@@ -208,6 +212,7 @@ const jsonTestData = {
         {
           "id": "_t8ln1vlwa",
           "name": "Review supply chain",
+          "note": "Begin review of supply chain...",
           "children": [{
             "id": "_qzltyy8rn",
             "name": "Optimize data flow"
@@ -290,8 +295,6 @@ class TreeMindMap extends React.Component {
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
-    this.handleModalOpen = this.handleModalOpen.bind(this);
-    this.handleModalClose = this.handleModalClose.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
@@ -321,10 +324,6 @@ class TreeMindMap extends React.Component {
       placement: undefined,
       anchorEl: null,
       setOpen: false,
-      modalOpen: false,
-      modalTop: 0,
-      modalLeft: 0,
-      modalVisible: false,
       isEditingIdea: false,
       nodeId: "",
       nodeTitle: "",
@@ -346,6 +345,7 @@ class TreeMindMap extends React.Component {
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
       d.name = d.data.name;
+      d.note = d.data.note;
       d._children = d.children;
     });
 
@@ -364,13 +364,15 @@ class TreeMindMap extends React.Component {
     let selectedNode = this.findSelectedNode();
     let vDuration = 1000;
     // This changes the note to a yellow square.
-    selectedNode.selectAll("rect.main")
+    //selectedNode.selectAll("rect.main")
+    selectedNode.append("rect")
       .transition().duration(vDuration)
       .attr("rx", 0).attr("width", vRad * 6).attr("height", vRad * 8)
-      .style("fill", function(d) { return d.data.color; })
-      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+      .style("fill", function(d) { return noteColor[0]; })
+      .style("stroke", function(d) { return noteColor[0]; })
+      .style("opacity", 1);
 
-    // Add <text>s and labels
+    // Add <text> and labels
     selectedNode
       .append("foreignObject")
       .attr("x", 20)
@@ -382,28 +384,32 @@ class TreeMindMap extends React.Component {
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
+    selectedNode.raise();
   };
 
   closeNote = (nodeId) => {
     // This minimizes the note.
     let vDuration = 1000;
-    let json = this.state.jsonData;
-    let node = this.getNodeById(nodeId, json);
-    node.selectAll("rect.main")
+    let svg = d3.select("svg");
+    let selectionCriteria = "[id=" + nodeId + "]";
+    let thisNode = svg.select(selectionCriteria);
+
+    //thisNode.selectAll("rect.main")
+    thisNode.selectAll("rect")
       .transition().duration(vDuration)
       .attr("rx", 0).attr("width", vRad ).attr("height", vRad )
-      .style("fill", function(d) { return d.data.color; })
+      .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
 
     // Add <text>s and labels
-    node
-      .append("foreignObject")
+    thisNode
+      .select("foreignObject")
       .attr("x", 20)
       .attr("y", 10)
       .attr("width", vRad )
       .attr("height", vRad )
-      .append("xhtml:p")
-      .text(d => d.data.note)
+      .select("xhtml:p")
+      .text(d => "+")       // Use this to expand text later.  May have to save text first.
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
@@ -427,13 +433,14 @@ class TreeMindMap extends React.Component {
       // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
 
     // Draw <rect>s
+    /*
     nodeContainers.append("rect").attr("class","main").attr("width", 0).attr("height", 0)
       .attr("rx", vRad)
       //.attr("transform", "rotate(5)")
       .each( function(d) { d.data.color = noteColor[0];})
       .style("fill", "black")
       .style("opacity", 1);
-
+    */
     /*
     // This changes the note to a yellow square.
     nodeContainers.selectAll("rect.main")
@@ -1214,6 +1221,7 @@ class TreeMindMap extends React.Component {
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
       d.name = d.data.name;
+      d.note = d.data.note;
       d._children = d.children;
     });
 
@@ -1237,6 +1245,7 @@ class TreeMindMap extends React.Component {
       .select("#nodes")
       .selectAll("g")
       .data(nodes, d => d.id)
+      .data(nodes, d => d.note)
       .data(nodes, d => d.name);
 
     // Enter any new nodes at the parent's previous position.
@@ -1246,6 +1255,7 @@ class TreeMindMap extends React.Component {
       .append("g")
       .attr("id", (d, i) => `${d.id}`)
       .attr("name", (d, i) => `${d.data.name}`)
+      .attr("note", (d, i) => `${d.data.note}`)
       .attr("class", "node")
       .attr("transform", d => `translate(${root.y0},${root.x0})`)
       .attr("fill-opacity", 0)
@@ -1268,8 +1278,7 @@ class TreeMindMap extends React.Component {
       .style("font-family", "Arial");
 
     // #newcode
-    this.addNoteRects(newNodeContainers);
-
+    // this.addNoteRects(newNodeContainers);
 
     existingNodeContainers
       .merge(newNodeContainers)
@@ -1493,7 +1502,6 @@ class TreeMindMap extends React.Component {
         .then(() => {
           this.setState({
             message: successMessage,
-            modalVisible: false,
             openSnackbar: true,
             open: false
           });
@@ -1502,19 +1510,6 @@ class TreeMindMap extends React.Component {
           console.log(err);
         });
     }, 2000);
-  };
-
-  // Modal dialog for the idea functions
-  handleModalOpen = () => {
-    this.setState({
-      modalOpen: true
-    });
-  };
-
-  handleModalClose = () => {
-    this.setState({
-      modalOpen: false
-    });
   };
 
   handlePopoverClick = event => {

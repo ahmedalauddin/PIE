@@ -18,18 +18,9 @@ import Grid from "@material-ui/core/Grid/index";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import "antd/dist/antd.css";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import ReactStickies from 'react-stickies';
-import { Editor, EditorState, ContentState } from "draft-js";
-import moment from 'moment';
-
 
 const styles = theme => ({
   grid: {
@@ -42,6 +33,16 @@ const styles = theme => ({
   typography: {
     padding: theme.spacing.unit * 2
   },
+  main: {
+    //stroke: "#05668D",
+    //fill: "white",
+    strokeWidth: "2px"
+  },
+  text: {
+    fill: "black",
+    //fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
+    //fontSize: "10px",
+    },
   paper: {
     position: "absolute",
     width: 400,
@@ -175,6 +176,7 @@ const jsonTestData = {
   "children": [{
     "id": "_o4r47dq71",
     "name": "Reduce operating costs",
+    "note": "Look to reduce operating costs throughout all divisions and locations.  Start with aggregating data.",
     "children": [{
       "id": "_al6om6znz",
       "name": "Reduce inventory",
@@ -188,7 +190,8 @@ const jsonTestData = {
     },
       {
         "id": "_z3uk0721f",
-        "name": "Operating procedures"
+        "name": "Operating procedures",
+        "note": "Initial review of operating procedures."
       }
     ]
   }, {
@@ -220,6 +223,10 @@ const dy = 100;
 const DEBUG_USE_TEST_DATA = true;
 const margin = { top: 40, right: 100, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
+const vWidth = 350;
+const vHeight = 600;
+const vRad = 25;
+const noteColor = ['#feff9c', '#7afcff', '#ff7eb9'];
 /**
  * @method: guid
  * @desc: Generates unique guid
@@ -242,7 +249,6 @@ function printNodes(msg, root) {
       ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
   });
 };
-
 
 class TreeMindMap extends React.Component {
   constructor(props) {
@@ -287,11 +293,16 @@ class TreeMindMap extends React.Component {
     this.handleModalOpen = this.handleModalOpen.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
-    this.createBlankNote = this.createBlankNote.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
     this.onChange = this.onChange.bind(this);
     this.onSave = this.onSave.bind(this);
+    this.addNote = this.addNote.bind(this);
+    this.openNote = this.openNote.bind(this);
+    this.closeNote = this.closeNote.bind(this);
+    this.getNoteRect = this.getNoteRect.bind(this);
+    this.addNoteRects = this.addNoteRects.bind(this);
+    this.update = this.update.bind(this);
     this.state = {
       width: window.innerWidth - 500,         // width for the mind map
       height: window.innerHeight - 400,       // height for the mimd map
@@ -324,9 +335,128 @@ class TreeMindMap extends React.Component {
       deletedNodeParentId: "",
       deleteDisabled: true,
       undoDeleteDisabled: true,
-      notes:[]
+      notesStringArray: []
     };
   }
+
+  addNote = () => {
+    let svg = d3.select("svg");
+    let root = this.createTreeLayout();
+
+    root.descendants().forEach((d, i) => {
+      d.id = d.data.id;
+      d.name = d.data.name;
+      d._children = d.children;
+    });
+
+    const nodes = root.descendants();
+    const links = root.links();
+    let g = d3.select("svg");
+    let vDelay = 250;
+    let vDuration = 1000;
+
+    this.openNote();
+  };
+
+  // open note for selected ID
+  openNote = () => {
+    let svg = d3.select("svg");
+    let selectedNode = this.findSelectedNode();
+    let vDuration = 1000;
+    // This changes the note to a yellow square.
+    selectedNode.selectAll("rect.main")
+      .transition().duration(vDuration)
+      .attr("rx", 0).attr("width", vRad * 6).attr("height", vRad * 8)
+      .style("fill", function(d) { return d.data.color; })
+      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+
+    // Add <text>s and labels
+    selectedNode
+      .append("foreignObject")
+      .attr("x", 20)
+      .attr("y", 10)
+      .attr("width", vRad * 5)
+      .attr("height", vRad * 8)
+      .append("xhtml:p")
+      .text(d => d.data.note)
+      .style("font-family", "Arial")
+      .style("stroke", "none")
+      .style("font-size", "13px");
+  };
+
+  closeNote = (nodeId) => {
+    // This minimizes the note.
+    let vDuration = 1000;
+    let json = this.state.jsonData;
+    let node = this.getNodeById(nodeId, json);
+    node.selectAll("rect.main")
+      .transition().duration(vDuration)
+      .attr("rx", 0).attr("width", vRad ).attr("height", vRad )
+      .style("fill", function(d) { return d.data.color; })
+      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+
+    // Add <text>s and labels
+    node
+      .append("foreignObject")
+      .attr("x", 20)
+      .attr("y", 10)
+      .attr("width", vRad )
+      .attr("height", vRad )
+      .append("xhtml:p")
+      .text(d => d.data.note)
+      .style("font-family", "Arial")
+      .style("stroke", "none")
+      .style("font-size", "13px");
+  };
+
+  getNoteRect = () => {
+    let svg = d3.select("svg");
+    const nodeContainers = svg.select("#nodes");
+    let selectedNode = this.findSelectedNode();
+    let vDelay = 250;
+    let vDuration = 1000;
+
+  };
+
+  addNoteRects = (nodeContainers) => {
+    let g = d3.select("svg");
+    let vDelay = 250;
+    let vDuration = 1000;
+    // Add <g>s
+    //let vRects = g.selectAll("g").data(nodes).enter().append("g");
+      // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
+
+    // Draw <rect>s
+    nodeContainers.append("rect").attr("class","main").attr("width", 0).attr("height", 0)
+      .attr("rx", vRad)
+      //.attr("transform", "rotate(5)")
+      .each( function(d) { d.data.color = noteColor[0];})
+      .style("fill", "black")
+      .style("opacity", 1);
+
+    /*
+    // This changes the note to a yellow square.
+    nodeContainers.selectAll("rect.main")
+      .transition().duration(vDuration)
+      .attr('rx', 0).attr('width', vRad * 6).attr('height', vRad * 8)
+      .style('fill', function(d) { return d.data.color; })
+      .style('stroke', function(d) { return d.data.color; }).style('opacity', 1);
+
+    // Add <text>s and labels
+    nodeContainers
+      .append("foreignObject")
+      .attr("x", 20)
+      .attr("y", 10)
+      .attr("width", vRad * 5)
+      .attr("height", vRad * 8)
+      .append("xhtml:p")
+      .text(d => d.data.note)
+      .style("font-family", "Arial")
+      .style("stroke", "none")
+      .style("font-size", "13px");
+     */
+
+  };
 
   createId = () => {
     return (
@@ -900,6 +1030,9 @@ class TreeMindMap extends React.Component {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
 
+    // new code
+    this.closeNote(idOfSelectedNode);
+
     let newValue = d3
       .select(nodes[i])
       .select("foreignObject")
@@ -1131,7 +1264,12 @@ class TreeMindMap extends React.Component {
       .attr("width", 150)
       .attr("height", 40)
       .append("xhtml:p")
-      .text(d => d.data.name);
+      .text(d => d.data.name)
+      .style("font-family", "Arial");
+
+    // #newcode
+    this.addNoteRects(newNodeContainers);
+
 
     existingNodeContainers
       .merge(newNodeContainers)
@@ -1201,7 +1339,6 @@ class TreeMindMap extends React.Component {
     // Compute the layout.
     let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
 
-    // TODO: change this.
     return tree(treeData);
   };
 
@@ -1302,7 +1439,7 @@ class TreeMindMap extends React.Component {
     this.setState({ openSnackbar: true, Transition });
   };
 
-  // For post-it notes
+  // For post-it notes.  Need to change these.
   onSave () {
     // Make sure to delete the editorState before saving to backend
     const notes = this.state.notes;
@@ -1316,7 +1453,7 @@ class TreeMindMap extends React.Component {
   onChange (notes) {
     this.setState({ // Update the notes state
       notes
-    })
+    });
   };
 
   handleIdeaChange = name => event => {
@@ -1394,46 +1531,6 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  /**
-   * Create sticky note, for react-stickies.
-   */
-  createBlankNote() {
-    const dateFormat = this.state.dateFormat;
-    const grid = this.props.grid || {};
-    const uid = guid();
-    const note = {
-      grid: {
-        i: `${uid}`,
-        x: this.state.notes.length * 2 % (this.state.cols || 12),
-        y: Infinity, // puts it at the bottom
-        w: grid.w || 2,
-        h: grid.h || 2
-      },
-      id: uid,
-      editorState: EditorState.createEmpty(),
-      title: 'Title',
-      // color: this.generateRandomColors(),
-      // degree: this.generateRandomDegree(-2, 2),
-      timeStamp: moment().format(dateFormat),
-      contentEditable: true
-    };
-    this.setState({
-      // Add a new item. It must have a unique key!
-      notes: this.state.notes.concat(note),
-      // Increment the counter to ensure key is always unique.
-      newCounter: this.state.newCounter + 1
-    });
-    if (typeof this.props.onAdd === 'function') {
-      this.props.onAdd(note);
-    }
-  };
-
-  handleIdeaTextChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    });
-  };
-
   render() {
     const { classes } = this.props;
 
@@ -1475,10 +1572,10 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => this.createBlankNote()}
+              onClick={this.addNote}
               className={classes.outlinedButton}
             >
-              Edit Idea
+              Add Note
             </Button>
             <Button
               variant="contained"

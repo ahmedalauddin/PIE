@@ -22,6 +22,7 @@ import "antd/dist/antd.css";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
+//<editor-fold desc="// Constant declarations">
 const styles = theme => ({
   grid: {
     width: 1500,
@@ -43,6 +44,9 @@ const styles = theme => ({
     //fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
     //fontSize: "10px",
     },
+  nodeTitle: {
+    fontFamily: "Arial"
+  },
   paper: {
     position: "absolute",
     width: 400,
@@ -171,6 +175,55 @@ const jsonNew = {
   name: "Root"
 };
 const jsonTestData = {
+  id: "_ns1nvi0ai",
+  name: "Root",
+  note: "Prioritization",
+  children: [
+    {
+      id: "_o4r47dq71",
+      name: "Reduce operating costs",
+      note: "Look to reduce operating costs throughout all divisions and locations.  Start with aggregating data.",
+      children: [
+        {
+          id: "_al6om6znz",
+          name: "Reduce inventory",
+          note: "Look to reduce inventory after review of parts.",
+          children: []
+        },
+        {
+          id: "_z3uk0721f",
+          name: "Operating procedures",
+          note: "Initial review of operating procedures."
+        }
+      ]
+    },
+    {
+      id: "_uajrljib9",
+      name: "Review supply chain processes",
+      note: "Perform supply chain review of all steps."
+    },
+    {
+      id: "_uguzpgdta",
+      name: "Introduce automation",
+      note: "Begin to use automation at all locations and sites.",
+      children: [
+        {
+          id: "_t8ln1vlwa",
+          name: "Review supply chain",
+          note: "Begin review of supply chain...",
+          children: []
+        },
+        {
+          id: "_c96w1yrth",
+          name: "Perform failover testing",
+          note: "Take sites offline to check failover capabilities",
+          children: []
+        }
+      ]
+    }
+  ]
+};
+const jsonTestData2 = {
   "id": "_ns1nvi0ai",
   "name": "Root",
   "note": "Prioritization",
@@ -230,8 +283,13 @@ const margin = { top: 40, right: 100, bottom: 40, left: 80 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 const vWidth = 350;
 const vHeight = 600;
+const vDuration = 1000;
+const vDelay = 250;
 const vRad = 25;
-const noteColor = ['#feff9c', '#7afcff', '#ff7eb9'];
+const noteColor = ["#feff9c", "#7afcff", "#ff7eb9"];
+//</editor-fold>
+
+//<editor-fold desc="// Non-class functions">
 /**
  * @method: guid
  * @desc: Generates unique guid
@@ -246,6 +304,15 @@ function guid() {
     s4() + "-" + s4() + s4() + s4();
 }
 
+function createId() {
+  return (
+    "_" +
+    Math.random()
+      .toString(36)
+      .substr(2, 9)
+  );
+}
+
 function printNodes(msg, root) {
   // Log where the nodes are.
   console.log(msg);
@@ -254,10 +321,12 @@ function printNodes(msg, root) {
       ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
   });
 };
+//</editor-fold>
 
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
+    //<editor-fold desc="Constructor bindings">
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
     this.createTreeLayout = this.createTreeLayout.bind(this);
@@ -286,7 +355,6 @@ class TreeMindMap extends React.Component {
     this.getNodeById = this.getNodeById.bind(this);
     this.fullTree = this.fullTree.bind(this);
     this.fetchIdea = this.fetchIdea.bind(this);
-    this.viewIdea = this.viewIdea.bind(this);
     this.logNode = this.logNode.bind(this);
     this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
     this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
@@ -298,17 +366,18 @@ class TreeMindMap extends React.Component {
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.createId = this.createId.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.onSave = this.onSave.bind(this);
+    this.onSaveNotes = this.onSaveNotes.bind(this);
     this.addNote = this.addNote.bind(this);
     this.openNote = this.openNote.bind(this);
     this.closeNote = this.closeNote.bind(this);
     this.getNoteRect = this.getNoteRect.bind(this);
     this.addNoteRects = this.addNoteRects.bind(this);
     this.update = this.update.bind(this);
+    //</editor-fold>
+    //<editor-fold desc="Constructor set state">
     this.state = {
       width: window.innerWidth - 500,         // width for the mind map
-      height: window.innerHeight - 400,       // height for the mimd map
+      height: window.innerHeight - 400,       // height for the mind map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
@@ -336,8 +405,10 @@ class TreeMindMap extends React.Component {
       undoDeleteDisabled: true,
       notesStringArray: []
     };
+    //</editor-fold>
   }
 
+  //<editor-fold desc="// Post-it note and rectangle drawing functions">
   addNote = () => {
     let svg = d3.select("svg");
     let root = this.createTreeLayout();
@@ -352,8 +423,6 @@ class TreeMindMap extends React.Component {
     const nodes = root.descendants();
     const links = root.links();
     let g = d3.select("svg");
-    let vDelay = 250;
-    let vDuration = 1000;
 
     this.openNote();
   };
@@ -362,12 +431,13 @@ class TreeMindMap extends React.Component {
   openNote = () => {
     let svg = d3.select("svg");
     let selectedNode = this.findSelectedNode();
-    let vDuration = 1000;
+
     // This changes the note to a yellow square.
     //selectedNode.selectAll("rect.main")
     selectedNode.append("rect")
       .transition().duration(vDuration)
-      .attr("rx", 0).attr("width", vRad * 6).attr("height", vRad * 8)
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", vRad * 6).attr("height", vRad * 8)
       .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return noteColor[0]; })
       .style("opacity", 1);
@@ -389,7 +459,6 @@ class TreeMindMap extends React.Component {
 
   closeNote = (nodeId) => {
     // This minimizes the note.
-    let vDuration = 1000;
     let svg = d3.select("svg");
     let selectionCriteria = "[id=" + nodeId + "]";
     let thisNode = svg.select(selectionCriteria);
@@ -397,7 +466,8 @@ class TreeMindMap extends React.Component {
     //thisNode.selectAll("rect.main")
     thisNode.selectAll("rect")
       .transition().duration(vDuration)
-      .attr("rx", 0).attr("width", vRad ).attr("height", vRad )
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", vRad ).attr("height", vRad )
       .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
 
@@ -419,35 +489,30 @@ class TreeMindMap extends React.Component {
     let svg = d3.select("svg");
     const nodeContainers = svg.select("#nodes");
     let selectedNode = this.findSelectedNode();
-    let vDelay = 250;
-    let vDuration = 1000;
-
   };
 
   addNoteRects = (nodeContainers) => {
     let g = d3.select("svg");
-    let vDelay = 250;
-    let vDuration = 1000;
     // Add <g>s
     //let vRects = g.selectAll("g").data(nodes).enter().append("g");
       // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
 
     // Draw <rect>s
-    /*
-    nodeContainers.append("rect").attr("class","main").attr("width", 0).attr("height", 0)
-      .attr("rx", vRad)
-      //.attr("transform", "rotate(5)")
-      .each( function(d) { d.data.color = noteColor[0];})
-      .style("fill", "black")
+    nodeContainers.append("rect").attr("class","main")
+      //.attr("width", 0).attr("height", 0)
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", vRad).attr("height", vRad)
+      .each(function(d) { d.data.color = noteColor[0];})
+      .style("fill", noteColor[0])
       .style("opacity", 1);
-    */
+
     /*
     // This changes the note to a yellow square.
     nodeContainers.selectAll("rect.main")
       .transition().duration(vDuration)
-      .attr('rx', 0).attr('width', vRad * 6).attr('height', vRad * 8)
-      .style('fill', function(d) { return d.data.color; })
-      .style('stroke', function(d) { return d.data.color; }).style('opacity', 1);
+      .attr("rx", 0).attr("width", vRad * 6).attr("height", vRad * 8)
+      .style("fill", function(d) { return d.data.color; })
+      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
 
     // Add <text>s and labels
     nodeContainers
@@ -464,47 +529,9 @@ class TreeMindMap extends React.Component {
      */
 
   };
+  //</editor-fold>
 
-  createId = () => {
-    return (
-      "_" +
-      Math.random()
-        .toString(36)
-        .substr(2, 9)
-    );
-  };
-
-  saveJson = () => {
-    console.log("JSON:" + JSON.stringify(this.state.jsonData));
-    let postData = {
-      orgId: this.state.orgId,
-      mapData: this.state.jsonData
-    };
-    console.log("JSON to post:" + JSON.stringify(postData));
-
-    setTimeout(() => {
-      fetch("/api/mindmaps", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData)
-      })
-        .then(response => {
-          if (response.status !== 400) {
-            // Success - open the snackbar
-            this.setState({
-              openSnackbar: true,
-              message: "Mind map saved."
-            });
-          } else {
-            // TODO: consider handling a 400 response.
-          }
-        })
-        .catch(err => {
-          this.setState({ message: "Error occurred." });
-        });
-    }, 2000);
-  };
-
+  //<editor-fold desc="// Functions invoked by buttons">
   appendChild = () => {
     let svg = d3.select(this.svg);
     this.appendChildToSelectedNode(svg);
@@ -514,13 +541,9 @@ class TreeMindMap extends React.Component {
     let svg = d3.select(this.svg);
     this.addSiblingToSelectedNode(svg);
   };
+  //</editor-fold>
 
-  viewIdea = () => {
-    let svg = d3.select(this.svg);
-    this.fetchIdea();
-    this.handlePopoverClick();
-  };
-
+  //<editor-fold desc="// Delete and undelete node functions">
   deleteNode = () => {
     let svg = d3.select(this.svg);
     this.removeSelectedNode(svg);
@@ -565,22 +588,9 @@ class TreeMindMap extends React.Component {
 
     this.update(svg);
   };
+  //</editor-fold>
 
-  newMap = () => {
-    this.setState(
-      {
-        isNewMap: true
-      },
-      () => {
-        console.log(
-          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
-        );
-        let svg = d3.select(this.svg);
-        this.update(svg);
-      }
-    );
-  };
-
+  //<editor-fold desc="Node functions">
   rename = () => {
     // Renames a node.
     let svg = d3.select(this.svg);
@@ -766,6 +776,91 @@ class TreeMindMap extends React.Component {
     this.update(svg);
   };
 
+  renameNode = (d, i, nodes) => {
+    console.log("renameNode");
+    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
+
+    const clickedNodeIndex = i;
+    const clickedNode = nodes[clickedNodeIndex];
+    const clickedNodeID = d3.select(clickedNode).attr("name");
+    // const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
+
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedNodeID
+    ) {
+      console.log("renameNode: going into editing mode!");
+      d3.select(clickedNode).call(this.editNode);
+    }
+  };
+
+  getSelectedNodeId = selectedNodeId => {
+    this.props.callback(selectedNodeId);
+  };
+
+  logNode = message => {
+    let svg = d3.select("svg");
+    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
+      ", name = " + this.findSelectedNodeName());
+  };
+
+  getSelectedNode = (nodes, i) => {
+    // Had to change the implementation of this to use the index instead of using
+    // a filter on ".node-selected". Come back and see why that didn't work if there is time.
+    /*
+    const currentlySelectedNode =
+      d3.selectAll(nodes)
+        .filter(".node-selected");
+     */
+
+    const currentlySelectedNode = d3.select(nodes[i]);
+    return currentlySelectedNode;
+  };
+
+  handleClickOnNode = (d, i, nodes) => {
+    console.log("handleClickOnNode: clicked on a node.");
+    let svg = d3.select("svg");
+    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+
+    const clickedNodeIndex = i;
+    const clickedNode = nodes[clickedNodeIndex];
+    const clickedNodeID = d3.select(clickedNode).attr("name");
+    const otherNodes = d3
+      .selectAll(nodes)
+      .filter((d, i) => i !== clickedNodeIndex);
+
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedNodeID
+    ) {
+      console.log("going into edit mode!");
+      d3.select(clickedNode)
+      //.call(this.editNode)
+        .call(this.selectNode);
+    } else {
+      d3.select(clickedNode).call(this.selectNode);
+
+      // If not already selected, mark as selected
+      otherNodes.each(this.deselectNode);
+    }
+
+    // d.children = d.children ? null : d._children;
+    // update(d);
+
+    // Prevent triggering clickOnCanvas handler
+    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+    d3.event.stopPropagation();
+  };
+
+  isUndoDeleteDisabled = () => {
+    return this.state.undoDeleteDisabled;
+  };
+
+  isDeleteDisabled = () => {
+    return this.state.deleteDisabled;
+  };
+  //</editor-fold>
+
   /**
    * Create the SVG and attach keystroke events to it.
    * The svg is initialized with height = dx.
@@ -837,84 +932,7 @@ class TreeMindMap extends React.Component {
       .each(this.deselectNode);
   };
 
-  renameNode = (d, i, nodes) => {
-    console.log("renameNode");
-    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
-
-    const clickedNodeIndex = i;
-    const clickedNode = nodes[clickedNodeIndex];
-    const clickedNodeID = d3.select(clickedNode).attr("name");
-    // const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
-
-    if (
-      currentlySelectedNode.size() > 0 &&
-      currentlySelectedNode.attr("name") === clickedNodeID
-    ) {
-      console.log("renameNode: going into editing mode!");
-      d3.select(clickedNode).call(this.editNode);
-    }
-  };
-
-  getSelectedNodeId = selectedNodeId => {
-    this.props.callback(selectedNodeId);
-  };
-
-  getSelectedNode = (nodes, i) => {
-    // Had to change the implementation of this to use the index instead of using
-    // a filter on ".node-selected". Come back and see why that didn't work if there is time.
-    /*
-    const currentlySelectedNode =
-      d3.selectAll(nodes)
-        .filter(".node-selected");
-     */
-
-    const currentlySelectedNode = d3.select(nodes[i]);
-    return currentlySelectedNode;
-  };
-
-  handleClickOnNode = (d, i, nodes) => {
-    console.log("handleClickOnNode: clicked on a node.");
-    let svg = d3.select("svg");
-    const currentlySelectedNode = this.getSelectedNode(nodes, i);
-
-    const clickedNodeIndex = i;
-    const clickedNode = nodes[clickedNodeIndex];
-    const clickedNodeID = d3.select(clickedNode).attr("name");
-    const otherNodes = d3
-      .selectAll(nodes)
-      .filter((d, i) => i !== clickedNodeIndex);
-
-    if (
-      currentlySelectedNode.size() > 0 &&
-      currentlySelectedNode.attr("name") === clickedNodeID
-    ) {
-      console.log("going into edit mode!");
-      d3.select(clickedNode)
-        //.call(this.editNode)
-        .call(this.selectNode);
-    } else {
-      d3.select(clickedNode).call(this.selectNode);
-
-      // If not already selected, mark as selected
-      otherNodes.each(this.deselectNode);
-    }
-
-    // d.children = d.children ? null : d._children;
-    // update(d);
-
-    // Prevent triggering clickOnCanvas handler
-    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
-    d3.event.stopPropagation();
-  };
-
-  isUndoDeleteDisabled = () => {
-    return this.state.undoDeleteDisabled;
-  };
-
-  isDeleteDisabled = () => {
-    return this.state.deleteDisabled;
-  };
-
+  //<editor-fold desc="// Select and edit node functions">
   removeSelectedNodeFromData = svg => {
     // Removes selected node from the JSON data, stored in state.
     let selectedNodeId = this.findSelectedNodeId(svg);
@@ -1027,12 +1045,6 @@ class TreeMindMap extends React.Component {
     }
   };
 
-  logNode = message => {
-    let svg = d3.select("svg");
-    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
-        ", name = " + this.findSelectedNodeName());
-  };
-
   deselectNode = (d, i, nodes) => {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
@@ -1076,7 +1088,9 @@ class TreeMindMap extends React.Component {
       .filter(".node-selected")
       .each(this.deselectNode);
   };
+  //</editor-fold>
 
+  //<editor-fold desc="// Helper functions for drawing the tree">
   appendText = nodeContainers => {
     // The "foreignObject" object will display the name text on the node.
     nodeContainers
@@ -1147,35 +1161,9 @@ class TreeMindMap extends React.Component {
     let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ", 0)");
     return g;
   };
+  //</editor-fold>
 
-  fetchIdea = () => {
-    let svg = d3.select("svg");
-    let selectedNodeId = this.findSelectedNodeId(svg);
-    let selectedNodeName = this.findSelectedNodeName();
-
-    if (selectedNodeId !== "") {
-      fetch(`/api/ideas-node/${selectedNodeId}`)
-        .then(res => res.json())
-        .then(idea => {
-          if (idea.ideaText) {
-            this.setState({
-              idea: idea.ideaText,
-              nodeTitle: selectedNodeName,
-              nodeId: selectedNodeId,
-              isEditingIdea: true
-            });
-          } else {
-            this.setState({
-              idea: "",
-              nodeTitle: selectedNodeName,
-              nodeId: selectedNodeId,
-              isEditingIdea: false
-            });
-          }
-        });
-    }
-  };
-
+  //<editor-fold desc="// D3 and tree layout and draw functions">
   createTreeLayout = () => {
     let svg = d3.select("svg");
     let leftTree = this.loadData("left");
@@ -1263,7 +1251,7 @@ class TreeMindMap extends React.Component {
 
     newNodeContainers
       .append("circle")
-      .attr("r", 10)
+      .attr("r", 12)
       .attr("fill", d => (d._children ? "#159" : "#159"));
 
     // The "foreignObject" object will display the name text on the node.
@@ -1278,7 +1266,7 @@ class TreeMindMap extends React.Component {
       .style("font-family", "Arial");
 
     // #newcode
-    // this.addNoteRects(newNodeContainers);
+    this.addNoteRects(newNodeContainers);
 
     existingNodeContainers
       .merge(newNodeContainers)
@@ -1350,7 +1338,9 @@ class TreeMindMap extends React.Component {
 
     return tree(treeData);
   };
+  //</editor-fold>
 
+  //<editor-fold desc="JSON and load data functions">
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
     let d3Data = "";
@@ -1383,6 +1373,53 @@ class TreeMindMap extends React.Component {
     let d3HierarchyData = d3.hierarchy(d3Data);
     return d3HierarchyData;
   };
+
+  newMap = () => {
+    this.setState(
+      {
+        isNewMap: true
+      },
+      () => {
+        console.log(
+          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
+        );
+        let svg = d3.select(this.svg);
+        this.update(svg);
+      }
+    );
+  };
+
+  saveJson = () => {
+    console.log("JSON:" + JSON.stringify(this.state.jsonData));
+    let postData = {
+      orgId: this.state.orgId,
+      mapData: this.state.jsonData
+    };
+    console.log("JSON to post:" + JSON.stringify(postData));
+
+    setTimeout(() => {
+      fetch("/api/mindmaps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData)
+      })
+        .then(response => {
+          if (response.status !== 400) {
+            // Success - open the snackbar
+            this.setState({
+              openSnackbar: true,
+              message: "Mind map saved."
+            });
+          } else {
+            // TODO: consider handling a 400 response.
+          }
+        })
+        .catch(err => {
+          this.setState({ message: "Error occurred." });
+        });
+    }, 2000);
+  };
+  //</editor-fold>
 
   update = svg => {
     // d3.hierarchy object is a data structure that represents a hierarchy
@@ -1439,7 +1476,7 @@ class TreeMindMap extends React.Component {
     }
   }
 
-  // Functions for the snackbar
+  //<editor-fold desc="Functions for the snackbar">
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
@@ -1447,22 +1484,45 @@ class TreeMindMap extends React.Component {
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
+  //</editor-fold>
 
-  // For post-it notes.  Need to change these.
-  onSave () {
+  //<editor-fold desc="Post-it note functions">
+  fetchIdea = () => {
+    let svg = d3.select("svg");
+    let selectedNodeId = this.findSelectedNodeId(svg);
+    let selectedNodeName = this.findSelectedNodeName();
+
+    if (selectedNodeId !== "") {
+      fetch(`/api/ideas-node/${selectedNodeId}`)
+        .then(res => res.json())
+        .then(idea => {
+          if (idea.ideaText) {
+            this.setState({
+              idea: idea.ideaText,
+              nodeTitle: selectedNodeName,
+              nodeId: selectedNodeId,
+              isEditingIdea: true
+            });
+          } else {
+            this.setState({
+              idea: "",
+              nodeTitle: selectedNodeName,
+              nodeId: selectedNodeId,
+              isEditingIdea: false
+            });
+          }
+        });
+    }
+  };
+
+  onSaveNotes () {
     // Make sure to delete the editorState before saving to backend
     const notes = this.state.notes;
     notes.map(note => {
       delete note.editorState;
-    })
+    });
     // Make service call to save notes
     // Code goes here...
-  };
-
-  onChange (notes) {
-    this.setState({ // Update the notes state
-      notes
-    });
   };
 
   handleIdeaChange = name => event => {
@@ -1511,7 +1571,9 @@ class TreeMindMap extends React.Component {
         });
     }, 2000);
   };
+  //</editor-fold>
 
+  //<editor-fold desc="Popover functions">
   handlePopoverClick = event => {
     this.setState({
       anchorEl: event.currentTarget,
@@ -1525,6 +1587,7 @@ class TreeMindMap extends React.Component {
       openPopover: false
     });
   };
+  //</editor-fold>
 
   render() {
     const { classes } = this.props;

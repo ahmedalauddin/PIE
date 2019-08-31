@@ -875,9 +875,8 @@ class TreeMindMap extends React.Component {
       currentlySelectedNode.attr("name") === clickedNodeID
     ) {
       console.log("going into edit mode!");
-      d3.select(clickedNode)
-      // TODO: review if this needs to be edit.
-      this.editNode();
+     d3.select(clickedNode)
+       .call(this.editNode);
       // ********************************************8
       // changed from .call(this.editNode);
       this.selectNode();
@@ -1091,7 +1090,7 @@ class TreeMindMap extends React.Component {
   editNode = node => {
     node
       .classed("node-editing", true)
-      .select("foreignObject")
+      .select("foreignObject.title")
       .select("p")
       .style("background-color", "#ddd");
     console.log(`${node.attr("name")} is being edited`);
@@ -1291,6 +1290,7 @@ class TreeMindMap extends React.Component {
   // Draw the full bidirectional tree.
   fullTree = () => {
     let svg = d3.select("svg");
+
     let root = this.createTreeLayout();
 
     root.descendants().forEach((d, i) => {
@@ -1305,6 +1305,9 @@ class TreeMindMap extends React.Component {
 
     // Set both root nodes to be dead center vertically
     nodes[0].x = this.state.height / 2;
+
+    // svg.select("g#nodes").exit().remove();
+    // svg.select("g#links").exit().remove();
 
     const transition = svg
       .transition()
@@ -1410,6 +1413,8 @@ class TreeMindMap extends React.Component {
       .attr("d", diagonal)
       .remove();
 
+    svg.select("g#nodes").exit().remove();
+
     // Stash the old positions for transition.
     root.eachBefore(d => {
       d.x0 = d.x;
@@ -1426,6 +1431,16 @@ class TreeMindMap extends React.Component {
     let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
 
     return tree(treeData);
+  };
+
+  update = svg => {
+    // d3.hierarchy object is a data structure that represents a hierarchy
+    // It has a number of functions defined on it for retrieving things like
+    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+    this.fullTree();
+    this.setState({
+      isNewMap: false
+    });
   };
   //</editor-fold>
 
@@ -1511,16 +1526,6 @@ class TreeMindMap extends React.Component {
     }, 2000);
   };
   //</editor-fold>
-
-  update = svg => {
-    // d3.hierarchy object is a data structure that represents a hierarchy
-    // It has a number of functions defined on it for retrieving things like
-    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    this.fullTree();
-    this.setState({
-      isNewMap: false
-    });
-  };
 
   componentDidMount() {
     if (DEBUG_USE_TEST_DATA) {

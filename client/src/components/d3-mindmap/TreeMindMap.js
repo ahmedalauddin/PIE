@@ -400,6 +400,7 @@ class TreeMindMap extends React.Component {
       nodeId: "",
       nodeTitle: "",
       idea: "",
+      myCounter: 0,
       deletedNodes: [],     // start using an arrary for this.
       deletedNodeId: "",
       deletedNodeName: "",
@@ -417,7 +418,6 @@ class TreeMindMap extends React.Component {
 
   //<editor-fold desc="// Post-it note and rectangle drawing functions">
   addNote = () => {
-    let svg = d3.select("svg");
     let root = this.createTreeLayout();
 
     root.descendants().forEach((d, i) => {
@@ -436,7 +436,6 @@ class TreeMindMap extends React.Component {
 
   // open note for selected ID
   openNote = () => {
-    let svg = d3.select("svg");
     let selectedNode = this.findSelectedNode();
 
     // This changes the note to a yellow square.
@@ -574,8 +573,6 @@ class TreeMindMap extends React.Component {
 
   undoDeleteNode = () => {
     // This is similar to appending a node.  We've saved the deleted node id and its parent to state.
-    let svg = d3.select(this.svg);
-
     // Get the last deleted node.
     let deletedNode = this.getLastDeletedNode();
 
@@ -907,8 +904,9 @@ class TreeMindMap extends React.Component {
 
     // Create the child.
     let child = {
-      name: "",
-      id: createId()
+      name: "new",
+      id: createId(),
+      note: ""
     };
 
     // TODO: change this to add child to the JSON, or get parent directly from the JSON.
@@ -1105,7 +1103,7 @@ class TreeMindMap extends React.Component {
     const idOfSelectedNode = node.attr("id");
 
     this.getSelectedNodeId(idOfSelectedNode);
-    console.log(`${node.attr("name")} selected`);
+    console.log("Selected node id = " +  node.attr("id") + ", name = " +  node.attr("name"));
     let collapsed = (node.attr("note-state") === "collapsed");
     let hasChilden = this.hasChildren(idOfSelectedNode);
 
@@ -1149,7 +1147,6 @@ class TreeMindMap extends React.Component {
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
-    let nodeFound = false;
     let parent = this.findNode(idOfSelectedNode);
     parent.name = newValue;
   };
@@ -1304,14 +1301,22 @@ class TreeMindMap extends React.Component {
         window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
       );
 
-    // Update the nodes
+    // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
+    // selectAll has to be a unique name.
     let node = svg
       .selectAll("#nodes")
       .selectAll("g")
-      .data(nodes, d => d.id)
+      .data(nodes, d => d.id);
+
+    // NOTE: COMMENTING THIS OUT SEEMED TO WORK.
+    /* comment this out for now.
       .data(nodes, d => d.note)
-      .data(nodes, d => d.name);
-      //.data(nodes);
+      .data(nodes, function(d) {
+        console.log("node, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
+        return d.name;
+      });
+    */
+    node.exit().remove();
 
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
@@ -1338,28 +1343,29 @@ class TreeMindMap extends React.Component {
       .attr("y", -35)
       .append("xhtml:p")
       .attr("class", "node-title")
-      .text(d => d.data.name);
+      .text(d => d.data.name + ", v" + this.state.myCounter);
 
     // #newcode --- will need to add this back in.
     // this.addNoteRects(newNodeContainers);    // comment out
 
     // Transition nodes to their new position. Increase opacity from 0 to 1 during transition.
-    let nodeUpdate = nodeEnter.merge(node)
+    let nodeUpdate = node.merge(nodeEnter)
       .on("click", this.handleClickOnNode);
-
-    let nodeExit = node.exit().remove();
 
     nodeUpdate.transition()
       .duration(duration)
-      .attr("transform", d => `translate(${d.y},${d.x})`)
+      .attr("transform", function(d) {
+        console.log("nodeUpdate, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
+        return "translate(" + d.y + "," + d.x + ")";
+      })
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1);
 
-    /*
     // Exiting nodes - remove any exiting nodes
     let nodeExit = node.exit().transition()
       .duration(duration)
       .attr("transform", function(d) {
+        console.log("nodeExit, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
         return "translate(" + d.y + "," + d.x + ")";
       })
       .remove();
@@ -1369,7 +1375,7 @@ class TreeMindMap extends React.Component {
 
     // On exit reduce the opacity of text labels
     nodeExit.select("text").style("fill-opacity", 1e-6);
-    */
+
     /*
     // Transition exiting nodes to the parent's new position.
     // Reduce opacity from 1 to 0 during transition
@@ -1437,7 +1443,8 @@ class TreeMindMap extends React.Component {
     // ancestor, descendant, and leaf nodes, and for computing the path between nodes
     this.fullTree();
     this.setState({
-      isNewMap: false
+      isNewMap: false,
+      myCounter: this.state.myCounter + 1
     });
   };
   //</editor-fold>

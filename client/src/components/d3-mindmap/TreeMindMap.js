@@ -6,7 +6,7 @@
  * Author:   Brad Kaufman
  * -----
  * Modified: 2019-08-29
- * Changes:  Added editor folding.
+ * Changes:  Added editor folding.  Styles for D3 and svg now specified more in mindmap.scss.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -18,7 +18,6 @@ import Grid from "@material-ui/core/Grid/index";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
-import "antd/dist/antd.css";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
@@ -39,11 +38,14 @@ const styles = theme => ({
     //fill: "white",
     strokeWidth: "2px"
   },
+  title: {
+    fontFamily: "Arial, Helvetica, Geneva, sans-serif",
+  },
   text: {
     fill: "black",
-    //fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
+    fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
     //fontSize: "10px",
-    },
+  },
   nodeTitle: {
     fontFamily: "Arial"
   },
@@ -335,12 +337,9 @@ class TreeMindMap extends React.Component {
     this.chart = this.chart.bind(this);
     this.createTreeLayout = this.createTreeLayout.bind(this);
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
-    this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
-    this.addSibling = this.addSibling.bind(this);
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
-    this.deleteNode = this.deleteNode.bind(this);
     this.undoDeleteNode = this.undoDeleteNode.bind(this);
     this.getLastDeletedNode = this.getLastDeletedNode.bind(this);
     this.rename = this.rename.bind(this);
@@ -563,32 +562,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="// Functions invoked by buttons and keystroke handlers">
-  appendChild = () => {
-    let svg = d3.select(this.svg);
-    this.appendChildToSelectedNode(svg);
-  };
-
-  addSibling = () => {
-    let svg = d3.select(this.svg);
-    this.addSiblingToSelectedNode(svg);
-  };
-
-  handleKeypressEsc = svg => {
-    // TODO: this isn't getting called.
-    svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .each(this.deselectNode);
-  };
-  //</editor-fold>
-
   //<editor-fold desc="// Delete and undelete node functions">
-  deleteNode = () => {
-    let svg = d3.select(this.svg);
-    this.removeSelectedNode(svg);
-  };
-
   getLastDeletedNode = () => {
     let lastDeletedNode = null;
     if (this.state.deletedNodes) {
@@ -626,7 +600,7 @@ class TreeMindMap extends React.Component {
       undoDeleteDisabled: undoDeleteDisabled
     });
 
-    this.update(svg);
+    this.update();
   };
   //</editor-fold>
 
@@ -637,6 +611,14 @@ class TreeMindMap extends React.Component {
     let selectedNode = console.log("rename node");
     console.log("idOfSelectedNode: " + this.findSelectedNodeId(svg));
     this.editNode(selectedNode);
+  };
+
+  handleKeypressEsc = svg => {
+    // TODO: this isn't getting called.
+    svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .each(this.deselectNode);
   };
 
   findNode = idOfSelectedNode => {
@@ -701,7 +683,7 @@ class TreeMindMap extends React.Component {
     }
 
     let hasChildren = false;
-    if (nodeFound && node.children) {
+    if (nodeFound && node.children && (node.children.length > 0)) {
       hasChildren = true;
     }
     return hasChildren;
@@ -777,46 +759,6 @@ class TreeMindMap extends React.Component {
     return runner(null, node);
   };
 
-  appendChildToSelectedNode = svg => {
-    // This version appends a child to the JSON, not the svg.  7/17/19.
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
-    this.logNode("appendChildToSelectedNode");
-    let json = this.state.jsonData;
-    let parent = this.getNodeById(idOfSelectedNode, json);
-
-    // Create the child.
-    let child = {
-      name: "",
-      id: createId()
-    };
-
-
-    // TODO: change this to add child to the JSON, or get parent directly from the JSON.
-    // Should just be able to change the JSON element.  For instance, change this:
-    //
-    if (parent.children) parent.children.push(child);
-    else parent.children = [child];
-
-    // Save the JSON back to state.
-    this.setState({
-      jsonData: json
-    });
-
-    this.update(svg);
-  };
-
-  addSiblingToSelectedNode = svg => {
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
-    let parent = this.findParentNode(idOfSelectedNode);
-
-    let child = {
-      name: "",
-      id: createId()
-    };
-    parent.children.push(child);
-    this.update(svg);
-  };
-
   renameNode = (d, i, nodes) => {
     console.log("renameNode");
     const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
@@ -875,11 +817,13 @@ class TreeMindMap extends React.Component {
       currentlySelectedNode.attr("name") === clickedNodeID
     ) {
       console.log("going into edit mode!");
-     d3.select(clickedNode)
-       .call(this.editNode);
-      // ********************************************8
+      d3.select(clickedNode)
+        .call(this.selectNode);
+      // TODO
+      // .call(this.editNode);
+      // ********************************************
       // changed from .call(this.editNode);
-      this.selectNode();
+
     } else {
       d3.select(clickedNode).call(this.selectNode);
 
@@ -952,72 +896,53 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  /**
-   * Create the SVG and attach keystroke events to it.
-   * The svg is initialized with height = dx.
-   * This will be updated later when the rest of the nodes in the tree are entered.
-   * @returns {*}
-   */
-  chart = () => {
-    // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
-    let svg = d3
-      .select(this.svg)
-      .attr("width", this.state.width)
-      .attr("height", this.state.height)
-      .style("font", "14px sans-serif")
-      .on("click", this.handleClickOnCanvas);
+  //<editor-fold desc="// Main add, sibling, and delete node functions">
+  appendChildToSelectedNode = () => {
+    // This version appends a child to the JSON, not the svg.  7/17/19.
+    let svg = d3.select(this.svg);
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    this.logNode("appendChildToSelectedNode");
+    let json = this.state.jsonData;
+    let parent = this.getNodeById(idOfSelectedNode, json);
 
-    // 2.1 Create a container for all the nodes in the graph
-    const gNode = svg
-      .append("g")
-      .attr("id", "nodes")
-      .attr("cursor", "pointer");
+    // Create the child.
+    let child = {
+      name: "",
+      id: createId()
+    };
 
-    // 2.2 Create a container for all the links in the graph
-    const gLink = svg
-      .append("g")
-      .attr("id", "links")
-      .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5);
+    // TODO: change this to add child to the JSON, or get parent directly from the JSON.
+    // Should just be able to change the JSON element.  For instance, change this:
+    //
+    if (parent.children) parent.children.push(child);
+    else parent.children = [child];
 
-    // 3. Fill in the nodes and links with the hierarchy data
-    this.update(svg);
-    let appendChildToSelectedNode = this.appendChildToSelectedNode;
-    let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
-    let removeSelectedNode = this.removeSelectedNode;
-    let handleKeypressEsc = this.handleKeypressEsc;
-
-    // 4. Register other event handlers
-    d3.select("body").on("keydown", function(e) {
-      // eslint-disable-next-line no-console
-      console.log(`keydown: ${d3.event.keyCode}`);
-      // Check to see if a node is being edited
-      let nodeIsBeingEdited = gNode.select("g.node-editing").size();
-
-      /*
-      if (d3.event.keyCode === 9) {
-        console.log("tab - append child to selected node");
-        // appendChildToSelectedNode(svg);
-      } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
-        console.log("enter - add sibling to selected node");
-        // addSiblingToSelectedNode(svg);
-      } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
-        console.log("delete - remove selected node");
-        removeSelectedNode(svg);
-      } else if (d3.event.keyCode === 27) {
-        console.log("esc - deselect node");
-        // handleKeypressEsc(svg);
-      } */
+    // Save the JSON back to state.
+    this.setState({
+      jsonData: json
     });
 
-    return svg.node();
+    this.update();
   };
 
-  //<editor-fold desc="// Select and edit node functions">
-  removeSelectedNodeFromData = svg => {
-    // Removes selected node from the JSON data, stored in state.
+  addSiblingToSelectedNode = () => {
+    let svg = d3.select(this.svg);
+    let idOfSelectedNode = this.findSelectedNodeId();
+    let parent = this.findParentNode(idOfSelectedNode);
+
+    let child = {
+      name: "",
+      id: createId(),
+      note: ""
+    };
+    parent.children.push(child);
+    this.update();
+  };
+
+  removeSelectedNodeFromData = () => {
+    // Removes selected node from the JSON data, stored in state.  Just need the id field.
+    // Also updates our deleted nodes data, so we can undelete later.
+    let svg = d3.select(this.svg);
     let selectedNodeId = this.findSelectedNodeId(svg);
     let selectedNodeName = this.findSelectedNodeName();
     let jsonData = [this.state.jsonData];
@@ -1040,13 +965,14 @@ class TreeMindMap extends React.Component {
     deletedNodes.push(deletedNode);
 
     this.setState({
-      jsonData: jsonData,
+      jsonData: jsonData[0],
       deletedNodes: deletedNodes,   // Array of deleted nodes
       undoDeleteDisabled: false
     });
   };
 
-  removeSelectedNode = svg => {
+  removeSelectedNode = () => {
+    let svg = d3.select(this.svg);
     let selectedNode = this.findSelectedNode();
 
     this.removeSelectedNodeFromData(svg);
@@ -1084,9 +1010,74 @@ class TreeMindMap extends React.Component {
     }
     */
 
-    this.update(svg);
+    this.update();
+  };
+  //</editor-fold>
+
+  /**
+   * Create the SVG and attach keystroke events to it.
+   * The svg is initialized with height = dx.
+   * This will be updated later when the rest of the nodes in the tree are entered.
+   * @returns {*}
+   */
+  chart = () => {
+    // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
+    let svg = d3
+      .select(this.svg)
+      .attr("width", this.state.width)
+      .attr("height", this.state.height)
+      .style("font", "14px sans-serif")
+      .on("click", this.handleClickOnCanvas);
+
+    // 2.1 Create a container for all the nodes in the graph
+    const gNode = svg
+      .append("g")
+      .attr("id", "nodes")
+      .attr("cursor", "pointer");
+
+    // 2.2 Create a container for all the links in the graph
+    const gLink = svg
+      .append("g")
+      .attr("id", "links")
+      .attr("fill", "none")
+      .attr("stroke", "#555")
+      .attr("stroke-opacity", 0.4)
+      .attr("stroke-width", 1.5);
+
+    // 3. Fill in the nodes and links with the hierarchy data
+    this.update();
+    let appendChildToSelectedNode = this.appendChildToSelectedNode;
+    let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
+    let removeSelectedNode = this.removeSelectedNode;
+    let handleKeypressEsc = this.handleKeypressEsc;
+
+    // 4. Register other event handlers
+    d3.select("body").on("keydown", function(e) {
+      // eslint-disable-next-line no-console
+      console.log(`keydown: ${d3.event.keyCode}`);
+      // Check to see if a node is being edited
+      let nodeIsBeingEdited = gNode.select("g.node-editing").size();
+
+      /*
+      if (d3.event.keyCode === 9) {
+        console.log("tab - append child to selected node");
+        // appendChildToSelectedNode(svg);
+      } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
+        console.log("enter - add sibling to selected node");
+        // addSiblingToSelectedNode(svg);
+      } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
+        console.log("delete - remove selected node");
+        removeSelectedNode(svg);
+      } else if (d3.event.keyCode === 27) {
+        console.log("esc - deselect node");
+        // handleKeypressEsc(svg);
+      } */
+    });
+
+    return svg.node();
   };
 
+  //<editor-fold desc="// Select and edit node functions">
   editNode = node => {
     node
       .classed("node-editing", true)
@@ -1158,8 +1149,6 @@ class TreeMindMap extends React.Component {
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
-    let nodeInTree = [this.state.jsonData];
-
     let nodeFound = false;
     let parent = this.findNode(idOfSelectedNode);
     parent.name = newValue;
@@ -1303,11 +1292,8 @@ class TreeMindMap extends React.Component {
     const nodes = root.descendants();
     const links = root.links();
 
-    // Set both root nodes to be dead center vertically
+    // Set both root nodes to be dead center vertically.
     nodes[0].x = this.state.height / 2;
-
-    // svg.select("g#nodes").exit().remove();
-    // svg.select("g#links").exit().remove();
 
     const transition = svg
       .transition()
@@ -1319,16 +1305,17 @@ class TreeMindMap extends React.Component {
       );
 
     // Update the nodes
-    const existingNodeContainers = svg
-      .select("#nodes")
+    let node = svg
+      .selectAll("#nodes")
       .selectAll("g")
       .data(nodes, d => d.id)
       .data(nodes, d => d.note)
       .data(nodes, d => d.name);
+      //.data(nodes);
 
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
-    const newNodeContainers = existingNodeContainers
+    let nodeEnter = node
       .enter()
       .append("g")
       .attr("id", (d, i) => `${d.id}`)
@@ -1340,80 +1327,91 @@ class TreeMindMap extends React.Component {
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
 
-    newNodeContainers
-      .append("circle")
-      .attr("r", 12)
-      .attr("fill", d => (d._children ? "#159" : "#159"));
+    nodeEnter.append("circle");
 
     // The "foreignObject" object will display the name text on the node.
-    newNodeContainers
+    nodeEnter
       .append("foreignObject")
-      .attr("class", "title")
-      .attr("x", -80)
-      .attr("y", -35)
       .attr("width", 150)
       .attr("height", 40)
+      .attr("x", -80)
+      .attr("y", -35)
       .append("xhtml:p")
-      .text(d => d.data.name)
-      .style("font-family", "Arial");
+      .attr("class", "node-title")
+      .text(d => d.data.name);
 
-    // #newcode
-    this.addNoteRects(newNodeContainers);
+    // #newcode --- will need to add this back in.
+    // this.addNoteRects(newNodeContainers);    // comment out
 
-    existingNodeContainers
-      .merge(newNodeContainers)
+    // Transition nodes to their new position. Increase opacity from 0 to 1 during transition.
+    let nodeUpdate = nodeEnter.merge(node)
       .on("click", this.handleClickOnNode);
 
-    // Transition nodes to their new position.
-    // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers
-      .merge(newNodeContainers)
-      //.transition(transition)
+    let nodeExit = node.exit().remove();
+
+    nodeUpdate.transition()
+      .duration(duration)
       .attr("transform", d => `translate(${d.y},${d.x})`)
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1);
 
+    /*
+    // Exiting nodes - remove any exiting nodes
+    let nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      })
+      .remove();
+
+    // On exit reduce the node circles size to 0
+    nodeExit.select("circle").attr("r", 1e-6);
+
+    // On exit reduce the opacity of text labels
+    nodeExit.select("text").style("fill-opacity", 1e-6);
+    */
+    /*
     // Transition exiting nodes to the parent's new position.
     // Reduce opacity from 1 to 0 during transition
-    const nodeExit = existingNodeContainers
+     let nodeExit = nodeContainers
       .exit()
       .transition(transition)
       .remove()
       .attr("transform", d => `translate(${root.y},${root.x})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
+     */
 
-    // Update the links…
-    const existingLinkPaths = svg
+    // Update the links.
+    let linkPaths = svg
       .select("#links")
       .selectAll("path")
       .data(links, d => d.target.id);
 
-    // newLinkPaths
-    let newLinkPaths = existingLinkPaths
+    // changed from newLinkPaths; just update the current.
+    let linkPathEnter = linkPaths
       .enter()
       .insert("path", "g")
       .attr("class", "link")
       .attr("d", diagonal);
 
-    let mergedLinks = existingLinkPaths.merge(newLinkPaths);
+    let linkPathsUpdate = linkPathEnter.merge(linkPaths);
+    //linkPaths = linkPaths.merge(linkPathEnter);
 
     // Transition links to their new position.
-    mergedLinks
+    linkPathsUpdate
       .transition()
       .duration(duration)
       .attr("transform", "translate(" + this.state.width / 2 + ",0)")
       .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
-    existingLinkPaths
+    let linkPathsExit = linkPaths
       .exit()
       .transition()
       .duration(duration)
       .attr("d", diagonal)
       .remove();
-
-    svg.select("g#nodes").exit().remove();
 
     // Stash the old positions for transition.
     root.eachBefore(d => {
@@ -1433,7 +1431,7 @@ class TreeMindMap extends React.Component {
     return tree(treeData);
   };
 
-  update = svg => {
+  update = () => {
     // d3.hierarchy object is a data structure that represents a hierarchy
     // It has a number of functions defined on it for retrieving things like
     // ancestor, descendant, and leaf nodes, and for computing the path between nodes
@@ -1490,7 +1488,7 @@ class TreeMindMap extends React.Component {
           "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
         );
         let svg = d3.select(this.svg);
-        this.update(svg);
+        this.update();
       }
     );
   };
@@ -1711,7 +1709,7 @@ class TreeMindMap extends React.Component {
               variant="contained"
               color="secondary"
               disabled={this.state.addChildDisabled}
-              onClick={this.appendChild}
+              onClick={this.appendChildToSelectedNode}
               className={classes.outlinedButton}
             >
               Add Child
@@ -1720,7 +1718,7 @@ class TreeMindMap extends React.Component {
               variant="contained"
               color="secondary"
               disabled={this.state.addSiblingDisabled}
-              onClick={this.addSibling}
+              onClick={this.addSiblingToSelectedNode}
               className={classes.outlinedButton}
             >
               Add Sibling
@@ -1747,7 +1745,7 @@ class TreeMindMap extends React.Component {
               variant="contained"
               color="secondary"
               disabled={this.state.deleteDisabled}
-              onClick={this.deleteNode}
+              onClick={this.removeSelectedNode}
               className={classes.outlinedButton}
             >
               Delete Node

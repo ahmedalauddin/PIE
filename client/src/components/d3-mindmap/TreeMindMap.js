@@ -174,12 +174,6 @@ const styles = theme => ({
 });
 // Use this JSON data to test a new mind map, starting only with root.
 // eslint-disable-next-line no-unused-vars
-const jsonNew = {
-  id: createId(),
-  name: "Root",
-  note: "",
-  children: []
-};
 const jsonTestData = {
   id: "_ns1nvi0ai",
   name: "Root",
@@ -375,6 +369,7 @@ class TreeMindMap extends React.Component {
     this.closeNote = this.closeNote.bind(this);
     // this.getNoteRect = this.getNoteRect.bind(this);
     this.addNoteRects = this.addNoteRects.bind(this);
+    this.createNewMapJson = this.createNewMapJson.bind(this);
     this.update = this.update.bind(this);
     //</editor-fold>
     //<editor-fold desc="// Constructor set state">
@@ -384,7 +379,7 @@ class TreeMindMap extends React.Component {
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      jsonData: DEBUG_USE_TEST_DATA? jsonTestData : jsonNew,
+      jsonData: DEBUG_USE_TEST_DATA? jsonTestData : "",
       isNewMap: false,
       openSnackbar: false,
       message: "",
@@ -1234,6 +1229,16 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// D3 and tree layout and draw functions">
+  createNewMapJson = () => {
+    let json = {
+      id: createId(),
+      name: "Root",
+      note: "",
+      children: []
+    };
+    return json;
+  };
+
   createTreeLayout = () => {
     let svg = d3.select("svg");
     let leftTree = this.loadData("left");
@@ -1262,9 +1267,12 @@ class TreeMindMap extends React.Component {
     leftTree.x = d3TreeHeight/2;
 
     // Combine the outputs from D3 tree.  Check if children exist first, as a new map won't have children.
-    if (rightTree.children) {
+    if (rightTree.children && rightTree.children.length) {
       rightTree.children.forEach((d, i) => {
-        leftTree.children.push(d);
+        if (leftTree.children)
+          leftTree.children.push(d);
+        else
+          leftTree.children = [d];
       });
     }
 
@@ -1302,7 +1310,7 @@ class TreeMindMap extends React.Component {
       );
 
     // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
-    // selectAll has to be a unique name.
+    // selectAll has to be a unique name.  Note we use d.id for data as we need a key field.
     let node = svg
       .selectAll("#nodes")
       .selectAll("g")
@@ -1343,7 +1351,7 @@ class TreeMindMap extends React.Component {
       .attr("y", -35)
       .append("xhtml:p")
       .attr("class", "node-title")
-      .text(d => d.data.name + ", v" + this.state.myCounter);
+      .text(d => d.data.name);
 
     // #newcode --- will need to add this back in.
     // this.addNoteRects(newNodeContainers);    // comment out
@@ -1488,7 +1496,7 @@ class TreeMindMap extends React.Component {
     this.setState(
       {
         isNewMap: true,
-        jsonData: jsonNew
+        jsonData: this.createNewMapJson()
       },
       () => {
         console.log(

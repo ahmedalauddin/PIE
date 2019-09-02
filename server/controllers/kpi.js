@@ -12,14 +12,13 @@
 // declaractions
 const models = require("../models");
 const logger = require("../util/logger")(__filename);
-const Organization = require("../models").Organization;
 const callerType = "controller";
 const util = require("util");
 
 module.exports = {
+  // Creates only a KPI.
   create(req, res) {
     const projectId = req.body.projectId;
-    let kpiId = null;
     logger.debug(`${callerType} create -> projectId: ${projectId}`);
     logger.debug(`${callerType} create -> JSON: req.body: ${JSON.stringify(req.body)}`);
     let nodeId = "";
@@ -74,6 +73,41 @@ module.exports = {
       })
       .catch(error => {
         logger.error(`${callerType} create -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  createWithProject(req, res) {
+    const projectId = req.body.projectId;
+    logger.debug(`kpi createWithProject -> projectId: ${projectId}`);
+    logger.debug(`kpi createWithProject -> JSON: req.body: ${JSON.stringify(req.body)}`);
+    let nodeId = "";
+    if (req.body.mindmapNodeId) {
+      nodeId = req.body.mindmapNodeId;
+    } else {
+      nodeId = "";
+    }
+    let kpiTitle = req.body.title;
+    let kpiDescription = req.body.description;
+    let formulaDescription = req.body.formula;
+    let project = req.body.project;
+    let projectDescription = req.body.projectDescription;
+    let mindmapNodeId = req.body.mindmapNodeId;
+    let orgId = req.body.orgId;
+    // TODO - test this.
+    // SQL to call stored procedure with its input parameters.
+    let sql = "CALL insert_kpi_with_project (" + orgId + ", '" + kpiTitle + "', '" + kpiDescription + "', '" +
+      formulaDescription + "', '" + mindmapNodeId + "', '" + project + "', '" + projectDescription + "')";
+
+    return models.sequelize
+      .query(sql)
+      .then(([results, metadata]) => {
+        // Results will be an empty array and metadata will contain the number of affected rows.
+        console.log("Kpi createWithProject -> metadata: " + metadata);
+        console.log("Kpi createWithProject -> create: successful");
+      })
+      .catch(error => {
+        logger.error(`${callerType} Kpi createWithProject -> error: ${error.stack}`);
         res.status(400).send(error);
       });
   },

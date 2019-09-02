@@ -20,6 +20,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import {Redirect} from "react-router-dom";
 
 //<editor-fold desc="// Constant declarations">
 const styles = theme => ({
@@ -374,6 +375,7 @@ class TreeMindMap extends React.Component {
     //</editor-fold>
     //<editor-fold desc="// Constructor set state">
     this.state = {
+      hasError: false,
       width: window.innerWidth - 500,         // width for the mind map
       height: window.innerHeight - 400,       // height for the mind map
       svg: d3.select(this.svg),
@@ -1016,59 +1018,67 @@ class TreeMindMap extends React.Component {
    * @returns {*}
    */
   chart = () => {
-    // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
-    let svg = d3
-      .select(this.svg)
-      .attr("width", this.state.width)
-      .attr("height", this.state.height)
-      .style("font", "14px sans-serif")
-      .on("click", this.handleClickOnCanvas);
+    console.log("Org = " + getOrgName());
+    if (!(getOrgId() > 0 )) {
+      console.log("Need to redirect to login");
+      this.setState({
+        hasError: true
+      });
+    } else {
+      // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
+      let svg = d3
+        .select(this.svg)
+        .attr("width", this.state.width)
+        .attr("height", this.state.height)
+        .style("font", "14px sans-serif")
+        .on("click", this.handleClickOnCanvas);
 
-    // 2.1 Create a container for all the nodes in the graph
-    const gNode = svg
-      .append("g")
-      .attr("id", "nodes")
-      .attr("cursor", "pointer");
+      // 2.1 Create a container for all the nodes in the graph
+      const gNode = svg
+        .append("g")
+        .attr("id", "nodes")
+        .attr("cursor", "pointer");
 
-    // 2.2 Create a container for all the links in the graph
-    const gLink = svg
-      .append("g")
-      .attr("id", "links")
-      .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5);
+      // 2.2 Create a container for all the links in the graph
+      const gLink = svg
+        .append("g")
+        .attr("id", "links")
+        .attr("fill", "none")
+        .attr("stroke", "#555")
+        .attr("stroke-opacity", 0.4)
+        .attr("stroke-width", 1.5);
 
-    // 3. Fill in the nodes and links with the hierarchy data
-    this.update();
-    let appendChildToSelectedNode = this.appendChildToSelectedNode;
-    let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
-    let removeSelectedNode = this.removeSelectedNode;
-    let handleKeypressEsc = this.handleKeypressEsc;
+      // 3. Fill in the nodes and links with the hierarchy data
+      this.update();
+      let appendChildToSelectedNode = this.appendChildToSelectedNode;
+      let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
+      let removeSelectedNode = this.removeSelectedNode;
+      let handleKeypressEsc = this.handleKeypressEsc;
 
-    // 4. Register other event handlers
-    d3.select("body").on("keydown", function(e) {
-      // eslint-disable-next-line no-console
-      console.log(`keydown: ${d3.event.keyCode}`);
-      // Check to see if a node is being edited
-      let nodeIsBeingEdited = gNode.select("g.node-editing").size();
+      // 4. Register other event handlers
+      d3.select("body").on("keydown", function (e) {
+        // eslint-disable-next-line no-console
+        console.log(`keydown: ${d3.event.keyCode}`);
+        // Check to see if a node is being edited
+        let nodeIsBeingEdited = gNode.select("g.node-editing").size();
 
-      if (d3.event.keyCode === 9) {
-        console.log("tab - append child to selected node");
-        // appendChildToSelectedNode(svg);
-      } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
-        console.log("enter - add sibling to selected node");
-        // addSiblingToSelectedNode(svg);
-      } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
-        console.log("delete - remove selected node");
-        // removeSelectedNode(svg);
-      } else if (d3.event.keyCode === 27) {
-        console.log("esc - deselect node");
-        // handleKeypressEsc(svg);
-      }
-    });
+        if (d3.event.keyCode === 9) {
+          console.log("tab - append child to selected node");
+          // appendChildToSelectedNode(svg);
+        } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
+          console.log("enter - add sibling to selected node");
+          // addSiblingToSelectedNode(svg);
+        } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
+          console.log("delete - remove selected node");
+          // removeSelectedNode(svg);
+        } else if (d3.event.keyCode === 27) {
+          console.log("esc - deselect node");
+          // handleKeypressEsc(svg);
+        }
+      });
 
-    return svg.node();
+      return svg.node();
+    }
   };
 
   //<editor-fold desc="// Select and edit node functions">
@@ -1317,14 +1327,6 @@ class TreeMindMap extends React.Component {
       .selectAll("g")
       .data(nodes, d => d.id);
 
-    // NOTE: COMMENTING THIS OUT SEEMED TO WORK.
-    /* comment this out for now.
-      .data(nodes, d => d.note)
-      .data(nodes, function(d) {
-        console.log("node, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
-        return d.name;
-      });
-    */
     node.exit().remove();
 
     // Enter any new nodes at the parent's previous position.
@@ -1541,6 +1543,12 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
+  componentDidCatch(error, info) {
+    console.log("error: " + error + ", info: " + info);
+    this.setState({hasError: true});
+    return <Redirect to="/Login" />;
+  };
+
   componentDidMount() {
     if (DEBUG_USE_TEST_DATA) {
       this.setState({
@@ -1701,6 +1709,9 @@ class TreeMindMap extends React.Component {
 
   render() {
     const { classes } = this.props;
+    if (this.state.hasError) {
+      return <Redirect to="/Login" />;
+    }
 
     return (
       <React.Fragment>

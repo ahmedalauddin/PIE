@@ -127,30 +127,35 @@ class ProjectPanelList extends Component {
 
   fetchProjects = () => {
     let orgId = getOrgId();
-    let statusFilter = this.props.projectListFilter.status;
-    let startYearFilter = this.props.projectListFilter.startYear;
-    let endYearFilter = this.props.projectListFilter.endYear;
-
     if (parseInt(orgId) > 0) {
-      console.log("ProjectPanelList, before setState for filter values");
-      // Use the props for the body of the fetch request.
-      const reqBody = {statusFilter, startYearFilter, endYearFilter, orgId};
+      console.log("Org ID = " + parseInt(orgId));
+      let statusFilter = this.props.projectListFilter.status;
+      let startYearFilter = this.props.projectListFilter.startYear;
+      let endYearFilter = this.props.projectListFilter.endYear;
 
-      fetch("/api/projects-filtered", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(reqBody)
-      })
-        .then(res => {
-          console.log("ProjectPanelList, after fetch");
-          return res.json();
+      if (parseInt(orgId) > 0) {
+        console.log("ProjectPanelList, before setState for filter values");
+        // Use the props for the body of the fetch request.
+        const reqBody = {statusFilter, startYearFilter, endYearFilter, orgId};
+
+        fetch("/api/projects-filtered", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(reqBody)
         })
-        .then(projects => {
-          this.setState({
-            projects: projects
+          .then(res => {
+            console.log("ProjectPanelList, after fetch");
+            return res.json();
+          })
+          .then(projects => {
+            this.setState({
+              projects: projects
+            });
+            console.log("fetch: complete");
           });
-          console.log("fetch: complete");
-        });
+      } else {
+        this.setState({hasError: true});
+      }
     }
   }
 
@@ -194,9 +199,8 @@ class ProjectPanelList extends Component {
 
   render() {
     const { classes } = this.props;
-
     if (this.state.hasError) {
-      return <h1>An error occurred.</h1>;
+      return <Redirect to="/Login" />;
     }
 
     return (

@@ -278,8 +278,8 @@ const jsonTestData2 = {
 const duration = 100;
 const dx = 100;
 const dy = 100;
-const DEBUG_USE_TEST_DATA = true;
-const margin = { top: 40, right: 100, bottom: 40, left: 80 };
+const DEBUG_USE_TEST_DATA = false;
+const margin = { top: 40, right: 100, bottom: 40, left: 100 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 const vWidth = 350;
 const vHeight = 600;
@@ -598,10 +598,14 @@ class TreeMindMap extends React.Component {
 
   //<editor-fold desc="// Node functions">
   rename = () => {
-    // Renames a node.
     let svg = d3.select(this.svg);
-    let selectedNode = console.log("rename node");
-    console.log("idOfSelectedNode: " + this.findSelectedNodeId(svg));
+    console.log("rename node");
+    let selectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected");
+
+    let idOfSelectedNode = selectedNode.attr("id");
+    console.log("idOfSelectedNode: " + idOfSelectedNode);
     this.editNode(selectedNode);
   };
 
@@ -811,13 +815,11 @@ class TreeMindMap extends React.Component {
       console.log("going into edit mode!");
       d3.select(clickedNode)
         .call(this.selectNode);
-      // TODO
-      // .call(this.editNode);
-      // ********************************************
-      // changed from .call(this.editNode);
-
+      d3.select(clickedNode)
+        .call(this.editNode);
     } else {
-      d3.select(clickedNode).call(this.selectNode);
+      d3.select(clickedNode)
+        .call(this.selectNode);
 
       // If not already selected, mark as selected
       otherNodes.each(this.deselectNode);
@@ -1051,7 +1053,6 @@ class TreeMindMap extends React.Component {
       // Check to see if a node is being edited
       let nodeIsBeingEdited = gNode.select("g.node-editing").size();
 
-      /*
       if (d3.event.keyCode === 9) {
         console.log("tab - append child to selected node");
         // appendChildToSelectedNode(svg);
@@ -1060,11 +1061,11 @@ class TreeMindMap extends React.Component {
         // addSiblingToSelectedNode(svg);
       } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
         console.log("delete - remove selected node");
-        removeSelectedNode(svg);
+        // removeSelectedNode(svg);
       } else if (d3.event.keyCode === 27) {
         console.log("esc - deselect node");
         // handleKeypressEsc(svg);
-      } */
+      }
     });
 
     return svg.node();
@@ -1346,9 +1347,9 @@ class TreeMindMap extends React.Component {
     nodeEnter
       .append("foreignObject")
       .attr("width", 150)
-      .attr("height", 40)
+      .attr("height", 50)
       .attr("x", -80)
-      .attr("y", -35)
+      .attr("y", -50)
       .append("xhtml:p")
       .attr("class", "node-title")
       .text(d => d.data.name);
@@ -1737,6 +1738,14 @@ class TreeMindMap extends React.Component {
               className={classes.outlinedButton}
             >
               Add Sibling
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={this.rename}
+              className={classes.outlinedButton}
+            >
+              Rename Node
             </Button>
             <Button
               variant="contained"

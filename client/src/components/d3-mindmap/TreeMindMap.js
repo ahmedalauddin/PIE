@@ -374,7 +374,7 @@ class TreeMindMap extends React.Component {
     //<editor-fold desc="// Constructor set state">
     this.state = {
       hasError: false,
-      width: window.innerWidth - 500,         // width for the mind map
+      width: window.innerWidth * 0.7,         // width for the mind map
       height: window.innerHeight - 400,       // height for the mind map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
@@ -841,18 +841,19 @@ class TreeMindMap extends React.Component {
     // d.children = d.children ? null : d._children;
     // update(d);
 
-    // Prevent triggering clickOnCanvas handler
-    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+    /* Prevent triggering clickOnCanvas handler
+       https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background */
     d3.event.stopPropagation();
   };
 
   handleClickOnPostit = (d, i, nodes) => {
     console.log("handleClickOnPostit: clicked on a post-it note.");
     let svg = d3.select("svg");
+    const noteWidth = vRad * 6;
+    const noteTextWidth = (vRad * 6) - 6;
+    const noteHeight = vRad * 10;
     const currentlySelectedNode = this.getSelectedNode(nodes, i);
-
-    const clickedNodeIndex = i;
-    const clickedNode = nodes[clickedNodeIndex];
+    const clickedNode = nodes[i];
     const clickedId = d3.select(clickedNode).attr("id");
 
     let selectionCriteria = "[id=" + clickedId + "]";
@@ -862,12 +863,11 @@ class TreeMindMap extends React.Component {
       currentlySelectedNode.size() > 0 &&
       currentlySelectedNode.attr("name") === clickedId
     ) {
-      // *** TODO: Need to go into edit mode here.
       // This changes the note to a yellow square.
       currentlySelectedNode.select("rect")
         .transition().duration(vDuration)
         .attr("rx", 0).attr("x", 10).attr("y", 8)
-        .attr("width", vRad * 6).attr("height", vRad * 8)
+        .attr("height", noteHeight).attr("width", noteWidth)
         .style("fill", function(d) { return noteColor[0]; })
         .style("stroke", function(d) { return noteColor[0]; })
         .style("opacity", 1);
@@ -877,20 +877,20 @@ class TreeMindMap extends React.Component {
         .select("foreignObject.note")
         .attr("x", 20)
         .attr("y", 10)
-        .attr("width", vRad * 5)
-        .attr("height", vRad * 8)
+        .attr("width", noteTextWidth)
+        .attr("height", noteHeight)
         .append("xhtml:p")
         .text(d => d.data.note)
         .style("font-family", "Arial")
         .style("stroke", "none")
         .style("font-size", "13px");
-      currentlySelectedNode.raise();;
+      currentlySelectedNode.raise();
     } else {
       d3.select(clickedNode).call(this.selectNode);
     }
 
-    // Prevent triggering clickOnCanvas handler
-    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+    /* Prevent triggering clickOnCanvas handler
+       https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background */
     d3.event.stopPropagation();
   };
 
@@ -1370,7 +1370,7 @@ class TreeMindMap extends React.Component {
     nodeUpdate.transition()
       .duration(duration)
       .attr("transform", function(d) {
-        console.log("nodeUpdate, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
+        console.log("nodeUpdate, debug: id = " + d.id + ", x pos = " + d.y + ", y pos = " + d.x);
         return "translate(" + d.y + "," + d.x + ")";
       })
       .attr("fill-opacity", 1)
@@ -1446,11 +1446,17 @@ class TreeMindMap extends React.Component {
   // Compute the positions of nodes in the tree using D3's tree layout.
   d3Tree = (treeData, direction) => {
     let SWITCH_CONST = 1;
+    let treeHeight = this.state.height;
+    let treeWidth = (this.state.width - 400)/2;
+
+    console.log("d3tree, direction = " + direction);
+    console.log("d3tree, state height = " + this.state.height + ", state width = " + this.state.width);
+    console.log("d3tree, actual height = " + treeHeight + ", actual width = " + treeWidth);
     if (direction === "left") {
       SWITCH_CONST = -1;
     }
     // Compute the layout.
-    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
+    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * treeWidth)]);
 
     return tree(treeData);
   };
@@ -1636,7 +1642,7 @@ class TreeMindMap extends React.Component {
 
     return (
       <React.Fragment>
-
+        <div ref={node => node && console.log("outer div width = " + node.offsetWidth)}>
         <Grid
           container
           alignItems="center"
@@ -1644,7 +1650,8 @@ class TreeMindMap extends React.Component {
           spacing={24}
           className={classes.root}
         >
-          <Grid item sm={12}>
+          <div ref={node => node && console.log("div width = " + node.offsetWidth)}>
+            <Grid item sm={12}>
             <Button
               variant="contained"
               color="secondary"
@@ -1725,6 +1732,7 @@ class TreeMindMap extends React.Component {
               Save Mind Map
             </Button>
           </Grid>
+          </div>
           <Grid item sm={12}>
             <Typography variant="h6">
               Mind Map for {this.state.orgName}
@@ -1734,6 +1742,7 @@ class TreeMindMap extends React.Component {
             <svg width="900" height="600" ref={svg => (this.svg = svg)} />
           </Grid>
         </Grid>
+
         <Grid item sm={12}>
           <Snackbar
             open={this.state.openSnackbar}
@@ -1745,6 +1754,7 @@ class TreeMindMap extends React.Component {
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
+        </div>
       </React.Fragment>
     );
   }

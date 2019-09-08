@@ -255,6 +255,7 @@ class NodeDetail extends React.Component {
     console.log("NodeDetail.js, selectedNodeId:" + selectedNodeId);
 
     if (selectedNodeId !== "") {
+      // Update KPI
       fetch(`/api/kpis-mindmapnode/${selectedNodeId}`)
         .then(res => res.json())
         .then(kpi => {
@@ -285,6 +286,7 @@ class NodeDetail extends React.Component {
           }
         });
     } else {
+      // Create KPI
       this.setState({
         title: "",
         kpiId: "",
@@ -322,7 +324,6 @@ class NodeDetail extends React.Component {
     }
 
     return (
-
       <div className={classes.paper}>
         <form onSubmit={this.handleSubmit} noValidate>
           <Grid container spacing={24}>

@@ -75,10 +75,10 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           <ul>
+                            <li>Mind map: post-it notes now functional.  </li>
                             <li>Mind map: fixes for creating a new mind map.  </li>
                             <li>Mind map: fixes for adding child and sibling nodes.  </li>
                             <li>Mind map: Creating a project with a KPI from a mind map now working.  </li>
-                            <li>Mind map ideas: temporarily inactive; testing edit text feature for the notes </li>
                           </ul>
                         </Typography>
                       </div>

@@ -347,6 +347,7 @@ class TreeMindMap extends React.Component {
     this.saveJson = this.saveJson.bind(this);
     this.saveNoteToJson = this.saveNoteToJson.bind(this);
     this.hasChildren = this.hasChildren.bind(this);
+    this.hasParent = this.hasParent.bind(this);
     this.findNode = this.findNode.bind(this);
     this.findParentNode = this.findParentNode.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
@@ -731,6 +732,39 @@ class TreeMindMap extends React.Component {
     return parent;
   };
 
+  // use HasParent to find out if this and the root node and we should disable add sibling.
+  hasParent = idOfSelectedNode => {
+    // Find the parent of the node in the JSON data.
+    console.log("idOfSelectedNode: " + idOfSelectedNode);
+
+    let parentNodes = [this.state.jsonData];
+    let nodeFound = false;
+
+    while (parentNodes.length !== 0) {
+      let allNextLevelParents = [];
+      for (let node of parentNodes) {
+        if (node.children) {
+          allNextLevelParents = allNextLevelParents.concat(node.children);
+          if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
+            nodeFound = true;
+            break;
+          }
+        }
+      }
+      if (nodeFound) {
+        break;
+      } else {
+        parentNodes = allNextLevelParents;
+      }
+    }
+
+    let hasParent = false;
+    if (nodeFound) {
+      hasParent = true;
+    }
+    return hasParent;
+  };
+
   findSelectedNodeId = svg => {
     let idOfSelectedNode = svg
       .selectAll("g.node")
@@ -935,7 +969,7 @@ class TreeMindMap extends React.Component {
 
   addSiblingToSelectedNode = () => {
     let svg = d3.select(this.svg);
-    let idOfSelectedNode = this.findSelectedNodeId();
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
     let parent = this.findParentNode(idOfSelectedNode);
 
     let child = {
@@ -996,7 +1030,7 @@ class TreeMindMap extends React.Component {
       selectedNode.remove();
     }
 
-    this.setButtonStates(false, true, false);
+    this.setButtonStates(false, true, false, false);
     this.update();
   };
   //</editor-fold>
@@ -1077,6 +1111,7 @@ class TreeMindMap extends React.Component {
       .classed("node-editing", true)
       .select("foreignObject.title")
       .select("p")
+      .attr("contenteditable", "true")          // added, 9/17/19
       .style("background-color", "#ddd");
     console.log(`${node.attr("name")} is being edited`);
   };
@@ -1102,11 +1137,12 @@ class TreeMindMap extends React.Component {
     console.log("Selected node id = " +  node.attr("id") + ", name = " +  node.attr("name"));
     let isNoteCollapsed = (node.attr("note-state") === "collapsed");
     let hasChilden = this.hasChildren(idOfSelectedNode);
+    let hasParent = this.hasParent(idOfSelectedNode);
 
-    this.setButtonStates(true, isNoteCollapsed, hasChilden);
+    this.setButtonStates(true, isNoteCollapsed, hasChilden, hasParent);
   };
 
-  setButtonStates = (isAnyNodeSelected, isNoteCollapsed, hasChildren) => {
+  setButtonStates = (isAnyNodeSelected, isNoteCollapsed, hasChildren, hasParent) => {
     // Set button states.
     if (!isAnyNodeSelected) {
       // All buttons should be deactivated when no node is selected.
@@ -1125,7 +1161,7 @@ class TreeMindMap extends React.Component {
         deleteDisabled: hasChildren,
         renameDisabled: false,
         addChildDisabled: false,
-        addSiblingDisabled: false
+        addSiblingDisabled: !hasParent
       });
     }
   };
@@ -1170,7 +1206,7 @@ class TreeMindMap extends React.Component {
       .selectAll("g.node")
       .filter(".node-selected")
       .each(this.deselectNode);
-    this.setButtonStates(false, false, false);
+    this.setButtonStates(false, false, false, false);
   };
   //</editor-fold>
 
@@ -1742,7 +1778,6 @@ class TreeMindMap extends React.Component {
             <svg width="900" height="600" ref={svg => (this.svg = svg)} />
           </Grid>
         </Grid>
-
         <Grid item sm={12}>
           <Snackbar
             open={this.state.openSnackbar}

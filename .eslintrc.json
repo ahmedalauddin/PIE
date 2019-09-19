@@ -67,12 +67,6 @@
     "consistent-return": 2,
     "semi": ["error", "always"],
     "indent": ["warn", 2],
-    "no-unused-vars": [
-      "error",
-      {
-        "args": "none"
-      }
-    ],
     "no-console": "warn",
     "html/indent": "+2",
     "prettier/prettier": "warn"

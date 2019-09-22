@@ -418,7 +418,7 @@
           .classed('node-selected', false)
           .select('foreignObject')
           .select('p')
-          .attr('contenteditable', 'false')
+          .attr('contenteditable', false)
           .style('background-color', null);
 
         updateNodeValue(idOfSelectedNode, newValue);

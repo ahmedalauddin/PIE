@@ -356,6 +356,7 @@ class TreeMindMap extends React.Component {
     this.getNodeById = this.getNodeById.bind(this);
     this.fullTree = this.fullTree.bind(this);
     this.logNode = this.logNode.bind(this);
+    this.getNewChildDirection = this.getNewChildDirection.bind(this);
     this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
     this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
@@ -474,7 +475,7 @@ class TreeMindMap extends React.Component {
       .attr("width", vRad * 7)
       .attr("height", vRad * 9)
       .append("xhtml:p")
-      .attr("contenteditable", "true")
+      .attr("contenteditable", true)
       .text(d => d.data.note)
       .style("font-family", "Arial")
       .style("stroke", "none")
@@ -845,8 +846,8 @@ class TreeMindMap extends React.Component {
 
   handleClickOnNode = (d, i, nodes) => {
     console.log("handleClickOnNode: clicked on a node.");
-    let svg = d3.select("svg");
-    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    // const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
@@ -950,8 +951,14 @@ class TreeMindMap extends React.Component {
     let child = {
       name: "new",
       id: createId(),
+      side: this.getNewChildDirection(),
       note: ""
     };
+
+    // If we are appending to the root, we need to determine which side of the map to add the child.
+    if ( !this.hasParent(idOfSelectedNode) ) {
+      child.side = this.getNewChildDirection();
+    }
 
     // TODO: change this to add child to the JSON, or get parent directly from the JSON.
     // Should just be able to change the JSON element.  For instance, change this:
@@ -1109,22 +1116,24 @@ class TreeMindMap extends React.Component {
   editNode = node => {
     node
       .classed("node-editing", true)
-      .select("foreignObject.title")
+      // .selectAll("foreignObject").filter("node-title")
+      .select("foreignObject")
       .select("p")
-      .attr("contenteditable", "true")          // added, 9/17/19
+      // .attr("contenteditable", true)          // added, 9/17/19
       .style("background-color", "#ddd");
     console.log(`${node.attr("name")} is being edited`);
   };
 
   selectNode = node => {
-    d3.selectAll("g.node")
-      .filter(".node-selected")
-      .each(this.deselectNode);
+    // d3.selectAll("g.node")
+    //  .filter(".node-selected")
+    //  .each(this.deselectNode);
     node
       .classed("node-selected", true)
       .select("foreignObject")
+      //.filter("node-title")
       .select("p")
-      .attr("contenteditable", "true")
+      .attr("contenteditable", true)
       .style("background-color", "#ddd");
     node
       .classed("node-selected", true)
@@ -1169,7 +1178,7 @@ class TreeMindMap extends React.Component {
   deselectNode = (d, i, nodes) => {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
-
+    console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
     // new code
     // TODO: don't have to close node right away.
     // this.closeNote(idOfSelectedNode);
@@ -1177,6 +1186,7 @@ class TreeMindMap extends React.Component {
     let newValue = d3
       .select(nodes[i])
       .select("foreignObject")
+      // .selectAll("foreignObject").filter("node-title")
       .select("p")
       .html();
 
@@ -1188,8 +1198,9 @@ class TreeMindMap extends React.Component {
       .classed("node-editing", false)
       .classed("node-selected", false)
       .select("foreignObject")
+      // .selectAll("foreignObject").filter("node-title")
       .select("p")
-      .attr("contenteditable", "false")
+      .attr("contenteditable", false)
       .style("background-color", null);
 
     this.updateNodeValue(idOfSelectedNode, newValue);
@@ -1510,11 +1521,46 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// JSON and load data functions">
+  // This is for root children only, to determine which side to add the the node to.
+  getNewChildDirection = () => {
+    let jsonData = this.state.jsonData;
+    let countRight = 0;
+    let countLeft = 0;
+    for (let child of jsonData.children) {
+      if (child.side === "left") {
+        countLeft++;
+      } else {
+        countRight++;
+      }
+    }
+    let dir = countLeft >= countRight ? "right" : "left";
+    return dir;
+  }
+
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
     let d3Data = "";
     let jsonData = this.state.jsonData;
-    let split_index = Math.round(jsonData.children.length / 2);
+    // let split_index = Math.round(jsonData.children.length / 2);
+
+    let childrenLeft = null;
+    let childrenRight = null;
+    for (let child of jsonData.children) {
+      if (child.side === "left") {
+        child.side = "left";
+        if (childrenLeft) {
+          childrenLeft.push(child);
+        } else {
+          childrenLeft = [child];
+        }
+      } else {
+        if (childrenRight) {
+          childrenRight.push(child);
+        } else {
+          childrenRight = [child];
+        }
+      }
+    }
 
     if (direction === "left") {
       // Left data
@@ -1522,7 +1568,8 @@ class TreeMindMap extends React.Component {
         name: jsonData.name,
         id: jsonData.id,
         children: JSON.parse(
-          JSON.stringify(jsonData.children.slice(split_index))
+          // JSON.stringify(jsonData.children.slice(split_index))
+          JSON.stringify(childrenLeft)
         )
       };
     } else {
@@ -1531,7 +1578,8 @@ class TreeMindMap extends React.Component {
         name: jsonData.name,
         id: jsonData.id,
         children: JSON.parse(
-          JSON.stringify(jsonData.children.slice(0, split_index))
+          // JSON.stringify(jsonData.children.slice(0, split_index))
+          JSON.stringify(childrenRight)
         )
       };
     }

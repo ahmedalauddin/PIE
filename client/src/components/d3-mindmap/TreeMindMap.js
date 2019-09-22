@@ -366,6 +366,7 @@ class TreeMindMap extends React.Component {
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
+    this.updateNodeInfo = this.updateNodeInfo.bind(this);
     this.addNote = this.addNote.bind(this);
     this.openNote = this.openNote.bind(this);
     this.closeNote = this.closeNote.bind(this);
@@ -821,8 +822,9 @@ class TreeMindMap extends React.Component {
     }
   };
 
-  getSelectedNodeId = selectedNodeId => {
-    this.props.callback(selectedNodeId);
+  // Uses our callback to send info to other components.
+  updateNodeInfo = (selectedNodeId, selectedNodeText) => {
+    this.props.callback(selectedNodeId, selectedNodeText);
   };
 
   logNode = message => {
@@ -1037,7 +1039,7 @@ class TreeMindMap extends React.Component {
       selectedNode.remove();
     }
 
-    this.setButtonStates(false, true, false, false);
+    this.setButtonStates(false, selectedNode);
     this.update();
   };
   //</editor-fold>
@@ -1131,7 +1133,6 @@ class TreeMindMap extends React.Component {
     node
       .classed("node-selected", true)
       .select("foreignObject")
-      //.filter("node-title")
       .select("p")
       .attr("contenteditable", true)
       .style("background-color", "#ddd");
@@ -1140,20 +1141,28 @@ class TreeMindMap extends React.Component {
       .select("circle")
       .style("fill", "green");
 
-    const idOfSelectedNode = node.attr("id");
-
-    this.getSelectedNodeId(idOfSelectedNode);
-    console.log("Selected node id = " +  node.attr("id") + ", name = " +  node.attr("name"));
-    let isNoteCollapsed = (node.attr("note-state") === "collapsed");
-    let hasChilden = this.hasChildren(idOfSelectedNode);
-    let hasParent = this.hasParent(idOfSelectedNode);
-
-    this.setButtonStates(true, isNoteCollapsed, hasChilden, hasParent);
+    // This is for the callback to our other components.
+    this.updateNodeInfo(node.attr("id"), node.attr("name"));
+    this.setButtonStates(true, node);
   };
 
-  setButtonStates = (isAnyNodeSelected, isNoteCollapsed, hasChildren, hasParent) => {
-    // Set button states.
-    if (!isAnyNodeSelected) {
+  // Set button states depending on whether the node has a parent, has children.
+  setButtonStates = (isAnyNodeSelected, node) => {
+    if (isAnyNodeSelected) {
+      const selectedNodeId = node.attr("id");
+      const isNoteCollapsed = (node.attr("note-state") === "collapsed");
+      const hasChildren = this.hasChildren(selectedNodeId);
+      const hasParent = this.hasParent(selectedNodeId);
+
+      this.setState({
+        closeNoteDisabled: isNoteCollapsed,
+        openNoteDisabled: !isNoteCollapsed,
+        deleteDisabled: hasChildren,
+        renameDisabled: false,
+        addChildDisabled: false,
+        addSiblingDisabled: !hasParent
+      });
+    } else {
       // All buttons should be deactivated when no node is selected.
       this.setState({
         closeNoteDisabled: true,
@@ -1163,15 +1172,6 @@ class TreeMindMap extends React.Component {
         addChildDisabled: true,
         addSiblingDisabled: true
       });
-    } else {
-      this.setState({
-        closeNoteDisabled: isNoteCollapsed,
-        openNoteDisabled: !isNoteCollapsed,
-        deleteDisabled: hasChildren,
-        renameDisabled: false,
-        addChildDisabled: false,
-        addSiblingDisabled: !hasParent
-      });
     }
   };
 
@@ -1179,17 +1179,14 @@ class TreeMindMap extends React.Component {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
     console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
-    // new code
-    // TODO: don't have to close node right away.
-    // this.closeNote(idOfSelectedNode);
 
     let newValue = d3
       .select(nodes[i])
       .select("foreignObject")
-      // .selectAll("foreignObject").filter("node-title")
       .select("p")
       .html();
 
+    // TODO - increase opacity.
     d3.select(nodes[i])
       .select("circle")
       .style("fill", d => (d._children ? "#159" : "#159"));
@@ -1204,6 +1201,8 @@ class TreeMindMap extends React.Component {
       .style("background-color", null);
 
     this.updateNodeValue(idOfSelectedNode, newValue);
+    // TODO
+    // this.updateNodeInfo(nodes[i].attr("id"), nodes[i].attr("name"));
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
@@ -1217,7 +1216,7 @@ class TreeMindMap extends React.Component {
       .selectAll("g.node")
       .filter(".node-selected")
       .each(this.deselectNode);
-    this.setButtonStates(false, false, false, false);
+    this.setButtonStates(false, null);
   };
   //</editor-fold>
 
@@ -1761,15 +1760,6 @@ class TreeMindMap extends React.Component {
               className={classes.outlinedButton}
             >
               Add Sibling
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.renameDisabled}
-              onClick={this.rename}
-              className={classes.outlinedButton}
-            >
-              Rename Node
             </Button>
             <Button
               variant="contained"

@@ -5,8 +5,9 @@
  * Descr:    Provides ability to create KPI and project from mindmap node.
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-24
+ * Modified: 2019-09-22
  * Editor:   Brad Kaufman
+ * Changes:  Adding selected node text.
  */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -177,9 +178,6 @@ class NodeDetail extends React.Component {
     isNew: false
   };
 
-  handleToggle = value => () => {
-  };
-
   // For the snackbar
   handleClose = () => {
     this.setState({ openSnackbar: false });
@@ -328,6 +326,12 @@ class NodeDetail extends React.Component {
         <form onSubmit={this.handleSubmit} noValidate>
           <Grid container spacing={24}>
             <Grid item xs={12}>
+              <Typography variant="h6" gutterBottom>
+                {this.props.text}
+              </Typography>
+              <Typography variant="h7" gutterBottom>
+                KPI
+              </Typography>
               <TextField
                 id="title"
                 label="KPI Title"
@@ -363,7 +367,10 @@ class NodeDetail extends React.Component {
                 InputLabelProps={{
                   shrink: true
                 }}
-              /><br />
+              /><br /><br /><br /><br />
+              <Typography variant="h7" gutterBottom>
+                Project
+              </Typography>
               <TextField
                 id="title"
                 label="Project Title"

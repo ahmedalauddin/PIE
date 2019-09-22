@@ -101,23 +101,26 @@ class ProjectPanelList extends Component {
     super(props);
     this.addProject = this.addProject.bind(this);
     this.fetchProjects = this.fetchProjects.bind(this);
-  };
-
-  state = {
-    order: "asc",
-    orderBy: "",
-    orgId: "",
-    organization:"",
-    orgName: "",
-    projects: [],
-    projectId: null,
-    readyToEdit: false,
-    readyToRedirect: false,
-    user: "",
-    toProject: false,
-    toProjectId: "",
-    hasError: false
-  };
+    this.setEditRedirect = this.setEditRedirect.bind(this);
+    this.renderEditRedirect = this.renderEditRedirect.bind(this);
+    //<editor-fold desc="// Constructor set state">
+    this.state = {
+      order: "asc",
+      orderBy: "",
+      orgId: "",
+      organization:"",
+      orgName: "",
+      projects: [],
+      projectId: null,
+      readyToEdit: false,
+      readyToRedirect: false,
+      user: "",
+      toProject: false,
+      toProjectId: "",
+      hasError: false
+    };
+    //</editor-fold>
+    };
 
   componentDidCatch(error, info) {
     console.log("error: " + error + ", info: " + info);
@@ -205,92 +208,95 @@ class ProjectPanelList extends Component {
 
     return (
       <React.Fragment>
-        <Grid container lg={10} justify="center">
-          <Grid lg={10} item>
-            <ExpansionPanel expanded={false}>
-              <ExpansionPanelSummary>
-                <div className={classes.narrowColumn}>
-                </div>
-                <div className={classes.column}>
-                  <Typography className={classes.heading}>
-                    Project title
-                  </Typography>
-                </div>
-                <div className={classes.column}>
-                  <Typography className={classes.secondaryHeading}>
-                    Status
-                  </Typography>
-                </div>
-                <div className={classes.column}>
-                  <Typography className={classes.secondaryHeading}>
-                    Targeted KPI
-                  </Typography>
-                </div>
-                <div className={classes.column}>
-                  <Typography className={classes.secondaryHeading}>
-                    Start date
-                  </Typography>
-                </div>
-                <div className={classes.column}>
-                  <Typography className={classes.secondaryHeading}>
-                    End date
-                  </Typography>
-                </div>
-              </ExpansionPanelSummary>
-            </ExpansionPanel>
-            {this.state.projects.map(project => {
-              return (
-                <ExpansionPanel key={project.id}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <div className={classes.narrowColumn}>
-                      <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
-                        <EditIcon color="primary" />
-                      </IconButton>
-                    </div>
-                    <div className={classes.column}>
-                      <Typography className={classes.heading}>
-                        {project.projectTitle}
-                      </Typography>
-                    </div>
-                    <div className={classes.column}>
-                      <Typography className={classes.secondaryHeading}>
-                        {project.status}
-                      </Typography>
-                    </div>
-                    <div className={classes.column}>
-                      <Typography className={classes.secondaryHeading}>
-                        {project.mainKpi}
-                      </Typography>
-                    </div>
-                    <div className={classes.column}>
-                      <Typography className={classes.secondaryHeading}>
-                        {this.formatDate(project.startAt)}
-                      </Typography>
-                    </div>
-                    <div className={classes.column}>
-                      <Typography className={classes.secondaryHeading}>
-                        {this.formatDate(project.endAt)}
-                      </Typography>
-                    </div>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails className={classes.details}>
-                    <div>
-                      <Typography className={classes.secondaryHeading}>
-                        Owners: {project.owners}<br/>
-                        Tasks: {project.tasks}
-                      </Typography>
-                    </div>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              );
-            })}
-            <br/>
-            <br/>
-            <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
-              <AddIcon />
-            </Fab>
+        <div className={classes.root}>
+          {this.renderEditRedirect()}
+          <Grid container lg={10} justify="center">
+            <Grid lg={10} item>
+              <ExpansionPanel expanded={false}>
+                <ExpansionPanelSummary>
+                  <div className={classes.narrowColumn}>
+                  </div>
+                  <div className={classes.column}>
+                    <Typography className={classes.heading}>
+                      Project title
+                    </Typography>
+                  </div>
+                  <div className={classes.column}>
+                    <Typography className={classes.secondaryHeading}>
+                      Status
+                    </Typography>
+                  </div>
+                  <div className={classes.column}>
+                    <Typography className={classes.secondaryHeading}>
+                      Targeted KPI
+                    </Typography>
+                  </div>
+                  <div className={classes.column}>
+                    <Typography className={classes.secondaryHeading}>
+                      Start date
+                    </Typography>
+                  </div>
+                  <div className={classes.column}>
+                    <Typography className={classes.secondaryHeading}>
+                      End date
+                    </Typography>
+                  </div>
+                </ExpansionPanelSummary>
+              </ExpansionPanel>
+              {this.state.projects.map(project => {
+                return (
+                  <ExpansionPanel key={project.id}>
+                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                      <div className={classes.narrowColumn}>
+                        <IconButton onClick={() => {this.setEditRedirect(project.id);}}>
+                          <EditIcon color="primary" />
+                        </IconButton>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.heading}>
+                          {project.projectTitle}
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          {project.status}
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          {project.mainKpi}
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          {this.formatDate(project.startAt)}
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          {this.formatDate(project.endAt)}
+                        </Typography>
+                      </div>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails className={classes.details}>
+                      <div>
+                        <Typography className={classes.secondaryHeading}>
+                          Owners: {project.owners}<br/>
+                          Tasks: {project.tasks}
+                        </Typography>
+                      </div>
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
+                );
+              })}
+              <br/>
+              <br/>
+              <Fab component={Link} color="primary" aria-label="Add" to={`/project`} className={classes.fab}>
+                <AddIcon />
+              </Fab>
+            </Grid>
           </Grid>
-        </Grid>
+        </div>
       </React.Fragment>
     );
   }

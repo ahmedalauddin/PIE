@@ -11,17 +11,17 @@
  */
 import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import { red, grey } from "@material-ui/core/colors";
-import "./tree-styles.scss";
+import "../tree-styles.scss";
 import Grid from "@material-ui/core/Grid";
 import Paper from '@material-ui/core/Paper';
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getOrgName } from "../../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
-import TreeMindMapOld from "./save/TreeMindMapOld";
-import NodeDetail from "./NodeDetail";
+import TreeMindMapOld from "./TreeMindMapOld";
+import NodeDetail from "../NodeDetail";
 
 const styles = theme => ({
   grid: {

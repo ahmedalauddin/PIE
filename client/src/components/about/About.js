@@ -75,10 +75,10 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           <ul>
-                            <li>Mind map: bi-directional map now available.  Access the mind map from the top navigation bar.  Allows you to create a new mind
-                            map and save.  Once saved, the saved mind map will open.</li>
-                            <li>Mind map ideas: use the Edit Idea feature on the mind map to capture notes and ideas.
-                            </li>
+                            <li>Mind map: post-it notes now functional.  </li>
+                            <li>Mind map: fixes for creating a new mind map.  </li>
+                            <li>Mind map: fixes for adding child and sibling nodes.  </li>
+                            <li>Mind map: Creating a project with a KPI from a mind map now working.  </li>
                           </ul>
                         </Typography>
                       </div>

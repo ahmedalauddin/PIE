@@ -5,8 +5,8 @@
  * Created:  2019-06-05
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-08-09
- * Changes:  Changing height and width of mind map to use window inner height and width, minus some corrections.
+ * Modified: 2019-08-29
+ * Changes:  Added editor folding.  Styles for D3 and svg now specified more in mindmap.scss.
  * Editor:   Brad Kaufman
  */
 import React from "react";
@@ -18,10 +18,11 @@ import Grid from "@material-ui/core/Grid/index";
 import { getOrgId, getOrgName } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
-import "antd/dist/antd.css";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import {Redirect} from "react-router-dom";
 
+//<editor-fold desc="// Constant declarations">
 const styles = theme => ({
   grid: {
     width: 1500,
@@ -38,11 +39,19 @@ const styles = theme => ({
     //fill: "white",
     strokeWidth: "2px"
   },
+  title: {
+    fontFamily: "Arial, Helvetica, Geneva, sans-serif",
+  },
   text: {
     fill: "black",
-    //fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
+    fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
     //fontSize: "10px",
-    },
+  },
+  nodeTitle: {
+    fontFamily: "Arial"
+  },
+  note: {
+  },
   paper: {
     position: "absolute",
     width: 400,
@@ -166,13 +175,59 @@ const styles = theme => ({
 });
 // Use this JSON data to test a new mind map, starting only with root.
 // eslint-disable-next-line no-unused-vars
-const jsonNew = {
-  id: "_ns1nvi0ai",
-  name: "Root"
-};
 const jsonTestData = {
+  id: "_ns1nvi0ai",
+  name: "Root",
+  note: "Prioritization",
+  children: [
+    {
+      id: "_o4r47dq71",
+      name: "Reduce operating costs",
+      note: "Look to reduce operating costs throughout all divisions and locations.  Start with aggregating data.",
+      children: [
+        {
+          id: "_al6om6znz",
+          name: "Reduce inventory",
+          note: "Look to reduce inventory after review of parts.",
+          children: []
+        },
+        {
+          id: "_z3uk0721f",
+          name: "Operating procedures",
+          note: "Initial review of operating procedures."
+        }
+      ]
+    },
+    {
+      id: "_uajrljib9",
+      name: "Review supply chain processes",
+      note: "Perform supply chain review of all steps."
+    },
+    {
+      id: "_uguzpgdta",
+      name: "Introduce automation",
+      note: "Begin to use automation at all locations and sites.",
+      children: [
+        {
+          id: "_t8ln1vlwa",
+          name: "Review supply chain",
+          note: "Begin review of supply chain...",
+          children: []
+        },
+        {
+          id: "_c96w1yrth",
+          name: "Perform failover testing",
+          note: "Take sites offline to check failover capabilities",
+          children: []
+        }
+      ]
+    }
+  ]
+};
+const jsonTestData2 = {
   "id": "_ns1nvi0ai",
   "name": "Root",
+  "note": "Prioritization",
   "children": [{
     "id": "_o4r47dq71",
     "name": "Reduce operating costs",
@@ -180,6 +235,7 @@ const jsonTestData = {
     "children": [{
       "id": "_al6om6znz",
       "name": "Reduce inventory",
+      "note": "Look to reduce inventory after review of parts.",
       "children": [{
         "id": "_46ct4o4oy",
         "name": "Review part models"
@@ -196,11 +252,13 @@ const jsonTestData = {
     ]
   }, {
     "id": "_uajrljib9",
-    "name": "Review supply chain processes"
+    "name": "Review supply chain processes",
+    "note": "Perform supply chain review of all steps."
   },
     {
       "id": "_uguzpgdta",
       "name": "Introduce automation",
+      "note": "Begin to use automation at all locations and sites.",
       "children": [{
         "id": "_6e1egf02s",
         "name": "Q"
@@ -208,6 +266,7 @@ const jsonTestData = {
         {
           "id": "_t8ln1vlwa",
           "name": "Review supply chain",
+          "note": "Begin review of supply chain...",
           "children": [{
             "id": "_qzltyy8rn",
             "name": "Optimize data flow"
@@ -220,13 +279,18 @@ const jsonTestData = {
 const duration = 100;
 const dx = 100;
 const dy = 100;
-const DEBUG_USE_TEST_DATA = true;
-const margin = { top: 40, right: 100, bottom: 40, left: 80 };
+const DEBUG_USE_TEST_DATA = false;
+const margin = { top: 40, right: 100, bottom: 40, left: 100 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
 const vWidth = 350;
 const vHeight = 600;
+const vDuration = 1000;
+const vDelay = 250;
 const vRad = 25;
-const noteColor = ['#feff9c', '#7afcff', '#ff7eb9'];
+const noteColor = ["#feff9c", "#7afcff", "#ff7eb9"];
+//</editor-fold>
+
+//<editor-fold desc="// Non-class functions">
 /**
  * @method: guid
  * @desc: Generates unique guid
@@ -241,6 +305,15 @@ function guid() {
     s4() + "-" + s4() + s4() + s4();
 }
 
+function createId() {
+  return (
+    "_" +
+    Math.random()
+      .toString(36)
+      .substr(2, 9)
+  );
+}
+
 function printNodes(msg, root) {
   // Log where the nodes are.
   console.log(msg);
@@ -249,20 +322,19 @@ function printNodes(msg, root) {
       ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
   });
 };
+//</editor-fold>
 
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
+    //<editor-fold desc="// Constructor bindings">
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
     this.createTreeLayout = this.createTreeLayout.bind(this);
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
-    this.appendChild = this.appendChild.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
-    this.addSibling = this.addSibling.bind(this);
     this.editNode = this.editNode.bind(this);
     this.renameNode = this.renameNode.bind(this);
-    this.deleteNode = this.deleteNode.bind(this);
     this.undoDeleteNode = this.undoDeleteNode.bind(this);
     this.getLastDeletedNode = this.getLastDeletedNode.bind(this);
     this.rename = this.rename.bind(this);
@@ -270,9 +342,12 @@ class TreeMindMap extends React.Component {
     this.selectNode = this.selectNode.bind(this);
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
+    this.setButtonStates = this.setButtonStates.bind(this);
     this.d3Tree = this.d3Tree.bind(this);
     this.saveJson = this.saveJson.bind(this);
+    this.saveNoteToJson = this.saveNoteToJson.bind(this);
     this.hasChildren = this.hasChildren.bind(this);
+    this.hasParent = this.hasParent.bind(this);
     this.findNode = this.findNode.bind(this);
     this.findParentNode = this.findParentNode.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
@@ -280,36 +355,33 @@ class TreeMindMap extends React.Component {
     this.findSelectedNode = this.findSelectedNode.bind(this);
     this.getNodeById = this.getNodeById.bind(this);
     this.fullTree = this.fullTree.bind(this);
-    this.fetchIdea = this.fetchIdea.bind(this);
-    this.viewIdea = this.viewIdea.bind(this);
     this.logNode = this.logNode.bind(this);
+    this.getNewChildDirection = this.getNewChildDirection.bind(this);
     this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
     this.isDeleteDisabled = this.isDeleteDisabled.bind(this);
     this.handleKeypressEsc = this.handleKeypressEsc.bind(this);
     this.handleClickOnNode = this.handleClickOnNode.bind(this);
+    this.handleClickOnPostit = this.handleClickOnPostit.bind(this);
     this.handleClickOnCanvas = this.handleClickOnCanvas.bind(this);
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
-    this.handleSubmitIdea = this.handleSubmitIdea.bind(this);
-    this.handleModalOpen = this.handleModalOpen.bind(this);
-    this.handleModalClose = this.handleModalClose.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
-    this.createId = this.createId.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.onSave = this.onSave.bind(this);
     this.addNote = this.addNote.bind(this);
     this.openNote = this.openNote.bind(this);
     this.closeNote = this.closeNote.bind(this);
-    this.getNoteRect = this.getNoteRect.bind(this);
     this.addNoteRects = this.addNoteRects.bind(this);
+    this.createNewMapJson = this.createNewMapJson.bind(this);
     this.update = this.update.bind(this);
+    //</editor-fold>
+    //<editor-fold desc="// Constructor set state">
     this.state = {
-      width: window.innerWidth - 500,         // width for the mind map
-      height: window.innerHeight - 400,       // height for the mimd map
+      hasError: false,
+      width: window.innerWidth * 0.7,         // width for the mind map
+      height: window.innerHeight - 400,       // height for the mind map
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      jsonData: DEBUG_USE_TEST_DATA? jsonTestData : jsonNew,
+      jsonData: DEBUG_USE_TEST_DATA? jsonTestData : "",
       isNewMap: false,
       openSnackbar: false,
       message: "",
@@ -321,204 +393,185 @@ class TreeMindMap extends React.Component {
       placement: undefined,
       anchorEl: null,
       setOpen: false,
-      modalOpen: false,
-      modalTop: 0,
-      modalLeft: 0,
-      modalVisible: false,
       isEditingIdea: false,
       nodeId: "",
       nodeTitle: "",
       idea: "",
+      myCounter: 0,
       deletedNodes: [],     // start using an arrary for this.
       deletedNodeId: "",
       deletedNodeName: "",
       deletedNodeParentId: "",
       deleteDisabled: true,
+      addChildDisabled: true,
+      addSiblingDisabled: true,
+      renameDisabled: true,
       undoDeleteDisabled: true,
+      closeNoteDisabled: true,
+      openNoteDisabled: true,
       notesStringArray: []
     };
+    //</editor-fold>
   }
 
+  //<editor-fold desc="// Post-it note and rectangle drawing functions">
   addNote = () => {
-    let svg = d3.select("svg");
     let root = this.createTreeLayout();
 
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
       d.name = d.data.name;
+      d.note = d.data.note;
       d._children = d.children;
     });
 
     const nodes = root.descendants();
     const links = root.links();
     let g = d3.select("svg");
-    let vDelay = 250;
-    let vDuration = 1000;
 
     this.openNote();
   };
 
-  // open note for selected ID
-  openNote = () => {
+  // Save all notes into JSON.
+  saveNoteToJson = () => {
     let svg = d3.select("svg");
-    let selectedNode = this.findSelectedNode();
-    let vDuration = 1000;
-    // This changes the note to a yellow square.
-    selectedNode.selectAll("rect.main")
-      .transition().duration(vDuration)
-      .attr("rx", 0).attr("width", vRad * 6).attr("height", vRad * 8)
-      .style("fill", function(d) { return d.data.color; })
-      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+    let json = this.state.jsonData;
+    console.log("called saveNoteToJson");
+    let nodes = svg.selectAll("#nodes").selectAll("g").selectAll("foreignObject.note");
+    nodes.each((d, i) => {
+      console.log("d note " + d.note + ", id " + d.id);
+      let jsonNode = this.getNodeById(d.id, json);
+      if (this.textContent) {
+        // note text has been updated
+        console.log("jsonNode note updated: " + this.textContent);
+      }
+      console.log("jsonNode note: " + jsonNode.note + ", id: " + jsonNode.id);
 
-    // Add <text>s and labels
-    selectedNode
-      .append("foreignObject")
+    });
+    console.log("saveNoteToJson complete.");
+  };
+
+  // Open post-it note for selected ID
+  openNote = () => {
+    let selectedNode = this.findSelectedNode();
+
+    // This changes the note to a yellow square.
+    selectedNode.select("rect")
+      .transition().duration(vDuration)
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", vRad * 8).attr("height", vRad * 10)
+      .style("fill", function(d) { return noteColor[0]; })
+      .style("stroke", function(d) { return noteColor[0]; })
+      .style("opacity", 1.0);
+    selectedNode.raise();
+
+    // Add <text> and labels
+    let selectedPostit = selectedNode.select("foreignObject.note");
+      //.transition().duration(vDuration);
+
+    selectedPostit
       .attr("x", 20)
       .attr("y", 10)
-      .attr("width", vRad * 5)
-      .attr("height", vRad * 8)
+      .attr("width", vRad * 7)
+      .attr("height", vRad * 9)
       .append("xhtml:p")
+      .attr("contenteditable", true)
       .text(d => d.data.note)
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
+
+    selectedNode.attr("note-state", "expanded");
+
+    this.setState({
+      closeNoteDisabled: false,
+      openNoteDisabled: true
+    });
+
+    console.log("openNote complete.");
   };
 
   closeNote = (nodeId) => {
     // This minimizes the note.
-    let vDuration = 1000;
+    let svg = d3.select("svg");
     let json = this.state.jsonData;
-    let node = this.getNodeById(nodeId, json);
-    node.selectAll("rect.main")
-      .transition().duration(vDuration)
-      .attr("rx", 0).attr("width", vRad ).attr("height", vRad )
-      .style("fill", function(d) { return d.data.color; })
-      .style("stroke", function(d) { return d.data.color; }).style("opacity", 1);
+    // let selectionCriteria = "[id=" + nodeId + "]";
+    // let thisNode = svg.select(selectionCriteria);
 
-    // Add <text>s and labels
-    node
-      .append("foreignObject")
+    let selectedNode = this.findSelectedNode();
+
+    selectedNode.selectAll("rect")
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", vRad).attr("height", vRad)
+      .style("fill", function(d) {return noteColor[0]; })
+      .style("stroke", function(d) {return d.data.color; }).style("opacity", 1);
+
+    // Select <text>s and labels and minimize
+    let selectedPostit = selectedNode.select("foreignObject.note");
+
+    // TODO: Save note to JSON first.
+    // Save this to JSON: selectedPostit._groups[0][0].textContent
+    let noteText = selectedPostit._groups[0][0].textContent;
+    if (noteText) {
+      let selectedNodeId = this.findSelectedNodeId(svg);
+      let jsonNode = this.getNodeById(selectedNodeId, json);
+      jsonNode.note = noteText;
+    }
+
+    selectedPostit
+      .transition().duration(vDuration)
       .attr("x", 20)
       .attr("y", 10)
-      .attr("width", vRad )
-      .attr("height", vRad )
-      .append("xhtml:p")
-      .text(d => d.data.note)
+      .attr("width", vRad)
+      .attr("height", vRad)
+      //.select("xhtml:p")
+      .text(d => "")       // Use this to expand text later.  May have to save text first.
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
+
+    selectedNode.attr("note-state", "collapsed");
+
+    this.setState({
+      jsonData: json,
+      closeNoteDisabled: true,
+      openNoteDisabled: false
+    });
   };
 
+  /*
   getNoteRect = () => {
     let svg = d3.select("svg");
     const nodeContainers = svg.select("#nodes");
     let selectedNode = this.findSelectedNode();
-    let vDelay = 250;
-    let vDuration = 1000;
-
   };
+   */
 
   addNoteRects = (nodeContainers) => {
     let g = d3.select("svg");
-    let vDelay = 250;
-    let vDuration = 1000;
     // Add <g>s
     //let vRects = g.selectAll("g").data(nodes).enter().append("g");
       // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
 
     // Draw <rect>s
-    nodeContainers.append("rect").attr("class","main").attr("width", 0).attr("height", 0)
-      .attr("rx", vRad)
-      //.attr("transform", "rotate(5)")
-      .each( function(d) { d.data.color = noteColor[0];})
-      .style("fill", "black")
-      .style("opacity", 1);
+    nodeContainers.append("rect").attr("class","main")
+      //.attr("width", 0).attr("height", 0)
+      .attr("rx", 0).attr("x", 10).attr("y", 8)
+      .attr("width", 0).attr("height", 0)
+      .attr("id", d => d.id )
+      .each(function(d) { d.data.color = noteColor[0];})
+      .style("fill", noteColor[0])
+      .style("opacity", 1.0)
+      .on("click", this.handleClickOnPostit);
 
-    /*
-    // This changes the note to a yellow square.
-    nodeContainers.selectAll("rect.main")
-      .transition().duration(vDuration)
-      .attr('rx', 0).attr('width', vRad * 6).attr('height', vRad * 8)
-      .style('fill', function(d) { return d.data.color; })
-      .style('stroke', function(d) { return d.data.color; }).style('opacity', 1);
-
-    // Add <text>s and labels
+    // Add foreignObject for text
     nodeContainers
       .append("foreignObject")
-      .attr("x", 20)
-      .attr("y", 10)
-      .attr("width", vRad * 5)
-      .attr("height", vRad * 8)
-      .append("xhtml:p")
-      .text(d => d.data.note)
-      .style("font-family", "Arial")
-      .style("stroke", "none")
-      .style("font-size", "13px");
-     */
-
+      .attr("class", "note");
   };
+  //</editor-fold>
 
-  createId = () => {
-    return (
-      "_" +
-      Math.random()
-        .toString(36)
-        .substr(2, 9)
-    );
-  };
-
-  saveJson = () => {
-    console.log("JSON:" + JSON.stringify(this.state.jsonData));
-    let postData = {
-      orgId: this.state.orgId,
-      mapData: this.state.jsonData
-    };
-    console.log("JSON to post:" + JSON.stringify(postData));
-
-    setTimeout(() => {
-      fetch("/api/mindmaps", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(postData)
-      })
-        .then(response => {
-          if (response.status !== 400) {
-            // Success - open the snackbar
-            this.setState({
-              openSnackbar: true,
-              message: "Mind map saved."
-            });
-          } else {
-            // TODO: consider handling a 400 response.
-          }
-        })
-        .catch(err => {
-          this.setState({ message: "Error occurred." });
-        });
-    }, 2000);
-  };
-
-  appendChild = () => {
-    let svg = d3.select(this.svg);
-    this.appendChildToSelectedNode(svg);
-  };
-
-  addSibling = () => {
-    let svg = d3.select(this.svg);
-    this.addSiblingToSelectedNode(svg);
-  };
-
-  viewIdea = () => {
-    let svg = d3.select(this.svg);
-    this.fetchIdea();
-    this.handlePopoverClick();
-  };
-
-  deleteNode = () => {
-    let svg = d3.select(this.svg);
-    this.removeSelectedNode(svg);
-  };
-
+  //<editor-fold desc="// Delete and undelete node functions">
   getLastDeletedNode = () => {
     let lastDeletedNode = null;
     if (this.state.deletedNodes) {
@@ -530,8 +583,6 @@ class TreeMindMap extends React.Component {
 
   undoDeleteNode = () => {
     // This is similar to appending a node.  We've saved the deleted node id and its parent to state.
-    let svg = d3.select(this.svg);
-
     // Get the last deleted node.
     let deletedNode = this.getLastDeletedNode();
 
@@ -556,30 +607,29 @@ class TreeMindMap extends React.Component {
       undoDeleteDisabled: undoDeleteDisabled
     });
 
-    this.update(svg);
+    this.update();
   };
+  //</editor-fold>
 
-  newMap = () => {
-    this.setState(
-      {
-        isNewMap: true
-      },
-      () => {
-        console.log(
-          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
-        );
-        let svg = d3.select(this.svg);
-        this.update(svg);
-      }
-    );
-  };
-
+  //<editor-fold desc="// Node functions">
   rename = () => {
-    // Renames a node.
     let svg = d3.select(this.svg);
-    let selectedNode = console.log("rename node");
-    console.log("idOfSelectedNode: " + this.findSelectedNodeId(svg));
+    console.log("rename node");
+    let selectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected");
+
+    let idOfSelectedNode = selectedNode.attr("id");
+    console.log("idOfSelectedNode: " + idOfSelectedNode);
     this.editNode(selectedNode);
+  };
+
+  handleKeypressEsc = svg => {
+    // TODO: this isn't getting called.
+    svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .each(this.deselectNode);
   };
 
   findNode = idOfSelectedNode => {
@@ -644,7 +694,7 @@ class TreeMindMap extends React.Component {
     }
 
     let hasChildren = false;
-    if (nodeFound && node.children) {
+    if (nodeFound && node.children && (node.children.length > 0)) {
       hasChildren = true;
     }
     return hasChildren;
@@ -681,6 +731,39 @@ class TreeMindMap extends React.Component {
       console.log("findNode, error: parentNode not found");
     }
     return parent;
+  };
+
+  // use HasParent to find out if this and the root node and we should disable add sibling.
+  hasParent = idOfSelectedNode => {
+    // Find the parent of the node in the JSON data.
+    console.log("idOfSelectedNode: " + idOfSelectedNode);
+
+    let parentNodes = [this.state.jsonData];
+    let nodeFound = false;
+
+    while (parentNodes.length !== 0) {
+      let allNextLevelParents = [];
+      for (let node of parentNodes) {
+        if (node.children) {
+          allNextLevelParents = allNextLevelParents.concat(node.children);
+          if (node.children.map(child => child.id).includes(idOfSelectedNode)) {
+            nodeFound = true;
+            break;
+          }
+        }
+      }
+      if (nodeFound) {
+        break;
+      } else {
+        parentNodes = allNextLevelParents;
+      }
+    }
+
+    let hasParent = false;
+    if (nodeFound) {
+      hasParent = true;
+    }
+    return hasParent;
   };
 
   findSelectedNodeId = svg => {
@@ -720,116 +803,6 @@ class TreeMindMap extends React.Component {
     return runner(null, node);
   };
 
-  appendChildToSelectedNode = svg => {
-    // This version appends a child to the JSON, not the svg.  7/17/19.
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
-    this.logNode("appendChildToSelectedNode");
-    let json = this.state.jsonData;
-    let parent = this.getNodeById(idOfSelectedNode, json);
-
-    // Create the child.
-    let child = {
-      name: "",
-      id: this.createId()
-    };
-
-
-    // TODO: change this to add child to the JSON, or get parent directly from the JSON.
-    // Should just be able to change the JSON element.  For instance, change this:
-    //
-    if (parent.children) parent.children.push(child);
-    else parent.children = [child];
-
-    // Save the JSON back to state.
-    this.setState({
-      jsonData: json
-    });
-
-    this.update(svg);
-  };
-
-  addSiblingToSelectedNode = svg => {
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
-    let parent = this.findParentNode(idOfSelectedNode);
-
-    let child = {
-      id: this.createId()
-    };
-    parent.children.push(child);
-    this.update(svg);
-  };
-
-  /**
-   * Create the SVG and attach keystroke events to it.
-   * The svg is initialized with height = dx.
-   * This will be updated later when the rest of the nodes in the tree are entered.
-   * @returns {*}
-   */
-  chart = () => {
-    // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
-    let svg = d3
-      .select(this.svg)
-      .attr("width", this.state.width)
-      .attr("height", this.state.height)
-      .style("font", "14px sans-serif")
-      .on("click", this.handleClickOnCanvas);
-
-    // 2.1 Create a container for all the nodes in the graph
-    const gNode = svg
-      .append("g")
-      .attr("id", "nodes")
-      .attr("cursor", "pointer");
-
-    // 2.2 Create a container for all the links in the graph
-    const gLink = svg
-      .append("g")
-      .attr("id", "links")
-      .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5);
-
-    // 3. Fill in the nodes and links with the hierarchy data
-    this.update(svg);
-    let appendChildToSelectedNode = this.appendChildToSelectedNode;
-    let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
-    let removeSelectedNode = this.removeSelectedNode;
-    let handleKeypressEsc = this.handleKeypressEsc;
-
-    // 4. Register other event handlers
-    d3.select("body").on("keydown", function(e) {
-      // eslint-disable-next-line no-console
-      console.log(`keydown: ${d3.event.keyCode}`);
-      // Check to see if a node is being edited
-      let nodeIsBeingEdited = gNode.select("g.node-editing").size();
-
-      /*
-      if (d3.event.keyCode === 9) {
-        console.log("tab - append child to selected node");
-        // appendChildToSelectedNode(svg);
-      } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
-        console.log("enter - add sibling to selected node");
-        // addSiblingToSelectedNode(svg);
-      } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
-        console.log("delete - remove selected node");
-        removeSelectedNode(svg);
-      } else if (d3.event.keyCode === 27) {
-        console.log("esc - deselect node");
-        // handleKeypressEsc(svg);
-      } */
-    });
-
-    return svg.node();
-  };
-
-  handleKeypressEsc = svg => {
-    // TODO: this isn't getting called.
-    svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .each(this.deselectNode);
-  };
-
   renameNode = (d, i, nodes) => {
     console.log("renameNode");
     const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
@@ -852,6 +825,12 @@ class TreeMindMap extends React.Component {
     this.props.callback(selectedNodeId);
   };
 
+  logNode = message => {
+    let svg = d3.select("svg");
+    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
+      ", name = " + this.findSelectedNodeName());
+  };
+
   getSelectedNode = (nodes, i) => {
     // Had to change the implementation of this to use the index instead of using
     // a filter on ".node-selected". Come back and see why that didn't work if there is time.
@@ -867,8 +846,8 @@ class TreeMindMap extends React.Component {
 
   handleClickOnNode = (d, i, nodes) => {
     console.log("handleClickOnNode: clicked on a node.");
-    let svg = d3.select("svg");
-    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    // const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
 
     const clickedNodeIndex = i;
     const clickedNode = nodes[clickedNodeIndex];
@@ -883,10 +862,12 @@ class TreeMindMap extends React.Component {
     ) {
       console.log("going into edit mode!");
       d3.select(clickedNode)
-        //.call(this.editNode)
         .call(this.selectNode);
+      d3.select(clickedNode)
+        .call(this.editNode);
     } else {
-      d3.select(clickedNode).call(this.selectNode);
+      d3.select(clickedNode)
+        .call(this.selectNode);
 
       // If not already selected, mark as selected
       otherNodes.each(this.deselectNode);
@@ -895,8 +876,56 @@ class TreeMindMap extends React.Component {
     // d.children = d.children ? null : d._children;
     // update(d);
 
-    // Prevent triggering clickOnCanvas handler
-    // https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
+    /* Prevent triggering clickOnCanvas handler
+       https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background */
+    d3.event.stopPropagation();
+  };
+
+  handleClickOnPostit = (d, i, nodes) => {
+    console.log("handleClickOnPostit: clicked on a post-it note.");
+    let svg = d3.select("svg");
+    const noteWidth = vRad * 6;
+    const noteTextWidth = (vRad * 6) - 6;
+    const noteHeight = vRad * 10;
+    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    const clickedNode = nodes[i];
+    const clickedId = d3.select(clickedNode).attr("id");
+
+    let selectionCriteria = "[id=" + clickedId + "]";
+    let thisNode = svg.selectAll("g.node").select(selectionCriteria);
+
+    if (
+      currentlySelectedNode.size() > 0 &&
+      currentlySelectedNode.attr("name") === clickedId
+    ) {
+      // This changes the note to a yellow square.
+      currentlySelectedNode.select("rect")
+        .transition().duration(vDuration)
+        .attr("rx", 0).attr("x", 10).attr("y", 8)
+        .attr("height", noteHeight).attr("width", noteWidth)
+        .style("fill", function(d) { return noteColor[0]; })
+        .style("stroke", function(d) { return noteColor[0]; })
+        .style("opacity", 1);
+
+      // Add <text> and labels
+      currentlySelectedNode
+        .select("foreignObject.note")
+        .attr("x", 20)
+        .attr("y", 10)
+        .attr("width", noteTextWidth)
+        .attr("height", noteHeight)
+        .append("xhtml:p")
+        .text(d => d.data.note)
+        .style("font-family", "Arial")
+        .style("stroke", "none")
+        .style("font-size", "13px");
+      currentlySelectedNode.raise();
+    } else {
+      d3.select(clickedNode).call(this.selectNode);
+    }
+
+    /* Prevent triggering clickOnCanvas handler
+       https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background */
     d3.event.stopPropagation();
   };
 
@@ -907,38 +936,92 @@ class TreeMindMap extends React.Component {
   isDeleteDisabled = () => {
     return this.state.deleteDisabled;
   };
+  //</editor-fold>
 
-  removeSelectedNodeFromData = svg => {
-    // Removes selected node from the JSON data, stored in state.
-    let selectedNodeId = this.findSelectedNodeId(svg);
-    let selectedNodeName = this.findSelectedNodeName();
+  //<editor-fold desc="// Main add, sibling, and delete node functions">
+  appendChildToSelectedNode = () => {
+    // This version appends a child to the JSON, not the svg.  7/17/19.
+    let svg = d3.select(this.svg);
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    this.logNode("appendChildToSelectedNode");
+    let json = this.state.jsonData;
+    let parent = this.getNodeById(idOfSelectedNode, json);
+
+    // Create the child.
+    let child = {
+      name: "new",
+      id: createId(),
+      side: this.getNewChildDirection(),
+      note: ""
+    };
+
+    // If we are appending to the root, we need to determine which side of the map to add the child.
+    if ( !this.hasParent(idOfSelectedNode) ) {
+      child.side = this.getNewChildDirection();
+    }
+
+    // TODO: change this to add child to the JSON, or get parent directly from the JSON.
+    // Should just be able to change the JSON element.  For instance, change this:
+    //
+    if (parent.children) parent.children.push(child);
+    else parent.children = [child];
+
+    // Save the JSON back to state.
+    this.setState({
+      jsonData: json
+    });
+
+    this.update();
+  };
+
+  addSiblingToSelectedNode = () => {
+    let svg = d3.select(this.svg);
+    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let parent = this.findParentNode(idOfSelectedNode);
+
+    let child = {
+      name: "",
+      id: createId(),
+      note: ""
+    };
+    parent.children.push(child);
+    this.update();
+  };
+
+  removeSelectedNodeFromData = () => {
+    // Removes selected node from the JSON data, stored in state.  Just need the id field.
+    // Also updates our deleted nodes data, so we can undelete later.
+    let svg = d3.select(this.svg);
+    let selectedNode = this.findSelectedNode();
     let jsonData = [this.state.jsonData];
-    let parent = this.findParentNode(selectedNodeId);
+    let parent = this.findParentNode(selectedNode.attr("id"));
 
     if (parent && parent.children) {
       // This deletes from the JSON.
       parent.children = parent.children.filter(
-        child => child.id !== selectedNodeId
+        child => child.id !== selectedNode.attr("id")
       );
       parent.children.length === 0 && delete parent.children;
     }
     console.log("JSON for jsonData now is:" + JSON.stringify(jsonData));
     let deletedNode = {
-      id: selectedNodeId,
-      name: selectedNodeName,
+      id: selectedNode.attr("id"),
+      name: selectedNode.attr("name"),
+      note: selectedNode.attr("note"),
       parentId: parent.id
     };
     let deletedNodes = this.state.deletedNodes;
     deletedNodes.push(deletedNode);
 
     this.setState({
-      jsonData: jsonData,
+      jsonData: jsonData[0],
       deletedNodes: deletedNodes,   // Array of deleted nodes
       undoDeleteDisabled: false
     });
   };
 
-  removeSelectedNode = svg => {
+  removeSelectedNode = () => {
+    let svg = d3.select(this.svg);
     let selectedNode = this.findSelectedNode();
 
     this.removeSelectedNodeFromData(svg);
@@ -954,49 +1037,103 @@ class TreeMindMap extends React.Component {
       selectedNode.remove();
     }
 
-    /*
-    // Find the link and try to remove it separately.
-    let linkFound = false;
-    let links = d3.hierarchy(this.state.jsonData).links();
+    this.setButtonStates(false, true, false, false);
+    this.update();
+  };
+  //</editor-fold>
 
-    let thisLink = null;
+  /**
+   * Create the SVG and attach keystroke events to it.
+   * The svg is initialized with height = dx.
+   * This will be updated later when the rest of the nodes in the tree are entered.
+   * @returns {*}
+   */
+  chart = () => {
+    console.log("Org = " + getOrgName());
+    if (!(getOrgId() > 0 )) {
+      console.log("Need to redirect to login");
+      this.setState({
+        hasError: true
+      });
+    } else {
+      // 1. append to body, see https://blog.logrocket.com/data-visualization-in-react-using-react-d3-c35835af16d0/
+      let svg = d3
+        .select(this.svg)
+        .attr("width", this.state.width)
+        .attr("height", this.state.height)
+        .style("font", "14px sans-serif")
+        .on("click", this.handleClickOnCanvas);
 
-    for (let i=0; i < links.length; i++) {
-      let link = links[i];
-      if ((link.source.data.id === idOfSelectedNode) || (link.target.data.id === idOfSelectedNode)) {
-        linkFound = true;
-        thisLink = link;
-        if (linkFound) break;
-      }
+      // 2.1 Create a container for all the nodes in the graph
+      const gNode = svg
+        .append("g")
+        .attr("id", "nodes")
+        .attr("cursor", "pointer");
+
+      // 2.2 Create a container for all the links in the graph
+      const gLink = svg
+        .append("g")
+        .attr("id", "links")
+        .attr("fill", "none")
+        .attr("stroke", "#555")
+        .attr("stroke-opacity", 0.4)
+        .attr("stroke-width", 1.5);
+
+      // 3. Fill in the nodes and links with the hierarchy data
+      this.update();
+      let appendChildToSelectedNode = this.appendChildToSelectedNode;
+      let addSiblingToSelectedNode = this.addSiblingToSelectedNode;
+      let removeSelectedNode = this.removeSelectedNode;
+      let handleKeypressEsc = this.handleKeypressEsc;
+
+      // 4. Register other event handlers
+      d3.select("body").on("keydown", function (e) {
+        // eslint-disable-next-line no-console
+        console.log(`keydown: ${d3.event.keyCode}`);
+        // Check to see if a node is being edited
+        let nodeIsBeingEdited = gNode.select("g.node-editing").size();
+
+        if (d3.event.keyCode === 9) {
+          console.log("tab - append child to selected node");
+          // appendChildToSelectedNode(svg);
+        } else if (d3.event.keyCode === 13 && !nodeIsBeingEdited) {
+          console.log("enter - add sibling to selected node");
+          // addSiblingToSelectedNode(svg);
+        } else if (d3.event.keyCode === 8 && !nodeIsBeingEdited) {
+          console.log("delete - remove selected node");
+          // removeSelectedNode(svg);
+        } else if (d3.event.keyCode === 27) {
+          console.log("esc - deselect node");
+          // handleKeypressEsc(svg);
+        }
+      });
+
+      return svg.node();
     }
-
-    if (thisLink) {
-      thisLink.exit().remove();
-      console.log("Link removed.");
-    }
-    */
-
-    this.update(svg);
   };
 
+  //<editor-fold desc="// Select and edit node functions">
   editNode = node => {
     node
       .classed("node-editing", true)
+      // .selectAll("foreignObject").filter("node-title")
       .select("foreignObject")
       .select("p")
+      // .attr("contenteditable", true)          // added, 9/17/19
       .style("background-color", "#ddd");
     console.log(`${node.attr("name")} is being edited`);
   };
 
   selectNode = node => {
-    d3.selectAll("g.node")
-      .filter(".node-selected")
-      .each(this.deselectNode);
+    // d3.selectAll("g.node")
+    //  .filter(".node-selected")
+    //  .each(this.deselectNode);
     node
       .classed("node-selected", true)
       .select("foreignObject")
+      //.filter("node-title")
       .select("p")
-      .attr("contenteditable", "true")
+      .attr("contenteditable", true)
       .style("background-color", "#ddd");
     node
       .classed("node-selected", true)
@@ -1006,36 +1143,50 @@ class TreeMindMap extends React.Component {
     const idOfSelectedNode = node.attr("id");
 
     this.getSelectedNodeId(idOfSelectedNode);
-    console.log(`${node.attr("name")} selected`);
+    console.log("Selected node id = " +  node.attr("id") + ", name = " +  node.attr("name"));
+    let isNoteCollapsed = (node.attr("note-state") === "collapsed");
+    let hasChilden = this.hasChildren(idOfSelectedNode);
+    let hasParent = this.hasParent(idOfSelectedNode);
 
-    // Determine whether to disable the delete node button.
-    if (this.hasChildren(idOfSelectedNode)) {
+    this.setButtonStates(true, isNoteCollapsed, hasChilden, hasParent);
+  };
+
+  setButtonStates = (isAnyNodeSelected, isNoteCollapsed, hasChildren, hasParent) => {
+    // Set button states.
+    if (!isAnyNodeSelected) {
+      // All buttons should be deactivated when no node is selected.
       this.setState({
-        deleteDisabled: true
+        closeNoteDisabled: true,
+        openNoteDisabled: true,
+        deleteDisabled: true,
+        renameDisabled: true,
+        addChildDisabled: true,
+        addSiblingDisabled: true
       });
     } else {
       this.setState({
-        deleteDisabled: false
+        closeNoteDisabled: isNoteCollapsed,
+        openNoteDisabled: !isNoteCollapsed,
+        deleteDisabled: hasChildren,
+        renameDisabled: false,
+        addChildDisabled: false,
+        addSiblingDisabled: !hasParent
       });
     }
-  };
-
-  logNode = message => {
-    let svg = d3.select("svg");
-    console.log(message, ": node ID = " + this.findSelectedNodeId(svg) +
-        ", name = " + this.findSelectedNodeName());
   };
 
   deselectNode = (d, i, nodes) => {
     this.logNode("deselectNode");
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
-
+    console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
     // new code
-    this.closeNote(idOfSelectedNode);
+    // TODO: don't have to close node right away.
+    // this.closeNote(idOfSelectedNode);
 
     let newValue = d3
       .select(nodes[i])
       .select("foreignObject")
+      // .selectAll("foreignObject").filter("node-title")
       .select("p")
       .html();
 
@@ -1047,17 +1198,15 @@ class TreeMindMap extends React.Component {
       .classed("node-editing", false)
       .classed("node-selected", false)
       .select("foreignObject")
+      // .selectAll("foreignObject").filter("node-title")
       .select("p")
-      .attr("contenteditable", "false")
+      .attr("contenteditable", false)
       .style("background-color", null);
 
     this.updateNodeValue(idOfSelectedNode, newValue);
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
-    let nodeInTree = [this.state.jsonData];
-
-    let nodeFound = false;
     let parent = this.findNode(idOfSelectedNode);
     parent.name = newValue;
   };
@@ -1068,8 +1217,11 @@ class TreeMindMap extends React.Component {
       .selectAll("g.node")
       .filter(".node-selected")
       .each(this.deselectNode);
+    this.setButtonStates(false, false, false, false);
   };
+  //</editor-fold>
 
+  //<editor-fold desc="// Helper functions for drawing the tree">
   appendText = nodeContainers => {
     // The "foreignObject" object will display the name text on the node.
     nodeContainers
@@ -1140,33 +1292,17 @@ class TreeMindMap extends React.Component {
     let g = svg.selectAll("g").attr("transform", "translate(" + width / 2 + ", 0)");
     return g;
   };
+  //</editor-fold>
 
-  fetchIdea = () => {
-    let svg = d3.select("svg");
-    let selectedNodeId = this.findSelectedNodeId(svg);
-    let selectedNodeName = this.findSelectedNodeName();
-
-    if (selectedNodeId !== "") {
-      fetch(`/api/ideas-node/${selectedNodeId}`)
-        .then(res => res.json())
-        .then(idea => {
-          if (idea.ideaText) {
-            this.setState({
-              idea: idea.ideaText,
-              nodeTitle: selectedNodeName,
-              nodeId: selectedNodeId,
-              isEditingIdea: true
-            });
-          } else {
-            this.setState({
-              idea: "",
-              nodeTitle: selectedNodeName,
-              nodeId: selectedNodeId,
-              isEditingIdea: false
-            });
-          }
-        });
-    }
+  //<editor-fold desc="// D3 and tree layout and draw functions">
+  createNewMapJson = () => {
+    let json = {
+      id: createId(),
+      name: "Root",
+      note: "",
+      children: []
+    };
+    return json;
   };
 
   createTreeLayout = () => {
@@ -1196,10 +1332,15 @@ class TreeMindMap extends React.Component {
     rightTree.x = d3TreeHeight/2;
     leftTree.x = d3TreeHeight/2;
 
-    // Combine the outputs from D3 tree.
-    rightTree.children.forEach((d, i) => {
-      leftTree.children.push(d);
-    });
+    // Combine the outputs from D3 tree.  Check if children exist first, as a new map won't have children.
+    if (rightTree.children && rightTree.children.length) {
+      rightTree.children.forEach((d, i) => {
+        if (leftTree.children)
+          leftTree.children.push(d);
+        else
+          leftTree.children = [d];
+      });
+    }
 
     // use leftTree as the root
     let root = leftTree;
@@ -1214,13 +1355,14 @@ class TreeMindMap extends React.Component {
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
       d.name = d.data.name;
+      d.note = d.data.note;
       d._children = d.children;
     });
 
     const nodes = root.descendants();
     const links = root.links();
 
-    // Set both root nodes to be dead center vertically
+    // Set both root nodes to be dead center vertically.
     nodes[0].x = this.state.height / 2;
 
     const transition = svg
@@ -1232,97 +1374,114 @@ class TreeMindMap extends React.Component {
         window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
       );
 
-    // Update the nodes
-    const existingNodeContainers = svg
-      .select("#nodes")
+    // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
+    // selectAll has to be a unique name.  Note we use d.id for data as we need a key field.
+    let node = svg
+      .selectAll("#nodes")
       .selectAll("g")
-      .data(nodes, d => d.id)
-      .data(nodes, d => d.name);
+      .data(nodes, d => d.id);
+
+    node.exit().remove();
 
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
-    const newNodeContainers = existingNodeContainers
+    let nodeEnter = node
       .enter()
       .append("g")
       .attr("id", (d, i) => `${d.id}`)
       .attr("name", (d, i) => `${d.data.name}`)
+      .attr("note", (d, i) => `${d.data.note}`)
+      .attr("note-state", "collapsed")
       .attr("class", "node")
       .attr("transform", d => `translate(${root.y0},${root.x0})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
 
-    newNodeContainers
-      .append("circle")
-      .attr("r", 10)
-      .attr("fill", d => (d._children ? "#159" : "#159"));
+    nodeEnter.append("circle");
 
     // The "foreignObject" object will display the name text on the node.
-    newNodeContainers
+    nodeEnter
       .append("foreignObject")
-      .attr("x", -80)
-      .attr("y", -35)
       .attr("width", 150)
-      .attr("height", 40)
+      .attr("height", 50)
+      .attr("x", -80)
+      .attr("y", -50)
       .append("xhtml:p")
-      .text(d => d.data.name)
-      .style("font-family", "Arial");
+      .attr("class", "node-title")
+      .text(d => d.data.name);
 
-    // #newcode
-    this.addNoteRects(newNodeContainers);
-
-
-    existingNodeContainers
-      .merge(newNodeContainers)
+    // Transition nodes to their new position. Increase opacity from 0 to 1 during transition.
+    let nodeUpdate = node.merge(nodeEnter)
       .on("click", this.handleClickOnNode);
 
-    // Transition nodes to their new position.
-    // Increase opacity from 0 to 1 during transition
-    const nodeUpdate = existingNodeContainers
-      .merge(newNodeContainers)
-      //.transition(transition)
-      .attr("transform", d => `translate(${d.y},${d.x})`)
+    nodeUpdate.transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+        console.log("nodeUpdate, debug: id = " + d.id + ", x pos = " + d.y + ", y pos = " + d.x);
+        return "translate(" + d.y + "," + d.x + ")";
+      })
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 1);
 
+    // Exiting nodes - remove any exiting nodes
+    let nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+        console.log("nodeExit, debug: id = " + d.id + ", y = " + d.y + ", x = " + d.x);
+        return "translate(" + d.y + "," + d.x + ")";
+      })
+      .remove();
+
+    // On exit reduce the node circles size to 0
+    nodeExit.select("circle").attr("r", 1e-6);
+
+    // On exit reduce the opacity of text labels
+    nodeExit.select("text").style("fill-opacity", 1e-6);
+
+    /*
     // Transition exiting nodes to the parent's new position.
     // Reduce opacity from 1 to 0 during transition
-    const nodeExit = existingNodeContainers
+     let nodeExit = nodeContainers
       .exit()
       .transition(transition)
       .remove()
       .attr("transform", d => `translate(${root.y},${root.x})`)
       .attr("fill-opacity", 0)
       .attr("stroke-opacity", 0);
+     */
 
-    // Update the links…
-    const existingLinkPaths = svg
+    // Update the links.
+    let linkPaths = svg
       .select("#links")
       .selectAll("path")
       .data(links, d => d.target.id);
 
-    // newLinkPaths
-    let newLinkPaths = existingLinkPaths
+    // changed from newLinkPaths; just update the current.
+    let linkPathEnter = linkPaths
       .enter()
       .insert("path", "g")
       .attr("class", "link")
       .attr("d", diagonal);
 
-    let mergedLinks = existingLinkPaths.merge(newLinkPaths);
+    let linkPathsUpdate = linkPathEnter.merge(linkPaths);
 
     // Transition links to their new position.
-    mergedLinks
+    linkPathsUpdate
       .transition()
       .duration(duration)
       .attr("transform", "translate(" + this.state.width / 2 + ",0)")
       .attr("d", diagonal);
 
     // Transition exiting nodes to the parent's new position.
-    existingLinkPaths
+    let linkPathsExit = linkPaths
       .exit()
       .transition()
       .duration(duration)
       .attr("d", diagonal)
       .remove();
+
+    // #newcode - Post-it notes
+    this.addNoteRects(nodeEnter);
 
     // Stash the old positions for transition.
     root.eachBefore(d => {
@@ -1331,22 +1490,77 @@ class TreeMindMap extends React.Component {
     });
   };
 
+  // Compute the positions of nodes in the tree using D3's tree layout.
   d3Tree = (treeData, direction) => {
     let SWITCH_CONST = 1;
+    let treeHeight = this.state.height;
+    let treeWidth = (this.state.width - 400)/2;
+
+    console.log("d3tree, direction = " + direction);
+    console.log("d3tree, state height = " + this.state.height + ", state width = " + this.state.width);
+    console.log("d3tree, actual height = " + treeHeight + ", actual width = " + treeWidth);
     if (direction === "left") {
       SWITCH_CONST = -1;
     }
     // Compute the layout.
-    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * (this.state.width - 150)) / 2]);
+    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * treeWidth)]);
 
     return tree(treeData);
   };
+
+  update = () => {
+    // d3.hierarchy object is a data structure that represents a hierarchy
+    // It has a number of functions defined on it for retrieving things like
+    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
+    this.fullTree();
+    this.setState({
+      isNewMap: false,
+      myCounter: this.state.myCounter + 1
+    });
+  };
+  //</editor-fold>
+
+  //<editor-fold desc="// JSON and load data functions">
+  // This is for root children only, to determine which side to add the the node to.
+  getNewChildDirection = () => {
+    let jsonData = this.state.jsonData;
+    let countRight = 0;
+    let countLeft = 0;
+    for (let child of jsonData.children) {
+      if (child.side === "left") {
+        countLeft++;
+      } else {
+        countRight++;
+      }
+    }
+    let dir = countLeft >= countRight ? "right" : "left";
+    return dir;
+  }
 
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy.
     let d3Data = "";
     let jsonData = this.state.jsonData;
-    let split_index = Math.round(jsonData.children.length / 2);
+    // let split_index = Math.round(jsonData.children.length / 2);
+
+    let childrenLeft = null;
+    let childrenRight = null;
+    for (let child of jsonData.children) {
+      if (child.side === "left") {
+        child.side = "left";
+        if (childrenLeft) {
+          childrenLeft.push(child);
+        } else {
+          childrenLeft = [child];
+        }
+      } else {
+        if (childrenRight) {
+          childrenRight.push(child);
+        } else {
+          childrenRight = [child];
+        }
+      }
+    }
 
     if (direction === "left") {
       // Left data
@@ -1354,7 +1568,8 @@ class TreeMindMap extends React.Component {
         name: jsonData.name,
         id: jsonData.id,
         children: JSON.parse(
-          JSON.stringify(jsonData.children.slice(split_index))
+          // JSON.stringify(jsonData.children.slice(split_index))
+          JSON.stringify(childrenLeft)
         )
       };
     } else {
@@ -1363,7 +1578,8 @@ class TreeMindMap extends React.Component {
         name: jsonData.name,
         id: jsonData.id,
         children: JSON.parse(
-          JSON.stringify(jsonData.children.slice(0, split_index))
+          // JSON.stringify(jsonData.children.slice(0, split_index))
+          JSON.stringify(childrenRight)
         )
       };
     }
@@ -1375,14 +1591,60 @@ class TreeMindMap extends React.Component {
     return d3HierarchyData;
   };
 
-  update = svg => {
-    // d3.hierarchy object is a data structure that represents a hierarchy
-    // It has a number of functions defined on it for retrieving things like
-    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    this.fullTree();
-    this.setState({
-      isNewMap: false
-    });
+  newMap = () => {
+    // Create new JSON data as defined in the global const, then set state.
+    this.setState(
+      {
+        isNewMap: true,
+        jsonData: this.createNewMapJson()
+      },
+      () => {
+        console.log(
+          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
+        );
+        let svg = d3.select(this.svg);
+        this.update();
+      }
+    );
+  };
+
+  saveJson = () => {
+    this.saveNoteToJson();
+    console.log("JSON:" + JSON.stringify(this.state.jsonData));
+    let postData = {
+      orgId: this.state.orgId,
+      mapData: this.state.jsonData
+    };
+    console.log("JSON to post:" + JSON.stringify(postData));
+
+    setTimeout(() => {
+      fetch("/api/mindmaps", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData)
+      })
+        .then(response => {
+          if (response.status !== 400) {
+            // Success - open the snackbar
+            this.setState({
+              openSnackbar: true,
+              message: "Mind map saved."
+            });
+          } else {
+            // TODO: consider handling a 400 response.
+          }
+        })
+        .catch(err => {
+          this.setState({ message: "Error occurred." });
+        });
+    }, 2000);
+  };
+  //</editor-fold>
+
+  componentDidCatch(error, info) {
+    console.log("error: " + error + ", info: " + info);
+    this.setState({hasError: true});
+    return <Redirect to="/Login" />;
   };
 
   componentDidMount() {
@@ -1430,7 +1692,7 @@ class TreeMindMap extends React.Component {
     }
   }
 
-  // Functions for the snackbar
+  //<editor-fold desc="// Functions for the snackbar">
   handleClose = () => {
     this.setState({ openSnackbar: false });
   };
@@ -1438,85 +1700,9 @@ class TreeMindMap extends React.Component {
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
+  //</editor-fold>
 
-  // For post-it notes.  Need to change these.
-  onSave () {
-    // Make sure to delete the editorState before saving to backend
-    const notes = this.state.notes;
-    notes.map(note => {
-      delete note.editorState;
-    })
-    // Make service call to save notes
-    // Code goes here...
-  };
-
-  onChange (notes) {
-    this.setState({ // Update the notes state
-      notes
-    });
-  };
-
-  handleIdeaChange = name => event => {
-    this.setState({ idea: event.target.value });
-  };
-
-  handleSubmitIdea = () => {
-    // Save idea.  Selected node ID should already be in state, so will be submitted when we JSON.stringify state,
-    // which will be needed for create.
-    const orgId = getOrgId();
-    let svg = d3.select("svg");
-    let selectedNodeId = this.findSelectedNodeId(svg);
-    let apiPath = "";
-    let successMessage = "";
-    let method = "";
-
-    if (selectedNodeId !== "") {
-      if (this.state.isEditingIdea) {
-        // For edit
-        apiPath = "/api/ideas/" + selectedNodeId;
-        successMessage = "Idea updated.";
-        method = "PUT";
-      } else {
-        // For create
-        apiPath = "/api/ideas/";
-        successMessage = "Idea created.";
-        method = "POST";
-      }
-    }
-
-    setTimeout(() => {
-      fetch(apiPath, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(this.state)
-      })
-        .then(() => {
-          this.setState({
-            message: successMessage,
-            modalVisible: false,
-            openSnackbar: true,
-            open: false
-          });
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }, 2000);
-  };
-
-  // Modal dialog for the idea functions
-  handleModalOpen = () => {
-    this.setState({
-      modalOpen: true
-    });
-  };
-
-  handleModalClose = () => {
-    this.setState({
-      modalOpen: false
-    });
-  };
-
+  //<editor-fold desc="// Popover functions">
   handlePopoverClick = event => {
     this.setState({
       anchorEl: event.currentTarget,
@@ -1530,13 +1716,17 @@ class TreeMindMap extends React.Component {
       openPopover: false
     });
   };
+  //</editor-fold>
 
   render() {
     const { classes } = this.props;
+    if (this.state.hasError) {
+      return <Redirect to="/Login" />;
+    }
 
     return (
       <React.Fragment>
-
+        <div ref={node => node && console.log("outer div width = " + node.offsetWidth)}>
         <Grid
           container
           alignItems="center"
@@ -1544,7 +1734,8 @@ class TreeMindMap extends React.Component {
           spacing={24}
           className={classes.root}
         >
-          <Grid item sm={12}>
+          <div ref={node => node && console.log("div width = " + node.offsetWidth)}>
+            <Grid item sm={12}>
             <Button
               variant="contained"
               color="secondary"
@@ -1556,32 +1747,53 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.appendChild}
+              disabled={this.state.addChildDisabled}
+              onClick={this.appendChildToSelectedNode}
               className={classes.outlinedButton}
             >
-              Add Child Node
+              Add Child
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.addSibling}
+              disabled={this.state.addSiblingDisabled}
+              onClick={this.addSiblingToSelectedNode}
               className={classes.outlinedButton}
             >
-              Add Sibling Node
+              Add Sibling
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.addNote}
+              disabled={this.state.renameDisabled}
+              onClick={this.rename}
               className={classes.outlinedButton}
             >
-              Add Note
+              Rename Node
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.openNoteDisabled}
+              onClick={this.openNote}
+              className={classes.outlinedButton}
+            >
+              Open Note
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.closeNoteDisabled}
+              onClick={this.closeNote}
+              className={classes.outlinedButton}
+            >
+              Close Note
             </Button>
             <Button
               variant="contained"
               color="secondary"
               disabled={this.state.deleteDisabled}
-              onClick={this.deleteNode}
+              onClick={this.removeSelectedNode}
               className={classes.outlinedButton}
             >
               Delete Node
@@ -1604,6 +1816,7 @@ class TreeMindMap extends React.Component {
               Save Mind Map
             </Button>
           </Grid>
+          </div>
           <Grid item sm={12}>
             <Typography variant="h6">
               Mind Map for {this.state.orgName}
@@ -1624,6 +1837,7 @@ class TreeMindMap extends React.Component {
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
+        </div>
       </React.Fragment>
     );
   }

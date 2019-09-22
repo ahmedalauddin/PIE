@@ -217,9 +217,17 @@ class NodeDetail extends React.Component {
       method = "PUT";
     } else {
       // For create
-      apiPath = "/api/kpis/";
-      successMessage = "KPI '" + this.state.title + "' created.";
       method = "POST";
+      if (this.state.project === "") {
+        // Create KPI only
+        apiPath = "/api/kpis/";
+        successMessage = "KPI '" + this.state.title + "' created.";
+      } else {
+        // Create KPI and a project.
+        apiPath = "/api/kpis-with-project/";
+        successMessage = "KPI '" + this.state.title + "' created with project '" +
+          this.state.project + "'";
+      }
     }
 
     setTimeout(() => {
@@ -247,6 +255,7 @@ class NodeDetail extends React.Component {
     console.log("NodeDetail.js, selectedNodeId:" + selectedNodeId);
 
     if (selectedNodeId !== "") {
+      // Update KPI
       fetch(`/api/kpis-mindmapnode/${selectedNodeId}`)
         .then(res => res.json())
         .then(kpi => {
@@ -277,6 +286,7 @@ class NodeDetail extends React.Component {
           }
         });
     } else {
+      // Create KPI
       this.setState({
         title: "",
         kpiId: "",
@@ -314,7 +324,6 @@ class NodeDetail extends React.Component {
     }
 
     return (
-
       <div className={classes.paper}>
         <form onSubmit={this.handleSubmit} noValidate>
           <Grid container spacing={24}>
@@ -355,12 +364,6 @@ class NodeDetail extends React.Component {
                   shrink: true
                 }}
               /><br />
-              <Checkbox
-                key={this.state.projectId}
-                checked={!!+this.state.projectId}
-                tabIndex={-1}
-                onChange={this.handleToggle(this.state.projectId)}
-              />Add Project<br />
               <TextField
                 id="title"
                 label="Project Title"
@@ -376,7 +379,7 @@ class NodeDetail extends React.Component {
                 id="projectDescription"
                 label="Project Description"
                 onChange={this.handleChange("projectDescription")}
-                value={this.state.description}
+                value={this.state.projectDescription}
                 fullWidth
                 margin="normal"
                 InputLabelProps={{

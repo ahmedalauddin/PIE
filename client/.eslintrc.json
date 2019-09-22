@@ -80,12 +80,6 @@
     "indent": ["warn", 2],
     "quotes": "warn",
     "no-invalid-this": "warn",
-    "no-unused-vars": [
-      "warn",
-      {
-        "args": "none"
-      }
-    ],
     "no-console": "warn",
     "html/indent": "+2",
     "prettier/prettier": "warn",

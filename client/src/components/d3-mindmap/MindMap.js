@@ -275,7 +275,7 @@ class MindMap extends React.Component {
               </Grid>
               <Grid item xs={false} sm={3} md={3} >
                 <div className={classes.root}>
-                  <AppBar position="static">
+                  <AppBar position="static" elevation={0}>
                     <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
                       <Tab label="Node" />
                       <Tab label="Prioritized KPIs" />

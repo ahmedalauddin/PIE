@@ -17,6 +17,7 @@ const Project = require("../models").Project;
 const Task = require("../models").Task;
 const mvcType = "controller";
 const cookieName = "token";
+const models = require("../models");
 
 function writeJwt(email, organization) {
   let token = jwt.sign(
@@ -56,7 +57,7 @@ module.exports = {
       .then(p => {
         logger.debug(
           `${mvcType} authenticate -> 
-            Success, found person, pwdhash: ${p.pwdhash}`
+            Success, found person, pwdhash: ${p.pwdhash}, personId: ${p.id}`
         );
 
         bCrypt.compare(req.body.password, p.pwdhash, function(err, result) {
@@ -69,7 +70,13 @@ module.exports = {
             logger.debug(
               `${mvcType} authenticate -> returning token ${token} as cookie`
             );
+
+            let sql = "update `Persons` set lastLogin = CURRENT_TIMESTAMP where id = " + p.id;
+            logger.debug(`auth.js, setLastLogin -> sql: ${sql}`);
+            models.sequelize.query(sql);
+
             res.cookie(cookieName, token, { httpOnly: true }).status(200).json(p);
+
           } else {
             // Login failed
             let _m = "Username or password is incorrect";

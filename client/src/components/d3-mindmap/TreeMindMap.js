@@ -21,7 +21,7 @@ import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {Redirect} from "react-router-dom";
-
+import { createId, createNewMapJson } from "./MindMapFunctions";
 //<editor-fold desc="// Constant declarations">
 const styles = theme => ({
   grid: {
@@ -290,40 +290,6 @@ const vRad = 25;
 const noteColor = ["#feff9c", "#7afcff", "#ff7eb9"];
 //</editor-fold>
 
-//<editor-fold desc="// Non-class functions">
-/**
- * @method: guid
- * @desc: Generates unique guid
- **/
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + "-" + s4() + "-" + s4() + "-" +
-    s4() + "-" + s4() + s4() + s4();
-}
-
-function createId() {
-  return (
-    "_" +
-    Math.random()
-      .toString(36)
-      .substr(2, 9)
-  );
-}
-
-function printNodes(msg, root) {
-  // Log where the nodes are.
-  console.log(msg);
-  root.descendants().forEach((d, i) => {
-    console.log("node i: " + i + ", d.depth:" + d.depth + ", data.name: " + d.data.name +
-      ", d.x:" + parseFloat(d.x).toFixed(2) + ", d.y: " + parseFloat(d.y).toFixed(2));
-  });
-};
-//</editor-fold>
-
 class TreeMindMap extends React.Component {
   constructor(props) {
     super(props);
@@ -334,10 +300,8 @@ class TreeMindMap extends React.Component {
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
     this.editNode = this.editNode.bind(this);
-    this.renameNode = this.renameNode.bind(this);
     this.undoDeleteNode = this.undoDeleteNode.bind(this);
     this.getLastDeletedNode = this.getLastDeletedNode.bind(this);
-    this.rename = this.rename.bind(this);
     this.newMap = this.newMap.bind(this);
     this.selectNode = this.selectNode.bind(this);
     this.deselectNode = this.deselectNode.bind(this);
@@ -367,11 +331,11 @@ class TreeMindMap extends React.Component {
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
     this.updateNodeInfo = this.updateNodeInfo.bind(this);
+    this.updateJsonData = this.updateJsonData.bind(this);
     this.addNote = this.addNote.bind(this);
     this.openNote = this.openNote.bind(this);
     this.closeNote = this.closeNote.bind(this);
     this.addNoteRects = this.addNoteRects.bind(this);
-    this.createNewMapJson = this.createNewMapJson.bind(this);
     this.update = this.update.bind(this);
     //</editor-fold>
     //<editor-fold desc="// Constructor set state">
@@ -399,7 +363,7 @@ class TreeMindMap extends React.Component {
       nodeTitle: "",
       idea: "",
       myCounter: 0,
-      deletedNodes: [],     // start using an arrary for this.
+      deletedNodes: [],     // start using an array for this.
       deletedNodeId: "",
       deletedNodeName: "",
       deletedNodeParentId: "",
@@ -513,6 +477,9 @@ class TreeMindMap extends React.Component {
     // TODO: Save note to JSON first.
     // Save this to JSON: selectedPostit._groups[0][0].textContent
     let noteText = selectedPostit._groups[0][0].textContent;
+    // Try this later.
+    // const noteText = selectedPostit.select("p.note").text();
+
     if (noteText) {
       let selectedNodeId = this.findSelectedNodeId(svg);
       let jsonNode = this.getNodeById(selectedNodeId, json);
@@ -525,13 +492,16 @@ class TreeMindMap extends React.Component {
       .attr("y", 10)
       .attr("width", vRad)
       .attr("height", vRad)
-      //.select("xhtml:p")
       .text(d => "")       // Use this to expand text later.  May have to save text first.
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
 
     selectedNode.attr("note-state", "collapsed");
+
+    // New code 9/22/19
+    this.updateJsonData();
+    // end new code
 
     this.setState({
       jsonData: json,
@@ -540,13 +510,18 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  /*
-  getNoteRect = () => {
-    let svg = d3.select("svg");
-    const nodeContainers = svg.select("#nodes");
+  // Update JSON for a node and save it to state.
+  updateJsonData = () => {
     let selectedNode = this.findSelectedNode();
-  };
-   */
+    if (!selectedNode.empty()) {
+      const nodeId = selectedNode.attr("id");
+      const newNodeName = selectedNode.select("p.node-title").text();
+      selectedNode.attr("name", newNodeName);
+      let json = this.state.jsonData;
+      let jsonNode = this.getNodeById(nodeId, json);
+      jsonNode.name = newNodeName;
+    }
+  }
 
   addNoteRects = (nodeContainers) => {
     let g = d3.select("svg");
@@ -613,18 +588,6 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// Node functions">
-  rename = () => {
-    let svg = d3.select(this.svg);
-    console.log("rename node");
-    let selectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected");
-
-    let idOfSelectedNode = selectedNode.attr("id");
-    console.log("idOfSelectedNode: " + idOfSelectedNode);
-    this.editNode(selectedNode);
-  };
-
   handleKeypressEsc = svg => {
     // TODO: this isn't getting called.
     svg
@@ -804,24 +767,6 @@ class TreeMindMap extends React.Component {
     return runner(null, node);
   };
 
-  renameNode = (d, i, nodes) => {
-    console.log("renameNode");
-    const currentlySelectedNode = d3.selectAll(nodes).filter(".node-selected");
-
-    const clickedNodeIndex = i;
-    const clickedNode = nodes[clickedNodeIndex];
-    const clickedNodeID = d3.select(clickedNode).attr("name");
-    // const otherNodes = d3.selectAll(nodes).filter((d,i) => i!== clickedNodeIndex);
-
-    if (
-      currentlySelectedNode.size() > 0 &&
-      currentlySelectedNode.attr("name") === clickedNodeID
-    ) {
-      console.log("renameNode: going into editing mode!");
-      d3.select(clickedNode).call(this.editNode);
-    }
-  };
-
   // Uses our callback to send info to other components.
   updateNodeInfo = (selectedNodeId, selectedNodeText) => {
     this.props.callback(selectedNodeId, selectedNodeText);
@@ -993,7 +938,6 @@ class TreeMindMap extends React.Component {
   removeSelectedNodeFromData = () => {
     // Removes selected node from the JSON data, stored in state.  Just need the id field.
     // Also updates our deleted nodes data, so we can undelete later.
-    let svg = d3.select(this.svg);
     let selectedNode = this.findSelectedNode();
     let jsonData = [this.state.jsonData];
     let parent = this.findParentNode(selectedNode.attr("id"));
@@ -1118,10 +1062,8 @@ class TreeMindMap extends React.Component {
   editNode = node => {
     node
       .classed("node-editing", true)
-      // .selectAll("foreignObject").filter("node-title")
       .select("foreignObject")
       .select("p")
-      // .attr("contenteditable", true)          // added, 9/17/19
       .style("background-color", "#ddd");
     console.log(`${node.attr("name")} is being edited`);
   };
@@ -1130,12 +1072,16 @@ class TreeMindMap extends React.Component {
     // d3.selectAll("g.node")
     //  .filter(".node-selected")
     //  .each(this.deselectNode);
+    let updateJsonData = this.updateJsonData;
     node
       .classed("node-selected", true)
       .select("foreignObject")
       .select("p")
       .attr("contenteditable", true)
-      .style("background-color", "#ddd");
+      .style("background-color", "#ddd")
+      .on("blur", function() {
+        updateJsonData();
+      });
     node
       .classed("node-selected", true)
       .select("circle")
@@ -1180,7 +1126,7 @@ class TreeMindMap extends React.Component {
     let idOfSelectedNode = d3.select(nodes[i]).attr("id");
     console.log("Selected node id = " +  idOfSelectedNode + ", name = " +  d3.select(nodes[i]).attr("name"));
 
-    let newValue = d3
+    let newTextValue = d3
       .select(nodes[i])
       .select("foreignObject")
       .select("p")
@@ -1195,19 +1141,18 @@ class TreeMindMap extends React.Component {
       .classed("node-editing", false)
       .classed("node-selected", false)
       .select("foreignObject")
-      // .selectAll("foreignObject").filter("node-title")
       .select("p")
       .attr("contenteditable", false)
       .style("background-color", null);
 
-    this.updateNodeValue(idOfSelectedNode, newValue);
-    // TODO
+    this.updateNodeValue(idOfSelectedNode, newTextValue);
+    // TODO - save newValue to JSON
     // this.updateNodeInfo(nodes[i].attr("id"), nodes[i].attr("name"));
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
-    let parent = this.findNode(idOfSelectedNode);
-    parent.name = newValue;
+    let node = this.findNode(idOfSelectedNode);
+    node.name = newValue;
   };
 
   handleClickOnCanvas = (d, i, nodes) => {
@@ -1231,7 +1176,6 @@ class TreeMindMap extends React.Component {
       .attr("height", 40)
       .append("xhtml:p")
       .text(d => {
-        // logAppendText(d, true);
         return d.data.name;
       });
   };
@@ -1294,15 +1238,7 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// D3 and tree layout and draw functions">
-  createNewMapJson = () => {
-    let json = {
-      id: createId(),
-      name: "Root",
-      note: "",
-      children: []
-    };
-    return json;
-  };
+
 
   createTreeLayout = () => {
     let svg = d3.select("svg");
@@ -1595,7 +1531,7 @@ class TreeMindMap extends React.Component {
     this.setState(
       {
         isNewMap: true,
-        jsonData: this.createNewMapJson()
+        jsonData: createNewMapJson()
       },
       () => {
         console.log(

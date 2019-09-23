@@ -181,15 +181,17 @@ class MindMap extends React.Component {
       orgName: getOrgName(),
       orgId: getOrgId(),
       selectedNodeId: "",
+      selectedNodeText: "",
       openSnackbar: false,
       message: "",
       tabValue: 0
     };
   }
 
-  sendSelectedNode(nodeId) {
+  sendSelectedNode(nodeId, nodeText) {
     this.setState({
-      selectedNodeId: nodeId
+      selectedNodeId: nodeId,
+      selectedNodeText: nodeText
     });
   }
 
@@ -226,7 +228,7 @@ class MindMap extends React.Component {
     if (showDetail) {
       return (
         <Grid item xs={12} sm={2} md={2} component={Paper}>
-          <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+          <NodeDetail nodeId={this.state.selectedNodeId} text={this.state.selectedNodeText} messages={this.showMessages}/>
         </Grid>);
     }
   };
@@ -283,7 +285,7 @@ class MindMap extends React.Component {
                   </AppBar>
                   {this.state.tabValue === 0 && (
                     <TabContainer>
-                      <NodeDetail nodeId={this.state.selectedNodeId} messages={this.showMessages}/>
+                      <NodeDetail nodeId={this.state.selectedNodeId} text={this.state.selectedNodeText} messages={this.showMessages}/>
                     </TabContainer>)}
                   {this.state.tabValue === 1 && (
                     <TabContainer>

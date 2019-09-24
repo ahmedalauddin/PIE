@@ -475,8 +475,11 @@ module.exports = {
 
   // List all KPIs for a single organization by priority for the mind map screen.
   listByOrganizationAndPriority(req, res) {
-    let sql = "select * from Kpis " +
-      "where orgId = " + req.params.orgid + " and active = 1 order by orgPriority asc";
+    const orgId = req.params.orgid;
+    const sql = "select K.id, K.title, K.orgPriority, P.id as projId, P.title as projTitle, P.description as projDescription " +
+      "from Kpis K left outer join Projects P on K.id = P.mainKpiId and K.orgId = P.orgId " +
+      "where K.orgId = '" + orgId + "' and active = 1 " +
+      "order by orgPriority asc";
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);
     return models.sequelize
       .query(sql,

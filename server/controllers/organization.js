@@ -91,6 +91,51 @@ module.exports = {
       });
   },
 
+  checkKpiPrioritizationLock(req, res) {
+    let orgId = req.params.id;
+    let sql = "SELECT * from Organizations O where id = " + orgId + " ";
+    logger.debug(`Organization checkKpiPrioritizationLock -> sql: ${sql}`);
+    return models.sequelize
+      .query(
+        sql,
+        {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(s => {
+        res.status(200).send(s);
+      })
+      .catch(error => {
+        logger.error(`Organization checkKpiPrioritizationLock -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  saveKpiPrioritizationLock(req, res) {
+    const id = req.params.id;
+    logger.debug("Calling Organizations update");
+    logger.debug(`Organizations saveKpiPrioritizationLock --> name = ${req.params.name}`);
+    return models.Organization.update(
+      {
+        lockPrioritization: !req.body.orgKpiPriorityLock,
+      },
+      {
+        returning: true,
+        where: {
+          id: id
+        }
+      }
+    )
+      .then(p => {
+        logger.debug(`Organizations saveKpiPrioritizationLock -> successful`);
+        res.status(200).send(p);
+      })
+      .catch(error => {
+        logger.error(`Organizations saveKpiPrioritizationLock -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // select all organizations
   list(req, res) {
     if (req.query.format === "select") {

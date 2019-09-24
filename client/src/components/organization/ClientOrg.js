@@ -1,13 +1,14 @@
 /**
- * Project:  valueinfinity-mvp
- * File:     /client/src/components/ClientOrg.js
- * Created:  2019-02-04
- * Author:   Brad Kaufman
+ * Project:     valueinfinity-mvp
+ * File:        /client/src/components/ClientOrg.js
+ * Created:     2019-02-04
+ * Author:      Brad Kaufman
  * Description: Filter client organization for VI personnel.  Sets the Redux store
  *              for organization.
  * -----
- * Modified: 2019-03-23 15:10:01
- * Editor:   Darrin Tisdale
+ * Modified:    2019-09-21
+ * Editor:      Brad Kaufman
+ * Changes:     Update to direct to mind map.
  */
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -28,25 +29,22 @@ import Select from "@material-ui/core/Select";
 import { setOrg, store } from "../../redux";
 
 class ClientOrg extends React.Component {
-  // Note that I'll need the individual fields for handleChange.  Use state to manage the inputs for the various
-  // fields.
-  state = {
-    id: "",
-    organizations: [],
-    org: "",
-    orgId: 0,
-    expanded: false,
-    readyToRedirect: false,
-    labelWidth: 0,
-    msgText: ""
-  };
-
   constructor(props) {
     super(props);
     // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
     // state values.
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      id: "",
+      organizations: [],
+      org: "",
+      orgId: 0,
+      expanded: false,
+      readyToRedirect: false,
+      labelWidth: 0,
+      msgText: ""
+    };
   }
 
   handleChange = name => event => {
@@ -105,14 +103,14 @@ class ClientOrg extends React.Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/paneldashboard" />;
+      return <Redirect to="/mindmap" />;
     }
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath}/>
-        <form onSubmit={this.handleSubmit} noValidate>
+        <form id onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
               <Grid

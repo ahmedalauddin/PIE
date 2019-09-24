@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: true,
         allowNull: false
       },
+      lockPrioritization: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

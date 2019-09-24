@@ -16,10 +16,10 @@ import Checkbox from "@material-ui/core/Checkbox/index";
 import MenuItem from "@material-ui/core/MenuItem/index";
 import FormControl from "@material-ui/core/FormControl/index";
 import Select from "@material-ui/core/Select/index";
-import Back from "../common/Back";
+import Back from "../../common/Back";
 
 const qs = require("query-string");
-const backgroundShape = require("../../images/shape.svg");
+const backgroundShape = require("../../../images/shape.svg");
 
 const numeral = require("numeral");
 numeral.defaultFormat("0,000");

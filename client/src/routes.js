@@ -32,11 +32,7 @@ import Analytics from "./components/analytics/Analytics";
 import withAuth from "./components/withAuth.jsx";
 import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
-import TreeMap from "./components/d3-mindmap/save/TreeMap";
-import TreeMindMap from "./components/d3-mindmap/TreeMindMap";
-import TreeMindMapOld from "./components/d3-mindmap/save/TreeMindMapOld";
 import MindMap from "./components/d3-mindmap/MindMap";
-import MindMapOld from "./components/d3-mindmap/save/MindMapOld";
 import Search from "./components/search/Search";
 
 export default props => (
@@ -50,14 +46,11 @@ export default props => (
         <Route exact path="/logout" component={Logout} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
-        <Route exact path="/treemap" component={TreeMap} />
-        <Route exact path="/treemapold" component={TreeMindMapOld} />
         <Route exact path="/mindmap" component={MindMap} />
-        <Route exact path="/mindmapold" component={MindMapOld} />
         <Route exact path="/password" component={ChangePassword} />
         <Route exact path="/search" component={withAuth(Search)} />
         <Route exact path="/about" component={About} />
-        <Route exact path="/" component={Main} />
+        <Route exact path="/" component={Login} />
         <Route exact path="/userinfo" component={UserInfo} />
         <Route exact path="/clientorg" component={withAuth(ClientOrg)} />
         <Route exact path="/analytics" component={withAuth(Analytics)} />

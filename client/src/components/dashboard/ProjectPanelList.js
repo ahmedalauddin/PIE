@@ -5,7 +5,7 @@
  * Created:  2019-06-02
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-06-02
+ * Modified: 2019-09-22
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -13,11 +13,11 @@ import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getProjectFilter } from "../../redux";
+import { getOrgId } from "../../redux";
 import moment from "moment/moment";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";

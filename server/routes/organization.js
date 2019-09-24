@@ -4,8 +4,8 @@
  * Created:  2019-02-05 09:23:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-26 17:45:43
- * Editor:   Darrin Tisdale
+ * Modified: 2019-09-22
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -24,6 +24,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/organizations-dashboard`);
   router.get("/api/organizations-dashboard", orgController.dashboardList);
 
+  // save KPI prioritization lock
+  logger.debug(`${callerType} PUT -> path: /api/org-save-prioritization-lock/:id`);
+  router.put("/api/org-save-prioritization-lock/:id", orgController.saveKpiPrioritizationLock   );
+
   // select all organizations for a dashboard list
   logger.debug(`${callerType} GET -> path: /api/ft-search`);
   router.get("/api/ft-search", orgController.fulltextSearch);
@@ -31,6 +35,10 @@ module.exports = router => {
   // select a single organization by ID
   logger.debug(`${callerType} GET -> path: /api/organizations/:id`);
   router.get("/api/organizations/:id", orgController.findById);
+
+  // select a single organization by ID to check its KPI prioritization lock.
+  logger.debug(`${callerType} GET -> path: /api/organizations-kpilock/:id`);
+  router.get("/api/organizations-kpilock/:id", orgController.checkKpiPrioritizationLock);
 
   // create an organization
   logger.debug(`${callerType} POST -> path: /api/organizations`);

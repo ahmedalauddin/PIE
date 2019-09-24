@@ -1,103 +1,119 @@
 {
-  "order": "asc",
-  "orderBy": "title",
-  "selected": [],
-  "data": [
+  "ideas": [],
+  "items": [
     {
-      "id": 53,
-      "orgId": 2,
-      "deptId": null,
-      "title": "New KPI",
-      "description": "Linear regression and Bayesian analysis",
-      "level": 1,
-      "type": "leading",
-      "status": null,
-      "createdAt": "2019-05-03T18:55:50.000Z",
-      "updatedAt": "2019-05-06T21:33:22.000Z",
-      "projectId": null,
-      "formulaDescription": "",
-      "departmentId": null,
-      "projectTitle": "Lean operations",
-      "orgName": "Northwest Lumber",
-      "tags": null,
-      "selected": true
+      "id": "item-0",
+      "content": "item 0"
     },
     {
-      "id": 55,
-      "orgId": 2,
-      "deptId": null,
-      "title": "Simple regression",
-      "description": "Simple regression against costs, inventory, and maintenance.",
-      "level": 1,
-      "type": "lagging",
-      "status": null,
-      "createdAt": "2019-05-04T18:45:03.000Z",
-      "updatedAt": "2019-05-04T18:45:03.000Z",
-      "projectId": null,
-      "formulaDescription": "None",
-      "departmentId": null,
-      "projectTitle": "Address Increasing Annual Costs",
-      "orgName": "Northwest Lumber",
-      "tags": null
+      "id": "item-1",
+      "content": "item 1"
     },
     {
-      "id": 58,
-      "orgId": 2,
-      "deptId": null,
-      "title": "Increase efficiency",
-      "description": "",
-      "level": 1,
-      "type": "",
-      "status": null,
-      "createdAt": "2019-05-04T20:10:48.000Z",
-      "updatedAt": "2019-05-04T20:10:48.000Z",
-      "projectId": null,
-      "formulaDescription": "",
-      "departmentId": null,
-      "projectTitle": "Address Increasing Annual Costs",
-      "orgName": "Northwest Lumber",
-      "tags": "Linear regression",
-      "selected": true
+      "id": "item-2",
+      "content": "item 2"
     },
     {
-      "id": 59,
-      "orgId": 2,
-      "deptId": null,
-      "title": "Increase efficiency",
-      "description": "",
-      "level": 1,
-      "type": "",
-      "status": null,
-      "createdAt": "2019-05-04T20:12:18.000Z",
-      "updatedAt": "2019-05-04T20:12:18.000Z",
-      "projectId": null,
-      "formulaDescription": "",
-      "departmentId": null,
-      "projectTitle": "Address Increasing Annual Costs",
-      "orgName": "Northwest Lumber",
-      "tags": "Linear regression",
-      "selected": true
+      "id": "item-3",
+      "content": "item 3"
     },
     {
-      "id": 67,
-      "orgId": 2,
-      "deptId": null,
-      "title": "Increase efficiency",
-      "description": "Sample description for increasing energy",
-      "level": 1,
-      "type": "",
-      "status": null,
-      "createdAt": "2019-05-04T21:28:59.000Z",
-      "updatedAt": "2019-05-05T13:55:10.000Z",
-      "projectId": null,
-      "formulaDescription": "",
-      "departmentId": null,
-      "projectTitle": "Address Increasing Annual Costs",
-      "orgName": "Northwest Lumber",
-      "tags": "Cluster analysis,Linear regression,Predictive analytics,Time-series analysis"
+      "id": "item-4",
+      "content": "item 4"
+    },
+    {
+      "id": "item-5",
+      "content": "item 5"
+    },
+    {
+      "id": "item-6",
+      "content": "item 6"
+    },
+    {
+      "id": "item-7",
+      "content": "item 7"
+    },
+    {
+      "id": "item-8",
+      "content": "item 8"
+    },
+    {
+      "id": "item-9",
+      "content": "item 9"
     }
   ],
-  "submitted": true,
-  "page": 0,
-  "rowsPerPage": 5
+  "kpis": [
+    {
+      "id": 9,
+      "title": "Mean Time Between Failure",
+      "orgPriority": 1,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    },
+    {
+      "id": 97,
+      "title": "Assess degree of automation",
+      "orgPriority": 2,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    },
+    {
+      "id": 107,
+      "title": "Measure failover testing",
+      "orgPriority": 3,
+      "projId": 140,
+      "projTitle": "Increase levels of tesing",
+      "projDescription": "Assess potential benefits of testing to prevent future failures"
+    },
+    {
+      "id": 4,
+      "title": "Increase parts availability",
+      "orgPriority": 4,
+      "projId": 30,
+      "projTitle": "Plant closing",
+      "projDescription": "Reduce inventory in all warehouses"
+    },
+    {
+      "id": 99,
+      "title": "Reduce Inventory Cost",
+      "orgPriority": 5,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    },
+    {
+      "id": 96,
+      "title": "Evaluate supply chain",
+      "orgPriority": 6,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    },
+    {
+      "id": 12,
+      "title": "Increase parts availability and more",
+      "orgPriority": 7,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    },
+    {
+      "id": 23,
+      "title": "Increase energy output efficiency",
+      "orgPriority": 8,
+      "projId": null,
+      "projTitle": null,
+      "projDescription": null
+    }
+  ],
+  "orgName": "Northwest Lumber",
+  "orgKpiPriorityLock": 1,
+  "lockPrioritization": false,
+  "dragDisabled": true,
+  "helpText": "Unlock prioritization to enable reordering KPI priorities.",
+  "lockButtonText": "Unlock Prioritization",
+  "title": "assess mena time here.",
+  "description": "another decr right here."
 }

@@ -3,7 +3,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import { Link, withRouter } from "react-router-dom";
 import { isAdministrator, isLoggedIn } from "../redux";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -135,10 +134,10 @@ class Topbar extends Component {
 
   current = () => {
     let value = 0;
-    if (this.props.currentPath === "/paneldashboard") {
+    if (this.props.currentPath === "/login") {
       value = 0;
     }
-    if (this.props.currentPath === "/login") {
+    if (this.props.currentPath === "/paneldashboard") {
       value = 1;
     }
     if (this.props.currentPath === "/mindmap") {

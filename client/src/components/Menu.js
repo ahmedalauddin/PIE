@@ -1,15 +1,15 @@
 const Menu = [
   {
-    label: "Dashboard",
-    pathname: "/paneldashboard",
-    admin: false,
-    intro: false
-  },
-  {
     label: "Login",
     pathname: "/login",
     admin: false,
     intro: true
+  },
+  {
+    label: "Dashboard",
+    pathname: "/paneldashboard",
+    admin: false,
+    intro: false
   },
   {
     label: "Mind Map",

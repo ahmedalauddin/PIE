@@ -151,42 +151,45 @@ const styles = theme => ({
 class NodeDetail extends React.Component {
   constructor(props) {
     super(props);
-    // Make sure to .bind the handleSubmit to the class.  Otherwise the API doesn't receive the
-    // state values.
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
+    this.state = {
+      kpiId: undefined,
+      title: undefined,
+      orgId: 0,
+      description: undefined,
+      formula: undefined,
+      project: undefined,
+      projectId: undefined,
+      projectDescription: undefined,
+      mindmapNodeId: undefined,
+      hasError: "",
+      startAt: "",
+      endAt: "",
+      message: "",
+      buttonText: undefined,
+      isEditing: false,
+      redirect: false,
+      isNew: false
+    }
   };
 
-  state = {
-    kpiId: undefined,
-    title: undefined,
-    orgId: 0,
-    description: undefined,
-    formula: undefined,
-    project: undefined,
-    projectId: undefined,
-    projectDescription: undefined,
-    mindmapNodeId: undefined,
-    hasError: "",
-    startAt: "",
-    endAt: "",
-    message: "",
-    buttonText: undefined,
-    isEditing: false,
-    redirect: false,
-    isNew: false
-  };
-
-  // For the snackbar
+  //<editor-fold desc="Snackbar functions">
   handleClose = () => {
     this.setState({ openSnackbar: false });
+  };
+
+  // This function is for the snackbar messages.
+  anotherFunction = () => {
+    this.props.showMessages(this.state.message);
   };
 
   // For the snackbar
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
   };
+  //   //</editor-fold>
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -194,10 +197,6 @@ class NodeDetail extends React.Component {
 
   handleExpandClick = () => {
     this.setState(state => ({ expanded: !state.expanded }));
-  };
-
-  anotherFunction = () => {
-    this.props.showMessages(this.state.message);
   };
 
   handleSubmit(event) {
@@ -367,32 +366,7 @@ class NodeDetail extends React.Component {
                 InputLabelProps={{
                   shrink: true
                 }}
-              /><br /><br /><br /><br />
-              <Typography variant="h7" gutterBottom>
-                Project
-              </Typography>
-              <TextField
-                id="title"
-                label="Project Title"
-                onChange={this.handleChange("project")}
-                value={this.state.project}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
-              <TextField
-                id="projectDescription"
-                label="Project Description"
-                onChange={this.handleChange("projectDescription")}
-                value={this.state.projectDescription}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true
-                }}
-              />
+              /><br /><br />
               <br /><br />
               <Typography component="p">
                 <Button

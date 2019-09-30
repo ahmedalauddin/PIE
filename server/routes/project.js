@@ -4,7 +4,7 @@
  * Created:  2019-02-01 12:39:21
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-26 17:58:19
+ * Modified: 2019-09-28
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -23,6 +23,10 @@ module.exports = router => {
   // Create a project
   logger.debug(`${callerType} POST -> path: /api/projects`);
   router.post("/api/projects", projController.create);
+
+  // Create a project
+  logger.debug(`${callerType} POST -> path: /api/projects-add`);
+  router.post("/api/projects-add", projController.createOrUpdateProjectWithKpi);
 
   // Retrieve a single project by Id
   logger.debug(`${callerType} GET -> path: /api/projects/:id`);

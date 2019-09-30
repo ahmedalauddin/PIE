@@ -158,6 +158,7 @@ class NodeDetail extends React.Component {
       kpiId: undefined,
       title: undefined,
       orgId: 0,
+      nodeDescription: "",
       description: undefined,
       formula: undefined,
       project: undefined,
@@ -328,6 +329,17 @@ class NodeDetail extends React.Component {
               <Typography variant="h6" gutterBottom>
                 {this.props.text}
               </Typography>
+              <TextField
+                id="nodeDescription"
+                label="Node Description"
+                onChange={this.handleChange("nodeDescription")}
+                value={this.state.nodeDescription}
+                rowMax = "6"
+                margin="normal"
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
               <Typography variant="h7" gutterBottom>
                 KPI
               </Typography>
@@ -343,7 +355,7 @@ class NodeDetail extends React.Component {
                 }}
               />
               <TextField
-                id="title"
+                id="description"
                 label="Description"
                 onChange={this.handleChange("description")}
                 value={this.state.description}

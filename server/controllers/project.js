@@ -65,6 +65,44 @@ module.exports = {
       });
   },
 
+  // Creates project with KPI
+  // TODO: look at persons associated with the project, see the create method above.
+  createOrUpdateProjectWithKpi(req, res) {
+    // let _obj = util.inspect(req, { showHidden: false, depth: null });
+    logger.debug(`${callerType} createOrUpdateProjectWithKpi -> JSON: req.body: ${JSON.stringify(req.body)}`);
+
+    const title = req.body.title;
+    const description = req.body.description;
+    const mainKpiId = req.body.kpiProjectSubmitted;
+    const orgId = req.body.orgId;
+    /**
+     *  Call the setProject stored procedure, which inserts or updates a project, depending on whether a project
+     *  exists for the KPI and org.  Note that we call the stored procedure with @returnText as its output parameter,
+     *  call the proc, then select the output parameter.  This is because Sequelize does not support output parameters
+     *  from stored procedures, we use this approach.  See https://github.com/sequelize/sequelize/issues/7060 for
+     *  details.
+     */
+    /**
+     * Try this code later
+     * const sql = "set @returnText = null; " +
+     *   "call setProject(" +  mainKpiId + ", " + orgId + ", '" + title + "', '" + description + "', @returnText); " +
+     *   "SELECT @returnText;";
+     */
+    const sql = "call setProject(" +  mainKpiId + ", " + orgId + ", '" + title + "', '" + description + "'); ";
+    return models.sequelize.query(
+      sql, {
+      type: models.sequelize.QueryTypes.RAW
+    })
+      .then(statusText => {
+        logger.info(`${callerType} createOrUpdateProjectWithKpi -> returned text`);
+        res.status(200).send(statusText);
+      })
+      .catch(error => {
+        logger.error(`${callerType} createOrUpdateProjectWithKpi -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // Update a project
   update(req, res) {
     if (req.query.mmid && req.query.nid) {

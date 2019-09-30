@@ -11,20 +11,18 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
-import {getOrgId, setOrg, store} from "../../redux";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {getOrgId } from "../../redux";
+import {DragDropContext, Droppable, Draggable} from "react-beautiful-dnd";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
 
 //<editor-fold desc="Non-class react-beautiful-dnd methods">
 const getItems = count =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
+  Array.from({length: count}, (v, k) => k).map(k => ({
     id: `item-${k}`,
     content: `item ${k}`
   }));
@@ -178,6 +176,7 @@ const getListStyle = isDraggingOver => ({
   padding: grid,
   width: 500
 });
+
 //</editor-fold>
 
 class PrioritizeKpis extends React.Component {
@@ -185,17 +184,17 @@ class PrioritizeKpis extends React.Component {
     super(props);
     this.onDragEnd = this.onDragEnd.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.saveOrAddProject = this.saveOrAddProject.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.fetchKpis = this.fetchKpis.bind(this);
     this.fetchOrganizationKpiLock = this.fetchOrganizationKpiLock.bind(this);
     this.updatePrioritizationLock = this.updatePrioritizationLock.bind(this);
     this.saveKpiPriorities = this.saveKpiPriorities.bind(this);
     this.state = {
-      ideas: [],
       items: getItems(10),
       kpis: [],
+      kpiProjectSubmitted: null,
       orgName: "",
+      orgId: getOrgId(),
       orgKpiPriorityLock: false,
       lockPrioritization: false,
       dragDisabled: false,
@@ -248,11 +247,12 @@ class PrioritizeKpis extends React.Component {
             helpText: helpText,
             lockButtonText: lockButtonText,
             dragDisabled: dragDisabled
-        });
+          });
           console.log("fetchOrganizationKpiLock, lockPrioritization selected is:" + org[0].lockPrioritization);
         });
     }
   };
+
   //</editor-fold>
 
   //<editor-fold desc="Component and other methods">
@@ -261,8 +261,10 @@ class PrioritizeKpis extends React.Component {
     this.fetchOrganizationKpiLock();
   };
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value });
+  handleChange = (i, name) => event => {
+    this.setState({
+      [name]: event.target.value
+    });
   };
   //</editor-fold>
 
@@ -277,46 +279,20 @@ class PrioritizeKpis extends React.Component {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(this.state)
       })
-        .then( () => {
+        .then(() => {
           console.log("Going to log message: " + successMessage);
           this.setState({
             message: successMessage,
             // readyToRedirect: true
           });
         })
-        .then(updated =>{
+        .then(updated => {
           this.fetchOrganizationKpiLock();
         })
         .catch(err => {
-          this.setState({ message: "Error occurred." });
+          this.setState({message: "Error occurred."});
         });
     }, 2000);
-  }
-
-  saveOrAddProject() {
-    // need to do an "upsert" for projects
-    const orgId = getOrgId();
-    let successMessage = "";
-    alert(JSON.stringify(this.state));
-
-    /*
-    setTimeout(() => {
-      fetch("/api/save-kpi-project/" + orgId, {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(this.state)
-      })
-        .then( () => {
-          console.log("Going to log message: " + successMessage);
-          this.setState({
-            message: successMessage,
-            // readyToRedirect: true
-          });
-        })
-        .catch(err => {
-          this.setState({ message: "Error occurred." });
-        });
-    }, 2000); */
   }
 
   saveKpiPriorities() {
@@ -329,6 +305,37 @@ class PrioritizeKpis extends React.Component {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(this.state)
       })
+        .then(() => {
+          console.log("Going to log message: " + successMessage);
+          this.setState({
+            message: successMessage,
+            // readyToRedirect: true
+          });
+        })
+        .catch(err => {
+          this.setState({message: "Error occurred."});
+        });
+    }, 2000);
+  };
+
+  //</editor-fold>
+
+  // Handle submit of a project as main KPI for one of the selected KPI sections.
+  handleSubmit = (kpiId) => (event) => {
+    // Add the index to state so we know what we are submitting.
+    let successMessage = "";
+    this.setState({
+      kpiProjectSubmitted: kpiId
+    });
+
+    console.log("JSON state: " + JSON.stringify(this.state));
+    setTimeout(() => {
+      fetch("/api/projects-add", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(this.state)
+      })
+        .then(res => res.json())
         .then( () => {
           console.log("Going to log message: " + successMessage);
           this.setState({
@@ -337,16 +344,10 @@ class PrioritizeKpis extends React.Component {
           });
         })
         .catch(err => {
-          this.setState({ message: "Error occurred." });
+          this.setState({message: "Error occurred."});
         });
     }, 2000);
   };
-  //</editor-fold>
-
-  handleSubmit = () => event => {
-    alert(JSON.stringify(this.state));
-    console.log("JSON state: " + JSON.stringify(this.state));
-  }
 
   //<editor-fold desc="Drag and drop methods">
   onDragEnd(result) {
@@ -366,10 +367,11 @@ class PrioritizeKpis extends React.Component {
     });
     this.saveKpiPriorities();
   }
+
   //</editor-fold>
 
   render() {
-    const { classes } = this.props;
+    const {classes} = this.props;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -400,7 +402,7 @@ class PrioritizeKpis extends React.Component {
                         )}
                       >
                         <ExpansionPanel>
-                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
                             <div className={classes.column}>
                               <Typography className={classes.heading}>
                                 <strong>{kpi.title}</strong>
@@ -413,11 +415,11 @@ class PrioritizeKpis extends React.Component {
                           <ExpansionPanelDetails className={classes.details}>
                             <form onSubmit={this.handleSubmit} noValidate>
                               <Typography className={classes.secondaryHeading}>
-                                <input type="hidden" name="kpiId" value={kpi.id} />
+                                <input type="hidden" name="kpiId" value={kpi.id}/>
                                 <TextField
-                                  id="title"
+                                  id={`title${index + 1}`}
                                   label="Project Title"
-                                  onChange={this.handleChange("title")}
+                                  onChange={this.handleChange(index, "title")}
                                   value={kpi.projTitle}
                                   fullWidth
                                   margin="normal"
@@ -428,7 +430,7 @@ class PrioritizeKpis extends React.Component {
                                 <TextField
                                   id="description"
                                   label="Description"
-                                  onChange={this.handleChange("description")}
+                                  onChange={this.handleChange(index, "description")}
                                   value={kpi.projDescription}
                                   fullWidth
                                   margin="normal"
@@ -439,8 +441,8 @@ class PrioritizeKpis extends React.Component {
                                 <Button
                                   variant="contained"
                                   color="primary"
-                                  value={kpi.id}
-                                  onClick={this.handleSubmit()}
+                                  value={kpi.id + "-index-" + index}
+                                  onClick={this.handleSubmit(kpi.id)}
                                   className={classes.secondary}
                                 >
                                   Add or Update Project

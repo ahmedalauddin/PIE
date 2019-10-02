@@ -26,8 +26,6 @@ import { styles } from "../styles/MaterialSense";
 import { stableSort, getSorting } from "../TableFunctions";
 import Button from "@material-ui/core/Button/index";
 import { getOrgId, getOrgName } from "../../redux";
-import Fab from '@material-ui/core/Fab/index';
-import AddIcon from '@material-ui/icons/Add';
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },

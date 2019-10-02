@@ -1,11 +1,13 @@
 /**
  * Project:  valueinfinity-mvp
  * File:     /client/src/components/d3-mindmap/MindMap.js
- * Descr:    Container page for D3 mind map.
+ * Descr:    Container page for D3 mind map.  The container contains the tree mind map (the actual D3 mond map),
+ *           plus the tabs on the right for the mind map node detail (node name, descrip, and associated KPI)
+ *           and the prioritized KPI list.
  * Created:  2019-06-22
  * Author:   Brad Kaufman
- * -----
- * Modified: 2019-08-14
+ *
+ * Modified: 2019-10-01
  * Changes:  Tabs for node detail and prioritzing KPIs.
  * Editor:   Brad Kaufman
  */
@@ -180,6 +182,7 @@ class MindMap extends React.Component {
     this.state = {
       orgName: getOrgName(),
       orgId: getOrgId(),
+      mindmapId: undefined,
       selectedNodeId: "",
       selectedNodeText: "",
       openSnackbar: false,
@@ -188,10 +191,12 @@ class MindMap extends React.Component {
     };
   }
 
-  sendSelectedNode(nodeId, nodeText) {
+  // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
+  sendSelectedNode(nodeId, nodeText, mindmapId) {
     this.setState({
       selectedNodeId: nodeId,
-      selectedNodeText: nodeText
+      selectedNodeText: nodeText,
+      mindmapId: mindmapId
     });
   }
 
@@ -228,7 +233,8 @@ class MindMap extends React.Component {
     if (showDetail) {
       return (
         <Grid item xs={12} sm={2} md={2} component={Paper}>
-          <NodeDetail nodeId={this.state.selectedNodeId} text={this.state.selectedNodeText} messages={this.showMessages}/>
+          <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={this.state.mindmapId}
+            text={this.state.selectedNodeText} messages={this.showMessages}/>
         </Grid>);
     }
   };
@@ -285,7 +291,8 @@ class MindMap extends React.Component {
                   </AppBar>
                   {this.state.tabValue === 0 && (
                     <TabContainer>
-                      <NodeDetail nodeId={this.state.selectedNodeId} text={this.state.selectedNodeText} messages={this.showMessages}/>
+                      <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={this.state.mindmapId}
+                        text={this.state.selectedNodeText} messages={this.showMessages}/>
                     </TabContainer>)}
                   {this.state.tabValue === 1 && (
                     <TabContainer>

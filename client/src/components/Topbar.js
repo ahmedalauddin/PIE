@@ -140,7 +140,7 @@ class Topbar extends Component {
     if (this.props.currentPath === "/paneldashboard") {
       value = 1;
     }
-    if (this.props.currentPath === "/mindmap") {
+    if (this.props.currentPath === "/mindmaplist") {
       value = 2;
     }
     if (this.props.currentPath === "/search") {

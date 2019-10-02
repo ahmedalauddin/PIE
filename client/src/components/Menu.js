@@ -12,8 +12,8 @@ const Menu = [
     intro: false
   },
   {
-    label: "Mind Map",
-    pathname: "/mindmap",
+    label: "Mind Maps",
+    pathname: "/mindmaplist",
     admin: true,
     intro: false
   },

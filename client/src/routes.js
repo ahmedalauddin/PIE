@@ -33,6 +33,7 @@ import withAuth from "./components/withAuth.jsx";
 import ListDepartments from "./components/department/ListDepartments";
 import Department from "./components/department/Department";
 import MindMap from "./components/d3-mindmap/MindMap";
+import MindMapList from "./components/d3-mindmap/MindmapList";
 import Search from "./components/search/Search";
 
 export default props => (
@@ -74,6 +75,7 @@ export default props => (
         <Route exact path="/action/:id" component={withAuth(Action)} />
         <Route exact path="/action" component={withAuth(Action)} />
         <Route exact path="/mindmap" component={withAuth(MindMap)} />
+        <Route exact path="/mindmaplist" component={withAuth(MindMapList)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />
         <Route exact path="/listorgs" component={withAuth(ListOrgs)} />

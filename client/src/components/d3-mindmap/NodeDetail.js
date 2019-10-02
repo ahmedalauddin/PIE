@@ -5,7 +5,7 @@
  * Descr:    Provides ability to create KPI and project from mindmap node.
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-09-22
+ * Modified: 2019-10-01
  * Editor:   Brad Kaufman
  * Changes:  Adding selected node text.
  */
@@ -154,6 +154,7 @@ class NodeDetail extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
+    this.fetchMindMapNodeDescription = this.fetchMindMapNodeDescription.bind(this);
     this.state = {
       kpiId: undefined,
       title: undefined,
@@ -173,7 +174,7 @@ class NodeDetail extends React.Component {
       isEditing: false,
       redirect: false,
       isNew: false
-    }
+    };
   };
 
   //<editor-fold desc="Snackbar functions">
@@ -247,6 +248,30 @@ class NodeDetail extends React.Component {
         });
     }, 2000);
   }
+
+  fetchMindMapNodeDescription = () => {
+    let selectedNodeId = this.props.nodeId;
+    let mindmapId = this.props.mindmapId;
+    console.log("NodeDetail.js, selectedNodeId:" + selectedNodeId + ", mindmapId: " + mindmapId);
+
+    if (selectedNodeId !== "") {
+      // Update KPI
+      fetch(`/api/mindmap-node/${mindmapId}/${selectedNodeId}`)
+        .then(res => res.json())
+        .then(node => {
+          if (node[0]) {
+            this.setState({
+              nodeDescription: node[0].title
+            });
+          } else {
+            this.setState({
+              nodeDescription: ""
+            });
+          }
+        });
+    }
+  };
+
 
   fetchKpiDetail = () => {
     let selectedNodeId = this.props.nodeId;

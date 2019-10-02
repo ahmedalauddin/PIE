@@ -346,6 +346,7 @@ class TreeMindMap extends React.Component {
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
+      mindmapId: undefined,
       jsonData: DEBUG_USE_TEST_DATA? jsonTestData : "",
       isNewMap: false,
       openSnackbar: false,
@@ -768,8 +769,8 @@ class TreeMindMap extends React.Component {
   };
 
   // Uses our callback to send info to other components.
-  updateNodeInfo = (selectedNodeId, selectedNodeText) => {
-    this.props.callback(selectedNodeId, selectedNodeText);
+  updateNodeInfo = (selectedNodeId, selectedNodeText, mindmapId) => {
+    this.props.callback(selectedNodeId, selectedNodeText, mindmapId);
   };
 
   logNode = message => {
@@ -1088,7 +1089,7 @@ class TreeMindMap extends React.Component {
       .style("fill", "green");
 
     // This is for the callback to our other components.
-    this.updateNodeInfo(node.attr("id"), node.attr("name"));
+    this.updateNodeInfo(node.attr("id"), node.attr("name"), this.state.mindmapId);
     this.setButtonStates(true, node);
   };
 
@@ -1147,7 +1148,7 @@ class TreeMindMap extends React.Component {
 
     this.updateNodeValue(idOfSelectedNode, newTextValue);
     // TODO - save newValue to JSON
-    // this.updateNodeInfo(nodes[i].attr("id"), nodes[i].attr("name"));
+    // this.updateNodeInfo(nodes[i].attr("id"), nodes[i].attr("name"), this.state.mindmapId);
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
@@ -1600,7 +1601,8 @@ class TreeMindMap extends React.Component {
                 if (map[0]) {
                   this.setState({
                     // jsonData: JSON.stringify(map[0].mapData)
-                    jsonData: map[0].mapData
+                    jsonData: map[0].mapData,
+                    mindmapId: map[0].id
                   });
                 } else {
                   this.setState({
@@ -1661,7 +1663,6 @@ class TreeMindMap extends React.Component {
 
     return (
       <React.Fragment>
-        <div ref={node => node && console.log("outer div width = " + node.offsetWidth)}>
         <Grid
           container
           alignItems="center"
@@ -1671,77 +1672,77 @@ class TreeMindMap extends React.Component {
         >
           <div ref={node => node && console.log("div width = " + node.offsetWidth)}>
             <Grid item sm={12}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={this.newMap}
-              className={classes.outlinedButton}
-            >
-              New Mind Map
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.addChildDisabled}
-              onClick={this.appendChildToSelectedNode}
-              className={classes.outlinedButton}
-            >
-              Add Child
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.addSiblingDisabled}
-              onClick={this.addSiblingToSelectedNode}
-              className={classes.outlinedButton}
-            >
-              Add Sibling
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.openNoteDisabled}
-              onClick={this.openNote}
-              className={classes.outlinedButton}
-            >
-              Open Note
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.closeNoteDisabled}
-              onClick={this.closeNote}
-              className={classes.outlinedButton}
-            >
-              Close Note
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.deleteDisabled}
-              onClick={this.removeSelectedNode}
-              className={classes.outlinedButton}
-            >
-              Delete Node
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={this.state.undoDeleteDisabled}
-              onClick={this.undoDeleteNode}
-              className={classes.outlinedButton}
-            >
-              Undo Delete
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={this.saveJson}
-              className={classes.outlinedButton}
-            >
-              Save Mind Map
-            </Button>
-          </Grid>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={this.newMap}
+                className={classes.outlinedButton}
+              >
+                New Mind Map
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.addChildDisabled}
+                onClick={this.appendChildToSelectedNode}
+                className={classes.outlinedButton}
+              >
+                Add Child
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.addSiblingDisabled}
+                onClick={this.addSiblingToSelectedNode}
+                className={classes.outlinedButton}
+              >
+                Add Sibling
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.openNoteDisabled}
+                onClick={this.openNote}
+                className={classes.outlinedButton}
+              >
+                Open Note
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.closeNoteDisabled}
+                onClick={this.closeNote}
+                className={classes.outlinedButton}
+              >
+                Close Note
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.deleteDisabled}
+                onClick={this.removeSelectedNode}
+                className={classes.outlinedButton}
+              >
+                Delete Node
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.undoDeleteDisabled}
+                onClick={this.undoDeleteNode}
+                className={classes.outlinedButton}
+              >
+                Undo Delete
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={this.saveJson}
+                className={classes.outlinedButton}
+              >
+                Save Mind Map
+              </Button>
+            </Grid>
           </div>
           <Grid item sm={12}>
             <Typography variant="h6">
@@ -1763,7 +1764,6 @@ class TreeMindMap extends React.Component {
             message={<span id="message-id">{this.state.message}</span>}
           />
         </Grid>
-        </div>
       </React.Fragment>
     );
   }

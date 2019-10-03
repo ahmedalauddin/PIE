@@ -12,10 +12,9 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
-import { red, grey } from "@material-ui/core/colors";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
-import { getOrgId, getOrgName } from "../../redux";
+import { getOrgId, getOrgName,setMindmapNode } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
@@ -318,6 +317,7 @@ class TreeMindMap extends React.Component {
     this.findSelectedNodeName = this.findSelectedNodeName.bind(this);
     this.findSelectedNode = this.findSelectedNode.bind(this);
     this.getNodeById = this.getNodeById.bind(this);
+    this.getNodeJson = this.getNodeJson.bind(this);
     this.fullTree = this.fullTree.bind(this);
     this.logNode = this.logNode.bind(this);
     this.getNewChildDirection = this.getNewChildDirection.bind(this);
@@ -754,8 +754,15 @@ class TreeMindMap extends React.Component {
     return nodeSelected;
   };
 
+  getNodeJson = (id) => {
+    const json = this.state.jsonData;
+    let nodeJson = this.getNodeById(id, json);
+    return nodeJson;
+  };
+
   getNodeById = (id, node) => {
-    // This function works on the JSON data.
+    // This function works on the JSON data.  The argument "node" is actually JSON, so typically (always?) the
+    // this.state.jsonData get passed in.
     var reduce = [].reduce;
     function runner(result, node) {
       if (result || !node) return result;
@@ -1070,10 +1077,14 @@ class TreeMindMap extends React.Component {
   };
 
   selectNode = node => {
-    // d3.selectAll("g.node")
-    //  .filter(".node-selected")
-    //  .each(this.deselectNode);
     let updateJsonData = this.updateJsonData;
+    let nodeId = node.attr("id");
+    // 10/2/19 - this is where we'll use our Redux function to store the node.
+    // Need to pass in the node's json here, e.g. {"id": "_jb42g162q", "name": "new", "note": "", "side": "left"}.
+    // Get JSON
+    let nodeJson = this.getNodeJson(nodeId);
+    setMindmapNode(nodeJson);
+
     node
       .classed("node-selected", true)
       .select("foreignObject")
@@ -1148,7 +1159,7 @@ class TreeMindMap extends React.Component {
 
     this.updateNodeValue(idOfSelectedNode, newTextValue);
     // TODO - save newValue to JSON
-    // this.updateNodeInfo(nodes[i].attr("id"), nodes[i].attr("name"), this.state.mindmapId);
+    this.updateNodeInfo("", "", this.state.mindmapId);
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {

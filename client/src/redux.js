@@ -3,8 +3,10 @@
  * File:     /src/redux.js
  * Created:  2019-03-23 14:04:12
  * Author:   Brad Kaufman
- * -----
- * Modified: 2019-05-05
+ * Desc:     Redux store and functions.  Maintaining Redux stores for organization, user, and project search filters.
+ *           Going to add mind map.
+ *
+ * Modified: 2019-10-02
  * Editor:   Brad Kaufman
  */
 
@@ -30,6 +32,17 @@ export const setUser = userData => ({
 export const setOrg = orgData => ({
   type: "ORGANIZATION",
   payload: orgData
+});
+
+/**
+ * *setMindmapNode*
+ * Redux action to set the selected mind map node.  Pass in the node's json here, e.g. {"id": "_jb42g162q", "name": "new", "note": "", "side": "left"}.
+ *
+ * @param {*} mindmapNodeData
+ */
+export const setMindmapNode = mindmapNodeData => ({
+  type: "MINDMAP_NODE",
+  payload: mindmapNodeData
 });
 
 /**
@@ -60,7 +73,7 @@ export const setProjectStatusFilter = projectStatusFilter => ({
 
 /**
  * *setProject*
- * redux action to set the organization
+ * redux action to set the project
  *
  * @param {*} projectData
  */
@@ -72,7 +85,9 @@ export const setProject = projectData => ({
 // local default date, used during initialization
 let defaultState = {
   user: "",
-  organization: ""
+  organization: "",
+  mindmapNode: "",
+  project: ""
 };
 
 /**
@@ -86,11 +101,16 @@ let defaultState = {
 export const reducers = (state = defaultState, action) => {
   switch (action.type) {
     case "USER":
+    return {
+      ...state,
+      user: action.payload
+    };
+    case "ORGANIZATION":
       return {
         ...state,
-        user: action.payload
+        organization: action.payload
       };
-    case "ORGANIZATION":
+    case "MINDMAP_NODE":
       return {
         ...state,
         organization: action.payload
@@ -131,7 +151,7 @@ export const reducers = (state = defaultState, action) => {
  *
  * @export
  */
-// TODO set conditional load for redux devtools extension
+// Set conditional load for redux devtools extension
   /*
 export const store = createStore(
   combineReducers({
@@ -155,16 +175,28 @@ export function getUser() {
 }
 
 /**
+ * *getMindmapNode*
+ * retrieve the full selected mind map node object from redux
+ *
+ * @export
+ * @returns mindmapNode object
+ */
+export function getMindmapNode() {
+  return JSON.parse(store.getState().mindmapNode);
+}
+
+/**
  * *getOrg*
  * retrieve the full org object from redux
  *
  * @export
- * @returns org object
+ * @returns organization object
  */
 export function getOrg() {
   return JSON.parse(store.getState().organization);
 }
 
+//<editor-fold desc="Organization get methods for individual elements from its JSON">
 /**
  * *getOrgId*
  * retrieve the id of the organization object
@@ -221,17 +253,7 @@ export function getUserOrgName() {
 export function getOrgDepartments() {
   return JSON.parse(store.getState().organization).departments;
 }
-
-/**
- * *getProject*
- * Retrieve the active project from redux
- *
- * @export
- * @returns JSON with the information from the active project being used.
- */
-export function getProject() {
-  return JSON.parse(store.getState().project);
-}
+//</editor-fold>
 
 /**
  * *getProjectFilter*
@@ -242,6 +264,17 @@ export function getProject() {
  */
 export function getProjectFilter() {
   return JSON.parse(store.getState().projectFilter);
+}
+
+/**
+ * *getProject*
+ * Retrieve the active project from redux
+ *
+ * @export
+ * @returns JSON with the information from the active project being used.
+ */
+export function getProject() {
+  return JSON.parse(store.getState().project);
 }
 
 /**

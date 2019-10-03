@@ -138,6 +138,30 @@ module.exports = {
       });
   },
 
+  // Get the mind map node.  Pass in two parameters, the mindmap ID and the ID
+  // of the node.
+  getNode(req, res) {
+    const nodeId = req.params.nodeId;
+    const mindmapId = req.params.mindmapId;
+    const args = "'" + mindmapId + "', " + nodeId;
+    // This uses MySQL json function to get information from a JSON field.  Pass in the .id, get the .description back.
+    const sql = "select getMindmapJsonNode(" + mindmapId + ", '" + nodeId + "')";
+
+    logger.debug(`mindmap: getNode -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql, {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(mms => {
+        res.status(200).send(mms);
+      })
+      .catch(error => {
+        logger.error(`${callerType} getNodeDescription -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // Find all mindmaps
   list(req, res) {
     if (req.params.orgId) {

@@ -37,6 +37,11 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/mindmap-node/:mindmapId/:nodeId`);
   router.get("/api/mindmap-node/:mindmapId/:nodeId", mindmap.getNodeDescription);
 
+  // **** NEW *************
+  // get mindmap node information second version
+  logger.debug(`${callerType} GET -> path: /api/mindmap-node2/:mindmapId/:nodeId`);
+  router.get("/api/mindmap-node2/:mindmapId/:nodeId", mindmap.getNode);
+
   // update a mindmap
   logger.debug(`${callerType} PUT -> path: /api/mindmaps/:id`);
   router.put("/api/mindmaps/:id", mindmap.update);

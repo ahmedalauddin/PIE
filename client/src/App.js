@@ -57,7 +57,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ setUser, setOrg, setProjectStatusFilter, setProjectStartYearFilter, setProjectEndYearFilter }, dispatch);
+  return bindActionCreators({ setUser, setOrg, setProjectStatusFilter, setProjectStartYearFilter,
+    setProjectEndYearFilter, setMindmapNode }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

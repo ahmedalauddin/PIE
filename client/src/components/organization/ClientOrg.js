@@ -80,9 +80,9 @@ class ClientOrg extends React.Component {
           return response.json();
         }
       })
-      .then(data => {
-        store.dispatch(setOrg(JSON.stringify(data)));
-        console.log("ClientOrg.js, organization:" + JSON.stringify(data));
+      .then(orgData => {
+        store.dispatch(setOrg(JSON.stringify(orgData)));
+        console.log("ClientOrg.js, organization:" + JSON.stringify(orgData));
       })
       .then(response => {
         this.setState({ readyToRedirect: true });

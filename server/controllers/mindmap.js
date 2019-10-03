@@ -110,23 +110,55 @@ module.exports = {
       });
   },
 
+  // Get the mind map node description.  Pass in two parameters, the mindmap ID and the ID
+  // of the node.
+  getNodeDescription(req, res) {
+    const nodeId = req.params.nodeId;
+    const mindmapId = req.params.mindmapId;
+
+    logger.debug(`${callerType} getNodeDescription -> orgId: ${req.params.mindmapId}`);
+    logger.debug(`${callerType} getNodeDescription -> orgId: ${req.params.nodeId}`);
+
+    // This uses MySQL json functions to get information from a JSON field.  Pass in the .id, get the .description back.
+    const sql = "select json_unquote(json_extract(mapData, replace(json_unquote(json_search(mapData, 'one', '" + nodeId + "')), '.id', '.description'))) " +
+      "as nodeDescript from Mindmaps m where m.id = " + mindmapId + ";";
+
+    logger.debug(`${callerType} getNodeDescription -> sql: ${sql}`);
+    return models.sequelize
+      .query(sql, {
+          type: models.sequelize.QueryTypes.SELECT
+        }
+      )
+      .then(mms => {
+        res.status(200).send(mms);
+      })
+      .catch(error => {
+        logger.error(`${callerType} getNodeDescription -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
   // Find all mindmaps
   list(req, res) {
-    if (req.query.orgId) {
-      return models.Mindmap.findOne({
+    if (req.params.orgId) {
+      return models.Mindmap.findAll({
+        attributes: ["id", "mapName", "mapDescription", "createdAt", "updatedAt", "orgId"],
+        order: [["createdAt", "DESC"]],
         where: {
-          orgId: req.query.orgId
+          orgId: req.params.orgId,
+          active: 1
         }
       })
         .then(map => {
-          logger.debug(`${callerType} findByOrgId -> id: ${map.id}`);
+          logger.debug(`${callerType} list -> id: ${map.id}`);
           res.status(200).send(map);
         })
         .catch(error => {
-          logger.error(`${callerType} findByOrgId -> error: ${error.stack}`);
+          logger.error(`${callerType} list -> error: ${error.stack}`);
           res.status(400).send(error);
         });
-    } else {
+    }
+    /* else {
       return models.Mindmap.findAll({
         include: [
           {
@@ -136,13 +168,13 @@ module.exports = {
         ]
       })
         .then(maps => {
-          logger.debug(`${callerType} findById -> count: ${maps.length}`);
+          logger.debug(`${callerType} list -> count: ${maps.length}`);
           res.status(200).send(maps);
         })
         .catch(error => {
-          logger.error(`${callerType} findById -> error: ${error.stack}`);
+          logger.error(`${callerType} list -> error: ${error.stack}`);
           res.status(400).send(error);
         });
-    }
+    }  */
   }
 };

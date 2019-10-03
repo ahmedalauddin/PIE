@@ -77,8 +77,8 @@ const AdminMenu = [
     pathname: "/login"
   },
   {
-    label: "Mind Map",
-    pathname: "/mindmap"
+    label: "Mind Maps",
+    pathname: "/mindmaplist"
   },
   {
     label: "Search",

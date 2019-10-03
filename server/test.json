@@ -1,119 +1,63 @@
 {
-  "items": [
+  "id": "_ns1nvi0ai",
+  "name": "Increase plant uptime",
+  "note": "The idea is to have all the possibilities identified, prioritized to be able to allocate resources",
+  "children": [
     {
-      "id": "item-0",
-      "content": "item 0"
+      "id": "_o4r47dq71",
+      "name": "Reduce operating costs",
+      "description": "Look to reduce operating costs as description.",
+      "note": "Look to reduce operating costs throughout all divisions and locations.  Start with aggregating data.",
+      "side": "right",
+      "children": [
+        {
+          "id": "_al6om6znz",
+          "name": "Reduce Inventory",
+          "description": "Inventory reductions, review for all sites.",
+          "note": "undefined",
+          "parentId": "_o4r47dq71"
+        },
+        {
+          "id": "_z3uk0721f",
+          "name": "Operating Procedures",
+          "description": "Check operating procedures periodically",
+          "note": "Initial review of operating procedures.",
+          "parentId": "_o4r47dq71"
+        }
+      ]
     },
     {
-      "id": "item-1",
-      "content": "item 1"
+      "id": "_uajrljib9",
+      "name": "Review supply chain processes",
+      "description": "",
+      "note": "Perform supply chain review of all steps.",
+      "side": "left"
     },
     {
-      "id": "item-2",
-      "content": "item 2"
+      "id": "_uguzpgdta",
+      "name": "Introduce automation",
+      "note": "Begin to use automation at all locations and sites.",
+      "side": "left",
+      "children": [
+        {
+          "id": "_c96w1yrth",
+          "name": "Perform failover testing",
+          "note": "Take sites offline to check failover capabilities",
+          "children": []
+        },
+        {
+          "id": "_t8ln1vlwa",
+          "name": "Review supply chain",
+          "note": "Begin review of supply chain...",
+          "parentId": "_uguzpgdta"
+        }
+      ]
     },
     {
-      "id": "item-3",
-      "content": "item 3"
-    },
-    {
-      "id": "item-4",
-      "content": "item 4"
-    },
-    {
-      "id": "item-5",
-      "content": "item 5"
-    },
-    {
-      "id": "item-6",
-      "content": "item 6"
-    },
-    {
-      "id": "item-7",
-      "content": "item 7"
-    },
-    {
-      "id": "item-8",
-      "content": "item 8"
-    },
-    {
-      "id": "item-9",
-      "content": "item 9"
+      "id": "_p66om69pl",
+      "name": "Review SOPs",
+      "note": "undefined",
+      "parentId": "_ns1nvi0ai"
     }
-  ],
-  "kpis": [
-    {
-      "id": 97,
-      "title": "Assess degree of automation",
-      "orgPriority": 1,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    },
-    {
-      "id": 107,
-      "title": "Measure failover testing",
-      "orgPriority": 2,
-      "projId": 140,
-      "projTitle": "Increase levels of tesing",
-      "projDescription": "Assess potential benefits of testing to prevent future failures"
-    },
-    {
-      "id": 9,
-      "title": "Mean Time Between Failure",
-      "orgPriority": 3,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    },
-    {
-      "id": 4,
-      "title": "Increase parts availability",
-      "orgPriority": 4,
-      "projId": 30,
-      "projTitle": "Plant closing",
-      "projDescription": "Reduce inventory in all warehouses"
-    },
-    {
-      "id": 99,
-      "title": "Inventory Cost",
-      "orgPriority": 5,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    },
-    {
-      "id": 96,
-      "title": "Evaluate supply chain",
-      "orgPriority": 6,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    },
-    {
-      "id": 12,
-      "title": "Increase parts availability and more",
-      "orgPriority": 7,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    },
-    {
-      "id": 23,
-      "title": "Increase energy output efficiency",
-      "orgPriority": 8,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
-    }
-  ],
-  "kpiProjectSubmitted": 9,
-  "orgName": "Northwest Lumber",
-  "orgKpiPriorityLock": 1,
-  "lockPrioritization": false,
-  "dragDisabled": true,
-  "helpText": "Unlock prioritization to enable reordering KPI priorities.",
-  "lockButtonText": "Unlock Prioritization",
-  "title": "hi",
-  "description": "again"
+  ]
 }

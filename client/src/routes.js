@@ -57,6 +57,7 @@ export default props => (
         <Route exact path="/analytics" component={withAuth(Analytics)} />
         <Route exact path="/project" component={withAuth(Project)} />
         <Route exact path="/department" component={withAuth(Department)} />
+        <Route path="/mindmap/:id" component={withAuth(MindMap)} />
         <Route path="/project/:id" component={withAuth(Project)} />
         <Route path="/projectpersons/:id" component={withAuth(ProjectPersons)} />
         <Route path="/organization/:id" component={withAuth(Organization)} />
@@ -74,7 +75,6 @@ export default props => (
         <Route exact path="/milestone" component={withAuth(Milestone)} />
         <Route exact path="/action/:id" component={withAuth(Action)} />
         <Route exact path="/action" component={withAuth(Action)} />
-        <Route exact path="/mindmap" component={withAuth(MindMap)} />
         <Route exact path="/mindmaplist" component={withAuth(MindMapList)} />
         <Route exact path="/listpersons" component={withAuth(ListPersons)} />
         <Route exact path="/listkpis" component={withAuth(ListKpis)} />

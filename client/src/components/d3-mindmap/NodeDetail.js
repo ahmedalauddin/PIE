@@ -259,9 +259,9 @@ class NodeDetail extends React.Component {
       fetch(`/api/mindmap-node/${mindmapId}/${selectedNodeId}`)
         .then(res => res.json())
         .then(node => {
-          if (node[0]) {
+          if (node[0].nodeDescript !== null) {
             this.setState({
-              nodeDescription: node[0].title
+              nodeDescription: node[0].nodeDescript
             });
           } else {
             this.setState({
@@ -269,9 +269,12 @@ class NodeDetail extends React.Component {
             });
           }
         });
+    } else {
+      this.setState({
+        nodeDescription: ""
+      });
     }
   };
-
 
   fetchKpiDetail = () => {
     let selectedNodeId = this.props.nodeId;
@@ -327,11 +330,13 @@ class NodeDetail extends React.Component {
 
   componentDidMount() {
     this.fetchKpiDetail();
+    this.fetchMindMapNodeDescription();
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.nodeId !== prevProps.nodeId) {
       this.fetchKpiDetail();
+      this.fetchMindMapNodeDescription();
     }
   };
 
@@ -360,12 +365,13 @@ class NodeDetail extends React.Component {
                 onChange={this.handleChange("nodeDescription")}
                 value={this.state.nodeDescription}
                 rowMax = "6"
+                fullWidth
                 margin="normal"
                 InputLabelProps={{
                   shrink: true
                 }}
-              />
-              <Typography variant="h7" gutterBottom>
+              /><br/><br/><br/>
+              <Typography variant="h6" gutterBottom>
                 KPI
               </Typography>
               <TextField

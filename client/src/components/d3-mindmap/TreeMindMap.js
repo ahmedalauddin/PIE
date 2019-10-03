@@ -346,7 +346,7 @@ class TreeMindMap extends React.Component {
       svg: d3.select(this.svg),
       orgName: getOrgName(),
       orgId: getOrgId(),
-      mindmapId: undefined,
+      mindmapId: this.props.mindmapId,
       jsonData: DEBUG_USE_TEST_DATA? jsonTestData : "",
       isNewMap: false,
       openSnackbar: false,
@@ -1592,17 +1592,16 @@ class TreeMindMap extends React.Component {
     } else {
       // Try to fetch data.
       if (this.state.orgId > 0) {
-        fetch(`/api/mindmaps-org/${this.state.orgId}`)
+        fetch(`/api/mindmaps/${this.props.mindmapId}`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
               return response.json().then(map => {
                 // process your JSON data further
-                if (map[0]) {
+                if (map) {
                   this.setState({
                     // jsonData: JSON.stringify(map[0].mapData)
-                    jsonData: map[0].mapData,
-                    mindmapId: map[0].id
+                    jsonData: map.mapData
                   });
                 } else {
                   this.setState({

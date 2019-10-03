@@ -36,6 +36,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.JSON,
         allowNull: true
       },
+      mapName: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      mapDescription: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
+      active: {
+        type: DataTypes.TINYINT,
+        allowNull: true
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

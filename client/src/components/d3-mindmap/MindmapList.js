@@ -31,6 +31,27 @@ const rows = [
   { id: "owners", numeric: false, disablePadding: true, label: "Owners" }
 ];
 
+function formatDate(dateInput) {
+  let dateOut = "";
+
+  if (dateInput !== null) {
+    dateOut = moment(dateInput).format("YYYY-MM-DD");
+  }
+  return dateOut;
+}
+
+function handleNull(refToParse) {
+  try {
+    if (refToParse != null) {
+      return refToParse;
+    } else {
+      return "";
+    }
+  } catch (e) {
+    return "";
+  }
+}
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -84,7 +105,7 @@ var msg = "";
 class MindmapList extends Component {
   constructor(props) {
     super(props);
-    this.handleNull = this.handleNull.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   };
 
   state = {
@@ -107,17 +128,6 @@ class MindmapList extends Component {
     return <Redirect to="/Login" />;
   };
 
-  handleNull(refToParse) {
-    try {
-      if (refToParse != null) {
-        return refToParse;
-      } else {
-        return "";
-      }
-    } catch (e) {
-      return "";
-    }
-  }
 
   componentDidMount() {
     fetch("/api/mindmaps-list/" + getOrgId())
@@ -131,17 +141,7 @@ class MindmapList extends Component {
       });
   };
 
-  formatDate(dateInput) {
-    let dateOut = "";
-
-    if (dateInput !== null) {
-      dateOut = moment(dateInput).format("YYYY-MM-DD");
-    }
-    return dateOut;
-  }
-
   handleClick = (event, id) => {};
-
 
   render() {
     const { classes } = this.props;
@@ -193,25 +193,25 @@ class MindmapList extends Component {
                         </div>
                       </ExpansionPanelSummary>
                     </ExpansionPanel>
-                    {this.state.organizations.map(mindmap => {
+                    {this.state.mindmaps.map(mindmap => {
                       return (
                         <ExpansionPanel key={mindmap.id}>
                           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <div className={classes.column}>
                               <Typography className={classes.heading}>
                                 <Link to={`/mindmap/${mindmap.id}`}>
-                                  {mindmap.name}
+                                  {mindmap.mapName}
                                 </Link>
                               </Typography>
                             </div>
                             <div className={classes.wideColumn}>
                               <Typography className={classes.secondaryHeading}>
-                                {mindmap.description}
+                                {mindmap.mapDescription}
                               </Typography>
                             </div>
                             <div className={classes.wideColumn}>
                               <Typography className={classes.secondaryHeading}>
-                                {mindmap.name}
+                                {formatDate(mindmap.createdAt)}
                               </Typography>
                             </div>
                           </ExpansionPanelSummary>

@@ -4,8 +4,8 @@
  * Created:  2019-01-27 17:59:36
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-26 17:40:49
- * Editor:   Darrin Tisdale
+ * Modified: 2019-10-01
+ * Editor:   Brad Kaufman
  */
 "use strict";
 
@@ -17,8 +17,8 @@ module.exports = router => {
   const callerType = "router";
 
   // get all mindmaps
-  logger.debug(`${callerType} GET -> path: /api/mindmaps`);
-  router.get("/api/mindmaps", mindmap.list);
+  logger.debug(`${callerType} GET -> path: /api/mindmaps-list/:orgId`);
+  router.get("/api/mindmaps-list/:orgId", mindmap.list);
 
   // create a mindmap
   logger.debug(`${callerType} POST -> path: /api/mindmaps`);
@@ -31,6 +31,11 @@ module.exports = router => {
   // get a mindmap by organization id
   logger.debug(`${callerType} GET -> path: /api/mindmaps-org/:orgId`);
   router.get("/api/mindmaps-org/:orgId", mindmap.findByOrgId);
+
+  // **** NEW *************
+  // get mindmap node information
+  logger.debug(`${callerType} GET -> path: /api/mindmap-node/:mindmapId/:nodeId`);
+  router.get("/api/mindmap-node/:mindmapId/:nodeId", mindmap.getNodeDescription);
 
   // update a mindmap
   logger.debug(`${callerType} PUT -> path: /api/mindmaps/:id`);

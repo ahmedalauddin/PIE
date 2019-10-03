@@ -28,6 +28,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import { setOrg, store } from "../../redux";
 
+const redirectComponent = "/mindmaplist";
+
 class ClientOrg extends React.Component {
   constructor(props) {
     super(props);
@@ -103,7 +105,7 @@ class ClientOrg extends React.Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.readyToRedirect) {
-      return <Redirect to="/mindmap" />;
+      return <Redirect to={redirectComponent} />;
     }
 
     return (

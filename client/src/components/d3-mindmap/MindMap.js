@@ -182,7 +182,7 @@ class MindMap extends React.Component {
     this.state = {
       orgName: getOrgName(),
       orgId: getOrgId(),
-      mindmapId: undefined,
+      mindmapId: this.props.match.params.id,
       selectedNodeId: "",
       selectedNodeText: "",
       openSnackbar: false,
@@ -230,6 +230,8 @@ class MindMap extends React.Component {
 
   showNodeDetail = () => {
     let showDetail = false;
+    console.log("MindMap, selected node: " + this.state.selectedNodeId);
+    console.log("MindMap, mindmapId: " + this.state.mindmapId);
     if (showDetail) {
       return (
         <Grid item xs={12} sm={2} md={2} component={Paper}>
@@ -247,73 +249,51 @@ class MindMap extends React.Component {
 
   render() {
     const { classes } = this.props;
+    let mindmapId = this.props.match.params.id;
+    console.log("MindMap, selected node: " + this.state.selectedNodeId);
+    console.log("MindMap, mindmapId: " + mindmapId);
 
-    if (DEBUG) {
-      return (
-        <React.Fragment>
-          <CssBaseline />
-          <Topbar />
-          <div className={classes.root}>
-            <Grid container className={classes.root} spacing={24}>
-              <Grid item xs={false} sm={12} md={12} >
-                <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
-              </Grid>
-              <Snackbar
-                open={this.state.openSnackbar}
-                onClose={this.handleClose}
-                TransitionComponent={this.state.Transition}
-                ContentProps={{
-                  "aria-describedby": "message-id"
-                }}
-                message={<span id="message-id">{this.state.message}</span>}
-              />
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <Topbar />
+        <div className={classes.root}>
+          <Grid container className={classes.root} spacing={24}>
+            <Grid item xs={false} sm={9} md={9} >
+              <TreeMindMap mindmapId={mindmapId} callback={this.sendSelectedNode.bind(this)} />
             </Grid>
-          </div>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <CssBaseline />
-          <Topbar />
-          <div className={classes.root}>
-            <Grid container className={classes.root} spacing={24}>
-              <Grid item xs={false} sm={9} md={9} >
-                <TreeMindMap callback={this.sendSelectedNode.bind(this)} />
-              </Grid>
-              <Grid item xs={false} sm={3} md={3} >
-                <div className={classes.root}>
-                  <AppBar position="static" elevation={0}>
-                    <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
-                      <Tab label="Node" />
-                      <Tab label="Prioritized KPIs" />
-                    </Tabs>
-                  </AppBar>
-                  {this.state.tabValue === 0 && (
-                    <TabContainer>
-                      <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={this.state.mindmapId}
-                        text={this.state.selectedNodeText} messages={this.showMessages}/>
-                    </TabContainer>)}
-                  {this.state.tabValue === 1 && (
-                    <TabContainer>
-                      <PrioritizeKpis />
-                    </TabContainer>)}
-                </div>
-              </Grid>
-              <Snackbar
-                open={this.state.openSnackbar}
-                onClose={this.handleClose}
-                TransitionComponent={this.state.Transition}
-                ContentProps={{
-                  "aria-describedby": "message-id"
-                }}
-                message={<span id="message-id">{this.state.message}</span>}
-              />
+            <Grid item xs={false} sm={3} md={3} >
+              <div className={classes.root}>
+                <AppBar position="static" elevation={0}>
+                  <Tabs value={this.state.tabValue} onChange={this.handleTabChange}>
+                    <Tab label="Node" />
+                    <Tab label="Prioritized KPIs" />
+                  </Tabs>
+                </AppBar>
+                {this.state.tabValue === 0 && (
+                  <TabContainer>
+                    <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={mindmapId}
+                      text={this.state.selectedNodeText} messages={this.showMessages}/>
+                  </TabContainer>)}
+                {this.state.tabValue === 1 && (
+                  <TabContainer>
+                    <PrioritizeKpis />
+                  </TabContainer>)}
+              </div>
             </Grid>
-          </div>
-        </React.Fragment>
-      );
-    }
+            <Snackbar
+              open={this.state.openSnackbar}
+              onClose={this.handleClose}
+              TransitionComponent={this.state.Transition}
+              ContentProps={{
+                "aria-describedby": "message-id"
+              }}
+              message={<span id="message-id">{this.state.message}</span>}
+            />
+          </Grid>
+        </div>
+      </React.Fragment>
+    );
   }
 }
 

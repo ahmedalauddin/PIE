@@ -35,6 +35,17 @@ export const setOrg = orgData => ({
 });
 
 /**
+ * *setMindmap*
+ * Redux action to set the mind map.  Need the mindmap id here or somewhere.
+ *
+ * @param {*} mindmapNodeData
+ */
+export const setMindmap = mindmapNodeData => ({
+  type: "MINDMAP",
+  payload: mindmapNodeData
+});
+
+/**
  * *setMindmapNode*
  * Redux action to set the selected mind map node.  Pass in the node's json here, e.g. {"id": "_jb42g162q", "name": "new", "note": "", "side": "left"}.
  *
@@ -45,6 +56,7 @@ export const setMindmapNode = mindmapNodeData => ({
   payload: mindmapNodeData
 });
 
+//<editor-fold desc="Set project list filter functions">
 /**
  * *setProjectListFilter*
  * redux action to set the project filters, including filters for status, and begin and end years.
@@ -55,6 +67,7 @@ export const setProjectListFilter = projectListFilterData => ({
   type: "PROJECT_LIST_FILTER",
   payload: projectListFilterData
 });
+
 
 export const setProjectStartYearFilter = projectStartYearFilterData => ({
   type: "PROJECT_START_YEAR_FILTER",
@@ -70,6 +83,7 @@ export const setProjectStatusFilter = projectStatusFilter => ({
   type: "PROJECT_STATUS_FILTER",
   payload: projectStatusFilter
 });
+//</editor-fold>
 
 /**
  * *setProject*
@@ -86,7 +100,8 @@ export const setProject = projectData => ({
 let defaultState = {
   user: "",
   organization: "",
-  mindmapNode: "",
+  mindmap: JSON.stringify("{}"),
+  mindmapNode: JSON.stringify("{}"),
   project: ""
 };
 
@@ -113,7 +128,12 @@ export const reducers = (state = defaultState, action) => {
     case "MINDMAP_NODE":
       return {
         ...state,
-        organization: action.payload
+        mindmapNode: action.payload
+      };
+    case "MINDMAP":
+      return {
+        ...state,
+        mindmap: action.payload
       };
     case "PROJECT_LIST_FILTER":
       return {
@@ -172,6 +192,17 @@ export const store = createStore(reducers,
  */
 export function getUser() {
   return JSON.parse(store.getState().user);
+}
+
+/**
+ * *getMindmap*
+ * retrieve the full user object from redux
+ *
+ * @export
+ * @returns mindmap object
+ */
+export function getMindmap() {
+  return JSON.parse(store.getState().mindmap);
 }
 
 /**

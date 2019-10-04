@@ -14,13 +14,15 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
-import { getOrgId, getOrgName,setMindmapNode } from "../../redux";
+import { store, getOrgId, getOrgName, setMindmapNode, setMindmap } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { createId, createNewMapJson } from "./MindMapFunctions";
+import TextField from "@material-ui/core/TextField";
+import * as jsonq from "jsonq";
+
 //<editor-fold desc="// Constant declarations">
 const styles = theme => ({
   grid: {
@@ -330,6 +332,7 @@ class TreeMindMap extends React.Component {
     this.removeSelectedNode = this.removeSelectedNode.bind(this);
     this.handlePopoverClick = this.handlePopoverClick.bind(this);
     this.handlePopoverClose = this.handlePopoverClose.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.updateNodeInfo = this.updateNodeInfo.bind(this);
     this.updateJsonData = this.updateJsonData.bind(this);
     this.addNote = this.addNote.bind(this);
@@ -359,10 +362,10 @@ class TreeMindMap extends React.Component {
       placement: undefined,
       anchorEl: null,
       setOpen: false,
-      isEditingIdea: false,
       nodeId: "",
       nodeTitle: "",
-      idea: "",
+      mapName: "",
+      mapDescription: "",
       myCounter: 0,
       deletedNodes: [],     // start using an array for this.
       deletedNodeId: "",
@@ -528,7 +531,7 @@ class TreeMindMap extends React.Component {
     let g = d3.select("svg");
     // Add <g>s
     //let vRects = g.selectAll("g").data(nodes).enter().append("g");
-      // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
+    // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
 
     // Draw <rect>s
     nodeContainers.append("rect").attr("class","main")
@@ -632,6 +635,7 @@ class TreeMindMap extends React.Component {
   };
 
   hasChildren = idOfSelectedNode => {
+    // Operates on mindmap JSON data.
     // Check if the node has children in the JSON data.
     let nodeInTree = [this.state.jsonData];
     let nodeFound = false;
@@ -666,6 +670,7 @@ class TreeMindMap extends React.Component {
   };
 
   findParentNode = idOfSelectedNode => {
+    // Operates on mindmap JSON data.
     // Find the parent of the node in the JSON data.
     console.log("idOfSelectedNode: " + idOfSelectedNode);
 
@@ -700,6 +705,7 @@ class TreeMindMap extends React.Component {
 
   // use HasParent to find out if this and the root node and we should disable add sibling.
   hasParent = idOfSelectedNode => {
+    // Operates on mindmap JSON data.
     // Find the parent of the node in the JSON data.
     console.log("idOfSelectedNode: " + idOfSelectedNode);
 
@@ -731,36 +737,15 @@ class TreeMindMap extends React.Component {
     return hasParent;
   };
 
-  findSelectedNodeId = svg => {
-    let idOfSelectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .attr("id");
-    return idOfSelectedNode;
-  };
-
-  findSelectedNodeName = () => {
-    let svg = d3.select(this.svg);
-    let nameOfSelectedNode = svg
-      .selectAll("g.node")
-      .filter(".node-selected")
-      .attr("name");
-    return nameOfSelectedNode;
-  };
-
-  findSelectedNode = () => {
-    let svg = d3.select(this.svg);
-    let nodeSelected = svg.selectAll("g.node").filter(".node-selected");
-    return nodeSelected;
-  };
-
   getNodeJson = (id) => {
+    // Operates on mindmap JSON data.
     const json = this.state.jsonData;
     let nodeJson = this.getNodeById(id, json);
     return nodeJson;
   };
 
   getNodeById = (id, node) => {
+    // Operates on mindmap JSON data.
     // This function works on the JSON data.  The argument "node" is actually JSON, so typically (always?) the
     // this.state.jsonData get passed in.
     var reduce = [].reduce;
@@ -774,6 +759,33 @@ class TreeMindMap extends React.Component {
     }
     return runner(null, node);
   };
+
+  findSelectedNodeId = svg => {
+    // Operates on mindmap D3 svg.
+    let idOfSelectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .attr("id");
+    return idOfSelectedNode;
+  };
+
+  findSelectedNodeName = () => {
+    // Operates on mindmap D3 svg.
+    let svg = d3.select(this.svg);
+    let nameOfSelectedNode = svg
+      .selectAll("g.node")
+      .filter(".node-selected")
+      .attr("name");
+    return nameOfSelectedNode;
+  };
+
+  findSelectedNode = () => {
+    // Operates on mindmap D3 svg.
+    let svg = d3.select(this.svg);
+    let nodeSelected = svg.selectAll("g.node").filter(".node-selected");
+    return nodeSelected;
+  };
+
 
   // Uses our callback to send info to other components.
   updateNodeInfo = (selectedNodeId, selectedNodeText, mindmapId) => {
@@ -1078,12 +1090,12 @@ class TreeMindMap extends React.Component {
 
   selectNode = node => {
     let updateJsonData = this.updateJsonData;
+    let jsonData = this.state.jsonData;
     let nodeId = node.attr("id");
     // 10/2/19 - this is where we'll use our Redux function to store the node.
     // Need to pass in the node's json here, e.g. {"id": "_jb42g162q", "name": "new", "note": "", "side": "left"}.
-    // Get JSON
     let nodeJson = this.getNodeJson(nodeId);
-    setMindmapNode(nodeJson);
+    store.dispatch(setMindmapNode(JSON.stringify(nodeJson)));
 
     node
       .classed("node-selected", true)
@@ -1101,6 +1113,18 @@ class TreeMindMap extends React.Component {
 
     // This is for the callback to our other components.
     this.updateNodeInfo(node.attr("id"), node.attr("name"), this.state.mindmapId);
+
+    // TODO - see if updated content gets save to Redux state
+
+    let mapData = jsonq(jsonData);
+
+    // Get the node for our selected id.
+    var object = mapData.find("id", function () {
+      return this === nodeId;
+    });
+
+    // object.parent().value() is the node we are looking for.
+
     this.setButtonStates(true, node);
   };
 
@@ -1485,10 +1509,10 @@ class TreeMindMap extends React.Component {
   }
 
   loadData = direction => {
-    // Loads JSON data into a D3 tree hierarchy.
+    // Loads JSON data into a D3 tree hierarchy with right and left sides.  The D3 hierarchy
+    // gives up screen coordinates.
     let d3Data = "";
     let jsonData = this.state.jsonData;
-    // let split_index = Math.round(jsonData.children.length / 2);
 
     let childrenLeft = null;
     let childrenRight = null;
@@ -1509,27 +1533,16 @@ class TreeMindMap extends React.Component {
       }
     }
 
-    if (direction === "left") {
-      // Left data
-      d3Data = {
-        name: jsonData.name,
-        id: jsonData.id,
-        children: JSON.parse(
-          // JSON.stringify(jsonData.children.slice(split_index))
-          JSON.stringify(childrenLeft)
-        )
-      };
-    } else {
-      // Right data
-      d3Data = {
-        name: jsonData.name,
-        id: jsonData.id,
-        children: JSON.parse(
-          // JSON.stringify(jsonData.children.slice(0, split_index))
-          JSON.stringify(childrenRight)
-        )
-      };
-    }
+    let childrenData = (direction === "left") ? childrenLeft : childrenRight;
+
+    d3Data = {
+      name: jsonData.name,
+      id: jsonData.id,
+      description: jsonData.description,
+      children: JSON.parse(
+        JSON.stringify(childrenData)
+      )
+    };
 
     // d3.hierarchy object is a data structure that represents a hierarchy.
     // It has a number of functions defined on it for retrieving things like
@@ -1562,19 +1575,23 @@ class TreeMindMap extends React.Component {
       orgId: this.state.orgId,
       mapData: this.state.jsonData
     };
-    console.log("JSON to post:" + JSON.stringify(postData));
+
+    // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
+    let method = (this.state.isNewMap) ? "POST" : "PUT";
+    let url = "/api/mindmaps";
+    if (!this.state.isNewMap)
+      url += "/" + this.props.mindmapId;
 
     setTimeout(() => {
-      fetch("/api/mindmaps", {
-        method: "POST",
+      fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData)
       })
         .then(response => {
           if (response.status !== 400) {
-            // Success - open the snackbar
             this.setState({
-              openSnackbar: true,
+              openSnackbar: true,         // Success - open the snackbar
               message: "Mind map saved."
             });
           } else {
@@ -1611,9 +1628,12 @@ class TreeMindMap extends React.Component {
                 // process your JSON data further
                 if (map) {
                   this.setState({
-                    // jsonData: JSON.stringify(map[0].mapData)
-                    jsonData: map.mapData
+                    jsonData: map.mapData,
+                    mapName: map.mapName,
+                    mapDescription: map.mapDescription
                   });
+                  // Call Redux here.
+                  store.dispatch(setMindmap(JSON.stringify(map.mapData)));
                 } else {
                   this.setState({
                     isNewMap: true
@@ -1627,7 +1647,6 @@ class TreeMindMap extends React.Component {
             }
           })
           .then(() => {
-            // Then call chart().
             this.chart();
           });
       } else {
@@ -1665,6 +1684,10 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
+  handleChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
+
   render() {
     const { classes } = this.props;
     if (this.state.hasError) {
@@ -1680,84 +1703,99 @@ class TreeMindMap extends React.Component {
           spacing={24}
           className={classes.root}
         >
-          <div ref={node => node && console.log("div width = " + node.offsetWidth)}>
-            <Grid item sm={12}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={this.newMap}
-                className={classes.outlinedButton}
-              >
-                New Mind Map
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.addChildDisabled}
-                onClick={this.appendChildToSelectedNode}
-                className={classes.outlinedButton}
-              >
-                Add Child
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.addSiblingDisabled}
-                onClick={this.addSiblingToSelectedNode}
-                className={classes.outlinedButton}
-              >
-                Add Sibling
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.openNoteDisabled}
-                onClick={this.openNote}
-                className={classes.outlinedButton}
-              >
-                Open Note
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.closeNoteDisabled}
-                onClick={this.closeNote}
-                className={classes.outlinedButton}
-              >
-                Close Note
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.deleteDisabled}
-                onClick={this.removeSelectedNode}
-                className={classes.outlinedButton}
-              >
-                Delete Node
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.undoDeleteDisabled}
-                onClick={this.undoDeleteNode}
-                className={classes.outlinedButton}
-              >
-                Undo Delete
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={this.saveJson}
-                className={classes.outlinedButton}
-              >
-                Save Mind Map
-              </Button>
-            </Grid>
-          </div>
           <Grid item sm={12}>
-            <Typography variant="h6">
-              Mind Map for {this.state.orgName}
-            </Typography>
+            <TextField
+              id="mapName"
+              label="Name"
+              onChange={this.handleChange("mapName")}
+              value={this.state.mapName}
+              margin="normal"
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+            <TextField
+              id="mapDescription"
+              label="Description"
+              onChange={this.handleChange("mapDescription")}
+              value={this.state.mapDescription}
+              margin="normal"
+              InputLabelProps={{
+                shrink: true
+              }}
+            />
+          </Grid>
+          <Grid item sm={12}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={this.newMap}
+              className={classes.outlinedButton}
+            >
+              New Mind Map
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.addChildDisabled}
+              onClick={this.appendChildToSelectedNode}
+              className={classes.outlinedButton}
+            >
+              Add Child
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.addSiblingDisabled}
+              onClick={this.addSiblingToSelectedNode}
+              className={classes.outlinedButton}
+            >
+              Add Sibling
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.openNoteDisabled}
+              onClick={this.openNote}
+              className={classes.outlinedButton}
+            >
+              Open Note
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.closeNoteDisabled}
+              onClick={this.closeNote}
+              className={classes.outlinedButton}
+            >
+              Close Note
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.deleteDisabled}
+              onClick={this.removeSelectedNode}
+              className={classes.outlinedButton}
+            >
+              Delete Node
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={this.state.undoDeleteDisabled}
+              onClick={this.undoDeleteNode}
+              className={classes.outlinedButton}
+            >
+              Undo Delete
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={this.saveJson}
+              className={classes.outlinedButton}
+            >
+              Save Mind Map
+            </Button>
           </Grid>
           <Grid item sm={12}>
             <svg width="900" height="600" ref={svg => (this.svg = svg)} />

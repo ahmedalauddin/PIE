@@ -15,14 +15,10 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import { Redirect } from "react-router-dom";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import { getOrgId } from "../../redux";
+import { getOrgId, getMindmapNode, getMindmap, setMindmapNode, setMindmap, store } from "../../redux";
 import {red} from "@material-ui/core/colors";
-import Checkbox from "@material-ui/core/Checkbox";
-import TableCell from "@material-ui/core/TableCell";
+import * as jsonq from "jsonq";
 
 const styles = theme => ({
   grid: {
@@ -153,13 +149,16 @@ class NodeDetail extends React.Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleNodeDescriptionChange = this.handleNodeDescriptionChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
-    this.fetchMindMapNodeDescription = this.fetchMindMapNodeDescription.bind(this);
+    this.updateMindmap = this.updateMindmap.bind(this);
+    this.getMindMapNodeDescription = this.getMindMapNodeDescription.bind(this);
     this.state = {
       kpiId: undefined,
       title: undefined,
       orgId: 0,
       nodeDescription: "",
+      node: "",
       description: undefined,
       formula: undefined,
       project: undefined,
@@ -195,6 +194,33 @@ class NodeDetail extends React.Component {
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
+  };
+
+  handleNodeDescriptionChange = name => event => {
+    // Specific change handler for the node description.  Use Redux for this.
+    // See if we can get by without updating state for now by using Redux.
+    // this.setState({ [name]: event.target.value });
+
+    let nodeDescription = event.target.value;
+    this.updateMindmap(nodeDescription);
+  };
+
+  // Update Redux store with selected mindmap node and the mindmap JSON itself.
+  updateMindmap = (nodeDescription) => {
+    let node = getMindmapNode();
+    node.description = nodeDescription;
+    store.dispatch(setMindmapNode(JSON.stringify(node)));
+
+    // Get the node for our selected id.
+    let jsonMapData = getMindmap();
+    let mapData = jsonq(jsonMapData);
+    var nodeObject = mapData.find("id", function () {
+      return this === node.id;
+    });
+
+    nodeObject.parent().find("description").value(nodeDescription);
+    console.log("json node from full map: " + nodeObject.parent().value());
+    store.dispatch(setMindmap(JSON.stringify(mapData.value())));
   };
 
   handleExpandClick = () => {
@@ -249,29 +275,14 @@ class NodeDetail extends React.Component {
     }, 2000);
   }
 
-  fetchMindMapNodeDescription = () => {
-    let selectedNodeId = this.props.nodeId;
-    let mindmapId = this.props.mindmapId;
-    console.log("NodeDetail.js, selectedNodeId:" + selectedNodeId + ", mindmapId: " + mindmapId);
+  getMindMapNodeDescription = () => {
+    // Redux version of getting node description (from JSON)
+    const nodeDescription = getMindmapNode().description;
 
-    if (selectedNodeId !== "") {
-      // Update KPI
-      fetch(`/api/mindmap-node/${mindmapId}/${selectedNodeId}`)
-        .then(res => res.json())
-        .then(node => {
-          if (node[0].nodeDescript !== null) {
-            this.setState({
-              nodeDescription: node[0].nodeDescript
-            });
-          } else {
-            this.setState({
-              nodeDescription: ""
-            });
-          }
-        });
-    } else {
+    if (nodeDescription != null) {
       this.setState({
-        nodeDescription: ""
+        nodeDescription: nodeDescription,
+        node: getMindmapNode()
       });
     }
   };
@@ -330,13 +341,13 @@ class NodeDetail extends React.Component {
 
   componentDidMount() {
     this.fetchKpiDetail();
-    this.fetchMindMapNodeDescription();
+    this.getMindMapNodeDescription();
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.nodeId !== prevProps.nodeId) {
       this.fetchKpiDetail();
-      this.fetchMindMapNodeDescription();
+      this.getMindMapNodeDescription();
     }
   };
 
@@ -357,13 +368,13 @@ class NodeDetail extends React.Component {
           <Grid container spacing={24}>
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
-                {this.props.text}
+                {getMindmapNode().name}
               </Typography>
               <TextField
                 id="nodeDescription"
                 label="Node Description"
-                onChange={this.handleChange("nodeDescription")}
-                value={this.state.nodeDescription}
+                onChange={this.handleNodeDescriptionChange("nodeDescription")}
+                value={getMindmapNode().description}
                 rowMax = "6"
                 fullWidth
                 margin="normal"

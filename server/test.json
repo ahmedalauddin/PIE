@@ -6,32 +6,32 @@
     {
       "id": "_o4r47dq71",
       "name": "Reduce operating costs",
-      "description": "Look to reduce operating costs as description.",
       "note": "Look to reduce operating costs throughout all divisions and locations.  Start with aggregating data.",
       "side": "right",
       "children": [
         {
           "id": "_al6om6znz",
           "name": "Reduce Inventory",
-          "description": "Inventory reductions, review for all sites.",
           "note": "undefined",
-          "parentId": "_o4r47dq71"
+          "parentId": "_o4r47dq71",
+          "description": "Inventory reductions, review for all sites."
         },
         {
           "id": "_z3uk0721f",
           "name": "Operating Procedures",
-          "description": "Check operating procedures periodically",
           "note": "Initial review of operating procedures.",
-          "parentId": "_o4r47dq71"
+          "parentId": "_o4r47dq71",
+          "description": "Check operating procedures periodically"
         }
-      ]
+      ],
+      "description": "Look to reduce operating costs as description."
     },
     {
       "id": "_uajrljib9",
       "name": "Review supply chain processes",
-      "description": "",
       "note": "Perform supply chain review of all steps.",
-      "side": "left"
+      "side": "left",
+      "description": ""
     },
     {
       "id": "_uguzpgdta",

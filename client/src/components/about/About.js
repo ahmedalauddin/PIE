@@ -69,16 +69,17 @@ class About extends React.Component {
                       </Typography>
                       <div>
                         <Typography variant="body2">
-                          Version: {Package.version}
+                          Version: {Package.version}<br/>>
+                          Build date: 10/4/19
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
                           <ul>
-                            <li>Mind map: post-it notes now functional.  </li>
-                            <li>Mind map: fixes for creating a new mind map.  </li>
-                            <li>Mind map: fixes for adding child and sibling nodes.  </li>
-                            <li>Mind map: Creating a project with a KPI from a mind map now working.  </li>
+                            <li>Interim build fixing some issues and implementing some changes. </li>
+                            <li>Mind map: transitional screen to allow selection of a mindmap for an organization.  </li>
+                            <li>Mind map: added map name and description fields for the mind map itself.  </li>
+                            <li>Mind map: Creating a project from the KPI prioritization module is now working.  </li>
                           </ul>
                         </Typography>
                       </div>

@@ -149,6 +149,7 @@ class NodeDetail extends React.Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
     this.handleNodeDescriptionChange = this.handleNodeDescriptionChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
     this.updateMindmap = this.updateMindmap.bind(this);
@@ -157,14 +158,14 @@ class NodeDetail extends React.Component {
       kpiId: undefined,
       title: undefined,
       orgId: 0,
-      nodeDescription: "",
+      nodeDescription: getMindmapNode().description,
+      mindmapNodeId: getMindmapNode().id,
       node: "",
       description: undefined,
       formula: undefined,
       project: undefined,
       projectId: undefined,
       projectDescription: undefined,
-      mindmapNodeId: undefined,
       hasError: "",
       startAt: "",
       endAt: "",
@@ -196,13 +197,16 @@ class NodeDetail extends React.Component {
     this.setState({ [name]: event.target.value });
   };
 
+  handleBlur = name => event => {
+    let nodeDescription = event.target.value;
+    this.updateMindmap(nodeDescription);
+  };
+
   handleNodeDescriptionChange = name => event => {
     // Specific change handler for the node description.  Use Redux for this.
     // See if we can get by without updating state for now by using Redux.
-    // this.setState({ [name]: event.target.value });
+    this.setState({ [name]: event.target.value });
 
-    let nodeDescription = event.target.value;
-    this.updateMindmap(nodeDescription);
   };
 
   // Update Redux store with selected mindmap node and the mindmap JSON itself.
@@ -277,14 +281,23 @@ class NodeDetail extends React.Component {
 
   getMindMapNodeDescription = () => {
     // Redux version of getting node description (from JSON)
-    const nodeDescription = getMindmapNode().description;
+    const node = getMindmapNode();
+    if (node != null) {
+      const nodeDescription = node.description;
 
-    if (nodeDescription != null) {
+      if (nodeDescription != null) {
+        this.setState({
+          nodeDescription: nodeDescription,
+          node: node
+        });
+      }
+    } else {
       this.setState({
-        nodeDescription: nodeDescription,
-        node: getMindmapNode()
+        nodeDescription: "",
+        node: ""
       });
     }
+
   };
 
   fetchKpiDetail = () => {
@@ -302,7 +315,7 @@ class NodeDetail extends React.Component {
               kpiId: kpi[0].id,
               description: kpi[0].description,
               project: kpi[0].project,
-              projectDescription: kpi[0]. projectDescription,
+              projectDescription: kpi[0].projectDescription,
               formula: kpi[0].formulaDescription,
               mindmapNodeId: selectedNodeId,
               orgId: getOrgId(),
@@ -345,9 +358,17 @@ class NodeDetail extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.nodeId !== prevProps.nodeId) {
+    // Changing this.  Now compare Redux to state.
+    // if (this.props.nodeId !== prevProps.nodeId) {
+    const mindmapNodeId = getMindmapNode().id;
+    console.log("mindmap id: " + mindmapNodeId);
+
+    if ( (typeof mindmapNodeId != "undefined") && (this.state.mindmapNodeId !== mindmapNodeId) ) {
       this.fetchKpiDetail();
       this.getMindMapNodeDescription();
+      this.setState( {
+        mindmapNodeId: mindmapNodeId
+      })
     }
   };
 
@@ -373,8 +394,9 @@ class NodeDetail extends React.Component {
               <TextField
                 id="nodeDescription"
                 label="Node Description"
-                onChange={this.handleNodeDescriptionChange("nodeDescription")}
-                value={getMindmapNode().description}
+                onChange={this.handleChange("nodeDescription")}
+                onBlur={this.handleBlur("nodeDescription")}
+                value={this.state.nodeDescription}
                 rowMax = "6"
                 fullWidth
                 margin="normal"

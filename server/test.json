@@ -31,6 +31,15 @@
       "name": "Review supply chain processes",
       "note": "Perform supply chain review of all steps.",
       "side": "left",
+      "children": [
+        {
+          "id": "_xn7oyx7hr",
+          "name": "Testing",
+          "note": "",
+          "side": "left",
+          "description": ""
+        }
+      ],
       "description": ""
     },
     {

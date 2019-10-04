@@ -178,6 +178,7 @@ const styles = theme => ({
 class MindMap extends React.Component {
   constructor(props) {
     super(props);
+    this.sendSelectedNode = this.sendSelectedNode.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     this.state = {
       orgName: getOrgName(),
@@ -189,16 +190,14 @@ class MindMap extends React.Component {
       message: "",
       tabValue: 0
     };
-  }
+  };
 
   // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
-  sendSelectedNode(nodeId, nodeText, mindmapId) {
+  sendSelectedNode(nodeId) {
     this.setState({
-      selectedNodeId: nodeId,
-      selectedNodeText: nodeText,
-      mindmapId: mindmapId
+      selectedNodeId: nodeId
     });
-  }
+  };
 
   componentDidMount() {
     let message = "";
@@ -226,19 +225,6 @@ class MindMap extends React.Component {
 
   handleClick = Transition => () => {
     this.setState({ openSnackbar: true, Transition });
-  };
-
-  showNodeDetail = () => {
-    let showDetail = false;
-    console.log("MindMap, selected node: " + this.state.selectedNodeId);
-    console.log("MindMap, mindmapId: " + this.state.mindmapId);
-    if (showDetail) {
-      return (
-        <Grid item xs={12} sm={2} md={2} component={Paper}>
-          <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={this.state.mindmapId}
-            text={this.state.selectedNodeText} messages={this.showMessages}/>
-        </Grid>);
-    }
   };
 
   handleTabChange = (event, newValue) => {
@@ -272,12 +258,11 @@ class MindMap extends React.Component {
                 </AppBar>
                 {this.state.tabValue === 0 && (
                   <TabContainer>
-                    <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={mindmapId}
-                      text={this.state.selectedNodeText} messages={this.showMessages}/>
+                    <NodeDetail nodeId={this.state.selectedNodeId} mindmapId={mindmapId} messages={this.showMessages}/>
                   </TabContainer>)}
                 {this.state.tabValue === 1 && (
                   <TabContainer>
-                    <PrioritizeKpis />
+                    <PrioritizeKpis mindmapId={mindmapId} />
                   </TabContainer>)}
               </div>
             </Grid>

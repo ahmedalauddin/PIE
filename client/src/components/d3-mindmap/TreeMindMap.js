@@ -225,7 +225,7 @@ const jsonTestData = {
     }
   ]
 };
-const jsonTestData2 = {
+/* const jsonTestData2 = {
   "id": "_ns1nvi0ai",
   "name": "Root",
   "note": "Prioritization",
@@ -276,17 +276,17 @@ const jsonTestData2 = {
       ]
     }
   ]
-};
+}; */
 const duration = 100;
 const dx = 100;
 const dy = 100;
 const DEBUG_USE_TEST_DATA = false;
 const margin = { top: 40, right: 100, bottom: 40, left: 100 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-const vWidth = 350;
-const vHeight = 600;
+// const vWidth = 350;
+// const vHeight = 600;
 const vDuration = 1000;
-const vDelay = 250;
+// const vDelay = 250;
 const vRad = 25;
 const noteColor = ["#feff9c", "#7afcff", "#ff7eb9"];
 //</editor-fold>
@@ -739,8 +739,7 @@ class TreeMindMap extends React.Component {
 
   getNodeJson = (id) => {
     // Operates on mindmap JSON data.
-    const json = this.state.jsonData;
-    let nodeJson = this.getNodeById(id, json);
+    let nodeJson = this.getNodeById(id, this.state.jsonData);
     return nodeJson;
   };
 
@@ -786,11 +785,20 @@ class TreeMindMap extends React.Component {
     return nodeSelected;
   };
 
-
   // Uses our callback to send info to other components.
-  updateNodeInfo = (selectedNodeId, selectedNodeText, mindmapId) => {
-    this.props.callback(selectedNodeId, selectedNodeText, mindmapId);
+  updateNodeInfo = (selectedNodeId) => {
+    this.props.callback(selectedNodeId);
   };
+
+  // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
+  sendSelectedNode(nodeId, nodeText, mindmapId) {
+    this.setState({
+      selectedNodeId: nodeId,
+      selectedNodeText: nodeText,
+      mindmapId: mindmapId
+    });
+  }
+
 
   logNode = message => {
     let svg = d3.select("svg");
@@ -799,16 +807,7 @@ class TreeMindMap extends React.Component {
   };
 
   getSelectedNode = (nodes, i) => {
-    // Had to change the implementation of this to use the index instead of using
-    // a filter on ".node-selected". Come back and see why that didn't work if there is time.
-    /*
-    const currentlySelectedNode =
-      d3.selectAll(nodes)
-        .filter(".node-selected");
-     */
-
-    const currentlySelectedNode = d3.select(nodes[i]);
-    return currentlySelectedNode;
+    return d3.select(nodes[i]);
   };
 
   handleClickOnNode = (d, i, nodes) => {
@@ -854,19 +853,16 @@ class TreeMindMap extends React.Component {
     const noteWidth = vRad * 6;
     const noteTextWidth = (vRad * 6) - 6;
     const noteHeight = vRad * 10;
-    const currentlySelectedNode = this.getSelectedNode(nodes, i);
+    const selectedNode = this.getSelectedNode(nodes, i);
     const clickedNode = nodes[i];
     const clickedId = d3.select(clickedNode).attr("id");
 
     let selectionCriteria = "[id=" + clickedId + "]";
     let thisNode = svg.selectAll("g.node").select(selectionCriteria);
 
-    if (
-      currentlySelectedNode.size() > 0 &&
-      currentlySelectedNode.attr("name") === clickedId
-    ) {
+    if ( (selectedNode.size() > 0) && (selectedNode.attr("name") === clickedId) ) {
       // This changes the note to a yellow square.
-      currentlySelectedNode.select("rect")
+      selectedNode.select("rect")
         .transition().duration(vDuration)
         .attr("rx", 0).attr("x", 10).attr("y", 8)
         .attr("height", noteHeight).attr("width", noteWidth)
@@ -875,7 +871,7 @@ class TreeMindMap extends React.Component {
         .style("opacity", 1);
 
       // Add <text> and labels
-      currentlySelectedNode
+      selectedNode
         .select("foreignObject.note")
         .attr("x", 20)
         .attr("y", 10)
@@ -886,13 +882,12 @@ class TreeMindMap extends React.Component {
         .style("font-family", "Arial")
         .style("stroke", "none")
         .style("font-size", "13px");
-      currentlySelectedNode.raise();
+      selectedNode.raise();
     } else {
       d3.select(clickedNode).call(this.selectNode);
     }
 
-    /* Prevent triggering clickOnCanvas handler
-       https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background */
+    // Prevent triggering clickOnCanvas handler, see https://stackoverflow.com/questions/22941796/attaching-onclick-event-to-d3-chart-background
     d3.event.stopPropagation();
   };
 
@@ -918,14 +913,16 @@ class TreeMindMap extends React.Component {
     let child = {
       name: "new",
       id: createId(),
+      description: "",
       side: this.getNewChildDirection(),
       note: ""
     };
 
+    /*
     // If we are appending to the root, we need to determine which side of the map to add the child.
     if ( !this.hasParent(idOfSelectedNode) ) {
       child.side = this.getNewChildDirection();
-    }
+    } */
 
     // TODO: change this to add child to the JSON, or get parent directly from the JSON.
     // Should just be able to change the JSON element.  For instance, change this:
@@ -949,6 +946,7 @@ class TreeMindMap extends React.Component {
     let child = {
       name: "",
       id: createId(),
+      description: "",
       note: ""
     };
     parent.children.push(child);
@@ -973,6 +971,7 @@ class TreeMindMap extends React.Component {
     let deletedNode = {
       id: selectedNode.attr("id"),
       name: selectedNode.attr("name"),
+      description: selectedNode.attr("description"),
       note: selectedNode.attr("note"),
       parentId: parent.id
     };
@@ -1112,7 +1111,8 @@ class TreeMindMap extends React.Component {
       .style("fill", "green");
 
     // This is for the callback to our other components.
-    this.updateNodeInfo(node.attr("id"), node.attr("name"), this.state.mindmapId);
+    // TODO - check if this works
+    this.updateNodeInfo(node.attr("id"));
 
     // TODO - see if updated content gets save to Redux state
 
@@ -1183,7 +1183,7 @@ class TreeMindMap extends React.Component {
 
     this.updateNodeValue(idOfSelectedNode, newTextValue);
     // TODO - save newValue to JSON
-    this.updateNodeInfo("", "", this.state.mindmapId);
+    this.updateNodeInfo("");
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
@@ -1493,20 +1493,29 @@ class TreeMindMap extends React.Component {
 
   //<editor-fold desc="// JSON and load data functions">
   // This is for root children only, to determine which side to add the the node to.
-  getNewChildDirection = () => {
+  getNewChildDirection = (selectedNodeId) => {
+    // If we are appending to the root, we need to determine which side of the map to add the child.
     let jsonData = this.state.jsonData;
-    let countRight = 0;
-    let countLeft = 0;
-    for (let child of jsonData.children) {
-      if (child.side === "left") {
-        countLeft++;
-      } else {
-        countRight++;
+    let parent = this.getNodeById(selectedNodeId, jsonData);
+    let side = "";
+    const isRoot = !this.hasParent(selectedNodeId);
+    if ( isRoot ) {
+      // Figure out which side to add the node based on which side currently has fewer immediate child nodes.
+      let countRight = 0;
+      let countLeft = 0;
+      for (let child of jsonData.children) {
+        if (child.side === "left") {
+          countLeft++;
+        } else {
+          countRight++;
+        }
       }
+      side = countLeft >= countRight ? "right" : "left";
+    } else {
+      side = parent.side;
     }
-    let dir = countLeft >= countRight ? "right" : "left";
-    return dir;
-  }
+    return side;
+  };
 
   loadData = direction => {
     // Loads JSON data into a D3 tree hierarchy with right and left sides.  The D3 hierarchy
@@ -1562,7 +1571,6 @@ class TreeMindMap extends React.Component {
         console.log(
           "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
         );
-        let svg = d3.select(this.svg);
         this.update();
       }
     );

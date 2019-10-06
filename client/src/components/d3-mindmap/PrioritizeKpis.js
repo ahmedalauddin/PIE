@@ -19,6 +19,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import PropTypes from "prop-types";
 
 //<editor-fold desc="Non-class react-beautiful-dnd methods">
 const getItems = count =>
@@ -186,13 +187,25 @@ class PrioritizeKpis extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.fetchKpis = this.fetchKpis.bind(this);
+    this.findIndexSubmitted = this.findIndexSubmitted.bind(this);
     this.fetchOrganizationKpiLock = this.fetchOrganizationKpiLock.bind(this);
     this.updatePrioritizationLock = this.updatePrioritizationLock.bind(this);
     this.saveKpiPriorities = this.saveKpiPriorities.bind(this);
     this.state = {
       items: getItems(10),
       kpis: [],
+      /* kpis: [{
+        id: "",
+        title: "",
+        orgPriority: "",
+        projId: "",
+        projTitle: "",
+        projDescription: ""
+      }], */
       kpiProjectSubmitted: null,
+      indexSubmitted: null,
+      // projTitle: [],
+      // projDescription: [],
       orgName: "",
       orgId: getOrgId(),
       orgKpiPriorityLock: false,
@@ -201,6 +214,10 @@ class PrioritizeKpis extends React.Component {
       helpText: "",
       lockButtonText: ""
     };
+  };
+
+  static propTypes = {
+    mindmapId: PropTypes.number
   };
 
   //<editor-fold desc="Fetch methods">
@@ -214,7 +231,10 @@ class PrioritizeKpis extends React.Component {
         .then(res => res.json())
         .then(kpis => this.setState({
           kpis: kpis
-        }));
+        }))
+        .then( () => {
+          console.log("testing");
+        });
     }
   };
 
@@ -262,8 +282,26 @@ class PrioritizeKpis extends React.Component {
   };
 
   handleChange = (i, name) => event => {
+    console.log("name: " + [name]);
+    console.log("event.target.id: " + event.target.id);
+
+    // get index from the control's id.
+    var position = event.target.id.indexOf("-");
+    var index = event.target.id.substring(position+1, position+10);
+
+    let kpisCopy = JSON.parse(JSON.stringify(this.state.kpis));
+
+    console.log("control's index is: " + index);
+
+    if (name === "projDescription") {
+      kpisCopy[index].projDescription = event.target.value;
+    } else if (name === "projTitle") {
+      kpisCopy[index].projTitle = event.target.value;
+    } else {
+      console.log("control's index is: " + index);
+    }
     this.setState({
-      [name]: event.target.value
+      kpis: kpisCopy
     });
   };
   //</editor-fold>
@@ -320,12 +358,26 @@ class PrioritizeKpis extends React.Component {
 
   //</editor-fold>
 
+  // Use the kpiId submnitted to determine the index in the control array.
+  findIndexSubmitted = (kpiId) => {
+    let index = "";
+    for (let i=0; i<this.state.kpis.length; i++) {
+      if (this.state.kpis[i].id === kpiId) {
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }
+
   // Handle submit of a project as main KPI for one of the selected KPI sections.
   handleSubmit = (kpiId) => (event) => {
     // Add the index to state so we know what we are submitting.
     let successMessage = "";
+    let index = this.findIndexSubmitted(kpiId);
     this.setState({
-      kpiProjectSubmitted: kpiId
+      kpiProjectSubmitted: kpiId,
+      indexSubmitted: index
     });
 
     console.log("JSON state: " + JSON.stringify(this.state));
@@ -417,9 +469,9 @@ class PrioritizeKpis extends React.Component {
                               <Typography className={classes.secondaryHeading}>
                                 <input type="hidden" name="kpiId" value={kpi.id}/>
                                 <TextField
-                                  id={`title${index + 1}`}
+                                  id={`title-${index}`}
                                   label="Project Title"
-                                  onChange={this.handleChange(index, "title")}
+                                  onChange={this.handleChange(index, "projTitle")}
                                   value={kpi.projTitle}
                                   fullWidth
                                   margin="normal"
@@ -428,9 +480,9 @@ class PrioritizeKpis extends React.Component {
                                   }}
                                 />
                                 <TextField
-                                  id="description"
+                                  id={`description-${index}`}
                                   label="Description"
-                                  onChange={this.handleChange(index, "description")}
+                                  onChange={this.handleChange(index, "projDescription")}
                                   value={kpi.projDescription}
                                   fullWidth
                                   margin="normal"

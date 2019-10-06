@@ -1,5 +1,4 @@
 {
-  "ideas": [],
   "items": [
     {
       "id": "item-0",
@@ -44,12 +43,12 @@
   ],
   "kpis": [
     {
-      "id": 97,
-      "title": "Assess degree of automation",
+      "id": 9,
+      "title": "Mean Time Between Failure",
       "orgPriority": 1,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
+      "projId": 6792,
+      "projTitle": "hello",
+      "projDescription": "again"
     },
     {
       "id": 107,
@@ -60,28 +59,28 @@
       "projDescription": "Assess potential benefits of testing to prevent future failures"
     },
     {
-      "id": 9,
-      "title": "Mean Time Between Failure",
+      "id": 97,
+      "title": "Assess degree of automation",
       "orgPriority": 3,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
+      "projId": 6793,
+      "projTitle": "Automation assessment",
+      "projDescription": "Assess degrees of automation over next two months"
     },
     {
       "id": 4,
       "title": "Increase parts availability",
       "orgPriority": 4,
       "projId": 30,
-      "projTitle": "Plant closing",
-      "projDescription": "Reduce inventory in all warehouses"
+      "projTitle": "ds",
+      "projDescription": "dd"
     },
     {
       "id": 99,
       "title": "Inventory Cost",
       "orgPriority": 5,
-      "projId": null,
-      "projTitle": null,
-      "projDescription": null
+      "projId": 6794,
+      "projTitle": "undefined",
+      "projDescription": "undefined"
     },
     {
       "id": 96,
@@ -108,10 +107,14 @@
       "projDescription": null
     }
   ],
+  "kpiProjectSubmitted": 97,
+  "indexSubmitted": 2,
   "orgName": "Northwest Lumber",
-  "orgKpiPriorityLock": 1,
+  "orgId": 2,
+  "orgKpiPriorityLock": 0,
   "lockPrioritization": false,
-  "dragDisabled": true,
-  "helpText": "Unlock prioritization to enable reordering KPI priorities.",
-  "lockButtonText": "Unlock Prioritization"
+  "dragDisabled": false,
+  "helpText": "Drag KPIs up and down to reorder their priorities.",
+  "lockButtonText": "Lock Prioritization",
+  "message": ""
 }

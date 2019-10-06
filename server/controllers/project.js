@@ -71,8 +71,9 @@ module.exports = {
     // let _obj = util.inspect(req, { showHidden: false, depth: null });
     logger.debug(`${callerType} createOrUpdateProjectWithKpi -> JSON: req.body: ${JSON.stringify(req.body)}`);
 
-    const title = req.body.title;
-    const description = req.body.description;
+    const index = req.body.indexSubmitted;
+    const projTitle = req.body.kpis[index].projTitle;
+    const projDescription = req.body.kpis[index].projDescription;
     const mainKpiId = req.body.kpiProjectSubmitted;
     const orgId = req.body.orgId;
     /**
@@ -88,7 +89,7 @@ module.exports = {
      *   "call setProject(" +  mainKpiId + ", " + orgId + ", '" + title + "', '" + description + "', @returnText); " +
      *   "SELECT @returnText;";
      */
-    const sql = "call setProject(" +  mainKpiId + ", " + orgId + ", '" + title + "', '" + description + "'); ";
+    const sql = "call setProject(" +  mainKpiId + ", " + orgId + ", '" + projTitle + "', '" + projDescription + "'); ";
     return models.sequelize.query(
       sql, {
       type: models.sequelize.QueryTypes.RAW

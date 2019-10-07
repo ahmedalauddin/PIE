@@ -161,8 +161,8 @@ const styles = theme => ({
     width: 400
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2
   },
   dense: {
     marginTop: 19
@@ -1718,6 +1718,7 @@ class TreeMindMap extends React.Component {
               onChange={this.handleChange("mapName")}
               value={this.state.mapName}
               margin="normal"
+              className={classes.textField}
               InputLabelProps={{
                 shrink: true
               }}
@@ -1728,6 +1729,7 @@ class TreeMindMap extends React.Component {
               onChange={this.handleChange("mapDescription")}
               value={this.state.mapDescription}
               margin="normal"
+              className={classes.textFieldWide}
               InputLabelProps={{
                 shrink: true
               }}

@@ -217,7 +217,7 @@ class PrioritizeKpis extends React.Component {
   };
 
   static propTypes = {
-    mindmapId: PropTypes.number
+    mindmapId: PropTypes.number.isRequired
   };
 
   //<editor-fold desc="Fetch methods">

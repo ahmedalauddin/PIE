@@ -299,7 +299,7 @@ class ProjectDashboard extends Component {
             </Grid>
           </Grid>
           <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <Grid item>
+              <Grid item>
               <FormControl className={classes.formControl}>
                 <InputLabel htmlFor="selectChips">Status</InputLabel>
                 <Select

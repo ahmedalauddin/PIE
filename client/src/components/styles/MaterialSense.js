@@ -4,12 +4,16 @@ import { red } from "@material-ui/core/colors";
 export const styles = theme => ({
   root: {
     flexGrow: 1,
+    display: "flex",
+    flex: "1 0 100vh",
+    //flexDirection: 'row',
+    //flexWrap: 'wrap',
     backgroundColor: theme.palette.grey["100"],
+    // height: "100vh",
     overflow: "hidden",
-
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
+    //backgroundSize: "cover",
+    //backgroundPosition: "0 400px",
+    paddingBottom: "300px"
   },
   grid: {
     width: 1200,

@@ -212,19 +212,21 @@ class NodeDetail extends React.Component {
   // Update Redux store with selected mindmap node and the mindmap JSON itself.
   updateMindmap = (nodeDescription) => {
     let node = getMindmapNode();
-    node.description = nodeDescription;
-    store.dispatch(setMindmapNode(JSON.stringify(node)));
+    if ( node && (node !== "{}") ) {
+      node.description = nodeDescription;
+      store.dispatch(setMindmapNode(JSON.stringify(node)));
 
-    // Get the node for our selected id.
-    let jsonMapData = getMindmap();
-    let mapData = jsonq(jsonMapData);
-    var nodeObject = mapData.find("id", function () {
-      return this === node.id;
-    });
+      // Get the node for our selected id.
+      let jsonMapData = getMindmap();
+      let mapData = jsonq(jsonMapData);
+      var nodeObject = mapData.find("id", function () {
+        return this === node.id;
+      });
 
-    nodeObject.parent().find("description").value(nodeDescription);
-    console.log("json node from full map: " + nodeObject.parent().value());
-    store.dispatch(setMindmap(JSON.stringify(mapData.value())));
+      nodeObject.parent().find("description").value(nodeDescription);
+      console.log("json node from full map: " + nodeObject.parent().value());
+      store.dispatch(setMindmap(JSON.stringify(mapData.value())));
+    }
   };
 
   handleExpandClick = () => {

@@ -1,6 +1,6 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/d3-mindmap/MindmapList.js
+ * File:     /client/src/components/d3-mindmap/EnhancedTable.js
  * Created:  2019-10-01
  * Desc:     List of mind maps for an organization.  Used to select which one to edit.
  * Author:   Brad Kaufman
@@ -24,18 +24,19 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import EditIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import TablePagination from "@material-ui/core/TablePagination";
+import TableHead from "@material-ui/core/TableHead";
+import Tooltip from "@material-ui/core/Tooltip";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import PropTypes from "prop-types";
 import EnhancedTableHead from "../common/EnhancedTableHead";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import DeleteIcon from "@material-ui/icons/Delete";
-import SectionHeader from "../typo/SectionHeader";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
 
+
+// Pass in rows.
 const rows = [
-  { id: "edit", numeric: false, disablePadding: false, label: "" },
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "createdAt", numeric: false, disablePadding: false, label: "Created" },
@@ -112,11 +113,10 @@ const styles = theme => ({
   }
 });
 
-class MindmapList extends Component {
+class EnhancedTable extends Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
-    this.setEditRedirect = this.setEditRedirect.bind(this);
     this.renderEditRedirect = this.renderEditRedirect.bind(this);
   };
 
@@ -126,16 +126,11 @@ class MindmapList extends Component {
     orgId: getOrgId(),
     orgName: getOrgName(),
     selected: [],
-    // data: [],
-
-
     readyToEdit: false,
     submitted: null,
     page: 0,
     rowsPerPage: 5,
-
-
-    mindmaps: [],
+    data: [],
     readyToRedirect: false,
     user: "",
     toProject: false,
@@ -150,15 +145,7 @@ class MindmapList extends Component {
   };
 
   componentDidMount() {
-    fetch("/api/mindmaps-list/" + getOrgId())
-      .then(res => {
-        return res.json();
-      })
-      .then(mindmaps => {
-        this.setState({
-          mindmaps: mindmaps
-        });
-      });
+
   };
 
   handleRequestSort = (event, property) => {
@@ -176,6 +163,9 @@ class MindmapList extends Component {
     setTimeout(() => {
       if (id > 0) {
         // Deactivate a mind map
+
+        // Need something here.
+
         let removePath = "/api/mindmaps-deactivate/" + id;
         fetch(removePath, {
           method: "PUT",
@@ -223,17 +213,19 @@ class MindmapList extends Component {
 
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
-  setEditRedirect = (mindmapId) => {
-    this.setState({
-      readyToEdit: true,
-      mindmapId: mindmapId
-    });
-  }
-
   // Redirect to Mindmap.
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
-      return <Redirect to={`/mindmap/${this.state.mindmapId}`} />;
+      return (
+        <Redirect
+          to={{
+            pathname: "/somewhere",
+            state: {
+              mindmapId: this.state.mindmapId
+            }
+          }}
+        />
+      );
     }
   };
 
@@ -251,92 +243,90 @@ class MindmapList extends Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath}/>
-        <div className={classes.root}>
+        <div>
           {this.renderEditRedirect()}
-          <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <Grid item>
-              <Card className={classes.card}>
-                <CardContent>
-                  <div className={classes.tableWrapper}>
-                    <Table className={classes.table} aria-labelledby="tableTitle">
-                      <EnhancedTableHead
-                        numSelected={selected.length}
-                        rows={rows}
-                        order={order}
-                        orderBy={orderBy}
-                        onRequestSort={this.handleRequestSort}
-                        rowCount={mindmaps.length}
-                      />
-                      <TableBody>
-                        {stableSort(mindmaps, getSorting(order, orderBy))
-                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                          .map(mindmap => {
-                            const isSelected = this.isSelected(mindmap.id);
-                            return (
-                              <TableRow
-                                hover
-                                aria-checked={isSelected}
-                                tabIndex={-1}
-                                key={mindmap.id}
-                                selected={isSelected}
-                              >
-                                <TableCell component="th" scope="row" padding="none">
-                                  <IconButton
-                                    onClick={() => {
-                                      this.setEditRedirect(mindmap.id);
-                                    }}
-                                  >
-                                    <EditIcon color="primary" />
-                                  </IconButton>
-                                </TableCell>
-                                <TableCell align="left">{mindmap.mapName}</TableCell>
-                                <TableCell align="left">{mindmap.mapDescription}</TableCell>
-                                <TableCell align="left">{formatDate(mindmap.createdAt)}</TableCell>
-                                <TableCell align="left">{formatDate(mindmap.updatedAt)}</TableCell>
-                                <TableCell padding="none">
-                                  <IconButton
-                                    onClick={() => {
-                                      this.deactivateKpi(mindmap.id);
-                                    }}
-                                  >
-                                    <DeleteIcon color="primary" />
-                                  </IconButton>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        {emptyRows > 0 && (
-                          <TableRow style={{ height: 49 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={mindmaps.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                backIconButtonProps={{
-                  "aria-label": "Previous Page"
-                }}
-                nextIconButtonProps={{
-                  "aria-label": "Next Page"
-                }}
-                onChangePage={this.handleChangePage}
-                onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          <div className={classes.tableWrapper}>
+            <Table className={classes.table} aria-labelledby="tableTitle">
+              <EnhancedTableHead
+                numSelected={selected.length}
+                rows={rows}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={this.handleRequestSort}
+                rowCount={mindmaps.length}
               />
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+              <TableBody>
+                {stableSort(data, getSorting(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(data => {
+                    const isSelected = this.isSelected(data.id);
+                    return (
+                      <TableRow
+                        hover
+                        aria-checked={isSelected}
+                        tabIndex={-1}
+                        key={mindmap.id}
+                        selected={isSelected}
+                      >
+                        <TableCell component="th" scope="row" padding="none">
+                          <IconButton
+                            onClick={() => {
+                              this.setEditRedirect(mindmap.id);
+                            }}
+                          >
+                            <EditIcon color="primary" />
+                          </IconButton>
+                        </TableCell>
 
+                        // for loop here...
+                        <TableCell align="left">{data.title}</TableCell>
+                        <TableCell align="left">{mindmap.description}</TableCell>
+                        <TableCell align="left">{mindmap.createdAt}</TableCell>
+                        <TableCell align="left">{mindmap.updatedAt}</TableCell>
+
+
+
+                        <TableCell padding="none">
+                          <IconButton
+                            onClick={() => {
+
+                              // pass in this function.
+                              this.deactivate(data.id);
+                            }}
+                          >
+                            <DeleteIcon color="primary" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 49 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={mindmaps.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            backIconButtonProps={{
+              "aria-label": "Previous Page"
+            }}
+            nextIconButtonProps={{
+              "aria-label": "Next Page"
+            }}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          />
         </div>
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(MindmapList);
+export default withStyles(styles)(EnhancedTable);

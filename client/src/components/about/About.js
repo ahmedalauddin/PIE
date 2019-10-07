@@ -48,7 +48,7 @@ class About extends React.Component {
         <Topbar currentPath={currentPath} />
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
-            <Grid container justify="center">
+            <Grid container justify="center" className={classes.root}>
               <Grid
                 spacing={24}
                 alignItems="center"

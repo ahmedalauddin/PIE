@@ -30,6 +30,11 @@ const MenuProps = {
       width: 250,
     },
   },
+  getContentAnchorEl: null,
+  anchorOrigin: {
+    vertical: "bottom",
+    horizontal: "left",
+  }
 };
 const styles = theme => ({
   chip: {

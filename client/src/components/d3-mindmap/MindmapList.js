@@ -115,6 +115,7 @@ const styles = theme => ({
 class MindmapList extends Component {
   constructor(props) {
     super(props);
+    this.addMindmap = this.addMindmap.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.setEditRedirect = this.setEditRedirect.bind(this);
     this.renderEditRedirect = this.renderEditRedirect.bind(this);
@@ -212,6 +213,11 @@ class MindmapList extends Component {
 
     this.setState({ selected: newSelected });
   };
+
+  addMindmap = () => {
+    return <Redirect to="/mindmap" />;
+  };
+
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -314,20 +320,25 @@ class MindmapList extends Component {
                     </Table>
                   </div>
                   <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={mindmaps.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                backIconButtonProps={{
-                  "aria-label": "Previous Page"
-                }}
-                nextIconButtonProps={{
-                  "aria-label": "Next Page"
-                }}
-                onChangePage={this.handleChangePage}
-                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-              />
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={mindmaps.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    backIconButtonProps={{
+                      "aria-label": "Previous Page"
+                    }}
+                    nextIconButtonProps={{
+                      "aria-label": "Next Page"
+                    }}
+                    onChangePage={this.handleChangePage}
+                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  />
+                  <br/>
+                  <br/>
+                  <Fab component={Link} color="primary" aria-label="Add" to={`/mindmap`} className={classes.fab}>
+                    <AddIcon />
+                  </Fab>
                 </CardContent>
               </Card>
             </Grid>

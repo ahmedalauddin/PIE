@@ -22,6 +22,7 @@ import { Redirect } from "react-router-dom";
 import { createId, createNewMapJson } from "./MindMapFunctions";
 import TextField from "@material-ui/core/TextField";
 import * as jsonq from "jsonq";
+import { createTreeLayout } from "./MindmapLayout";
 
 //<editor-fold desc="// Constant declarations">
 const styles = theme => ({
@@ -297,7 +298,6 @@ class TreeMindMap extends React.Component {
     //<editor-fold desc="// Constructor bindings">
     this.update = this.update.bind(this);
     this.chart = this.chart.bind(this);
-    this.createTreeLayout = this.createTreeLayout.bind(this);
     this.appendChildToSelectedNode = this.appendChildToSelectedNode.bind(this);
     this.addSiblingToSelectedNode = this.addSiblingToSelectedNode.bind(this);
     this.editNode = this.editNode.bind(this);
@@ -308,7 +308,6 @@ class TreeMindMap extends React.Component {
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.setButtonStates = this.setButtonStates.bind(this);
-    this.d3Tree = this.d3Tree.bind(this);
     this.saveJson = this.saveJson.bind(this);
     this.saveNoteToJson = this.saveNoteToJson.bind(this);
     this.hasChildren = this.hasChildren.bind(this);
@@ -320,7 +319,7 @@ class TreeMindMap extends React.Component {
     this.findSelectedNode = this.findSelectedNode.bind(this);
     this.getNodeById = this.getNodeById.bind(this);
     this.getNodeJson = this.getNodeJson.bind(this);
-    this.fullTree = this.fullTree.bind(this);
+    this.drawTree = this.drawTree.bind(this);
     this.logNode = this.logNode.bind(this);
     this.getNewChildDirection = this.getNewChildDirection.bind(this);
     this.isUndoDeleteDisabled = this.isUndoDeleteDisabled.bind(this);
@@ -385,7 +384,7 @@ class TreeMindMap extends React.Component {
 
   //<editor-fold desc="// Post-it note and rectangle drawing functions">
   addNote = () => {
-    let root = this.createTreeLayout();
+    let root = createTreeLayout( d3.select(this.svg), this.state.height, this.state.width, this.state.jsonData);
 
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
@@ -1275,53 +1274,10 @@ class TreeMindMap extends React.Component {
 
   //<editor-fold desc="// D3 and tree layout and draw functions">
 
-
-  createTreeLayout = () => {
-    let svg = d3.select("svg");
-    let leftTree = this.loadData("left");
-    let rightTree = this.loadData("right");
-
-    let d3TreeHeight = this.state.height;
-    let d3TreeWidth = (this.state.width - 50) / 2;      // Should be roughly half the SVG width, so divide by 2.
-
-    // Compute the layout.
-    // tree.size() sets the available layout size, with x and y values.  Keep in mind we are rotating our
-    // tree by 90 degrees, so height is in the x position, and width in the y position.
-    // For the left tree, the y value is negative, meaning the tree is reversed, it goes to the left.
-    let treeLeft = d3.tree().size([d3TreeHeight, (-1 * d3TreeWidth)]);
-    let treeRight = d3.tree().size([d3TreeHeight, d3TreeWidth]);
-
-    // The shift the entire tree by half its width
-    let g = svg.select("g").attr("transform", "translate(" + this.state.width / 2 + ",0)");
-
-    // Compute the new tree layouts.
-    this.d3Tree(leftTree, "left");
-    this.d3Tree(rightTree, "right");
-
-    // Set the origins of each left and right tree to the same x position, which we use as the y position, given
-    // we rotate the tree by 90 degrees.
-    rightTree.x = d3TreeHeight/2;
-    leftTree.x = d3TreeHeight/2;
-
-    // Combine the outputs from D3 tree.  Check if children exist first, as a new map won't have children.
-    if (rightTree.children && rightTree.children.length) {
-      rightTree.children.forEach((d, i) => {
-        if (leftTree.children)
-          leftTree.children.push(d);
-        else
-          leftTree.children = [d];
-      });
-    }
-
-    // use leftTree as the root
-    let root = leftTree;
-    return root;
-  };
-
   // Draw the full bidirectional tree.
-  fullTree = () => {
+  drawTree = () => {
     let svg = d3.select("svg");
-    let root = this.createTreeLayout();
+    let root = createTreeLayout(svg, this.state.height, this.state.width, this.state.jsonData);
 
     root.descendants().forEach((d, i) => {
       d.id = d.data.id;
@@ -1461,33 +1417,15 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  // Compute the positions of nodes in the tree using D3's tree layout.
-  d3Tree = (treeData, direction) => {
-    let SWITCH_CONST = 1;
-    let treeHeight = this.state.height;
-    let treeWidth = (this.state.width - 400)/2;
-
-    console.log("d3tree, direction = " + direction);
-    console.log("d3tree, state height = " + this.state.height + ", state width = " + this.state.width);
-    console.log("d3tree, actual height = " + treeHeight + ", actual width = " + treeWidth);
-    if (direction === "left") {
-      SWITCH_CONST = -1;
-    }
-    // Compute the layout.
-    let tree = d3.tree().size([this.state.height, (SWITCH_CONST * treeWidth)]);
-
-    return tree(treeData);
-  };
-
   update = () => {
-    // d3.hierarchy object is a data structure that represents a hierarchy
-    // It has a number of functions defined on it for retrieving things like
-    // ancestor, descendant, and leaf nodes, and for computing the path between nodes
-    this.fullTree();
-    this.setState({
-      isNewMap: false,
-      myCounter: this.state.myCounter + 1
-    });
+    // d3.hierarchy object is a data structure that represents a hierarchy.  It has a number of functions defined
+    // on it for retrieving things like ancestor, descendant, and leaf nodes, and for computing the path between nodes.
+    if (this.state.jsonData && (this.state.jsonData != "")) {
+      this.drawTree();
+      this.setState({
+        isNewMap: false
+      });
+    }
   };
   //</editor-fold>
 
@@ -1517,63 +1455,17 @@ class TreeMindMap extends React.Component {
     return side;
   };
 
-  loadData = direction => {
-    // Loads JSON data into a D3 tree hierarchy with right and left sides.  The D3 hierarchy
-    // gives up screen coordinates.
-    let d3Data = "";
-    let jsonData = this.state.jsonData;
-
-    let childrenLeft = null;
-    let childrenRight = null;
-    for (let child of jsonData.children) {
-      if (child.side === "left") {
-        child.side = "left";
-        if (childrenLeft) {
-          childrenLeft.push(child);
-        } else {
-          childrenLeft = [child];
-        }
-      } else {
-        if (childrenRight) {
-          childrenRight.push(child);
-        } else {
-          childrenRight = [child];
-        }
-      }
-    }
-
-    let childrenData = (direction === "left") ? childrenLeft : childrenRight;
-
-    d3Data = {
-      name: jsonData.name,
-      id: jsonData.id,
-      description: jsonData.description,
-      children: JSON.parse(
-        JSON.stringify(childrenData)
-      )
-    };
-
-    // d3.hierarchy object is a data structure that represents a hierarchy.
-    // It has a number of functions defined on it for retrieving things like
-    // ancestor, descendant, and leaf nodes, and for computing the path between nodes.
-    let d3HierarchyData = d3.hierarchy(d3Data);
-    return d3HierarchyData;
-  };
-
   newMap = () => {
     // Create new JSON data as defined in the global const, then set state.
-    this.setState(
-      {
-        isNewMap: true,
-        jsonData: createNewMapJson()
-      },
-      () => {
-        console.log(
-          "newMap, updated state this.state.isNewMap = " + this.state.isNewMap
-        );
-        this.update();
-      }
-    );
+    const newJsonData = createNewMapJson();
+
+    this.setState({
+      isNewMap: true,
+      jsonData: newJsonData
+    }, () => {
+      store.dispatch(setMindmap(JSON.stringify(newJsonData)));
+      this.update();
+    });
   };
 
   saveJson = () => {
@@ -1585,10 +1477,8 @@ class TreeMindMap extends React.Component {
     };
 
     // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
-    let method = (this.state.isNewMap) ? "POST" : "PUT";
-    let url = "/api/mindmaps";
-    if (!this.state.isNewMap)
-      url += "/" + this.props.mindmapId;
+    let method = (!this.state.isNewMap) ? "PUT" : "POST";
+    let url = (!this.state.isNewMap) ? "/api/mindmaps" + this.props.mindmapId : "/api/mindmaps";
 
     setTimeout(() => {
       fetch(url, {
@@ -1620,49 +1510,38 @@ class TreeMindMap extends React.Component {
   };
 
   componentDidMount() {
-    if (DEBUG_USE_TEST_DATA) {
-      this.setState({
-        jsonData: jsonTestData
-      });
-      this.chart();
-    } else {
-      // Try to fetch data.
-      if (this.state.orgId > 0) {
-        fetch(`/api/mindmaps/${this.props.mindmapId}`)
-          .then(response => {
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-              return response.json().then(map => {
-                // process your JSON data further
-                if (map) {
-                  this.setState({
-                    jsonData: map.mapData,
-                    mapName: map.mapName,
-                    mapDescription: map.mapDescription
-                  });
-                  // Call Redux here.
-                  store.dispatch(setMindmap(JSON.stringify(map.mapData)));
-                } else {
-                  this.setState({
-                    isNewMap: true
-                  });
-                }
-              });
-            } else {
-              this.setState({
-                isNewMap: true
-              });
-            }
-          })
-          .then(() => {
-            this.chart();
-          });
-      } else {
-        this.setState({
-          isNewMap: true
+    const mindmapId = this.props.mindmapId;
+
+    // Try to fetch data.
+    if (mindmapId > 0) {
+      fetch(`/api/mindmaps/${mindmapId}`)
+        .then(response => {
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json().then(map => {
+              // process your JSON data further
+              if (map) {
+                this.setState({
+                  jsonData: map.mapData,
+                  mapName: map.mapName,
+                  mapDescription: map.mapDescription
+                });
+                // Call Redux here.
+                store.dispatch(setMindmap(JSON.stringify(map.mapData)));
+              } else {
+                this.newMap();
+              }
+            });
+          } else {
+            this.newMap();
+          }
+        })
+        .then(() => {
+          this.chart();
         });
-        this.chart();
-      }
+    } else {
+      this.newMap();
+      this.chart();
     }
   }
 

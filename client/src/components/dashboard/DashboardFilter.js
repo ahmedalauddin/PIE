@@ -20,6 +20,7 @@ import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import { styles } from "./DashboardStyles";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -36,74 +37,6 @@ const MenuProps = {
     horizontal: "left",
   }
 };
-const styles = theme => ({
-  chip: {
-    margin: 2,
-  },
-  filterSelect: {
-    alignItems: "flex-end",
-  },
-  filters: {
-    alignItems: "flex-end",
-  },
-  noLabel: {
-    marginTop: theme.spacing.unit * 3,
-  },
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.grey["100"],
-    overflow: "hidden",
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
-  },
-  grid: {
-    width: 1200,
-    marginTop: 40,
-    [theme.breakpoints.down("sm")]: {
-      width: "calc(100% - 20px)"
-    }
-  },
-  paper: {
-    padding: theme.spacing.unit * 3,
-    textAlign: "left",
-    color: theme.palette.text.secondary
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    flexBasis: "15%",
-    flexShrink: 0,
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 170,
-    maxWidth: 450,
-  },
-  chips: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  details: {
-    alignItems: "center",
-  },
-  column: {
-    flexBasis: "15%",
-  },
-  narrowColumn: {
-    flexBasis: "5%",
-  },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: "none",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  }
-});
 const statuses = [
   "Approved",
   "Not Approved",
@@ -116,30 +49,28 @@ class DashboardFilter extends Component {
   constructor(props) {
     super(props);
     this.updateFilterValues = this.updateFilterValues.bind(this);
+    this.state = {
+      order: "asc",
+      orderBy: "",
+      orgId: "",
+      organization:"",
+      orgName: "",
+      selected: [],
+      selectedYrs: [],
+      projects: [],
+      projectId: null,
+      readyToEdit: false,
+      yearList: [],
+      status: [],
+      startYear: [],
+      endYear: [],
+      readyToRedirect: false,
+      selectChips: null,
+      toProject: false,
+      toProjectId: "",
+      hasError: false
+    };
   }
-
-  state = {
-    order: "asc",
-    orderBy: "",
-    orgId: "",
-    organization:"",
-    orgName: "",
-    selected: [],
-    selectedYrs: [],
-    projects: [],
-    projectId: null,
-    readyToEdit: false,
-    yearList: [],
-    status: [],
-    startYear: [],
-    endYear: [],
-    readyToRedirect: false,
-    selectChips: null,
-    toProject: false,
-    toProjectId: "",
-    hasError: false
-  };
-
   handleStatusChange = event => {
     this.setState({ status: event.target.value });
   };
@@ -164,10 +95,13 @@ class DashboardFilter extends Component {
 
   componentDidMount() {
     // Get the organization from the filter.
-    let orgId = getOrgId();
+    let fetchUrl = "/api/projects-years";
+    if (!this.props.allClients) {
+      fetchUrl += "/" + getOrgId();
+    }
 
     // Get list of years for filtering.
-    fetch("/api/projects-years/" + orgId)
+    fetch(fetchUrl)
       .then(res => {
         return res.json();
       })

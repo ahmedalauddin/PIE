@@ -24,77 +24,8 @@ import AddIcon from "@material-ui/icons/Add";
 import EditIcon from "@material-ui/icons/Edit";
 import IconButton from "@material-ui/core/IconButton";
 import { connect } from "react-redux";
-
-const styles = theme => ({
-  chip: {
-    margin: 2,
-  },
-  filterSelect: {
-    alignItems: "flex-end",
-  },
-  filters: {
-    alignItems: "flex-end",
-  },
-  noLabel: {
-    marginTop: theme.spacing.unit * 3,
-  },
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.grey["100"],
-    overflow: "hidden",
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
-  },
-  grid: {
-    width: 1200,
-    marginTop: 40,
-    [theme.breakpoints.down("sm")]: {
-      width: "calc(100% - 20px)"
-    }
-  },
-  paper: {
-    padding: theme.spacing.unit * 3,
-    textAlign: "left",
-    color: theme.palette.text.secondary
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    flexBasis: "15%",
-    flexShrink: 0,
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
-  },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 170,
-    maxWidth: 450,
-  },
-  chips: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  details: {
-    alignItems: "center",
-  },
-  column: {
-    flexBasis: "15%",
-  },
-  narrowColumn: {
-    flexBasis: "5%",
-  },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: "none",
-    "&:hover": {
-      textDecoration: "underline",
-    },
-  }
-});
-
-var msg = "";
+import { styles } from "./DashboardStyles";
+import { formatDate } from "../common/UtilityFunctions";
 
 class ProjectPanelList extends Component {
   constructor(props) {
@@ -102,6 +33,8 @@ class ProjectPanelList extends Component {
     this.addProject = this.addProject.bind(this);
     this.fetchProjects = this.fetchProjects.bind(this);
     this.setEditRedirect = this.setEditRedirect.bind(this);
+    this.renderClientColumn = this.renderClientColumn.bind(this);
+    this.renderClientColumnHeading = this.renderClientColumnHeading.bind(this);
     this.renderEditRedirect = this.renderEditRedirect.bind(this);
     //<editor-fold desc="// Constructor set state">
     this.state = {
@@ -110,6 +43,8 @@ class ProjectPanelList extends Component {
       orgId: "",
       organization:"",
       orgName: "",
+      allClients: this.props.allClients,      // This is whether we're showing the full ValueInfinity admin project list,
+                                              // or for a selected client organization.
       projects: [],
       projectId: null,
       readyToEdit: false,
@@ -126,22 +61,25 @@ class ProjectPanelList extends Component {
     console.log("error: " + error + ", info: " + info);
     this.setState({hasError: true});
     return <Redirect to="/Login" />;
-  };
+  }
 
   fetchProjects = () => {
+    let fetchUrl = "/api/projects-filtered";
+
     let orgId = getOrgId();
     if (parseInt(orgId) > 0) {
       console.log("Org ID = " + parseInt(orgId));
-      let statusFilter = this.props.projectListFilter.status;
-      let startYearFilter = this.props.projectListFilter.startYear;
-      let endYearFilter = this.props.projectListFilter.endYear;
+      const statusFilter = this.props.projectListFilter.status;
+      const startYearFilter = this.props.projectListFilter.startYear;
+      const endYearFilter = this.props.projectListFilter.endYear;
+      const allClients = this.props.allClients;
 
       if (parseInt(orgId) > 0) {
         console.log("ProjectPanelList, before setState for filter values");
         // Use the props for the body of the fetch request.
-        const reqBody = {statusFilter, startYearFilter, endYearFilter, orgId};
+        const reqBody = {statusFilter, startYearFilter, endYearFilter, allClients, orgId};
 
-        fetch("/api/projects-filtered", {
+        fetch(fetchUrl, {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(reqBody)
@@ -157,7 +95,7 @@ class ProjectPanelList extends Component {
             console.log("fetch: complete");
           });
       } else {
-        this.setState({hasError: true});
+        this.setState({ hasError: true });
       }
     }
   }
@@ -173,14 +111,6 @@ class ProjectPanelList extends Component {
     this.fetchProjects();
   };
 
-  formatDate(dateInput) {
-    let dateOut = "";
-    if (dateInput !== null) {
-      dateOut = moment(dateInput).format("YYYY-MM-DD");
-    }
-    return dateOut;
-  }
-
   handleClick = (event, id) => {};
 
   addProject = () => {
@@ -192,18 +122,54 @@ class ProjectPanelList extends Component {
       readyToEdit: true,
       projectId: projectId
     });
-  }
+  };
 
   renderEditRedirect = () => {
     if (this.state.readyToEdit) {
       return <Redirect to={`/project/${this.state.projectId}`} />;
     }
-  }
+  };
+
+  renderClientColumnHeading = () => {
+    let clientColumnHeading = "";
+    const { classes } = this.props;
+
+    if (this.props.allClients) {
+      clientColumnHeading =
+        <div className={classes.column}>
+          <Typography className={classes.secondaryHeading}>
+            Client
+          </Typography>
+        </div>;
+    }
+    return clientColumnHeading;
+  };
+
+  renderClientColumn = (organization) => {
+    let clientColumnHeading = "";
+    const { classes } = this.props;
+
+    if (this.props.allClients) {
+      clientColumnHeading =
+        <div className={classes.column}>
+          <Typography className={classes.secondaryHeading}>
+            {organization}
+          </Typography>
+        </div>;
+    }
+    return clientColumnHeading;
+  };
 
   render() {
     const { classes } = this.props;
     if (this.state.hasError) {
-      return <Redirect to="/Login" />;
+      return (
+        <div className={classes.column}>
+          <Typography className={classes.secondaryHeading}>
+            Client
+          </Typography>
+        </div>
+      );
     }
 
     return (
@@ -221,6 +187,7 @@ class ProjectPanelList extends Component {
                       Project title
                     </Typography>
                   </div>
+                  {this.renderClientColumnHeading()}
                   <div className={classes.column}>
                     <Typography className={classes.secondaryHeading}>
                       Status
@@ -257,6 +224,7 @@ class ProjectPanelList extends Component {
                           {project.projectTitle}
                         </Typography>
                       </div>
+                      {this.renderClientColumn(project.organization)}
                       <div className={classes.column}>
                         <Typography className={classes.secondaryHeading}>
                           {project.status}
@@ -269,20 +237,29 @@ class ProjectPanelList extends Component {
                       </div>
                       <div className={classes.column}>
                         <Typography className={classes.secondaryHeading}>
-                          {this.formatDate(project.startAt)}
+                          {formatDate(project.startAt)}
                         </Typography>
                       </div>
                       <div className={classes.column}>
                         <Typography className={classes.secondaryHeading}>
-                          {this.formatDate(project.endAt)}
+                          {formatDate(project.endAt)}
                         </Typography>
                       </div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.details}>
-                      <div>
+                      <div className={classes.column}>
                         <Typography className={classes.secondaryHeading}>
-                          Owners: {project.owners}<br/>
-                          Tasks: {project.tasks}
+                          Owner: {project.owners}<br/>
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          Team: {project.owners}<br/>
+                        </Typography>
+                      </div>
+                      <div className={classes.column}>
+                        <Typography className={classes.secondaryHeading}>
+                          Tasks: {project.tasks}<br/>
                         </Typography>
                       </div>
                     </ExpansionPanelDetails>

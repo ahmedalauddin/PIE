@@ -306,114 +306,6 @@ module.exports = {
   },
 
   // get projects by organization
-  getProjectFilteredDashboard(req, res) {
-    let i = 0;
-    let orgId = req.body.orgId;
-    let status = req.body.statusFilter;
-    let startYears = req.body.startYearFilter;
-    let endYears = req.body.endYearFilter;
-    let firstClause = true;
-    let orgClause = "";
-    let statusClause = "";
-    let statusList = "";
-    let startYearClause = "";
-    let endYearClause = "";
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard------------------------`);
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> orgId: ${orgId}, filter: ${status}`);
-
-    // Build clause to filter by client organization.
-    if (req.body.orgId) {
-      orgClause = " where P.orgId = " + orgId;
-      firstClause = false;
-    }
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past orgId`);
-
-    // Build clause to filter on status.
-    if (status && status.length >= 1) {
-      for (i = 0; i < status.length; i++) {
-        status[i] = "'" + status[i] + "'";
-      }
-      statusList = status.join();
-      if (firstClause) {
-        statusClause = " where ";
-        firstClause = false;
-      } else {
-        statusClause = " and ";
-      }
-      statusClause += " PS.label in (" + statusList + ")";
-    }
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past status`);
-
-    // Build clause to filter on project start year.
-    let first = true;
-    if (startYears && startYears.length >= 1) {
-      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, startYears.length: ${startYears.length}`);
-      for (i = 0; i < startYears.length; i++) {
-        if (!first) {
-          startYearClause += " or Year(P.startAt) = " + startYears[i] + " ";
-        } else {
-          first = false;
-          startYearClause = " Year(P.startAt) = " + startYears[i] + " ";
-        }
-      }
-      if (firstClause) {
-        logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, firstClause: ${firstClause}`);
-        startYearClause = " where (" + startYearClause + ")";
-        firstClause = false;
-      } else {
-        startYearClause = " and (" + startYearClause + ")";
-      }
-    }
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past start year, startYearClause: ${startYearClause}`);
-
-    // Build clause to filter on project start year.
-    first = true;
-    if (endYears && endYears.length >= 1) {
-      for (i = 0; i < endYears.length; i++) {
-        if (!first) {
-          endYearClause += " or Year(P.endAt) = " + endYears[i] + " ";
-        } else {
-          first = false;
-          endYearClause = " Year(P.endAt) = " + endYears[i] + " ";
-        }
-      }
-      if (firstClause) {
-        endYearClause = " where (" + endYearClause + ")";
-        firstClause = false;
-      } else {
-        endYearClause = " and (" + endYearClause + ")";
-      }
-    }
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past end year, endYearClause: ${endYearClause}`);
-
-    let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
-      P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
-      Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
-      (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
-      from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
-      left outer join Organizations O on P.orgId = O.id  \
-      left outer join Kpis K on P.mainKpiId = K.id "
-      + orgClause + statusClause + startYearClause + endYearClause + " order by P.title";
-
-    logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
-    return models.sequelize
-      .query(sql,
-        {
-          type: models.sequelize.QueryTypes.SELECT,
-          limit: 20
-        }
-      )
-      .then(projects => {
-        res.status(200).send(projects);
-      })
-      .catch(error => {
-        logger.error(error.stack);
-        res.status(400).send(error);
-      });
-  },
-
-  // get projects by organization
   getProjectDashboard(req, res) {
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`,\
       P.progress, P.startAt, P.endAt, (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
@@ -438,6 +330,129 @@ module.exports = {
         res.status(400).send(error);
       });
   },
+
+  // get projects by organization
+  getProjectFilteredDashboard(req, res) {
+    try {
+      let i = 0;
+      const orgId = req.body.orgId;
+      const status = req.body.statusFilter;
+      const startYears = req.body.startYearFilter;
+      const endYears = req.body.endYearFilter;
+      const allClients = req.body.allClients;       // For whether to filter by a single client organization.
+      let firstClause = true;
+      let orgClause = "";
+      let statusClause = "";
+      let statusList = "";
+      let startYearClause = "";
+      let endYearClause = "";
+      let first = true;
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard------------------------------------`);
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> req.body: ${JSON.stringify(req.body)}`);
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> allClients: ${allClients}, orgId: ${orgId}, filter: ${status}`);
+
+      //<editor-fold desc="Build filter SQL text for the where clauses">
+      // Build clause to filter by client organization.
+      if (!allClients) {
+        if (req.body.orgId) {
+          if (firstClause) {
+            orgClause = " where ";
+            firstClause = false;
+          } else {
+            orgClause = " and ";
+          }
+          orgClause += " P.orgId = " + orgId;
+        }
+      }
+
+      // Build clause to filter on status.
+      if (status && status.length >= 1) {
+        for (i = 0; i < status.length; i++) {
+          status[i] = "'" + status[i] + "'";
+        }
+        statusList = status.join();
+        if (firstClause) {
+          statusClause = " where ";
+          firstClause = false;
+        } else {
+          statusClause = " and ";
+        }
+        statusClause += " PS.label in (" + statusList + ")";
+      }
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past status`);
+
+      // Build clause to filter on project start year.
+      first = true;
+      if (startYears && startYears.length >= 1) {
+        logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, startYears.length: ${startYears.length}`);
+        for (i = 0; i < startYears.length; i++) {
+          if (!first) {
+            startYearClause += " or Year(P.startAt) = " + startYears[i] + " ";
+          } else {
+            first = false;
+            startYearClause = " Year(P.startAt) = " + startYears[i] + " ";
+          }
+        }
+        if (firstClause) {
+          logger.debug(`${callerType} Project: getProjectFilteredDashboard -> start year, firstClause: ${firstClause}`);
+          startYearClause = " where (" + startYearClause + ")";
+          firstClause = false;
+        } else {
+          startYearClause = " and (" + startYearClause + ")";
+        }
+      }
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past start year, startYearClause: ${startYearClause}`);
+
+      // Build clause to filter on project start year.
+      first = true;
+      if (endYears && endYears.length >= 1) {
+        for (i = 0; i < endYears.length; i++) {
+          if (!first) {
+            endYearClause += " or Year(P.endAt) = " + endYears[i] + " ";
+          } else {
+            first = false;
+            endYearClause = " Year(P.endAt) = " + endYears[i] + " ";
+          }
+        }
+        if (firstClause) {
+          endYearClause = " where (" + endYearClause + ")";
+          firstClause = false;
+        } else {
+          endYearClause = " and (" + endYearClause + ")";
+        }
+      }
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> past end year, endYearClause: ${endYearClause}`);
+      //</editor-fold>
+
+      let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
+        P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
+        Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+        (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
+        from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
+        left outer join Organizations O on P.orgId = O.id  \
+        left outer join Kpis K on P.mainKpiId = K.id "
+        + orgClause + statusClause + startYearClause + endYearClause + " order by P.title";
+
+      logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
+      return models.sequelize
+        .query(sql,
+          {
+            type: models.sequelize.QueryTypes.SELECT,
+            limit: 20
+          }
+        )
+        .then(projects => {
+          res.status(200).send(projects);
+        })
+        .catch(error => {
+          logger.error(error.stack);
+          res.status(400).send(error);
+        });
+    } catch (error) {
+      console.log("getProjectFilteredDashboard, exception: " + error);
+    }
+  },
+
 
   // get projects
   getAllProjects(req, res) {

@@ -127,15 +127,10 @@ class MindmapList extends Component {
     orgId: getOrgId(),
     orgName: getOrgName(),
     selected: [],
-    // data: [],
-
-
     readyToEdit: false,
     submitted: null,
     page: 0,
     rowsPerPage: 5,
-
-
     mindmaps: [],
     readyToRedirect: false,
     user: "",

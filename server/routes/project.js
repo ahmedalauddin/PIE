@@ -33,16 +33,14 @@ module.exports = router => {
   router.get("/api/projects/:id", projController.findById);
 
   // list most recently updated projects
+
+
   logger.debug(`${callerType} GET -> path: /api/projects-recent`);
   router.get("/api/projects-recent", projController.getMostRecent);
 
   // list projects for an org for our dashboard
   logger.debug(`${callerType} GET -> path: /api/projects-dashboard/:orgId`);
   router.get("/api/projects-dashboard/:orgId", projController.getProjectDashboard);
-
-  // list all projects for our dashboard
-  logger.debug(`${callerType} GET -> path: /api/projects-all`);
-  router.get("/api/projects-all", projController.getAllProjects);
 
   // list earliest and latest years associated with projects
   logger.debug(`${callerType} GET -> path: /api/projects-years/:orgId`);
@@ -52,9 +50,17 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/projects-years`);
   router.get("/api/projects-years", projController.getProjectYears);
 
+
+  // list all projects for our dashboard
+  logger.debug(`${callerType} GET -> path: /api/projects-all`);
+  router.get("/api/projects-all", projController.getAllProjects);
+
   // list most recently updated projects
   logger.debug(`${callerType} POST -> path: /api/projects-filtered`);
   router.post("/api/projects-filtered", projController.getProjectFilteredDashboard);
+
+
+
 
   // Retrieve a list of projects for a selected organization
   logger.debug(`${callerType} GET -> path: /api/projects/organization/:orgid`);

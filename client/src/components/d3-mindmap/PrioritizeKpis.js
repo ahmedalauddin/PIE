@@ -204,8 +204,7 @@ class PrioritizeKpis extends React.Component {
       }], */
       kpiProjectSubmitted: null,
       indexSubmitted: null,
-      // projTitle: [],
-      // projDescription: [],
+      message: "",
       orgName: "",
       orgId: getOrgId(),
       orgKpiPriorityLock: false,
@@ -370,6 +369,11 @@ class PrioritizeKpis extends React.Component {
     return index;
   }
 
+  // This function is for the snackbar messages.
+  anotherFunction = () => {
+    this.props.showMessages(this.state.message);
+  };
+
   // Handle submit of a project as main KPI for one of the selected KPI sections.
   handleSubmit = (kpiId) => (event) => {
     // Add the index to state so we know what we are submitting.
@@ -389,11 +393,12 @@ class PrioritizeKpis extends React.Component {
       })
         .then(res => res.json())
         .then( () => {
+          successMessage = "Project " + this.state.kpis[index].projTitle + " saved.";
           console.log("Going to log message: " + successMessage);
           this.setState({
-            message: successMessage,
-            // readyToRedirect: true
+            message: successMessage
           });
+          this.props.messages(successMessage);
         })
         .catch(err => {
           this.setState({message: "Error occurred."});

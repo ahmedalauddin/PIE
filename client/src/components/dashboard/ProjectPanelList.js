@@ -26,6 +26,13 @@ import IconButton from "@material-ui/core/IconButton";
 import { connect } from "react-redux";
 import { styles } from "./DashboardStyles";
 import { formatDate } from "../common/UtilityFunctions";
+function formatTasks(tasks) {
+  let retstr = tasks;
+  // if (tasks !== null && tasks !== "") {
+  //  retstr = tasks.replace(";,", "<br/>");
+  // }
+  return retstr;
+}
 
 class ProjectPanelList extends Component {
   constructor(props) {
@@ -247,21 +254,17 @@ class ProjectPanelList extends Component {
                       </div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.details}>
-                      <div className={classes.column}>
-                        <Typography className={classes.secondaryHeading}>
+                      <Grid container spacing={3}>
+                        <Grid item xs>
                           Owner: {project.owners}<br/>
-                        </Typography>
-                      </div>
-                      <div className={classes.column}>
-                        <Typography className={classes.secondaryHeading}>
+                        </Grid>
+                        <Grid item xs>
                           Team: {project.owners}<br/>
-                        </Typography>
-                      </div>
-                      <div className={classes.column}>
-                        <Typography className={classes.secondaryHeading}>
-                          Tasks: {project.tasks}<br/>
-                        </Typography>
-                      </div>
+                        </Grid>
+                        <Grid item xs>
+                          Tasks: { formatTasks(project.tasks) }
+                        </Grid>
+                      </Grid>
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
                 );

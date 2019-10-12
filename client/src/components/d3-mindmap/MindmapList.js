@@ -146,6 +146,13 @@ class MindmapList extends Component {
   };
 
   componentDidMount() {
+    if (!(getOrgId() > 0 )) {
+      console.log("Need to redirect to login");
+      this.setState({
+        hasError: true
+      });
+    }
+
     fetch("/api/mindmaps-list/" + getOrgId())
       .then(res => {
         return res.json();
@@ -245,7 +252,7 @@ class MindmapList extends Component {
     const currentPath = this.props.location.pathname;
 
     if (this.state.hasError) {
-      return <h1>An error occurred.</h1>;
+      return <Redirect to="/Login" />;
     }
 
     return (

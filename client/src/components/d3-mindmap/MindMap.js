@@ -30,8 +30,6 @@ import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
 import Typography from "@material-ui/core/Typography";
 
-const DEBUG = false;
-
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -236,13 +234,14 @@ class MindMap extends React.Component {
   render() {
     const { classes } = this.props;
     let mindmapId = this.props.match.params.id;
+    const currentPath = this.props.location.pathname;
     console.log("MindMap, selected node: " + this.state.selectedNodeId);
     console.log("MindMap, mindmapId: " + mindmapId);
 
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
           <Grid container className={classes.root} spacing={24}>
             <Grid item xs={false} sm={9} md={9} >
@@ -262,7 +261,7 @@ class MindMap extends React.Component {
                   </TabContainer>)}
                 {this.state.tabValue === 1 && (
                   <TabContainer>
-                    <PrioritizeKpis mindmapId={mindmapId} />
+                    <PrioritizeKpis mindmapId={mindmapId} messages={this.showMessages}/>
                   </TabContainer>)}
               </div>
             </Grid>

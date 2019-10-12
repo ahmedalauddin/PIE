@@ -315,6 +315,7 @@ class TreeMindMap extends React.Component {
 
     // This changes the note to a yellow square.
     selectedNode.select("rect")
+    // selectedNode.append("rect")
       .transition().duration(vDuration)
       .attr("rx", 0).attr("x", 10).attr("y", 8)
       .attr("width", vRad * 8).attr("height", vRad * 10)
@@ -985,9 +986,12 @@ class TreeMindMap extends React.Component {
     return node;
   };
 
+
   //</editor-fold>
 
   //<editor-fold desc="// D3 and tree layout and draw functions">
+
+
 
   // Draw the full bidirectional tree.
   drawTree = () => {
@@ -1025,6 +1029,39 @@ class TreeMindMap extends React.Component {
 
     node.exit().remove();
 
+    // try adding the links first.
+
+    // Update the links.
+    let linkPaths = svg
+      .select("#links")
+      .selectAll("path")
+      .data(links, d => d.target.id);
+
+    // changed from newLinkPaths; just update the current.
+    let linkPathEnter = linkPaths
+      .enter()
+      .insert("path", "g")
+      .attr("class", "link")
+      .attr("d", diagonal);
+
+    let linkPathsUpdate = linkPathEnter.merge(linkPaths);
+
+    // Transition links to their new position.
+    linkPathsUpdate
+      .transition()
+      .duration(duration)
+      .attr("transform", "translate(" + this.state.width / 2 + ",0)")
+      .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    let linkPathsExit = linkPaths
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("d", diagonal)
+      .remove();
+
+
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
     let nodeEnter = node
@@ -1036,10 +1073,13 @@ class TreeMindMap extends React.Component {
       .attr("note-state", "collapsed")
       .attr("class", "node")
       .attr("transform", d => `translate(${root.y0},${root.x0})`)
-      .attr("fill-opacity", 0)
+      .attr("fill-opacity", 1)
       .attr("stroke-opacity", 0);
 
-    nodeEnter.append("circle");
+    nodeEnter.append("circle")
+      .style("opacity", 1.0);
+      //.style("fill", "#f46d43");
+      //.style("fill-opacity", 1.0);
 
     // The "foreignObject" object will display the name text on the node.
     nodeEnter
@@ -1092,35 +1132,7 @@ class TreeMindMap extends React.Component {
       .attr("stroke-opacity", 0);
      */
 
-    // Update the links.
-    let linkPaths = svg
-      .select("#links")
-      .selectAll("path")
-      .data(links, d => d.target.id);
 
-    // changed from newLinkPaths; just update the current.
-    let linkPathEnter = linkPaths
-      .enter()
-      .insert("path", "g")
-      .attr("class", "link")
-      .attr("d", diagonal);
-
-    let linkPathsUpdate = linkPathEnter.merge(linkPaths);
-
-    // Transition links to their new position.
-    linkPathsUpdate
-      .transition()
-      .duration(duration)
-      .attr("transform", "translate(" + this.state.width / 2 + ",0)")
-      .attr("d", diagonal);
-
-    // Transition exiting nodes to the parent's new position.
-    let linkPathsExit = linkPaths
-      .exit()
-      .transition()
-      .duration(duration)
-      .attr("d", diagonal)
-      .remove();
 
     // #newcode - Post-it notes
     this.addNoteRects(nodeEnter);

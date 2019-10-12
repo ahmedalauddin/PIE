@@ -76,6 +76,7 @@ module.exports = {
     const projDescription = req.body.kpis[index].projDescription;
     const mainKpiId = req.body.kpiProjectSubmitted;
     const orgId = req.body.orgId;
+    let message = "";
     /**
      *  Call the setProject stored procedure, which inserts or updates a project, depending on whether a project
      *  exists for the KPI and org.  Note that we call the stored procedure with @returnText as its output parameter,
@@ -89,7 +90,7 @@ module.exports = {
      *   "call setProject(" +  mainKpiId + ", " + orgId + ", '" + title + "', '" + description + "', @returnText); " +
      *   "SELECT @returnText;";
      */
-    const sql = "call setProject(" +  mainKpiId + ", " + orgId + ", '" + projTitle + "', '" + projDescription + "'); ";
+    const sql = "call setProject(" +  mainKpiId + ", " + orgId + ", '" + projTitle + "', '" + projDescription + "', @message); ";
     return models.sequelize.query(
       sql, {
       type: models.sequelize.QueryTypes.RAW
@@ -465,7 +466,6 @@ module.exports = {
     }
   },
 
-
   // get projects
   getAllProjects(req, res) {
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
@@ -491,7 +491,6 @@ module.exports = {
         res.status(400).send(error);
       });
   },
-
 
   // List most recent projects
   getMostRecent(req, res) {

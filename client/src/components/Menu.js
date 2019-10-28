@@ -1,3 +1,4 @@
+// Menu.js is not currently used.
 const Menu = [
   {
     label: "Login",

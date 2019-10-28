@@ -9,13 +9,13 @@
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
-import Grid from "@material-ui/core/Grid/index";
+import Grid from "@material-ui/core/Grid";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography/index";
+import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { getOrgId } from "../../redux";
 import moment from "moment/moment";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -28,9 +28,9 @@ import { styles } from "./DashboardStyles";
 import { formatDate } from "../common/UtilityFunctions";
 function formatTasks(tasks) {
   let retstr = tasks;
-  // if (tasks !== null && tasks !== "") {
-  //  retstr = tasks.replace(";,", "<br/>");
-  // }
+  if (tasks !== null && tasks !== "") {
+    retstr = tasks.replace(/;,/g, "<br />");
+  }
   return retstr;
 }
 
@@ -262,7 +262,9 @@ class ProjectPanelList extends Component {
                           Team: {project.owners}<br/>
                         </Grid>
                         <Grid item xs>
-                          Tasks: { formatTasks(project.tasks) }
+                          <div>
+                            Tasks: { formatTasks(project.tasks) }
+                          </div>
                         </Grid>
                       </Grid>
                     </ExpansionPanelDetails>

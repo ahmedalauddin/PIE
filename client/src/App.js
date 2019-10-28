@@ -28,8 +28,12 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    // Use the system font instead of the default Roboto font.
-    //fontFamily: ['"Lato"', "sans-serif"].join(",")
+    fontFamily: [
+      'Roboto',
+      '"SegoeUI"',
+      '"Lato"',
+      "sans-serif"
+    ].join(",")
   }
 });
 

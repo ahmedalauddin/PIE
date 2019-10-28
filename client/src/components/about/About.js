@@ -69,8 +69,8 @@ class About extends React.Component {
                       </Typography>
                       <div>
                         <Typography variant="body2">
-                          Version: {Package.version}<br/>>
-                          Build date: 10/8/19
+                          Version: {Package.version}<br/>
+                          Build date: 10/26/19
                         </Typography>
                       </div>
                       <div>

@@ -1,3 +1,13 @@
+/**
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/common/EnahncedTableHead.js
+ * Descr:    Table header with column sorting and paging used on our tables.
+ * Created:  2019-06-02
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-09-22
+ * Editor:   Brad Kaufman
+ */
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import TableHead from "@material-ui/core/TableHead";

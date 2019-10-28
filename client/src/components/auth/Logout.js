@@ -2,7 +2,7 @@
 //
 import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import { withRouter } from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Typography from "@material-ui/core/Typography/index";
 import Topbar from "../Topbar";
@@ -11,6 +11,8 @@ import Card from "@material-ui/core/Card/index";
 import CardContent from "@material-ui/core/CardContent/index";
 import Grid from "@material-ui/core/Grid/index";
 import SectionHeader from "../typo/SectionHeader";
+import { store, setUser } from "../../redux";
+import Toolbar from "@material-ui/core/Toolbar";
 
 class Logout extends Component {
   state = {
@@ -20,7 +22,10 @@ class Logout extends Component {
   };
 
   componentDidMount() {
-    // Authenticate against the username
+    // Reset the user.
+    store.dispatch(setUser(JSON.stringify("")));
+
+    // Call logout.
     fetch("/api/auth/logout")
       .then(response => {
         if (response.status === 200) {
@@ -32,6 +37,8 @@ class Logout extends Component {
       .catch(err => {
         // TODO - set error login on form.
       });
+
+
   }
 
   render() {
@@ -39,7 +46,7 @@ class Logout extends Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar loggedOut={true} />
         <form onSubmit={this.handleSubmit} noValidate>
           <div className={classes.root}>
             <Grid container justify="center">
@@ -61,6 +68,10 @@ class Logout extends Component {
                         gutterBottom
                       >
                         You have been logged out.
+                        <Typography component="div">
+                          <br/><br/>
+                          Click <Link to={`/login`}>here to login</Link>.
+                        </Typography>
                       </Typography>
                     </CardContent>
                   </Card>

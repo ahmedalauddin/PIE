@@ -7,6 +7,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
 
 const logo = require("../images/ValueInfLogo.png");
 const styles = theme => ({
@@ -15,6 +16,15 @@ const styles = theme => ({
     boxShadow: "none",
     borderBottom: `1px solid ${theme.palette.grey["100"]}`,
     backgroundColor: "white"
+  },
+  productLogo: {
+    display: 'inline-block',
+    borderLeft: `1px solid ${theme.palette.grey['A100']}`,
+    marginLeft: 32,
+    paddingLeft: 24,
+    [theme.breakpoints.up('md')]: {
+      paddingTop: '1.5em'
+    }
   },
   image: {
     backgroundSize: "cover",
@@ -34,12 +44,6 @@ const styles = theme => ({
   link: {
     textDecoration: "none",
     color: "inherit"
-  },
-  productLogo: {
-    display: "inline-block",
-    borderLeft: `1px solid ${theme.palette.grey["A100"]}`,
-    marginLeft: 32,
-    paddingLeft: 24
   },
   tagline: {
     display: "inline-block",
@@ -67,14 +71,56 @@ const styles = theme => ({
   }
 });
 
+const NotLoggedInMenu = [
+  {
+    label: "Login",
+    pathname: "/login"
+  }
+];
+
 const AdminMenu = [
+  {
+    label: "Login",
+    pathname: "/login"
+  },
   {
     label: "Dashboard",
     pathname: "/paneldashboard"
   },
   {
-    label: "Login",
-    pathname: "/login"
+    label: "Mind Maps",
+    pathname: "/mindmaplist"
+  },
+  {
+    label: "Search",
+    pathname: "/search"
+  },
+  {
+    label: "Projects",
+    pathname: "/projectdashboard"
+  },
+  {
+    label: "Organizations",
+    pathname: "/orgdashboard"
+  },
+  {
+    label: "Analytics",
+    pathname: "/analytics"
+  },
+  {
+    label: "Client Filter",
+    pathname: "/clientorg"
+  },
+  {
+    label: "About",
+    pathname: "/about"
+  }
+];
+
+const LoggedInMenu = [
+  {
+    label: "Dashboard",
+    pathname: "/paneldashboard"
   },
   {
     label: "Mind Maps",
@@ -110,6 +156,83 @@ const AdminMenu = [
   }
 ];
 
+function getMenu(menuType) {
+  var menu = null;
+
+  if (menuType === "notLoggedIn") {
+    menu = NotLoggedInMenu;
+  } else {
+    menu = LoggedInMenu;
+  }
+  return menu;
+}
+
+function getAppbarValue(menuType, currentPath)  {
+  var value = 0;
+  if (menuType === "initial") {
+    if (currentPath === "/login") {
+      value = 0;
+    }
+    if (currentPath === "/paneldashboard") {
+      value = 1;
+    }
+    if (currentPath === "/mindmaplist") {
+      value = 2;
+    }
+    if (currentPath === "/search") {
+      value = 3;
+    }
+    if (currentPath === "/projectdashboard") {
+      value = 4;
+    }
+    if (currentPath === "/listorgs") {
+      value = 5;
+    }
+    if (currentPath === "/analytics") {
+      value = 6;
+    }
+    if (currentPath === "/clientorg") {
+      value = 7;
+    }
+    if (currentPath === "/logout") {
+      value = 8;
+    }
+    if (currentPath === "/about") {
+      value = 9;
+    }
+  } else {
+    if (currentPath === "/paneldashboard") {
+      value = 0;
+    }
+    if (currentPath === "/mindmaplist") {
+      value = 1;
+    }
+    if (currentPath === "/search") {
+      value = 2;
+    }
+    if (currentPath === "/projectdashboard") {
+      value = 3;
+    }
+    if (currentPath === "/listorgs") {
+      value = 4;
+    }
+    if (currentPath === "/analytics") {
+      value = 5;
+    }
+    if (currentPath === "/clientorg") {
+      value = 6;
+    }
+    if (currentPath === "/logout") {
+      value = 7;
+    }
+    if (currentPath === "/about") {
+      value = 8;
+    }
+  }
+  return value;
+};
+
+
 class Topbar extends Component {
   state = {
     value: 0,
@@ -132,62 +255,44 @@ class Topbar extends Component {
     window.scrollTo(0, 0);
   }
 
-  current = () => {
+
+  current = (menuType) => {
     let value = 0;
-    if (this.props.currentPath === "/login") {
-      value = 0;
-    }
-    if (this.props.currentPath === "/paneldashboard") {
-      value = 1;
-    }
-    if (this.props.currentPath === "/mindmaplist") {
-      value = 2;
-    }
-    if (this.props.currentPath === "/search") {
-      value = 3;
-    }
-    if (this.props.currentPath === "/projectdashboard") {
-      value = 4;
-    }
-    if (this.props.currentPath === "/listorgs") {
-      value = 5;
-    }
-    if (this.props.currentPath === "/analytics") {
-      value = 6;
-    }
-    if (this.props.currentPath === "/clientorg") {
-      value = 7;
-    }
-    if (this.props.currentPath === "/logout") {
-      value = 8;
-    }
-    if (this.props.currentPath === "/about") {
-      value = 9;
-    }
+    value = getAppbarValue(menuType, this.props.currentPath);
     return value;
   };
 
   render() {
     const { classes, location } = this.props;
     const currentPath = location ? location.pathname : "/";
-    let loggedIn = isLoggedIn();
+    let menuType = "";
+    if (isLoggedIn() && !this.props.loggedOut) {
+      menuType = "loggedIn";
+    } else {
+      menuType = "notLoggedIn";
+    }
     let isAdmin =  isAdministrator();
+    let menu = getMenu(menuType);
 
     return (
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>
           <Grid container spacing={24} alignItems="baseline">
             <Grid item xs={12} className={classes.flex}>
-
               <React.Fragment>
+                <div className={classes.productLogo}>
+                  <Typography>
+                    ValueInfinity Innovation Platform
+                  </Typography>
+                </div>
                 <div className={classes.tabContainer}>
                   <Tabs
-                    value={this.current() || this.state.value}
+                    value={this.current(menuType) || this.state.value}
                     indicatorColor="primary"
                     textColor="primary"
                     onChange={this.handleChange}
                   >
-                    {AdminMenu.map((item, index) => (
+                    {menu.map((item, index) => (
                       <Tab key={index} component={Link} to={{pathname: item.pathname, search: this.props.location.search}} classes={{root: classes.tabItem}} label={item.label} />
                     ))}
                   </Tabs>

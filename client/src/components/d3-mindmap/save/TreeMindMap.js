@@ -21,6 +21,7 @@ import Button from "@material-ui/core/Button";
 import { Redirect } from "react-router-dom";
 import { createId, createNewMapJson } from "./MindMapFunctions";
 import TextField from "@material-ui/core/TextField";
+import * as jsonq from "jsonq";
 import { createTreeLayout } from "./MindmapLayout";
 import { hasChildren, hasParent, findNode, findParentNode, getNodeById, getNodeJson} from "./JsonNodeFunctions";
 import { jsonTestData } from "./TestJsonData";
@@ -311,8 +312,6 @@ class TreeMindMap extends React.Component {
   // Open post-it note for selected ID
   openNote = () => {
     let selectedNode = this.findSelectedNode();
-    let selectedNodeId = this.findSelectedNodeId(d3.select("svg"));
-    let json = getMindmap();
 
     // This changes the note to a yellow square.
     selectedNode.select("rect")
@@ -323,14 +322,11 @@ class TreeMindMap extends React.Component {
       .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return noteColor[0]; })
       .style("opacity", 1.0);
-    // selectedNode.select("rect").raise();
+    selectedNode.raise();
 
     // Add <text> and labels
     let selectedPostit = selectedNode.select("foreignObject.note");
       //.transition().duration(vDuration);
-
-    let jsonNode = getNodeById(selectedNodeId, json);
-    let noteText = jsonNode.note;
 
     selectedPostit
       .attr("x", 20)
@@ -339,7 +335,7 @@ class TreeMindMap extends React.Component {
       .attr("height", vRad * 9)
       .append("xhtml:p")
       .attr("contenteditable", true)
-      .text(d => noteText)
+      .text(d => d.data.note)
       .style("font-family", "Arial")
       .style("stroke", "none")
       .style("font-size", "13px");
@@ -350,6 +346,8 @@ class TreeMindMap extends React.Component {
       closeNoteDisabled: false,
       openNoteDisabled: true
     });
+
+    console.log("openNote complete.");
   };
 
   closeNote = (nodeId) => {
@@ -371,6 +369,8 @@ class TreeMindMap extends React.Component {
     // TODO: Save note to JSON first.
     // Save this to JSON: selectedPostit._groups[0][0].textContent
     let noteText = selectedPostit._groups[0][0].textContent;
+    // Try this later.
+    // const noteText = selectedPostit.select("p.note").text();
 
     if (noteText) {
       let selectedNodeId = this.findSelectedNodeId(svg);
@@ -394,9 +394,9 @@ class TreeMindMap extends React.Component {
 
     // TODO: test and fix
     // New code 9/22/19
-    // this.updateJsonData();
+    this.updateJsonData();
     // end new code
-    store.dispatch(setMindmap(JSON.stringify(json)));
+    // store.dispatch(setMindmap(JSON.stringify(newJsonData)));
 
     this.setState({
       closeNoteDisabled: true,
@@ -1020,27 +1020,18 @@ class TreeMindMap extends React.Component {
         window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
       );
 
+    // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
+    // selectAll has to be a unique name.  Note we use d.id for data as we need a key field.
+    let node = svg
+      .selectAll("#nodes")
+      .selectAll("g")
+      .data(nodes, d => d.id);
 
-    // New code
-    let theLinks = svg.append("g").attr("id", "links");
-
-
-
-    // Use these to identify nodes and links.
-    // svg.select("#links").selectAll(".link")
-    // svg.select("#nodes").selectAll(".node")
-
-
+    node.exit().remove();
 
     // try adding the links first.
-    // Old
-    /*
     let linkPaths = svg.append("g").attr("class", "links")
       .selectAll("path")
-      .data(links, d => d.target.id); */
-
-    // New code
-    let linkPaths = svg.select("#links").selectAll(".link")
       .data(links, d => d.target.id);
 
 
@@ -1070,7 +1061,6 @@ class TreeMindMap extends React.Component {
       .attr("transform", "translate(" + this.state.width / 2 + ",0)")
       .attr("d", diagonal);
 
-
     // Transition exiting nodes to the parent's new position.
     let linkPathsExit = linkPaths
       .exit()
@@ -1079,24 +1069,6 @@ class TreeMindMap extends React.Component {
       .attr("d", diagonal)
       .remove();
 
-
-
-    // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
-    // selectAll has to be a unique name.  Note we use d.id for data as we need a key field.
-    // Old
-    /*
-    let node = svg
-      .selectAll("#nodes")
-      .selectAll("g")
-      .data(nodes, d => d.id);  */
-
-    // New code
-    let theNodes = svg.append("g").attr("id", "nodes");
-
-    let node = svg.select("#nodes").selectAll(".node")
-      .data(nodes, d => d.id);
-
-    node.exit().remove();
 
     // Enter any new nodes at the parent's previous position.
     // Create new node containers that each contains a circle and a text label
@@ -1126,8 +1098,8 @@ class TreeMindMap extends React.Component {
 
 
     nodeEnter.append("circle")
-      .style("opacity", 1.0);
-    //  .style("fill", "#f46d43").raise();
+    //.style("opacity", 1.0)
+      .style("fill", "#f46d43").raise();
     //.style("fill-opacity", 1.0);
 
     // Transition nodes to their new position. Increase opacity from 0 to 1 during transition.
@@ -1155,10 +1127,22 @@ class TreeMindMap extends React.Component {
       .remove();
 
     // On exit reduce the node circles size to 0
-    // nodeExit.select("circle").attr("r", 1e-6);
+    nodeExit.select("circle").attr("r", 1e-6);
 
     // On exit reduce the opacity of text labels
     nodeExit.select("text").style("fill-opacity", 1e-6);
+
+    /*
+    // Transition exiting nodes to the parent's new position.
+    // Reduce opacity from 1 to 0 during transition
+     let nodeExit = nodeContainers
+      .exit()
+      .transition(transition)
+      .remove()
+      .attr("transform", d => `translate(${root.y},${root.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stroke-opacity", 0);
+     */
 
 
 
@@ -1223,7 +1207,6 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  // Save Mind map JSON to the database.
   saveJson = () => {
     this.saveNoteToJson();
     console.log("JSON:" + JSON.stringify(getMindmap()));

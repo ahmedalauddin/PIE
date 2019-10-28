@@ -234,14 +234,15 @@ class MindMap extends React.Component {
   render() {
     const { classes } = this.props;
     let mindmapId = this.props.match.params.id;
-    const currentPath = this.props.location.pathname;
+    // We'll use "/mindmaplist" for the current path.
+    // const currentPath = this.props.location.pathname;
     console.log("MindMap, selected node: " + this.state.selectedNodeId);
     console.log("MindMap, mindmapId: " + mindmapId);
 
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar currentPath={currentPath}/>
+        <Topbar currentPath={"/mindmaplist"}/>
         <div className={classes.root}>
           <Grid container className={classes.root} spacing={24}>
             <Grid item xs={false} sm={9} md={9} >

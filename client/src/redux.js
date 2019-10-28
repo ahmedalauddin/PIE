@@ -350,7 +350,9 @@ export function isLoggedIn() {
   let loggedIn = false;
   try {
     user = JSON.parse(store.getState().user);
-    loggedIn = true;
+    if (user != null && user != "") {
+      loggedIn = true;
+    }
   } catch (error) {
     console.log("user not logged in");
   }

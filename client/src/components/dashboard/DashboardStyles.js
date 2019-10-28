@@ -13,13 +13,13 @@ export const styles = theme => ({
     margin: 2,
   },
   filterSelect: {
-    alignItems: "flex-end",
+    alignItems: "flex-end"
   },
   filters: {
-    alignItems: "flex-end",
+    alignItems: "flex-end"
   },
   noLabel: {
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 3
   },
   root: {
     flexGrow: 1,
@@ -35,6 +35,12 @@ export const styles = theme => ({
     [theme.breakpoints.down("sm")]: {
       width: "calc(100% - 20px)"
     }
+  },
+  card: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    maxWidth: 1200,
+    color: theme.palette.text.secondary
   },
   paper: {
     padding: theme.spacing.unit * 3,
@@ -57,22 +63,22 @@ export const styles = theme => ({
   },
   chips: {
     display: "flex",
-    flexWrap: "wrap",
+    flexWrap: "wrap"
   },
   details: {
     alignItems: "center",
   },
   column: {
-    flexBasis: "15%",
+    flexBasis: "15%"
   },
   narrowColumn: {
-    flexBasis: "5%",
+    flexBasis: "5%"
   },
   link: {
     color: theme.palette.primary.main,
     textDecoration: "none",
     "&:hover": {
       textDecoration: "underline",
-    },
+    }
   }
 });

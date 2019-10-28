@@ -18,7 +18,9 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 import SearchResults from "./SearchResults";
-import Paper from "@material-ui/core/Paper";
+import SectionHeader from "../typo/SectionHeader";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 
 const styles = theme => ({
   root: {
@@ -83,19 +85,25 @@ const styles = theme => ({
     width: "100%",
     [theme.breakpoints.up("md")]: {
       width: 200,
-    },
+    }
+  },
+  card: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    maxWidth: 1200,
+    color: theme.palette.text.secondary
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
       display: "flex",
-    },
+    }
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
       display: "none",
-    },
+    }
   },
 });
 
@@ -151,26 +159,29 @@ class Search extends React.Component {
         <div className={classes.root}>
           <Grid container direction="row" justify="center" alignItems="flex-end">
             <Grid item xs={12} md={8}>
-              <Paper className={classes.paper}>
-                <Typography variant="h6" component="h2" color="secondary" gutterBottom>
-                  Search
-                </Typography>
-                <form onSubmit={this.handleSubmit} noValidate>
-                  <div>
-                    <TextField
-                      id="searchText"
-                      label="Search"
-                      className={classes.textField}
-                      value={this.state.searchText}
-                      onChange={this.handleChange("searchText")}
-                    />
-                    <Button variant="contained" color="primary" onClick={this.handleSubmit} className={classes.secondary}>
-                      Submit
-                    </Button>
-                  </div>
-                </form>
-                <SearchResults searchString={this.state.searchString} orgId={this.props.orgId} />
-              </Paper>
+              <SectionHeader title="" subtitle="" />
+              <Card className={classes.card}>
+                <CardContent>
+                  <Typography variant="h7" color="secondary" gutterBottom>
+                    Search
+                  </Typography>
+                  <form onSubmit={this.handleSubmit} noValidate>
+                    <div>
+                      <TextField
+                        id="searchText"
+                        label="Search"
+                        className={classes.textField}
+                        value={this.state.searchText}
+                        onChange={this.handleChange("searchText")}
+                      />
+                      <Button variant="contained" color="primary" onClick={this.handleSubmit} className={classes.secondary}>
+                        Submit
+                      </Button>
+                    </div>
+                  </form>
+                  <SearchResults searchString={this.state.searchString} orgId={this.props.orgId} />
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </div>

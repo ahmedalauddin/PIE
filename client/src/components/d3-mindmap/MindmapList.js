@@ -13,7 +13,7 @@ import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Topbar from "../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography/index";
+import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import moment from "moment/moment";
 import Fab from "@material-ui/core/Fab/index";
@@ -30,9 +30,9 @@ import PropTypes from "prop-types";
 import EnhancedTableHead from "../common/EnhancedTableHead";
 import { stableSort, getSorting, desc } from "../common/TableFunctions";
 import DeleteIcon from "@material-ui/icons/Delete";
-import SectionHeader from "../typo/SectionHeader";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import SectionHeader from "../typo/SectionHeader";
 
 const rows = [
   { id: "edit", numeric: false, disablePadding: false, label: "" },
@@ -88,27 +88,33 @@ const styles = theme => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexBasis: "15%",
-    flexShrink: 0,
+    flexShrink: 0
+  },
+  card: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    maxWidth: 1200,
+    color: theme.palette.text.secondary
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary
   },
   details: {
-    alignItems: "center",
+    alignItems: "center"
   },
   column: {
-    flexBasis: "15%",
+    flexBasis: "15%"
   },
   wideColumn: {
-    flexBasis: "35%",
+    flexBasis: "35%"
   },
   link: {
     color: theme.palette.primary.main,
     textDecoration: "none",
     "&:hover": {
       textDecoration: "underline",
-    },
+    }
   }
 });
 
@@ -220,7 +226,6 @@ class MindmapList extends Component {
     return <Redirect to="/mindmap" />;
   };
 
-
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -236,7 +241,7 @@ class MindmapList extends Component {
       readyToEdit: true,
       mindmapId: mindmapId
     });
-  }
+  };
 
   // Redirect to Mindmap.
   renderEditRedirect = () => {
@@ -262,9 +267,15 @@ class MindmapList extends Component {
         <div className={classes.root}>
           {this.renderEditRedirect()}
           <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <Grid item>
+            <Grid item xs={12} md={10}>
+              <SectionHeader title="" subtitle="" />
               <Card className={classes.card}>
                 <CardContent>
+                  <div>
+                    <Typography variant="h7" color="secondary" gutterBottom>
+                      Mind maps for {getOrgName()}<br/><br/>
+                    </Typography>
+                  </div>
                   <div className={classes.tableWrapper}>
                     <Table className={classes.table} aria-labelledby="tableTitle">
                       <EnhancedTableHead
@@ -345,7 +356,6 @@ class MindmapList extends Component {
               </Card>
             </Grid>
           </Grid>
-
         </div>
       </React.Fragment>
     );

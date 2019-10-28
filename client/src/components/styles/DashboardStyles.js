@@ -30,8 +30,8 @@ const styles = theme => ({
     color: theme.palette.text.secondary
   },
   rangeLabel: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
     paddingTop: theme.spacing.unit * 2
   },
   topBar: {
@@ -39,12 +39,12 @@ const styles = theme => ({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  outlinedButtom: {
-    textTransform: 'uppercase',
+  outlinedButton: {
+    textTransform: "uppercase",
     margin: theme.spacing.unit
   },
-  actionButtom: {
-    textTransform: 'uppercase',
+  actionButton: {
+    textTransform: "uppercase",
     margin: theme.spacing.unit,
     width: 152,
     height: 36

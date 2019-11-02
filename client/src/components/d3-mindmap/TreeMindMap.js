@@ -258,7 +258,6 @@ class TreeMindMap extends React.Component {
   addNoteRects = (nodeContainers) => {
     // Draw <rect>s
     nodeContainers.append("rect").attr("class","main")
-      //.attr("width", 0).attr("height", 0)
       .attr("rx", 0).attr("x", 10).attr("y", 8)
       .attr("width", 0).attr("height", 0)
       .attr("id", d => d.id )
@@ -314,7 +313,7 @@ class TreeMindMap extends React.Component {
   };
   //</editor-fold>
 
-  //<editor-fold desc="// Node functions">
+  //<editor-fold desc="Node functions">
   handleKeypressEsc = svg => {
     // TODO: this isn't getting called.
     svg

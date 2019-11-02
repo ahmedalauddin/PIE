@@ -1,14 +1,14 @@
 /**
- * Project:  valueinfinity-mvp
- * File:     /client/src/components/d3-mindmap/TreeMindMap.js
- * Descr:    D3 mind map.  See examples on https://observablehq.com/@jianan-li/mind-map-with-data-persistence-wip.
- * Created:  2019-06-05
- * Author:   Brad Kaufman
- * -----
- * Modified: 2019-08-29
- * Changes:  Added editor folding.  Styles for D3 and svg now specified more in mindmap.scss.
- * Editor:   Brad Kaufman
- */
+* Project:  valueinfinity-mvp
+* File:     /client/src/components/d3-mindmap/TreeMindMap.js
+* Descr:    D3 mind map.  See examples on https://observablehq.com/@jianan-li/mind-map-with-data-persistence-wip.
+  * Created:  2019-06-05
+* Author:   Brad Kaufman
+* -----
+* Modified: 2019-08-29
+* Changes:  Added editor folding.  Styles for D3 and svg now specified more in mindmap.scss.
+* Editor:   Brad Kaufman
+*/
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
@@ -24,169 +24,16 @@ import TextField from "@material-ui/core/TextField";
 import { createTreeLayout } from "./MindmapLayout";
 import { hasChildren, hasParent, findNode, findParentNode, getNodeById, getNodeJson} from "./JsonNodeFunctions";
 import { jsonTestData } from "./TestJsonData";
+import { styles } from "./MindMapStyles";
 
 //<editor-fold desc="// Constant declarations">
-const styles = theme => ({
-  grid: {
-    width: 1500,
-    marginTop: 40,
-    [theme.breakpoints.down("sm")]: {
-      width: "calc(100% - 20px)"
-    }
-  },
-  typography: {
-    padding: theme.spacing.unit * 2
-  },
-  main: {
-    //stroke: "#05668D",
-    //fill: "white",
-    strokeWidth: "2px"
-  },
-  title: {
-    fontFamily: "Arial, Helvetica, Geneva, sans-serif",
-  },
-  text: {
-    fill: "black",
-    fontFamily: "Verdana, Arial, Helvetica, Geneva, sans-serif",
-    //fontSize: "10px",
-  },
-  nodeTitle: {
-    fontFamily: "Arial"
-  },
-  note: {
-  },
-  paper: {
-    position: "absolute",
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    outline: "none"
-  },
-  rangeLabel: {
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing.unit * 2
-  },
-  topBar: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 32
-  },
-  outlinedButton: {
-    textTransform: "uppercase",
-    margin: theme.spacing.unit
-  },
-  actionButton: {
-    textTransform: "uppercase",
-    margin: theme.spacing.unit,
-    width: 152
-  },
-  blockCenter: {
-    padding: theme.spacing.unit * 2,
-    textAlign: "center"
-  },
-  block: {
-    padding: theme.spacing.unit * 2
-  },
-  box: {
-    marginBottom: 40,
-    height: 65
-  },
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.grey["100"],
-    overflow: "hidden",
-    backgroundSize: "cover",
-    backgroundPosition: "0 400px",
-    paddingBottom: 200
-  },
-  inlining: {
-    display: "inline-block",
-    marginRight: 10
-  },
-  buttonBar: {
-    display: "flex"
-  },
-  alignRight: {
-    display: "flex",
-    justifyContent: "flex-end"
-  },
-  noBorder: {
-    borderBottomStyle: "hidden"
-  },
-  loadingState: {
-    opacity: 0.05
-  },
-  loadingMessage: {
-    position: "absolute",
-    top: "40%",
-    left: "40%"
-  },
-  card: {
-    maxWidth: 1000
-  },
-  button: {
-    margin: theme.spacing.unit
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit
-  },
-  media: {
-    height: 0,
-    paddingTop: "56.25%" // 16:9
-  },
-  actions: {
-    display: "flex"
-  },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest
-    })
-  },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
-  },
-  textFieldWide: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: 400
-  },
-  textField: {
-    marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2
-  },
-  dense: {
-    marginTop: 19
-  },
-  menu: {
-    width: 200
-  },
-  spaceTop: {
-    marginTop: 50
-  }
-});
+
 // eslint-disable-next-line no-unused-vars
 const duration = 100;
-const dx = 100;
-const dy = 100;
 const DEBUG_USE_TEST_DATA = false;
 const margin = { top: 40, right: 100, bottom: 40, left: 100 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
-// const vWidth = 350;
-// const vHeight = 600;
 const vDuration = 1000;
-// const vDelay = 250;
 const vRad = 25;
 const noteColor = ["#feff9c", "#7afcff", "#ff7eb9"];
 //</editor-fold>
@@ -278,10 +125,6 @@ class TreeMindMap extends React.Component {
       d._children = d.children;
     });
 
-    const nodes = root.descendants();
-    const links = root.links();
-    let g = d3.select("svg");
-
     this.openNote();
   };
 
@@ -316,14 +159,12 @@ class TreeMindMap extends React.Component {
 
     // This changes the note to a yellow square.
     selectedNode.select("rect")
-    // selectedNode.append("rect")
       .transition().duration(vDuration)
       .attr("rx", 0).attr("x", 10).attr("y", 8)
       .attr("width", vRad * 8).attr("height", vRad * 10)
       .style("fill", function(d) { return noteColor[0]; })
       .style("stroke", function(d) { return noteColor[0]; })
       .style("opacity", 1.0);
-    // selectedNode.select("rect").raise();
 
     // Add <text> and labels
     let selectedPostit = selectedNode.select("foreignObject.note");
@@ -391,11 +232,7 @@ class TreeMindMap extends React.Component {
 
     selectedNode.attr("note-state", "collapsed");
 
-
-    // TODO: test and fix
-    // New code 9/22/19
-    // this.updateJsonData();
-    // end new code
+    // Save map and note JSON to Redux
     store.dispatch(setMindmap(JSON.stringify(json)));
 
     this.setState({
@@ -419,11 +256,6 @@ class TreeMindMap extends React.Component {
   }
 
   addNoteRects = (nodeContainers) => {
-    let g = d3.select("svg");
-    // Add <g>s
-    //let vRects = g.selectAll("g").data(nodes).enter().append("g");
-    // .attr("transform", function (d) { return "translate(" + (d.y - vRad) + "," + (d.x - vRad) + ")"; });
-
     // Draw <rect>s
     nodeContainers.append("rect").attr("class","main")
       //.attr("width", 0).attr("height", 0)
@@ -491,26 +323,29 @@ class TreeMindMap extends React.Component {
       .each(this.deselectNode);
   };
 
-
+  /**
+   * Find and return selected node ID from the mindmap D3 svg.
+   * @param svg
+   * @returns {*|{loc, name, type, value}}
+   */
   findSelectedNodeId = svg => {
-    // Operates on mindmap D3 svg.
-    let idOfSelectedNode = this.findSelectedNode()
-      .attr("id");
-    return idOfSelectedNode;
+    return this.findSelectedNode().attr("id");
   };
 
+  /**
+   * Find and return the name of the selected node from the mindmap D3 svg.
+   * @returns {string} The selected node from the mindmap D3 svg.
+   */
   findSelectedNodeName = () => {
-    // Operates on mindmap D3 svg.
-    let nameOfSelectedNode = this.findSelectedNode()
-      .attr("name");
-    return nameOfSelectedNode;
+    return this.findSelectedNode().attr("name");
   };
 
+  /**
+   * Find and return the selected node from the mindmap D3 svg.
+   * @returns { D3 node } the selected node
+   */
   findSelectedNode = () => {
-    // Operates on mindmap D3 svg.
-    let svg = d3.select(this.svg);
-    let nodeSelected = svg.selectAll("g.node").filter(".node-selected");
-    return nodeSelected;
+    return d3.select(this.svg).selectAll("g.node").filter(".node-selected");
   };
 
   // Uses our callback to send info to other components.
@@ -526,7 +361,6 @@ class TreeMindMap extends React.Component {
       mindmapId: mindmapId
     });
   }
-
 
   logNode = message => {
     let svg = d3.select("svg");
@@ -621,8 +455,10 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// Main add, sibling, and delete node functions">
+  /**
+   * Append child node to JSON, below the selected node.
+   */
   appendChildToSelectedNode = () => {
-    // This version appends a child to the JSON, not the svg.  7/17/19.
     let svg = d3.select(this.svg);
     let idOfSelectedNode = this.findSelectedNodeId(svg);
 
@@ -640,7 +476,6 @@ class TreeMindMap extends React.Component {
 
     // TODO: change this to add child to the JSON, or get parent directly from the JSON.
     // Should just be able to change the JSON element.  For instance, change this:
-    //
     if (parent.children) parent.children.push(child);
     else parent.children = [child];
 
@@ -653,8 +488,6 @@ class TreeMindMap extends React.Component {
     let idOfSelectedNode = this.findSelectedNodeId(svg);
     let jsonMapData = getMindmap();
     let nodeJson = getNodeJson(idOfSelectedNode, jsonMapData)
-
-
     let parent = findParentNode(idOfSelectedNode, jsonMapData);
 
     let sibling = {
@@ -670,11 +503,12 @@ class TreeMindMap extends React.Component {
     this.update();
   };
 
+  /**
+   * Removes selected node from the JSON data, stored in state.  Just need the id field.
+   * Also updates our deleted nodes data, so we can undelete later.
+   */
   removeSelectedNodeFromData = () => {
-    // Removes selected node from the JSON data, stored in state.  Just need the id field.
-    // Also updates our deleted nodes data, so we can undelete later.
     let selectedNode = this.findSelectedNode();
-    // let jsonData = [getMindmap()];
     let jsonData = getMindmap();
     let parent = findParentNode(selectedNode.attr("id"), jsonData);
 
@@ -990,10 +824,9 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// D3 and tree layout and draw functions">
-
-
-
-  // Draw the full bidirectional tree.
+  /**
+   *   Draw the full bidirectional tree.
+   */
   drawTree = () => {
     let svg = d3.select("svg");
     let root = createTreeLayout(svg, this.state.height, this.state.width, getMindmap());
@@ -1011,8 +844,7 @@ class TreeMindMap extends React.Component {
     // Set both root nodes to be dead center vertically.
     nodes[0].x = this.state.height / 2;
 
-    const transition = svg
-      .transition()
+    svg.transition()
       .duration(duration)
       .attr("height", this.state.height)
       .tween(
@@ -1020,39 +852,17 @@ class TreeMindMap extends React.Component {
         window.ResizeObserver ? null : () => () => svg.dispatch("toggle")
       );
 
+    /*
+      Use these to identify nodes and links.
+      svg.select("#links").selectAll(".link")
+      svg.select("#nodes").selectAll(".node")
+     */
 
-    // New code
+    // Try adding the links first.  New code.
     let theLinks = svg.append("g").attr("id", "links");
 
-
-
-    // Use these to identify nodes and links.
-    // svg.select("#links").selectAll(".link")
-    // svg.select("#nodes").selectAll(".node")
-
-
-
-    // try adding the links first.
-    // Old
-    /*
-    let linkPaths = svg.append("g").attr("class", "links")
-      .selectAll("path")
-      .data(links, d => d.target.id); */
-
-    // New code
     let linkPaths = svg.select("#links").selectAll(".link")
       .data(links, d => d.target.id);
-
-
-    // Update the links.
-    /*
-    let linkPaths = svg
-      .select("#links")
-      .selectAll("path")
-      .data(links, d => d.target.id);
-    */
-
-
 
     // changed from newLinkPaths; just update the current.
     let linkPathEnter = linkPaths
@@ -1070,7 +880,6 @@ class TreeMindMap extends React.Component {
       .attr("transform", "translate(" + this.state.width / 2 + ",0)")
       .attr("d", diagonal);
 
-
     // Transition exiting nodes to the parent's new position.
     let linkPathsExit = linkPaths
       .exit()
@@ -1079,18 +888,8 @@ class TreeMindMap extends React.Component {
       .attr("d", diagonal)
       .remove();
 
-
-
     // Update the nodes. See https://medium.com/@bryony_17728/d3-js-merge-in-depth-a3069749a84f.
     // selectAll has to be a unique name.  Note we use d.id for data as we need a key field.
-    // Old
-    /*
-    let node = svg
-      .selectAll("#nodes")
-      .selectAll("g")
-      .data(nodes, d => d.id);  */
-
-    // New code
     let theNodes = svg.append("g").attr("id", "nodes");
 
     let node = svg.select("#nodes").selectAll(".node")
@@ -1098,8 +897,7 @@ class TreeMindMap extends React.Component {
 
     node.exit().remove();
 
-    // Enter any new nodes at the parent's previous position.
-    // Create new node containers that each contains a circle and a text label
+    // Enter any new nodes at the parent's previous position.  Create new node containers that each contains a circle and a text label
     let nodeEnter = node
       .enter()
       .append("g")
@@ -1112,7 +910,6 @@ class TreeMindMap extends React.Component {
       .attr("fill-opacity", 1)
       .attr("stroke-opacity", 0);
 
-
     // The "foreignObject" object will display the name text on the node.
     nodeEnter
       .append("foreignObject")
@@ -1124,11 +921,8 @@ class TreeMindMap extends React.Component {
       .attr("class", "node-title")
       .text(d => d.data.name);
 
-
     nodeEnter.append("circle")
       .style("opacity", 1.0);
-    //  .style("fill", "#f46d43").raise();
-    //.style("fill-opacity", 1.0);
 
     // Transition nodes to their new position. Increase opacity from 0 to 1 during transition.
     let nodeUpdate = node.merge(nodeEnter)
@@ -1154,13 +948,8 @@ class TreeMindMap extends React.Component {
       })
       .remove();
 
-    // On exit reduce the node circles size to 0
-    // nodeExit.select("circle").attr("r", 1e-6);
-
     // On exit reduce the opacity of text labels
     nodeExit.select("text").style("fill-opacity", 1e-6);
-
-
 
     // #newcode - Post-it notes
     this.addNoteRects(nodeEnter);
@@ -1172,6 +961,9 @@ class TreeMindMap extends React.Component {
     });
   };
 
+  /**
+   * Update calls drawTree() to update the D3 mind map.
+   */
   update = () => {
     // d3.hierarchy object is a data structure that represents a hierarchy.  It has a number of functions defined
     // on it for retrieving things like ancestor, descendant, and leaf nodes, and for computing the path between nodes.
@@ -1186,7 +978,11 @@ class TreeMindMap extends React.Component {
   //</editor-fold>
 
   //<editor-fold desc="// JSON and load data functions">
-  // This is for root children only, to determine which side to add the the node to.
+  /**
+   * This is for root children only, determines which side to add a new node.
+   * @param selectedNodeId
+   * @returns {string}
+   */
   getNewChildDirection = (selectedNodeId) => {
     // If we are appending to the root, we need to determine which side of the map to add the child.
     let jsonData = getMindmap();
@@ -1211,8 +1007,10 @@ class TreeMindMap extends React.Component {
     return side;
   };
 
+  /**
+   * Create new JSON data for the mind map, then store it to Redex.
+   */
   newMap = () => {
-    // Create new JSON data as defined in the global const, then set state.
     const newJsonData = createNewMapJson();
     store.dispatch(setMindmap(JSON.stringify(newJsonData)));
 
@@ -1223,7 +1021,9 @@ class TreeMindMap extends React.Component {
     });
   };
 
-  // Save Mind map JSON to the database.
+  /**
+   * Save Mind map JSON to the database.
+   */
   saveJson = () => {
     this.saveNoteToJson();
     console.log("JSON:" + JSON.stringify(getMindmap()));

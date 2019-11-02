@@ -14,7 +14,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography";
 import { Link, Redirect } from "react-router-dom";
 import { getOrgId } from "../../redux";
-import moment from "moment/moment";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -26,13 +25,10 @@ import IconButton from "@material-ui/core/IconButton";
 import { connect } from "react-redux";
 import { styles } from "./DashboardStyles";
 import { formatDate } from "../common/UtilityFunctions";
-function formatTasks(tasks) {
-  let retstr = tasks;
-  if (tasks !== null && tasks !== "") {
-    retstr = tasks.replace(/;,/g, "<br />");
-  }
-  return retstr;
-}
+import TableCell from "@material-ui/core/TableCell";
+import Tooltip from "@material-ui/core/Tooltip";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+
 
 class ProjectPanelList extends Component {
   constructor(props) {
@@ -256,15 +252,20 @@ class ProjectPanelList extends Component {
                     <ExpansionPanelDetails className={classes.details}>
                       <Grid container spacing={3}>
                         <Grid item xs>
-                          Owner: {project.owners}<br/>
+                          <Typography className={classes.secondaryHeading} component="p">
+                            Owner: {project.owners}<br/>
+                          </Typography>
                         </Grid>
                         <Grid item xs>
-                          Team: {project.owners}<br/>
+                          <Typography className={classes.secondaryHeading} component="p">
+                            Team: {project.owners}<br/>
+                          </Typography>
                         </Grid>
                         <Grid item xs>
-                          <div>
-                            Tasks: { formatTasks(project.tasks) }
-                          </div>
+                          <Typography className={classes.secondaryHeading} component="p">
+                            <div>Tasks</div>
+                            { project.tasks}
+                          </Typography>
                         </Grid>
                       </Grid>
                     </ExpansionPanelDetails>

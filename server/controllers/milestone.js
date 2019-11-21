@@ -157,5 +157,30 @@ module.exports = {
         logger.error(`${callerType} Milestone listByProject -> error: ${error.stack}`);
         res.status(400).send(error);
       });
+  },
+
+  // List all milestones for a single project
+  listForGantt(req, res) {
+    const projectId = req.params.projid;
+    const sql = "select t.id, t.title as text, t.startDate as start_date, t.endDate as end_date, " +
+      "'task' as type, t.milestoneId as parent, datediff(t.endDate, t.startDate)  as duration " +
+      "from Tasks t where t.projectId = " + projectId + " and t.milestoneId is not null " +
+      "union select m.id, m.title as text, m.startDate as start_date, m.targetDate as end_date, " +
+      "'milestone' as type, null as parent, null as duration " +
+      "from Milestones m where m.projectId = " + projectId + " " +
+      "order by parent, start_date, end_date;";
+
+    return models.sequelize.query(
+      sql, {
+        type: models.sequelize.QueryTypes.SELECT
+      })
+      .then(milestones => {
+        logger.debug(`${callerType} Milestone listForGantt -> successful, count: ${milestones.length}`);
+        res.status(201).send(milestones);
+      })
+      .catch(error => {
+        logger.error(`${callerType} Milestone listForGantt -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
   }
 };

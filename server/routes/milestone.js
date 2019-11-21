@@ -30,6 +30,10 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/milestones-project/:projid`);
   router.get("/api/milestones-project/:projid", milestoneController.listByProject);
 
+  // get all milestones for our Gantt chart view
+  logger.debug(`${callerType} GET -> path: /api/gantt/:projid`);
+  router.get("/api/gantt/:projid", milestoneController.listForGantt);
+
   // create a milestone
   logger.debug(`${callerType} POST -> path: /api/milestones`);
   router.post("/api/milestones", milestoneController.create);

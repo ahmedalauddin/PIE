@@ -35,6 +35,8 @@ import Department from "./components/department/Department";
 import MindMap from "./components/d3-mindmap/MindMap";
 import MindMapList from "./components/d3-mindmap/MindmapList";
 import Search from "./components/search/Search";
+import GanttTest from "./components/gantt/GanttTest";
+import Gantt from "./components/gantt/Gantt";
 
 export default props => (
   <BrowserRouter>
@@ -50,6 +52,8 @@ export default props => (
         <Route exact path="/mindmap" component={MindMap} />
         <Route exact path="/password" component={ChangePassword} />
         <Route exact path="/search" component={withAuth(Search)} />
+        <Route exact path="/gantttest" component={GanttTest} />
+        <Route exact path="/gantt" component={Gantt} />
         <Route exact path="/about" component={About} />
         <Route exact path="/" component={Login} />
         <Route exact path="/userinfo" component={UserInfo} />

@@ -29,7 +29,7 @@ import { styles } from "./MindMapStyles";
 //<editor-fold desc="// Constant declarations">
 
 // eslint-disable-next-line no-unused-vars
-const duration = 100;
+const duration = 200;
 const DEBUG_USE_TEST_DATA = false;
 const margin = { top: 40, right: 100, bottom: 40, left: 100 };
 const diagonal = d3.linkHorizontal().x(d => d.y).y(d => d.x);
@@ -186,6 +186,7 @@ class TreeMindMap extends React.Component {
       .style("font-size", "13px");
 
     selectedNode.attr("note-state", "expanded");
+    selectedPostit.raise();
 
     this.setState({
       closeNoteDisabled: false,
@@ -951,7 +952,7 @@ class TreeMindMap extends React.Component {
     nodeExit.select("text").style("fill-opacity", 1e-6);
 
     // #newcode - Post-it notes
-    this.addNoteRects(nodeEnter);
+    this.addNoteRects(nodeUpdate);
 
     // Stash the old positions for transition.
     root.eachBefore(d => {

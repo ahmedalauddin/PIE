@@ -741,8 +741,13 @@ class TreeMindMap extends React.Component {
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
-    let node = findNode(idOfSelectedNode, getMindmap());
-    node.name = newValue;
+    try {
+      let json = getMindmap();
+      let node = findNode(idOfSelectedNode, json);
+      node.name = newValue;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   handleClickOnCanvas = (d, i, nodes) => {

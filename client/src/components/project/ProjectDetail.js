@@ -102,15 +102,15 @@ class ProjectDetail extends React.Component {
     let method = "";
 
     if (projectId > 0) {
-      // For updates
+      // For updates - use PUT
       apiPath = "/api/projects/" + projectId;
       successMessage = "Project updated."
-      method = "POST";
+      method = "PUT";
     } else {
       // For create
       apiPath = "/api/projects/";
       successMessage = "Project created."
-      method = "PUT";
+      method = "POST";
     }
 
     setTimeout(() => {

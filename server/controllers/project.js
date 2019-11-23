@@ -107,6 +107,7 @@ module.exports = {
 
   // Update a project
   update(req, res) {
+    logger.debug(`${callerType} project update -> request: ${_obj}`);
     if (req.query.mmid && req.query.nid) {
       let _obj = util.inspect(req, { showHidden: false, depth: null });
       logger.debug(`${callerType} updateByMindMapNode -> request: ${_obj}`);
@@ -148,6 +149,7 @@ module.exports = {
           title: req.body.title,
           description: req.body.description,
           businessGoal: req.body.businessGoal,
+          summary: req.body.summary,
           mainKpiId: req.body.mainKpiId,
           progress: req.body.progress,
           startAt: req.body.startAt,

@@ -54,7 +54,7 @@ class TreeMindMap extends React.Component {
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
     this.setButtonStates = this.setButtonStates.bind(this);
-    this.saveJson = this.saveJson.bind(this);
+    this.saveMindmap = this.saveMindmap.bind(this);
     this.saveNoteToJson = this.saveNoteToJson.bind(this);
     this.findSelectedNodeId = this.findSelectedNodeId.bind(this);
     this.findSelectedNodeName = this.findSelectedNodeName.bind(this);
@@ -1026,7 +1026,7 @@ class TreeMindMap extends React.Component {
   /**
    * Save Mind map JSON to the database.
    */
-  saveJson = () => {
+  saveMindmap = () => {
     this.saveNoteToJson();
 
     let mindmapId = null;
@@ -1037,7 +1037,9 @@ class TreeMindMap extends React.Component {
     console.log("JSON:" + JSON.stringify(getMindmap()));
     let postData = {
       orgId: this.state.orgId,
-      mapData: getMindmap()
+      mapData: getMindmap(),
+      mapName: this.state.mapName,
+      mapDescription: this.state.mapDescription
     };
 
     // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
@@ -1052,13 +1054,21 @@ class TreeMindMap extends React.Component {
       })
         .then(response => response.json())
         .then(response => {
-          console.log('response is: ' + response)
-          this.setState({
-            openSnackbar: true,         // Success - open the snackbar
-            message: "Mind map saved.",
-            isNewMap: false,
-            mindmapId: response.id
-          });
+          console.log('response is: ' + response);
+          if (this.state.isNewMap) {
+            this.setState({
+              openSnackbar: true,         // Success - open the snackbar
+              message: "Mind map saved.",
+              isNewMap: false,
+              mindmapId: response.id
+            });
+          } else {
+            this.setState({
+              openSnackbar: true,         // Success - open the snackbar
+              message: "Mind map saved.",
+              isNewMap: false
+            });
+          }
         })
         .catch(err => {
           this.setState({ message: "Error occurred." });
@@ -1243,7 +1253,7 @@ class TreeMindMap extends React.Component {
             <Button
               variant="contained"
               color="secondary"
-              onClick={this.saveJson}
+              onClick={this.saveMindmap}
               className={classes.outlinedButton}
             >
               Save Mind Map

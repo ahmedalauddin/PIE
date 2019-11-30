@@ -4,7 +4,8 @@
  * Created:  2019-01-27 17:59:36
  * Author:   Darrin Tisdale
  * -----
- * Modified: 2019-02-21 10:03:27
+ * Modified: 2019-11-29
+ * Changes:  Add name and description to save fields for update and create.
  * Editor:   Darrin Tisdale
  */
 "use strict";
@@ -20,7 +21,9 @@ module.exports = {
     logger.debug(`${callerType} create -> mapData: ${req.body.mapData}`);
     return models.Mindmap.create({
       orgId: req.body.orgId,
-      mapData: req.body.mapData
+      mapData: req.body.mapData,
+      mapName: req.body.mapName,
+      mapDescription: req.body.mapDescription
     },
     {
       returning: true
@@ -41,7 +44,9 @@ module.exports = {
     const id = req.params.id;
     return models.Mindmap.update(
       {
-        mapData: req.body.mapData
+        mapData: req.body.mapData,
+        mapName: req.body.mapName,
+        mapDescription: req.body.mapDescription
       },
       {
         returning: true,

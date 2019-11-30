@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";

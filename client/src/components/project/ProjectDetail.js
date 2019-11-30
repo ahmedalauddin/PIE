@@ -22,7 +22,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import { getOrgId, getOrgName, getOrgDepartments, setProject, store, setOrg } from "../../redux";
+import { getOrgId, getOrgName, getOrgDepartments, setProject, store } from "../../redux";
 
 class ProjectDetail extends React.Component {
   constructor(props) {

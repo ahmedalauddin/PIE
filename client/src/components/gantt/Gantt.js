@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import {getProject, getProjectName} from "../../redux";
+import Button from "@material-ui/core/Button";
+import { styles } from "../styles/ProjectStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 
+/*
 const data = {
   data: [
     { id: 1, text: "Task #1", start_date: "2019-04-15 1:00", duration: 3, progress: 0.6 },
@@ -47,17 +51,25 @@ const data2 = {
     }
   ]
 }
+ */
 
-export default class Gantt extends Component {
+class Gantt extends React.Component {
   constructor(props) {
     super(props);
     this.setZoom = this.setZoom.bind(this);
+    this.handleSave = this.handleSave.bind(this);
     this.state = {
       project: {},
       organizations: [],
       tasks: null
     };
   }
+  handleSave() {
+    // See if there is output here
+    let ganttJson = gantt.serialize('json');
+    console.log(ganttJson);
+  }
+
   setZoom(value) {
     switch (value) {
       case 'Hours':
@@ -88,6 +100,15 @@ export default class Gantt extends Component {
           { unit:'week', step:1, date:'#%W' }
         ];
         break;
+      case 'Quarters':
+        gantt.config.min_column_width = 70;
+        gantt.config.scale_unit = 'quarter';
+        gantt.config.date_scale = '%F';
+        gantt.config.scale_height = 60;
+        gantt.config.subscales = [
+          { unit:'month', step:1, date:'%M' }
+        ];
+        break;
       default:
         break;
     }
@@ -95,23 +116,16 @@ export default class Gantt extends Component {
   componentDidMount() {
     const projectId = this.props.projectId;
     gantt.config.xml_date = "%Y-%m-%d %H:%i";
-    let tasks = null;
     let myTasks = {
       data: [],
       links: []
     };
-    //let myTasks = JSON.stringify(items);
 
     if (parseInt(projectId) > 0) {
       fetch(`/api/gantt/${projectId}`)
         .then(res => res.json())
         .then(tasks => {
-          /*
-          this.setState({
-            id: projectId,
-            tasks: tasks
-          }); */
-          // let myObj = JSON.parse(myTasks);
+          // Note that we're not setting state here, at least yet.
           myTasks.data = tasks;
         })
         .then(milestones => {
@@ -123,12 +137,28 @@ export default class Gantt extends Component {
   }
 
   render() {
-    this.setZoom("Months");
+    this.setZoom("Quarters");
+    const { classes } = this.props;
     return (
-      <div
-        ref={ (input) => { this.ganttContainer = input } }
-        style={ { width: 1500, height: 600 } }
-      ></div>
+      <div>
+        <div
+          ref={ (input) => { this.ganttContainer = input } }
+          style={ { width: 1200, height: 600 } }
+        >
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleSave}
+            className={classes.secondary}
+          >
+          Save
+          </Button>
+        </div>
+      </div>
     );
   }
 }
+
+export default withStyles(styles)(Gantt);

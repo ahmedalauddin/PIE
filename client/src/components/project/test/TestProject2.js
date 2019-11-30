@@ -13,15 +13,15 @@ import React, { Component } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline/index";
 import Typography from "@material-ui/core/Typography/index";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import Card from "@material-ui/core/Card/index";
 import CardContent from "@material-ui/core/CardContent/index";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
-import ProjectActions from "./ProjectActions";
-import ProjectPersons from "./ProjectPersons";
+import { getOrgId, getOrgName, getOrgDepartments } from "../../../redux";
+import ProjectActions from "../ProjectActions";
+import ProjectPersons from "../ProjectPersons";
 import Grid from "@material-ui/core/Grid";
-import SectionHeader from "../typo/SectionHeader";
+import SectionHeader from "../../typo/SectionHeader";
 import { red } from "@material-ui/core/colors";
 import PropTypes from "prop-types";
 import Tabs from "@material-ui/core/Tabs";
@@ -36,7 +36,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import MenuItem from '@material-ui/core/MenuItem';
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import { getSorting, stableSort } from "../TableFunctions";
+import { getSorting, stableSort } from "../../TableFunctions";
 import moment from "moment";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -673,7 +673,7 @@ class TestProject extends React.Component {
                   </Button>
                 </div>
               </form>
-  
+
             </CardContent>
           </Card>
 

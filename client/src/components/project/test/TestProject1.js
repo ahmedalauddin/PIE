@@ -12,10 +12,10 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-import Topbar from "../Topbar";
+import Topbar from "../../Topbar";
 import { Link, Redirect } from "react-router-dom";
-import { getOrgId, getOrgName, getOrgDepartments } from "../../redux";
-import "../../stylesheets/Draft.css";
+import { getOrgId, getOrgName, getOrgDepartments, store, setOrg } from "../../../redux";
+import "../../../stylesheets/Draft.css";
 import ProjectPersons from "./ProjectPersons";
 import ProjectDetail from "./ProjectDetail";
 import Grid from "@material-ui/core/Grid";
@@ -29,11 +29,9 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Fab from "@material-ui/core/Fab";
 import KpiTable from "../kpi/KpiTable";
 import ActionTable from "./ActionTable";
-import MilestoneList from "./MilestoneList";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
-import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
   root: {
@@ -213,20 +211,38 @@ class Project extends React.Component {
   };
 
   setOrganizationInfo = () => {
-    // Get the organization from the filter.
-    let orgName = getOrgName();
-    let orgId = getOrgId();
-    let departments = getOrgDepartments();
 
     this.setState({
-      orgName: orgName,
-      orgId: orgId,
-      departments: departments
+      orgName: "Test Org",
+      orgId: 2,
+      //departments: departments
     });
   };
 
   componentDidMount() {
     this.setOrganizationInfo();
+    fetch("/api/organizations/2")
+      .then(response => {
+        if (!response.ok) {
+          // here, we get out of the then handlers and
+          // over to the catch handler
+          throw new Error("Network response was not ok.");
+        } else {
+          // status code 200 is success.
+          console.log("ClientOrg.js, org selected. Status = 200");
+          return response.json();
+        }
+      })
+      .then(data => {
+        store.dispatch(setOrg(JSON.stringify(data)));
+        console.log("ClientOrg.js, organization:" + JSON.stringify(data));
+      })
+      .then(response => {
+        this.setState({ readyToRedirect: true });
+      })
+      .catch(err => {
+        // TODO - set error login on form.
+      });
   }
 
   componentDidCatch() {
@@ -238,7 +254,7 @@ class Project extends React.Component {
     const { value } = this.state;
     const currentPath = this.props.location.pathname;
     const { expanded } = this.state;
-    let projId = this.props.match.params.id;
+    let projId = 118;
 
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
@@ -247,46 +263,42 @@ class Project extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Topbar />
-        <div className={classes.root}>
+        <Grid className={classes.root}>
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
-                <form onSubmit={this.handleSubmit} noValidate>
-                  <Typography color="secondary" gutterBottom>
-                    {this.state.msg}
-                  </Typography>
-                  <Grid container spacing={24}>
-                    <Grid item xs={12}>
-                      <TextField
-                        required
-                        id="title-required"
-                        label="Project Title"
-                        onChange={this.handleChange("title")}
-                        value={this.state.title}
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        id="description"
-                        label="Description"
-                        multiline
-                        rowsMax="6"
-                        value={this.state.description}
-                        onChange={this.handleChange("description")}
-                        fullWidth
-                        margin="normal"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </Grid>
-                  </Grid>
+                <ProjectDetail projectId={118}/>
               </Paper>
             </Grid>
+            <Grid item lg={10}>
+              <ExpansionPanel expanded={expanded === "panel1"} onChange={this.handlePanelChange("panel1")}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.heading}>KPIs</Typography>
+
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container>
+                    <Grid item lg={10}>
+                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                        aria-label="Add" to={{pathname: "/kpi", state: {projectId: projId} }} >
+                        Add New
+                        <AddIcon className={classes.rightIcon}>
+                          Add New</AddIcon>
+                      </Button>
+                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                        aria-label="Search KPIs" to={{pathname: "/kpisearch", state: {projectId: projId} }} >
+                        Search and Assign
+                        <SearchIcon className={classes.rightIcon} />
+                      </Button>
+                      <KpiTable projectId={118}/>
+                    </Grid>
+                  </Grid>
+
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            </Grid>
           </Grid>
-        </div>
+        </Grid>
       </React.Fragment>
     );
   }

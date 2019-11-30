@@ -21,10 +21,14 @@ module.exports = {
     return models.Mindmap.create({
       orgId: req.body.orgId,
       mapData: req.body.mapData
-    })
-      .then(m => {
-        logger.debug(`${callerType} create -> id: ${m.id}`);
-        res.status(201).send(m);
+    },
+    {
+      returning: true
+    }
+    )
+      .then(result => {
+        logger.debug(`${callerType} create -> id: ${result.id}`);
+        res.status(201).send(result);
       })
       .catch(error => {
         logger.error(`${callerType} create -> error: ${error.stack}`);

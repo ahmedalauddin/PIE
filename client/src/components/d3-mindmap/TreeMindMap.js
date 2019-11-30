@@ -975,9 +975,6 @@ class TreeMindMap extends React.Component {
     let jsonMapData = getMindmap();
     if (jsonMapData && (jsonMapData != "")) {
       this.drawTree();
-      this.setState({
-        isNewMap: false
-      });
     }
   };
   //</editor-fold>
@@ -1031,6 +1028,12 @@ class TreeMindMap extends React.Component {
    */
   saveJson = () => {
     this.saveNoteToJson();
+
+    let mindmapId = null;
+    if (this.state.mindmapId != undefined) {
+      mindmapId = this.state.mindmapId;
+    }
+
     console.log("JSON:" + JSON.stringify(getMindmap()));
     let postData = {
       orgId: this.state.orgId,
@@ -1039,7 +1042,7 @@ class TreeMindMap extends React.Component {
 
     // Method -- POST (create) or PUT (update) depending if we're working on a new mindmap.
     let method = (!this.state.isNewMap) ? "PUT" : "POST";
-    let url = (!this.state.isNewMap) ? "/api/mindmaps" + this.props.mindmapId : "/api/mindmaps";
+    let url = (!this.state.isNewMap) ? "/api/mindmaps/" + mindmapId : "/api/mindmaps";
 
     setTimeout(() => {
       fetch(url, {
@@ -1047,15 +1050,15 @@ class TreeMindMap extends React.Component {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(postData)
       })
+        .then(response => response.json())
         .then(response => {
-          if (response.status !== 400) {
-            this.setState({
-              openSnackbar: true,         // Success - open the snackbar
-              message: "Mind map saved."
-            });
-          } else {
-            // TODO: consider handling a 400 response.
-          }
+          console.log('response is: ' + response)
+          this.setState({
+            openSnackbar: true,         // Success - open the snackbar
+            message: "Mind map saved.",
+            isNewMap: false,
+            mindmapId: response.id
+          });
         })
         .catch(err => {
           this.setState({ message: "Error occurred." });

@@ -70,17 +70,14 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           Version: {Package.version}<br/>
-                          Build date: 10/26/19
+                          Build date: 12/1/19
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
                           <ul>
-                            <li>Build fixing some issues and implementing some changes. </li>
-                            <li>Project dashboards: filters updated so they appear below the list of items selected.  </li>
-                            <li>Mind map: transitional screen to allow selection of a mindmap for an organization.  </li>
-                            <li>Mind map: added map name and description fields for the mind map itself.  </li>
-                            <li>Mind map: Creating a project from the KPI prioritization module is now working.  </li>
+                            <li>Gantt chart save under milestones on project component </li>
+                            <li>Mind map name and description save working </li>
                           </ul>
                         </Typography>
                       </div>

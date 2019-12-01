@@ -147,7 +147,6 @@ class Project extends React.Component {
    */
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
     const currentPath = this.props.location.pathname;
     const { expanded } = this.state;
     let projId = this.props.match.params.id;
@@ -158,17 +157,16 @@ class Project extends React.Component {
     return (
       <React.Fragment>
         <CssBaseline />
-        <Topbar />
+        <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
           <Grid container alignItems="center" justify="center" spacing={24} lg={12}>
             <Grid item lg={10}>
               <Paper className={classes.paper}>
                 <Typography
-                  style={{ textTransform: "uppercase" }}
                   color="secondary"
                   gutterBottom
                 >
-                  Project Detail<br/>
+                  Project Detail
                 </Typography>
                 <Typography variant="h7">
                   Organization: {getOrgName()}

@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
-import {getMindmap, getOrgId, getProject, getProjectName} from "../../redux";
+import { getOrgId } from "../../redux";
 import Button from "@material-ui/core/Button";
 import { styles } from "../styles/ProjectStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
 
 /*
 const data = {
@@ -57,10 +62,14 @@ class Gantt extends React.Component {
   constructor(props) {
     super(props);
     this.setZoom = this.setZoom.bind(this);
+    this.handleZoomChange = this.handleZoomChange.bind(this);
+    this.zoomIn = this.zoomIn.bind(this);
+    this.zoomOut = this.zoomOut.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.state = {
       project: {},
       projectId: undefined,
+      scale: 'Quarters',
       organizations: [],
       tasks: null,
       isNewGantt: undefined
@@ -113,48 +122,63 @@ class Gantt extends React.Component {
     }, 2000);
   }
 
-  setZoom(value) {
+  handleZoomChange = event => {
+    const zoomSetting = event.target.value;
+    this.setState({ scale: event.target.value });
+    this.setZoom(zoomSetting);
+    gantt.render();
+  }
+
+  setZoom = value => {
     switch (value) {
-      case 'Hours':
-        gantt.config.scale_unit = 'day';
-        gantt.config.date_scale = '%d %M';
+      case "Hours":
+        gantt.config.scale_unit = "day";
+        gantt.config.date_scale = "%d %M";
 
         gantt.config.scale_height = 60;
         gantt.config.min_column_width = 30;
         gantt.config.subscales = [
-          { unit:'hour', step:1, date:'%H' }
+          { unit:"hour", step:1, date:"%H" }
         ];
         break;
-      case 'Days':
+      case "Days":
         gantt.config.min_column_width = 70;
-        gantt.config.scale_unit = 'week';
-        gantt.config.date_scale = '#%W';
+        gantt.config.scale_unit = "week";
+        gantt.config.date_scale = "#%W";
         gantt.config.subscales = [
-          { unit: 'day', step: 1, date: '%d %M' }
+          { unit: "day", step: 1, date: "%d %M" }
         ];
         gantt.config.scale_height = 60;
         break;
-      case 'Months':
+      case "Months":
         gantt.config.min_column_width = 70;
-        gantt.config.scale_unit = 'month';
-        gantt.config.date_scale = '%F';
+        gantt.config.scale_unit = "month";
+        gantt.config.date_scale = "%F";
         gantt.config.scale_height = 60;
         gantt.config.subscales = [
-          { unit:'week', step:1, date:'#%W' }
+          { unit:"week", step:1, date:"#%W" }
         ];
         break;
-      case 'Quarters':
+      case "Quarters":
         gantt.config.min_column_width = 70;
-        gantt.config.scale_unit = 'quarter';
-        gantt.config.date_scale = '%F';
+        gantt.config.scale_unit = "quarter";
+        gantt.config.date_scale = "%F";
         gantt.config.scale_height = 60;
         gantt.config.subscales = [
-          { unit:'month', step:1, date:'%M' }
+          { unit:"month", step:1, date:"%M" }
         ];
         break;
       default:
         break;
     }
+    // gantt.init("gantt");
+  }
+
+  zoomIn = () => {
+    gantt.ext.zoom.zoomIn();
+  }
+  zoomOut = () => {
+    gantt.ext.zoom.zoomOut();
   }
 
   componentDidMount() {
@@ -194,23 +218,45 @@ class Gantt extends React.Component {
     this.setZoom("Quarters");
     const { classes } = this.props;
     return (
-      <div>
-        <div
-          ref={ (input) => { this.ganttContainer = input } }
-          style={ { width: 1200, height: 600 } }
-        >
-        </div>
-        <div>
-          <br/><br/>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSave}
-            className={classes.secondary}
-          >
-          Save
-          </Button>
-        </div>
+      <div className={classes.root}>
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            <FormControl className={classes.formControl}>
+              <InputLabel shrink id="select-scale-label">Scale</InputLabel>
+              <Select
+                labelId={"select-scale-label"}
+                value={this.state.scale}
+                onChange={this.handleZoomChange}
+                inputProps={{
+                  name: "scale",
+                  id: "scale"
+                }}
+              >
+                <MenuItem value={"Days"}>Days</MenuItem>
+                <MenuItem value={"Months"}>Months</MenuItem>
+                <MenuItem value={"Quarters"}>Quarters</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <div
+              ref={ (input) => { this.ganttContainer = input } }
+              style={ { width: 1400, height: 600 } }
+            >
+            </div>
+            <div>
+              <br/>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSave}
+                className={classes.secondary}
+              >
+              Save
+              </Button>
+            </div>
+          </Grid>
+        </Grid>
       </div>
     );
   }

@@ -107,10 +107,10 @@ module.exports = {
 
   // Update a project
   update(req, res) {
-    logger.debug(`${callerType} project update -> request: ${_obj}`);
+    //logger.debug(`${callerType} project update -> request: ${_obj}`);
     if (req.query.mmid && req.query.nid) {
       let _obj = util.inspect(req, { showHidden: false, depth: null });
-      logger.debug(`${callerType} updateByMindMapNode -> request: ${_obj}`);
+      //logger.debug(`${callerType} updateByMindMapNode -> request: ${_obj}`);
       return Project.update(
         {
           title: req.body.title,

@@ -34,6 +34,14 @@ module.exports = router => {
   logger.debug(`${callerType} GET -> path: /api/gantt/:projid`);
   router.get("/api/gantt/:projid", milestoneController.listForGantt);
 
+  // update Gantt chart view
+  logger.debug(`${callerType} PUT -> path: /api/gantt/:projid`);
+  router.put("/api/gantt/:projid", milestoneController.saveGantt);
+
+  // update Gantt chart view
+  logger.debug(`${callerType} POST -> path: /api/gantt/:projid`);
+  router.post("/api/gantt", milestoneController.createGantt);
+
   // create a milestone
   logger.debug(`${callerType} POST -> path: /api/milestones`);
   router.post("/api/milestones", milestoneController.create);

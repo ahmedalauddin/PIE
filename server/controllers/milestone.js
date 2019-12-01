@@ -159,16 +159,74 @@ module.exports = {
       });
   },
 
-  // List all milestones for a single project
+  // Save a Gantt chart
+  saveGantt(req, res) {
+    const projectId = req.body.projectId;
+    const jsonData = req.body.jsonData;
+    const sql = "update Gantt set jsonData = '" + jsonData + "' where projectId = " + projectId + ";";
+    logger.debug(
+      `${callerType} saveGantt -> body: ${util.inspect(req.body, {
+        showHidden: false,
+        depth: null
+      })}`
+    );
+    logger.debug(
+      `${callerType} saveGantt -> sql: ${sql}`
+    );
+    return models.sequelize.query(sql, {
+      type: models.sequelize.QueryTypes.RAW
+    })
+      .then(gantt => {
+        logger.debug(`${callerType} Milestone saveGantt -> successful`);
+        res.status(201).send(gantt);
+      })
+      .catch(error => {
+        logger.error(`${callerType} Milestone saveGantt -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // Save a Gantt chart
+  createGantt(req, res) {
+    const projectId = req.params.projid;
+    const orgId = req.body.orgId;
+    const jsonData = req.body.jsonData;
+    const sql = "insert into Gantt (orgId, jsonData) values (" + orgId +
+      ", '" + jsonData + "')";
+    logger.debug(
+      `${callerType} createGantt -> body: ${util.inspect(req.body, {
+        showHidden: false,
+        depth: null
+      })}`
+    );
+    logger.debug(
+      `${callerType} createGantt -> sql: ${sql}`
+    );
+    return models.sequelize.query(sql, {
+      type: models.sequelize.QueryTypes.RAW
+    })
+      .then(gantt => {
+        logger.debug(`${callerType} Milestone saveGantt -> successful`);
+        res.status(201).send(gantt);
+      })
+      .catch(error => {
+        logger.error(`${callerType} Milestone saveGantt -> error: ${error.stack}`);
+        res.status(400).send(error);
+      });
+  },
+
+  // List all milestones for a single project for our Gantt chart.
   listForGantt(req, res) {
     const projectId = req.params.projid;
+    /*
     const sql = "select t.id, t.title as text, t.startDate as start_date, t.endDate as end_date, " +
       "'task' as type, t.milestoneId as parent, datediff(t.endDate, t.startDate)  as duration " +
       "from Tasks t where t.projectId = " + projectId + " and t.milestoneId is not null " +
       "union select m.id, m.title as text, m.startDate as start_date, m.targetDate as end_date, " +
       "'milestone' as type, null as parent, null as duration " +
       "from Milestones m where m.projectId = " + projectId + " " +
-      "order by parent, start_date, end_date;";
+      "order by parent, start_date, end_date;";    */
+    const sql = "select jsonData from Gantt where projectId = " + projectId;
 
     return models.sequelize.query(
       sql, {

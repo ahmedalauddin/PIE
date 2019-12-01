@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
-import {getProject, getProjectName} from "../../redux";
+import {getMindmap, getOrgId, getProject, getProjectName} from "../../redux";
 import Button from "@material-ui/core/Button";
 import { styles } from "../styles/ProjectStyles";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -60,14 +60,57 @@ class Gantt extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.state = {
       project: {},
+      projectId: undefined,
       organizations: [],
-      tasks: null
+      tasks: null,
+      isNewGantt: undefined
     };
   }
-  handleSave() {
+
+  handleSave(event) {
+    event.preventDefault();
     // See if there is output here
     let ganttJson = gantt.serialize('json');
     console.log(ganttJson);
+    const projectId = this.props.projectId;
+
+    let postData = {
+      orgId: getOrgId(),
+      projectId: projectId,
+      jsonData: JSON.stringify(ganttJson)
+    };
+
+    let apiPath = "";
+    let successMessage = "";
+    let method = "";
+
+    if (this.state.isNewGantt) {
+      // For create
+      apiPath = "/api/gantt";
+      successMessage = "Gantt chart created."
+      method = "POST";
+    } else {
+      // For updates - use PUT
+      apiPath = "/api/gantt/" + projectId;
+      successMessage = "Gantt chart updated."
+      method = "PUT";
+    }
+
+    setTimeout(() => {
+      fetch(apiPath, {
+        method: method,
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(postData)
+      })
+        .then( () => {
+          console.log("Going to log message: " + successMessage);
+          this.props.messages(successMessage);
+          this.setState({ isNewGantt: false });
+        })
+        .catch(err => {
+          this.setState({ message: "Error occurred." });
+        });
+    }, 2000);
   }
 
   setZoom(value) {
@@ -113,6 +156,7 @@ class Gantt extends React.Component {
         break;
     }
   }
+
   componentDidMount() {
     const projectId = this.props.projectId;
     gantt.config.xml_date = "%Y-%m-%d %H:%i";
@@ -125,8 +169,18 @@ class Gantt extends React.Component {
       fetch(`/api/gantt/${projectId}`)
         .then(res => res.json())
         .then(tasks => {
-          // Note that we're not setting state here, at least yet.
-          myTasks.data = tasks;
+          if (tasks.length > 0 ){
+            // Note that we're not setting state here, at least yet.
+            myTasks = tasks[0].jsonData;
+            this.setState({
+              isNewGantt: false
+            });
+          } else {
+            // new chart
+            this.setState({
+              isNewGantt: true
+            });
+          }
         })
         .then(milestones => {
           // myTasks.data = this.state.tasks;
@@ -147,6 +201,7 @@ class Gantt extends React.Component {
         >
         </div>
         <div>
+          <br/><br/>
           <Button
             variant="contained"
             color="primary"

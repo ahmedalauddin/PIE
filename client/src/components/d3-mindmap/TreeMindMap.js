@@ -253,8 +253,9 @@ class TreeMindMap extends React.Component {
       let json = getMindmap();
       let jsonNode = getNodeById(nodeId, json);
       jsonNode.name = newNodeName;
+      store.dispatch(setMindmap(JSON.stringify(json)));
     }
-  }
+  };
 
   addNoteRects = (nodeContainers) => {
     // Draw <rect>s

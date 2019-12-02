@@ -266,6 +266,11 @@ class Organization extends React.Component {
                 <ExpansionPanelDetails>
                   <Grid container>
                     <Grid item lg={10}>
+                      <Button variant="contained" color="primary" className={classes.button} component={Link} size="small"
+                        aria-label="Add" to={{pathname: "/department", state: {organizationId: orgId} }} >
+                        Add New
+                        <AddIcon className={classes.rightIcon} />
+                      </Button>
                       <DepartmentTable organizationId={orgId}/>
                     </Grid>
                   </Grid>

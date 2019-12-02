@@ -234,7 +234,7 @@ class Person extends React.Component {
       method = "PUT";
     } else {
       // For create
-      apiPath = "/api/persons/";
+      apiPath = "/api/persons";
       successMessage = "User " + this.state.lastName + " created."
       method = "POST";
     }

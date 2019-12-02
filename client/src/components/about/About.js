@@ -76,6 +76,7 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           <ul>
+                            <li>Add people and departments on organization component </li>
                             <li>Gantt chart save under milestones on project component </li>
                             <li>Mind map name and description save working </li>
                           </ul>

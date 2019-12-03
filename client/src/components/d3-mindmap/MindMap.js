@@ -191,9 +191,11 @@ class MindMap extends React.Component {
   };
 
   // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
-  sendSelectedNode(nodeId) {
+  sendSelectedNode(nodeId, nodeText, mindmapId) {
     this.setState({
-      selectedNodeId: nodeId
+      selectedNodeId: nodeId,
+      selectedNodeText: nodeText,
+      mindmapId: mindmapId
     });
   };
 

@@ -123,13 +123,11 @@ module.exports = {
   getProject(req, res) {
     let _obj = util.inspect(req.body, { showHidden: false, depth: null });
     logger.debug(`${callerType} findById -> request: ${_obj}`);
-    return ProjectPerson.findByPk(req.params.id, {
-      include: [
-        {
-          model: Organization,
-          as: "organization"
-        }
-      ]
+    const projectId = req.params.id;
+    return ProjectPerson.findAll( {
+      where: {
+        projectId: projectId
+      }
     })
       .then(p => {
         logger.info(`${callerType} getProject -> successful, 

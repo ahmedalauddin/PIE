@@ -225,7 +225,10 @@ class NodeDetail extends React.Component {
 
       nodeObject.parent().find("description").value(nodeDescription);
       console.log("json node from full map: " + nodeObject.parent().value());
-      store.dispatch(setMindmap(JSON.stringify(mapData.value())));
+
+      // update 12/3/19
+      // store.dispatch(setMindmap(JSON.stringify(mapData.value())));
+      store.dispatch(setMindmapNode(JSON.stringify(mapData.value())));
     }
   };
 

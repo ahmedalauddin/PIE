@@ -1,20 +1,21 @@
 /**
-* Project:  valueinfinity-mvp
-* File:     /client/src/components/d3-mindmap/TreeMindMap.js
-* Descr:    D3 mind map.  See examples on https://observablehq.com/@jianan-li/mind-map-with-data-persistence-wip.
-  * Created:  2019-06-05
-* Author:   Brad Kaufman
-* -----
-* Modified: 2019-08-29
-* Changes:  Added editor folding.  Styles for D3 and svg now specified more in mindmap.scss.
-* Editor:   Brad Kaufman
-*/
+ * Project:  valueinfinity-mvp
+ * File:     /client/src/components/d3-mindmap/TreeMindMap.js
+ * Descr:    D3 mind map.  See examples on https://observablehq.com/@jianan-li/mind-map-with-data-persistence-wip.
+ * Created:  2019-06-05
+ *
+ * Author:   Brad Kaufman
+ * -----
+ * Modified: 2019-12-03
+ * Changes:  Adding functions for saving JSON.
+ * Editor:   Brad Kaufman
+ * */
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import * as d3 from "d3";
 import "./tree-styles.scss";
 import Grid from "@material-ui/core/Grid/index";
-import { store, getOrgId, getOrgName, setMindmapNode, setMindmap, getMindmap } from "../../redux";
+import { store, getOrgId, getOrgName, setMindmap, setMindmapNode, getMindmap } from "../../redux";
 import Snackbar from "@material-ui/core/Snackbar";
 import "./mindmap.scss";
 import Button from "@material-ui/core/Button";
@@ -50,6 +51,7 @@ class TreeMindMap extends React.Component {
     this.undoDeleteNode = this.undoDeleteNode.bind(this);
     this.getLastDeletedNode = this.getLastDeletedNode.bind(this);
     this.newMap = this.newMap.bind(this);
+    this.setMindmapJson = this.setMindmapJson.bind(this);
     this.selectNode = this.selectNode.bind(this);
     this.deselectNode = this.deselectNode.bind(this);
     this.updateNodeValue = this.updateNodeValue.bind(this);
@@ -242,6 +244,13 @@ class TreeMindMap extends React.Component {
     });
   };
 
+  setMindmapJson = (json) => {
+    if (Array.isArray(json)) {
+      console.log("setMindmapJson, error: JSON is an array");
+    }
+    store.dispatch(setMindmap(JSON.stringify(json)));
+  };
+
   // Update JSON for a node and save it to state.
   // TODO - fix this, confusion between state json and D3.
   updateJsonData = () => {
@@ -253,7 +262,9 @@ class TreeMindMap extends React.Component {
       let json = getMindmap();
       let jsonNode = getNodeById(nodeId, json);
       jsonNode.name = newNodeName;
-      store.dispatch(setMindmap(JSON.stringify(json)));
+      this.setMindmapJson(json);
+      // Updated 12/3/19
+      store.dispatch(setMindmapNode(JSON.stringify(jsonNode)));
     }
   };
 
@@ -303,7 +314,7 @@ class TreeMindMap extends React.Component {
     deletedNodes.pop();
 
     let undoDeleteDisabled = (deletedNodes.length === 0) ? true : false;
-    store.dispatch(setMindmap(JSON.stringify(jsonData)));
+    this.setMindmapJson(jsonData);
 
     // Save the JSON back to state.
     this.setState({
@@ -350,8 +361,10 @@ class TreeMindMap extends React.Component {
   };
 
   // Uses our callback to send info to other components.
-  updateNodeInfo = (selectedNodeId) => {
-    this.props.callback(selectedNodeId);
+  updateNodeInfo = (selectedNodeId, nodeText, mindmapId) => {
+    if (selectedNodeId !== "") {
+      this.props.callback(selectedNodeId, nodeText, mindmapId);
+    }
   };
 
   // This is the callback used by TreeMindMap.  Use this to get information from the TreeMindMap.
@@ -461,17 +474,17 @@ class TreeMindMap extends React.Component {
    */
   appendChildToSelectedNode = () => {
     let svg = d3.select(this.svg);
-    let idOfSelectedNode = this.findSelectedNodeId(svg);
+    let selectedNodeId = this.findSelectedNodeId(svg);
 
     let json = getMindmap();
-    let parent = getNodeById(idOfSelectedNode, json);
+    let parent = getNodeById(selectedNodeId, json);
 
     // Create the child.
     let child = {
       name: "new",
       id: createId(),
       description: "",
-      side: this.getNewChildDirection(),
+      side: this.getNewChildDirection(selectedNodeId),
       note: ""
     };
 
@@ -480,7 +493,7 @@ class TreeMindMap extends React.Component {
     if (parent.children) parent.children.push(child);
     else parent.children = [child];
 
-    store.dispatch(setMindmap(JSON.stringify(json)));
+    this.setMindmapJson(json);
     this.update();
   };
 
@@ -500,7 +513,7 @@ class TreeMindMap extends React.Component {
     };
     parent.children.push(sibling);
 
-    store.dispatch(setMindmap(JSON.stringify(jsonMapData)));
+    this.setMindmapJson(jsonMapData);
     this.update();
   };
 
@@ -531,7 +544,7 @@ class TreeMindMap extends React.Component {
     let deletedNodes = this.state.deletedNodes;
     deletedNodes.push(deletedNode);
 
-    store.dispatch(setMindmap(JSON.stringify(jsonData)));
+    this.setMindmapJson(jsonData);
     this.setState({
       deletedNodes: deletedNodes,   // Array of deleted nodes
       undoDeleteDisabled: false
@@ -645,8 +658,6 @@ class TreeMindMap extends React.Component {
     let updateJsonData = this.updateJsonData;
     let jsonData = getMindmap();
     let nodeId = node.attr("id");
-    // 10/2/19 - this is where we'll use our Redux function to store the node.
-    // Need to pass in the node's json here, e.g. {"id": "_jb42g162q", "name": "new", "note": "", "side": "left"}.
     let nodeJson = getNodeJson(nodeId, jsonData);
     store.dispatch(setMindmapNode(JSON.stringify(nodeJson)));
 
@@ -666,7 +677,7 @@ class TreeMindMap extends React.Component {
 
     // This is for the callback to our other components.
     // TODO - check if this works
-    this.updateNodeInfo(node.attr("id"));
+    this.updateNodeInfo(node.attr("id"), node.attr("name"), this.state.mindmapId);
 
     // TODO - see if updated content gets save to Redux state
     /*
@@ -684,11 +695,12 @@ class TreeMindMap extends React.Component {
 
   // Set button states depending on whether the node has a parent, has children.
   setButtonStates = (isAnyNodeSelected, node) => {
+    let jsonMap = getMindmap();
     if (isAnyNodeSelected) {
       const selectedNodeId = node.attr("id");
       const isNoteCollapsed = (node.attr("note-state") === "collapsed");
-      const hasChild = hasChildren(selectedNodeId, getMindmap());
-      const hasParentNode = hasParent(selectedNodeId, getMindmap());
+      const hasChild = hasChildren(selectedNodeId, jsonMap);
+      const hasParentNode = hasParent(selectedNodeId, jsonMap);
 
       this.setState({
         closeNoteDisabled: isNoteCollapsed,
@@ -738,7 +750,7 @@ class TreeMindMap extends React.Component {
     this.updateNodeValue(idOfSelectedNode, newTextValue);
 
     // TODO - save newValue to JSON
-    this.updateNodeInfo("");
+    this.updateNodeInfo("", "", this.state.mindmapId);
   };
 
   updateNodeValue = (idOfSelectedNode, newValue) => {
@@ -989,7 +1001,10 @@ class TreeMindMap extends React.Component {
   getNewChildDirection = (selectedNodeId) => {
     // If we are appending to the root, we need to determine which side of the map to add the child.
     let jsonData = getMindmap();
+    // Change 12/1/19
     let parent = getNodeById(selectedNodeId, jsonData);
+    // let parent = findParentNode(selectedNodeId, jsonData);
+
     let side = "";
     const isRoot = !hasParent(selectedNodeId, jsonData);
     if ( isRoot ) {
@@ -1015,7 +1030,7 @@ class TreeMindMap extends React.Component {
    */
   newMap = () => {
     const newJsonData = createNewMapJson();
-    store.dispatch(setMindmap(JSON.stringify(newJsonData)));
+    this.setMindmapJson(newJsonData);
 
     this.setState({
       isNewMap: true
@@ -1101,7 +1116,7 @@ class TreeMindMap extends React.Component {
                   mapDescription: map.mapDescription
                 });
                 // Call Redux here.
-                store.dispatch(setMindmap(JSON.stringify(map.mapData)));
+                this.setMindmapJson(map.mapData);
               } else {
                 this.newMap();
               }

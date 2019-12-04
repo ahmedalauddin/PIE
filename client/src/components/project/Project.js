@@ -218,7 +218,7 @@ class Project extends React.Component {
                         Select owners and people assigned to the project
                       </Typography>
                       <Fab component={Link} size="small" color="primary" aria-label="Add"
-                        to={{pathname: "/", state: {projectId: projId} }}
+                        to={{pathname: "/person", state: {projectId: projId} }}
                         className={classes.fab}>
                         <AddIcon />
                       </Fab>

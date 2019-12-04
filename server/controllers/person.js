@@ -130,7 +130,7 @@ module.exports = {
     let sql = "select O.id, O.name, Pr.id,  P.id as projectId, P.title, PP.inProject, PP.owner, Pr.firstName, Pr.lastName, Pr.email, " +
       "concat('assigned-', Pr.id) as checkname " +
       "from Persons Pr inner join Organizations O " +
-      "on O.id = Pr.orgId and O.id = 2 " +
+      "on O.id = Pr.orgId  " +
       "inner join Projects P on O.id = P.orgId and P.id = " + req.params.projectId + " " +
       "left outer join ProjectPersons PP " +
       "on PP.personId = Pr.id and PP.projectId = P.id " +

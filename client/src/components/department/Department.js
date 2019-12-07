@@ -275,7 +275,8 @@ class Department extends React.Component {
             name: department.name,
             description: department.description,
             orgName: department.organization.name,
-            orgId: organizationId
+            orgId: organizationId,
+            buttonText: "Save"
           });
         });
     } else {
@@ -378,7 +379,7 @@ class Department extends React.Component {
           onClose={this.handleClose}
           TransitionComponent={this.state.Transition}
           ContentProps={{
-            'aria-describedby': 'message-id',
+            "aria-describedby": "message-id"
           }}
           message={<span id="message-id">{this.state.message}</span>}
         />

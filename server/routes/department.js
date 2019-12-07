@@ -32,6 +32,9 @@ module.exports = router => {
   logger.debug(`${callerType} POST -> path: /api/departments`);
   router.post("/api/departments", departmentController.create);
 
-  // TODO add PUT /api/departments/:id method for updating a department
+  // update a department
+  logger.debug(`${callerType} PUT -> path: /api/departments/:id`);
+  router.put("/api/departments/:id", departmentController.update);
+
   // TODO add DELETE /api/departments/:id method for deleting a department
 };

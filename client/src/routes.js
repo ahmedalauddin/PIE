@@ -37,6 +37,7 @@ import MindMapList from "./components/d3-mindmap/MindmapList";
 import Search from "./components/search/Search";
 import GanttTest from "./components/gantt/GanttTest";
 import Gantt from "./components/gantt/Gantt";
+import KpiSearch from "./components/kpi/KpiSearch";
 
 export default props => (
   <BrowserRouter>
@@ -76,6 +77,7 @@ export default props => (
         <Route exact path="/person" component={withAuth(Person)} />
         <Route exact path="/kpi/:id" component={withAuth(Kpi)} />
         <Route exact path="/kpi" component={withAuth(Kpi)} />
+        <Route exact path="/kpisearch" component={withAuth(KpiSearch)} />
         <Route exact path="/milestone" component={withAuth(Milestone)} />
         <Route exact path="/action/:id" component={withAuth(Action)} />
         <Route exact path="/action" component={withAuth(Action)} />

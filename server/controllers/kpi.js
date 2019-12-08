@@ -4,8 +4,8 @@
  * Created:  2019-01-27 13:43:45
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-02-21 10:02:42
- * Editor:   Darrin Tisdale
+ * Modified: 2019-12-06
+ * Changes:  Updated insert statement on saveAsNew to use `id` instead of `KpiId`.
  */
 "use strict";
 
@@ -248,12 +248,13 @@ module.exports = {
           doInsert = true;
         }
       }
+      // Changed insert statement, 12/5/19.
       if (doInsert === true) {
         sql = "INSERT into `Kpis` " +
-          "(kpiId, projectId) " +
+          "(id, projectId) " +
           "VALUES " + sqlArrays +
           "ON DUPLICATE KEY " +
-          "UPDATE projectId=projectId, kpiId=kpiId;"
+          "UPDATE projectId = projectId, id = id;"
 
         let _obj = util.inspect(req, { showHidden: false, depth: null });
         logger.debug(`${callerType} KPI assignToProject -> request: ${_obj}`);
@@ -454,6 +455,7 @@ module.exports = {
 
   // List all KPIs for a single organization
   listByOrganization(req, res) {
+    // May need to change the view.
     let sql = "select * from vw_Kpis " +
       "where orgId = " + req.params.orgid + " and active = 1";
     logger.debug(`${callerType} create Kpi -> sql: ${sql}`);

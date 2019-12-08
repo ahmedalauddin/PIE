@@ -11,52 +11,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Grid from "@material-ui/core/Grid";
 import FormControl from "@material-ui/core/FormControl";
 
-/*
-const data = {
-  data: [
-    { id: 1, text: "Task #1", start_date: "2019-04-15 1:00", duration: 3, progress: 0.6 },
-    { id: 2, text: "Task #2", start_date: "2019-04-18 9:00", parent: 1, duration: 3, progress: 0.4 },
-    { id: 3, text: "Task #3", start_date: "2019-04-19 9:00", parent: 1, duration: 7, progress: 0.3 },
-    { id: 4, text: "Task #4", start_date: "2019-04-22 9:00", parent: 3, duration: 6, progress: 0.1 },
-    { id: 5, text: "Task #5", start_date: "2019-04-27 9:00", duration: 4, progress: 0.4 }
-  ],
-  links: [
-    { id: 1, source: 1, target: 2, type: "0" },
-    { id: 3, source: 1, target: 4, type: "0" }
-  ]
-};
-const data2 = {
-  data: [
-    {
-      "id": 1,
-      "text": "Gathering data",
-      "start_date": "2019-06-10",
-      "end_date": "2019-07-14",
-      "type": "milestone",
-      "parent": null,
-      "duration": null
-    },
-    {
-      "id": 2,
-      "text": "Initial analysis",
-      "start_date": "2019-07-15",
-      "end_date": "2019-08-15",
-      "type": "milestone",
-      "parent": null,
-      "duration": null
-    },
-    {
-      "id": 3,
-      "text": "Further analyses complete",
-      "start_date": "2019-08-18",
-      "end_date": "2019-09-27",
-      "type": "milestone",
-      "parent": null,
-      "duration": null
-    }
-  ]
-}
- */
 
 class Gantt extends React.Component {
   constructor(props) {
@@ -65,6 +19,7 @@ class Gantt extends React.Component {
     this.handleZoomChange = this.handleZoomChange.bind(this);
     this.zoomIn = this.zoomIn.bind(this);
     this.zoomOut = this.zoomOut.bind(this);
+    this.initGanttDataProcessor = this.initGanttDataProcessor.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.state = {
       project: {},
@@ -189,6 +144,10 @@ class Gantt extends React.Component {
       links: []
     };
 
+    this.initGanttDataProcessor();
+    // this.dataProcessor.destructor();
+    // this.dataProcessor = null;
+
     if (parseInt(projectId) > 0) {
       fetch(`/api/gantt/${projectId}`)
         .then(res => res.json())
@@ -208,9 +167,34 @@ class Gantt extends React.Component {
         })
         .then(milestones => {
           // myTasks.data = this.state.tasks;
+          /*
+          gantt.attachEvent("onGanttRender", function(){
+            gantt.message("Gantt chart is completely rendered on the page...")
+          }); */
           gantt.init(this.ganttContainer);
+          gantt.clearAll();
           gantt.parse(myTasks);
+          gantt.render();
         });
+    }
+  }
+
+  initGanttDataProcessor() {
+    const onDataUpdated = this.props.onDataUpdated;
+    this.dataProcessor = gantt.createDataProcessor((entityType, action, item, id) => {
+      return new Promise((resolve, reject) => {
+        if (onDataUpdated) {
+          onDataUpdated(entityType, action, item, id);
+        }
+        return resolve();
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.dataProcessor) {
+      this.dataProcessor.destructor();
+      this.dataProcessor = null;
     }
   }
 

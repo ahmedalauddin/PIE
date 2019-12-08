@@ -210,7 +210,8 @@ class KpiSearchResults extends React.Component {
   handleAssign(event) {
     event.preventDefault();
 
-    const projectId = this.props.projectId;
+    const projectId = getProject().id;
+    const orgId = getOrgId();
     fetch("/api/kpis-assign/" + projectId, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

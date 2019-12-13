@@ -203,7 +203,7 @@ class Project extends React.Component {
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <div className="gantt-container">
-                    <Gantt projectId={projId}/>
+                    <Gantt projectId={projId} messages={this.showMessages}/>
                   </div>
                 </ExpansionPanelDetails>
               </ExpansionPanel>

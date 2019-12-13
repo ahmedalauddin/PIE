@@ -44,18 +44,16 @@ class Gantt extends React.Component {
       jsonData: JSON.stringify(ganttJson)
     };
 
-    let apiPath = "";
+    let apiPath = "/api/gantt/" + projectId;
     let successMessage = "";
     let method = "";
 
     if (this.state.isNewGantt) {
       // For create
-      apiPath = "/api/gantt";
       successMessage = "Gantt chart created."
       method = "POST";
     } else {
       // For updates - use PUT
-      apiPath = "/api/gantt/" + projectId;
       successMessage = "Gantt chart updated."
       method = "PUT";
     }

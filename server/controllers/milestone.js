@@ -188,20 +188,12 @@ module.exports = {
 
   // Save a Gantt chart
   createGantt(req, res) {
-    const projectId = req.params.projid;
+    const projectId = req.body.projectId;
     const orgId = req.body.orgId;
     const jsonData = req.body.jsonData;
-    const sql = "insert into Gantt (orgId, jsonData) values (" + orgId +
+    const sql = "insert into Gantt (orgId, projectId, jsonData) values (" + orgId + ", " + projectId +
       ", '" + jsonData + "')";
-    logger.debug(
-      `${callerType} createGantt -> body: ${util.inspect(req.body, {
-        showHidden: false,
-        depth: null
-      })}`
-    );
-    logger.debug(
-      `${callerType} createGantt -> sql: ${sql}`
-    );
+    logger.debug(`createGantt -> sql: ${sql}`);
     return models.sequelize.query(sql, {
       type: models.sequelize.QueryTypes.RAW
     })

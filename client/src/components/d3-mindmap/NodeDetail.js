@@ -19,6 +19,7 @@ import { Redirect } from "react-router-dom";
 import { getOrgId, getMindmapNode, getMindmap, setMindmapNode, setMindmap, store } from "../../redux";
 import {red} from "@material-ui/core/colors";
 import * as jsonq from "jsonq";
+import {hasChildren, hasParent} from "./JsonNodeFunctions";
 
 const styles = theme => ({
   grid: {
@@ -153,6 +154,7 @@ class NodeDetail extends React.Component {
     this.handleNodeDescriptionChange = this.handleNodeDescriptionChange.bind(this);
     this.fetchKpiDetail = this.fetchKpiDetail.bind(this);
     this.updateMindmap = this.updateMindmap.bind(this);
+    this.setButtonStates = this.setButtonStates.bind(this);
     this.getMindMapNodeDescription = this.getMindMapNodeDescription.bind(this);
     this.state = {
       kpiId: undefined,
@@ -166,6 +168,7 @@ class NodeDetail extends React.Component {
       project: undefined,
       projectId: undefined,
       projectDescription: undefined,
+      kpiSaveDisabled: true,
       hasError: "",
       startAt: "",
       endAt: "",
@@ -194,9 +197,11 @@ class NodeDetail extends React.Component {
   //   //</editor-fold>
 
   handleChange = name => event => {
+    this.setButtonStates(event.target.value);
     this.setState({ [name]: event.target.value });
   };
 
+  // Updates the node description.
   handleBlur = name => event => {
     let nodeDescription = event.target.value;
     this.updateMindmap(nodeDescription);
@@ -326,11 +331,13 @@ class NodeDetail extends React.Component {
               orgId: getOrgId(),
               buttonText: "Update KPI"
             });
+            this.setButtonStates(kpi[0].title);
           } else {
             this.setState({
               title: "",
               kpiId: "",
               description: "",
+              kpiSaveDisabled: true,
               formula: "",
               project: "",
               projectDescription: "",
@@ -374,6 +381,19 @@ class NodeDetail extends React.Component {
       this.setState( {
         mindmapNodeId: mindmapNodeId
       })
+    }
+  };
+
+  // Set button state.  Don't activate the KPI Save button when there is not text for the KPI title.
+  setButtonStates = (text) => {
+    if (text !== "") {
+      this.setState({
+        kpiSaveDisabled: false
+      });
+    } else {
+      this.setState({
+        kpiSaveDisabled: true
+      });
     }
   };
 
@@ -453,6 +473,7 @@ class NodeDetail extends React.Component {
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={this.state.kpiSaveDisabled}
                   onClick={this.handleSubmit}
                   className={classes.secondary}
                 >

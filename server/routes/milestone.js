@@ -40,7 +40,7 @@ module.exports = router => {
 
   // update Gantt chart view
   logger.debug(`${callerType} POST -> path: /api/gantt/:projid`);
-  router.post("/api/gantt", milestoneController.createGantt);
+  router.post("/api/gantt/:projid", milestoneController.createGantt);
 
   // create a milestone
   logger.debug(`${callerType} POST -> path: /api/milestones`);

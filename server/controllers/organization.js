@@ -35,7 +35,7 @@ module.exports = {
   dashboardList(req, res) {
     logger.debug(`organizations dashboardList`);
     let sql = " Select O.*,  \
-      (select group_concat(title order by title  SEPARATOR ', ') from Projects P where P.orgId = O.id) as projects,  \
+      (select group_concat(title order by title SEPARATOR ', ') from Projects P where P.orgId = O.id) as projects,  \
       (select group_concat(fullName order by fullName SEPARATOR '; ' ) from Persons Pe where Pe.orgId = O.id  \
       ) as people,\
       (select group_concat(name order by name SEPARATOR ', ' ) from Departments D where D.orgId = O.id \

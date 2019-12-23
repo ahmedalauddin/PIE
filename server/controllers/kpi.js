@@ -45,9 +45,9 @@ module.exports = {
         let tags = req.body.tags;
         let kpiId = kpi.id;
         logger.debug(`${callerType} create Kpi -> tags: ${JSON.stringify(req.body.tags)}`);
-        logger.debug(`${callerType} create Kpi -> tags.length: ${tags.length}`);
+        // logger.debug(`${callerType} create Kpi -> tags.length: ${tags.length}`);
         let tag = "";
-        if (tags.length > 0) {
+        if (tags != undefined && tags.length > 0) {
           let valueStr = "";
           for (let i = 0; i < tags.length; i++) {
             tag = tags[i].text;

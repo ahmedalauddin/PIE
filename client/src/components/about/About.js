@@ -70,12 +70,13 @@ class About extends React.Component {
                       <div>
                         <Typography variant="body2">
                           Version: {Package.version}<br/>
-                          Build date: 12/12/19
+                          Build date: 12/22/19
                         </Typography>
                       </div>
                       <div>
                         <Typography variant="body2">
                           <ul>
+                            <li>Changes to retrieve top three tasks for project dashboard from Gantt JSON array</li>
                             <li>Add people and departments on organization component </li>
                             <li>Gantt chart save under milestones on project component </li>
                             <li>Mind map name and description save working </li>

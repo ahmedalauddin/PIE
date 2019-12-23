@@ -311,8 +311,11 @@ module.exports = {
   // get projects by organization
   getProjectDashboard(req, res) {
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`,\
-      P.progress, P.startAt, P.endAt, (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
-      Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+      P.progress, P.startAt, P.endAt, \
+      (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per \
+      where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+      (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per\
+      where P.id = PP.projectId and Per.id = PP.personId) as team, \
       (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
       from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
       left outer join Kpis K on P.mainKpiId = K.id  \
@@ -429,24 +432,15 @@ module.exports = {
 
       // Updated SQL using a new function, getTopTasks().
       let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
-        P.progress, P.startAt, P.endAt, getTopTasks(3, P.id) as tasks, \
-        (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) \
-        from ProjectPersons PP, Persons Per  \
-        where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners \
+        P.progress, P.startAt, P.endAt, json_array(getTopTasks(3, P.id)) as tasks, \
+        (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per  \
+        where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
+        (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per  \
+        where P.id = PP.projectId and Per.id = PP.personId) as team \
         from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
         left outer join Organizations O on P.orgId = O.id \
         left outer join Kpis K on P.mainKpiId = K.id "
         + orgClause + statusClause + startYearClause + endYearClause + " order by P.title";
-
-      /* Old SQL here:
-      let sql2 = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
-        P.progress, P.startAt, P.endAt,(select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \
-        Persons Per where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
-        (select group_concat(concat(' ', T.title)) from Tasks T where T.projectId = P.id) as tasks \
-        from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
-        left outer join Organizations O on P.orgId = O.id  \
-        left outer join Kpis K on P.mainKpiId = K.id "
-        + orgClause + statusClause + startYearClause + endYearClause + " order by P.title"; */
 
       logger.debug(`${callerType} Project: getProjectFilteredDashboard -> sql: ${sql}`);
       return models.sequelize
@@ -469,6 +463,7 @@ module.exports = {
   },
 
   // get projects
+  // TODO: may need to use getTopTasks function here.
   getAllProjects(req, res) {
     let sql = "select P.id, P.orgId, P.title as `projectTitle`, PS.label as `status`, K.title as `mainKpi`, O.name as organization, \
       P.progress, P.startAt, P.endAt, (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, \

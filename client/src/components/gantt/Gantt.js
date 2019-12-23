@@ -142,6 +142,13 @@ class Gantt extends React.Component {
       links: []
     };
 
+
+    gantt.config.lightbox.sections = [
+      {name: "description", height: 70, map_to: "text", type: "textarea", focus: true},
+      {name: "resource", type: "typeselect", map_to: "type"},
+      {name: "time", type: "duration", map_to: "auto"}
+    ];
+
     this.initGanttDataProcessor();
     // this.dataProcessor.destructor();
     // this.dataProcessor = null;

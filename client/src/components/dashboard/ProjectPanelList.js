@@ -25,10 +25,6 @@ import IconButton from "@material-ui/core/IconButton";
 import { connect } from "react-redux";
 import { styles } from "./DashboardStyles";
 import { formatDate } from "../common/UtilityFunctions";
-import TableCell from "@material-ui/core/TableCell";
-import Tooltip from "@material-ui/core/Tooltip";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-
 
 class ProjectPanelList extends Component {
   constructor(props) {
@@ -258,7 +254,7 @@ class ProjectPanelList extends Component {
                         </Grid>
                         <Grid item xs>
                           <Typography className={classes.secondaryHeading} component="p">
-                            Team: {project.owners}<br/>
+                            Team: {project.team}<br/>
                           </Typography>
                         </Grid>
                         <Grid item xs>

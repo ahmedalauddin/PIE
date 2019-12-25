@@ -10,7 +10,6 @@
 "use strict";
 
 const express = require("express");
-//const createError = require("http-errors");
 const path = require("path");
 const bodyParser = require("body-parser");
 var expressWinston = require("express-winston");
@@ -33,11 +32,6 @@ logger.debug(`adding parsers`);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// view engine setup
-// logger.debug(`adding views`);
-// app.set("views", path.join(__dirname, "server/views"));
-// app.set("view engine", "pug");
 
 // add support for static files and the built react app
 let serverPath = isHosted()

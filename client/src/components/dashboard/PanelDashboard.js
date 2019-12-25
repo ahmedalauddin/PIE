@@ -5,7 +5,8 @@
  * Created:  2019-01-16
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-05-30
+ * Modified: 2019-12-23
+ * Changes:  Formatting
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -15,12 +16,10 @@ import Grid from "@material-ui/core/Grid/index";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
 import { Redirect } from "react-router-dom";
-import { getOrgName, store, setProjectListFilter } from "../../redux";
+import { getOrgName } from "../../redux";
 import DashboardFilter from "./DashboardFilter";
 import ProjectPanelList from "./ProjectPanelList";
 import { styles } from "./DashboardStyles";
-
-var msg = "";
 
 class PanelDashboard extends Component {
   constructor(props) {
@@ -77,24 +76,25 @@ class PanelDashboard extends Component {
     if (this.state.hasError) {
       return <h1>An error occurred.</h1>;
     }
-    console.log("PanelDashboard render");
+    this.renderEditRedirect();
 
     return (
       <React.Fragment>
         <CssBaseline />
         <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
-          {this.renderEditRedirect()}
-          <Grid container justify="center">
-            <Grid container spacing={24} alignItems="center" justify="flex-start" className={classes.grid}>
-              <Typography variant="subtitle1" color="secondary" gutterBottom>
-                Projects listed for {getOrgName()}
-              </Typography>
+          <Grid container justify="center" direction="column" alignItems="center">
+            <Grid item xs={12} md={10}>
+              <Grid container spacing={24} justify="center" alignItems="center" className={classes.grid}>
+                <Typography variant="subtitle1" color="secondary" gutterBottom>
+                  Projects listed for {getOrgName()}
+                </Typography>
+              </Grid>
+              <Grid container direction="row" justify="center" alignItems="flex-end">
+                <DashboardFilter allClients={false} />
+                <ProjectPanelList allClients={false} />
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container direction="row" justify="center" alignItems="flex-end">
-            <DashboardFilter allClients={false} />
-            <ProjectPanelList allClients={false} />
           </Grid>
         </div>
       </React.Fragment>

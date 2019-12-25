@@ -6,11 +6,14 @@
  * Desc:     Redux store and functions.  Maintaining Redux stores for organization, user, and project search filters.
  *           Going to add mind map.
  *
- * Modified: 2019-10-02
+ * Modified: 2019-12-23
+ * Changes:  Adding npm package redux-persist.
  * Editor:   Brad Kaufman
  */
-
 import { createStore } from "redux";
+import { persistStore, persistReducer, REHYDRATE } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 /**
  * *setUser*
@@ -105,6 +108,12 @@ let defaultState = {
   project: ""
 };
 
+const persistConfig = {
+  key: "root",
+  storage: storage,
+  stateReconciler: autoMergeLevel2 // see "Merge Process" section for details.
+};
+
 /**
  * *reducers*
  * function handler for redux
@@ -115,6 +124,13 @@ let defaultState = {
  */
 export const reducers = (state = defaultState, action) => {
   switch (action.type) {
+    case REHYDRATE:
+      return {
+        ...state,
+        user: action.payload.user,
+        mindmap: action.payload.mindmap,
+        organization: action.payload.organization
+      };
     case "USER":
     return {
       ...state,
@@ -179,9 +195,11 @@ export const store = createStore(
   }),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );  */
-export const store = createStore(reducers,
+const pReducer = persistReducer(persistConfig, reducers);
+export const store = createStore(pReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
+export const persistor = persistStore(store);
 
 /**
  * *getUser*

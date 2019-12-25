@@ -5,7 +5,8 @@
  * Desc:     List of mind maps for an organization.  Used to select which one to edit.
  * Author:   Brad Kaufman
  *
- * Modified: 2019-10-02
+ * Modified: 2019-12-23
+ * Changes:  Format list to be centered on the screen.
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -26,9 +27,8 @@ import TableCell from "@material-ui/core/TableCell";
 import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import TablePagination from "@material-ui/core/TablePagination";
-import PropTypes from "prop-types";
 import EnhancedTableHead from "../common/EnhancedTableHead";
-import { stableSort, getSorting, desc } from "../common/TableFunctions";
+import { stableSort, getSorting } from "../common/TableFunctions";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -42,7 +42,6 @@ const rows = [
   { id: "updatedAt", numeric: false, disablePadding: true, label: "Updated" }
 ];
 
-
 function formatDate(dateInput) {
   let dateOut = "";
 
@@ -50,18 +49,6 @@ function formatDate(dateInput) {
     dateOut = moment(dateInput).format("YYYY-MM-DD");
   }
   return dateOut;
-}
-
-function handleNull(refToParse) {
-  try {
-    if (refToParse != null) {
-      return refToParse;
-    } else {
-      return "";
-    }
-  } catch (e) {
-    return "";
-  }
 }
 
 const styles = theme => ({
@@ -266,94 +253,96 @@ class MindmapList extends Component {
         <Topbar currentPath={currentPath}/>
         <div className={classes.root}>
           {this.renderEditRedirect()}
-          <Grid container lg={10} direction="row" justify="center" alignSelf="end" alignItems="flex-end">
-            <Grid item xs={12} md={10}>
-              <SectionHeader title="" subtitle="" />
-              <Card className={classes.card}>
-                <CardContent>
-                  <div>
-                    <Typography variant="h7" color="secondary" gutterBottom>
-                      Mind maps for {getOrgName()}<br/><br/>
-                    </Typography>
-                  </div>
-                  <div className={classes.tableWrapper}>
-                    <Table className={classes.table} aria-labelledby="tableTitle">
-                      <EnhancedTableHead
-                        numSelected={selected.length}
-                        rows={rows}
-                        order={order}
-                        orderBy={orderBy}
-                        onRequestSort={this.handleRequestSort}
-                        rowCount={mindmaps.length}
-                      />
-                      <TableBody>
-                        {stableSort(mindmaps, getSorting(order, orderBy))
-                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                          .map(mindmap => {
-                            const isSelected = this.isSelected(mindmap.id);
-                            return (
-                              <TableRow
-                                hover
-                                aria-checked={isSelected}
-                                tabIndex={-1}
-                                key={mindmap.id}
-                                selected={isSelected}
-                              >
-                                <TableCell component="th" scope="row" padding="none">
-                                  <IconButton
-                                    onClick={() => {
-                                      this.setEditRedirect(mindmap.id);
-                                    }}
-                                  >
-                                    <EditIcon color="primary" />
-                                  </IconButton>
-                                </TableCell>
-                                <TableCell align="left">{mindmap.mapName}</TableCell>
-                                <TableCell align="left">{mindmap.mapDescription}</TableCell>
-                                <TableCell align="left">{formatDate(mindmap.createdAt)}</TableCell>
-                                <TableCell align="left">{formatDate(mindmap.updatedAt)}</TableCell>
-                                <TableCell padding="none">
-                                  <IconButton
-                                    onClick={() => {
-                                      this.deactivateKpi(mindmap.id);
-                                    }}
-                                  >
-                                    <DeleteIcon color="primary" />
-                                  </IconButton>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        {emptyRows > 0 && (
-                          <TableRow style={{ height: 49 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={mindmaps.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    backIconButtonProps={{
-                      "aria-label": "Previous Page"
-                    }}
-                    nextIconButtonProps={{
-                      "aria-label": "Next Page"
-                    }}
-                    onChangePage={this.handleChangePage}
-                    onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  />
-                  <br/>
-                  <br/>
-                  <Fab component={Link} color="primary" aria-label="Add" to={`/mindmap`} className={classes.fab}>
-                    <AddIcon />
-                  </Fab>
-                </CardContent>
-              </Card>
+          <Grid container justify="center">
+            <Grid spacing={12} container lg={10} alignItems="center" justify="center">
+              <Grid item xs={12} md={10}>
+                <SectionHeader title="" subtitle="" />
+                <Card className={classes.card}>
+                  <CardContent>
+                    <div>
+                      <Typography variant="h7" color="secondary" gutterBottom>
+                        Mind maps for {getOrgName()}<br/><br/>
+                      </Typography>
+                    </div>
+                    <div className={classes.tableWrapper}>
+                      <Table className={classes.table} aria-labelledby="tableTitle">
+                        <EnhancedTableHead
+                          numSelected={selected.length}
+                          rows={rows}
+                          order={order}
+                          orderBy={orderBy}
+                          onRequestSort={this.handleRequestSort}
+                          rowCount={mindmaps.length}
+                        />
+                        <TableBody>
+                          {stableSort(mindmaps, getSorting(order, orderBy))
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map(mindmap => {
+                              const isSelected = this.isSelected(mindmap.id);
+                              return (
+                                <TableRow
+                                  hover
+                                  aria-checked={isSelected}
+                                  tabIndex={-1}
+                                  key={mindmap.id}
+                                  selected={isSelected}
+                                >
+                                  <TableCell component="th" scope="row" padding="none">
+                                    <IconButton
+                                      onClick={() => {
+                                        this.setEditRedirect(mindmap.id);
+                                      }}
+                                    >
+                                      <EditIcon color="primary" />
+                                    </IconButton>
+                                  </TableCell>
+                                  <TableCell align="left">{mindmap.mapName}</TableCell>
+                                  <TableCell align="left">{mindmap.mapDescription}</TableCell>
+                                  <TableCell align="left">{formatDate(mindmap.createdAt)}</TableCell>
+                                  <TableCell align="left">{formatDate(mindmap.updatedAt)}</TableCell>
+                                  <TableCell padding="none">
+                                    <IconButton
+                                      onClick={() => {
+                                        this.deactivateKpi(mindmap.id);
+                                      }}
+                                    >
+                                      <DeleteIcon color="primary" />
+                                    </IconButton>
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                          {emptyRows > 0 && (
+                            <TableRow style={{ height: 49 * emptyRows }}>
+                              <TableCell colSpan={6} />
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25]}
+                      component="div"
+                      count={mindmaps.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      backIconButtonProps={{
+                        "aria-label": "Previous Page"
+                      }}
+                      nextIconButtonProps={{
+                        "aria-label": "Next Page"
+                      }}
+                      onChangePage={this.handleChangePage}
+                      onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                    />
+                    <br/>
+                    <br/>
+                    <Fab component={Link} color="primary" aria-label="Add" to={`/mindmap`} className={classes.fab}>
+                      <AddIcon />
+                    </Fab>
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
         </div>

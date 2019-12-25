@@ -24,8 +24,8 @@ import { createId, createNewMapJson } from "./MindMapFunctions";
 import TextField from "@material-ui/core/TextField";
 import { createTreeLayout } from "./MindmapLayout";
 import { hasChildren, hasParent, findNode, findParentNode, getNodeById, getNodeJson} from "./JsonNodeFunctions";
-import { jsonTestData } from "./TestJsonData";
-import { styles } from "./MindMapStyles";
+import { jsonTestData } from "./save/TestJsonData";
+import { styles } from "../styles/MindMapStyles";
 
 //<editor-fold desc="// Constant declarations">
 

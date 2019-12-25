@@ -133,34 +133,18 @@ class Login extends React.Component {
         <form onSubmit={this.handleSubmit} noValidate >
           <div className={classes.root}>
             <Grid container justify="center">
-              <Grid
-                spacing={24}
-                alignItems="center"
-                justify="center"
-                container
-                className={classes.grid}
-              >
+              <Grid spacing={24} alignItems="center" justify="center" container className={classes.grid}>
                 <Grid item xs={12} md={6}>
                   <SectionHeader title="" subtitle="" />
                   <Card className={classes.card}>
                     <CardContent>
-                      <Typography
-                        variant="h5"
-                        component="h2"
-                        color="secondary"
-                        gutterBottom
-                      >
+                      <Typography variant="h5" component="h2" color="secondary" gutterBottom>
                         Please login
                       </Typography>
                       <Typography component="div">
                         or signup <Link to={`/signup`}>here</Link>
                       </Typography>
-                      <Typography
-                        variant="h6"
-                        component="h2"
-                        color="secondary"
-                        gutterBottom
-                      >
+                      <Typography variant="h6" component="h2" color="secondary" gutterBottom>
                         {this.state.msgText}
                       </Typography>
                       <Typography variant="h5" component="h2">

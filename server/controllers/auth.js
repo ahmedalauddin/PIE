@@ -71,7 +71,7 @@ module.exports = {
               `${mvcType} authenticate -> returning token ${token} as cookie`
             );
 
-            let sql = "update `Persons` set lastLogin = CURRENT_TIMESTAMP where id = " + p.id;
+            let sql = "update Persons set lastLogin = CURRENT_TIMESTAMP where id = " + p.id;
             logger.debug(`auth.js, setLastLogin -> sql: ${sql}`);
             models.sequelize.query(sql);
 

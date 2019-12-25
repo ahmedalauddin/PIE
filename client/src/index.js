@@ -4,8 +4,9 @@
  * Created:  2019-02-16 11:29:38
  * Author:   Brad Kaufman
  * -----
- * Modified: 2019-03-16 17:23:07
- * Editor:   Darrin Tisdale
+ * Modified: 2019-12-23
+ * Changes:  Adding PersistGate for redux-persist.
+ * Editor:   Brad Kaufman
  */
 import React from "react";
 import * as ReactDOM from "react-dom";
@@ -15,7 +16,10 @@ import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import Log from "./util/Log";
 import { Provider } from "react-redux";
-import { store } from "./redux";
+import { store, persistor } from "./redux";
+import { PersistGate } from "redux-persist/lib/integration/react";
+
+const LoadingView = () => <div>Loading...</div>;
 
 // configure logging
 if (process.env.NODE_ENV !== "production") {
@@ -27,13 +31,14 @@ if (process.env.NODE_ENV !== "production") {
 ReactDOM.render(
   <BrowserRouter>
     <Provider store={store}>
-      <App />
+      <PersistGate loading={<LoadingView />} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>
   </BrowserRouter>,
   document.getElementById("root")
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
+// If you want your app to work offline and load faster, you can change unregister() to register() below.
+// Note this comes with some pitfalls. Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();

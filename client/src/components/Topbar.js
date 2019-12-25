@@ -71,7 +71,7 @@ const styles = theme => ({
   }
 });
 
-const NotLoggedInMenu = [
+const LoginMenu = [
   {
     label: "Login",
     pathname: "/login"
@@ -117,7 +117,7 @@ const AdminMenu = [
   }
 ];
 
-const LoggedInMenu = [
+const StandardMenu = [
   {
     label: "Dashboard",
     pathname: "/paneldashboard"
@@ -131,20 +131,8 @@ const LoggedInMenu = [
     pathname: "/search"
   },
   {
-    label: "Projects",
-    pathname: "/projectdashboard"
-  },
-  {
-    label: "Organizations",
-    pathname: "/orgdashboard"
-  },
-  {
     label: "Analytics",
     pathname: "/analytics"
-  },
-  {
-    label: "Client Filter",
-    pathname: "/clientorg"
   },
   {
     label: "Logout",
@@ -160,9 +148,13 @@ function getMenu(menuType) {
   var menu = null;
 
   if (menuType === "notLoggedIn") {
-    menu = NotLoggedInMenu;
+    menu = LoginMenu;
+  } else if (menuType === "standard") {
+    menu = StandardMenu;
+  } else if (menuType === "admin") {
+    menu = AdminMenu;
   } else {
-    menu = LoggedInMenu;
+    menu = LoginMenu;
   }
   return menu;
 }
@@ -199,6 +191,34 @@ function getAppbarValue(menuType, currentPath)  {
     }
     if (currentPath === "/about") {
       value = 9;
+    }
+  } else if (menuType === "initial") {
+    if (currentPath === "/paneldashboard") {
+      value = 0;
+    }
+    if (currentPath === "/mindmaplist") {
+      value = 1;
+    }
+    if (currentPath === "/search") {
+      value = 2;
+    }
+    if (currentPath === "/projectdashboard") {
+      value = 3;
+    }
+    if (currentPath === "/listorgs") {
+      value = 4;
+    }
+    if (currentPath === "/analytics") {
+      value = 5;
+    }
+    if (currentPath === "/clientorg") {
+      value = 6;
+    }
+    if (currentPath === "/logout") {
+      value = 7;
+    }
+    if (currentPath === "/about") {
+      value = 8;
     }
   } else {
     if (currentPath === "/paneldashboard") {
@@ -266,12 +286,13 @@ class Topbar extends Component {
     const { classes, location } = this.props;
     const currentPath = location ? location.pathname : "/";
     let menuType = "";
-    if (isLoggedIn() && !this.props.loggedOut) {
-      menuType = "loggedIn";
+    if (isLoggedIn() && !this.props.loggedOut && isAdministrator()) {
+      menuType = "admin";
+    } else if (isLoggedIn() && !this.props.loggedOut && !isAdministrator()) {
+      menuType = "standard";
     } else {
       menuType = "notLoggedIn";
     }
-    let isAdmin =  isAdministrator();
     let menu = getMenu(menuType);
 
     return (

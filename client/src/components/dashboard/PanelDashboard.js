@@ -19,7 +19,7 @@ import { Redirect } from "react-router-dom";
 import { getOrgName } from "../../redux";
 import DashboardFilter from "./DashboardFilter";
 import ProjectPanelList from "./ProjectPanelList";
-import { styles } from "./DashboardStyles";
+import { styles } from "../styles/DashboardStyles";
 
 class PanelDashboard extends Component {
   constructor(props) {
@@ -85,15 +85,15 @@ class PanelDashboard extends Component {
         <div className={classes.root}>
           <Grid container justify="center" direction="column" alignItems="center">
             <Grid item xs={12} md={10}>
-              <Grid container spacing={24} justify="center" alignItems="center" className={classes.grid}>
-                <Typography variant="subtitle1" color="secondary" gutterBottom>
-                  Projects listed for {getOrgName()}
-                </Typography>
-              </Grid>
-              <Grid container direction="row" justify="center" alignItems="flex-end">
-                <DashboardFilter allClients={false} />
-                <ProjectPanelList allClients={false} />
-              </Grid>
+              <Typography variant="subtitle1" color="secondary" gutterBottom>
+                Projects listed for {getOrgName()}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <DashboardFilter allClients={false} />
+            </Grid>
+            <Grid item xs={12} md={10}>
+              <ProjectPanelList allClients={false} />
             </Grid>
           </Grid>
         </div>

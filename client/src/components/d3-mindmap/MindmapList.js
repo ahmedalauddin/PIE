@@ -5,8 +5,9 @@
  * Desc:     List of mind maps for an organization.  Used to select which one to edit.
  * Author:   Brad Kaufman
  *
- * Modified: 2019-12-23
- * Changes:  Format list to be centered on the screen.
+ * Modified: 2019-12-26
+ * Changes:  Format list to be centered on the screen.  Removed maxWidth parameter on `card` from `const styles` to allow
+ *           the component to be centered on the screen.  Changed delete button to deactivateMindmap().
  * Editor:   Brad Kaufman
  */
 import React, { Component } from "react";
@@ -39,7 +40,8 @@ const rows = [
   { id: "title", numeric: false, disablePadding: false, label: "Title" },
   { id: "description", numeric: false, disablePadding: false, label: "Description" },
   { id: "createdAt", numeric: false, disablePadding: false, label: "Created" },
-  { id: "updatedAt", numeric: false, disablePadding: true, label: "Updated" }
+  { id: "updatedAt", numeric: false, disablePadding: false, label: "Updated" },
+  { id: "delete", numeric: false, disablePadding: true, label: "" }
 ];
 
 function formatDate(dateInput) {
@@ -80,7 +82,6 @@ const styles = theme => ({
   card: {
     padding: theme.spacing.unit * 3,
     textAlign: "left",
-    maxWidth: 1200,
     color: theme.palette.text.secondary
   },
   secondaryHeading: {
@@ -94,7 +95,7 @@ const styles = theme => ({
     flexBasis: "15%"
   },
   wideColumn: {
-    flexBasis: "35%"
+    flexBasis: "30%"
   },
   link: {
     color: theme.palette.primary.main,
@@ -303,7 +304,7 @@ class MindmapList extends Component {
                                   <TableCell padding="none">
                                     <IconButton
                                       onClick={() => {
-                                        this.deactivateKpi(mindmap.id);
+                                        this.deactivateMindmap(mindmap.id);
                                       }}
                                     >
                                       <DeleteIcon color="primary" />

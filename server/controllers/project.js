@@ -436,7 +436,7 @@ module.exports = {
         (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per  \
         where P.id = PP.projectId and Per.id = PP.personId and PP.owner = '1') as owners, \
         (select group_concat(concat(' ', Per.firstName, ' ', Per.lastName)) from ProjectPersons PP, Persons Per  \
-        where P.id = PP.projectId and Per.id = PP.personId) as team \
+        where P.id = PP.projectId and Per.id = PP.personId and PP.inProject = '1') as team \
         from Projects P left outer join ProjectStatuses PS on P.statusId = PS.id \
         left outer join Organizations O on P.orgId = O.id \
         left outer join Kpis K on P.mainKpiId = K.id "

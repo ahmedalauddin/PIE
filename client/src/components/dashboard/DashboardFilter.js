@@ -20,7 +20,7 @@ import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import Button from "@material-ui/core/Button";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import { styles } from "./DashboardStyles";
+import { styles } from "../styles/DashboardStyles";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

@@ -15,7 +15,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Typography from "@material-ui/core/Typography/index";
 import { Redirect } from "react-router-dom";
 import moment from "moment/moment";
-import { styles } from "./DashboardStyles";
+import { styles } from "../styles/DashboardStyles";
 import DashboardFilter from "./DashboardFilter";
 import ProjectPanelList from "./ProjectPanelList";
 

@@ -1,95 +1,84 @@
 /**
  * Project:  valueinfinity-mvp
- * File:     /client/src/components/styles/DashboardStyles.js
- * Created:  2019-03-28
+ * File:     /client/src/components/dashboard/DashboardStyles.js
+ * Desc:     Commond styles for project dashboards.
+ * Created:  2019-10-08
  * Author:   Brad Kaufman
  * -----
- * Modified:
- * Editor:
+ * Modified: 2019-12-26
+ * Changes:  Removing maxWidth from card style to allow component to be centered on the screen.
+ * Editor:   Brad Kaufman
  */
-const styles = theme => ({
+export const styles = theme => ({
+  chip: {
+    margin: 2,
+  },
+  filterSelect: {
+    alignItems: "flex-end"
+  },
+  filters: {
+    alignItems: "flex-end"
+  },
+  noLabel: {
+    marginTop: theme.spacing.unit * 3
+  },
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.grey['100'],
-    overflow: 'hidden',
+    backgroundColor: theme.palette.grey["100"],
+    overflow: "hidden",
+    backgroundSize: "cover",
+    backgroundPosition: "0 400px",
     paddingBottom: 200
   },
   grid: {
-    width: 1200,
-    margin: `0 ${theme.spacing.unit * 2}px`,
-    [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 20px)'
+    marginTop: 40,
+    [theme.breakpoints.down("sm")]: {
+      width: "calc(100% - 20px)"
     }
   },
-  loadingState: {
-    opacity: 0.05
+  card: {
+    padding: theme.spacing.unit * 3,
+    textAlign: "left",
+    color: theme.palette.text.secondary
   },
   paper: {
     padding: theme.spacing.unit * 3,
-    textAlign: 'left',
+    textAlign: "left",
     color: theme.palette.text.secondary
   },
-  rangeLabel: {
-    display: "flex",
-    justifyContent: "space-between",
-    paddingTop: theme.spacing.unit * 2
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+    flexBasis: "15%",
+    flexShrink: 0,
   },
-  topBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
   },
-  outlinedButton: {
-    textTransform: "uppercase",
-    margin: theme.spacing.unit
-  },
-  actionButton: {
-    textTransform: "uppercase",
+  formControl: {
     margin: theme.spacing.unit,
-    width: 152,
-    height: 36
+    minWidth: 170,
+    maxWidth: 600,
   },
-  blockCenter: {
-    padding: theme.spacing.unit * 2,
-    textAlign: 'center'
+  chips: {
+    display: "flex",
+    flexWrap: "wrap"
   },
-  block: {
-    padding: theme.spacing.unit * 2,
+  details: {
+    alignItems: "center",
   },
-  loanAvatar: {
-    display: 'inline-block',
-    verticalAlign: 'center',
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    marginBottom: -2,
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.main
+  column: {
+    flexBasis: "20%"
   },
-  interestAvatar: {
-    display: 'inline-block',
-    verticalAlign: 'center',
-    width: 16,
-    height: 16,
-    marginRight: 10,
-    marginBottom: -2,
-    color: theme.palette.primary.contrastText,
-    backgroundColor: theme.palette.primary.light
+  narrowColumn: {
+    flexBasis: "8%"
   },
-  inlining: {
-    display: 'inline-block',
-    marginRight: 10
-  },
-  buttonBar: {
-    display: 'flex'
-  },
-  noBorder: {
-    borderBottomStyle: 'hidden'
-  },
-  mainBadge: {
-    textAlign: 'center',
-    marginTop: theme.spacing.unit * 4,
-    marginBottom: theme.spacing.unit * 4
+  link: {
+    color: theme.palette.primary.main,
+    textDecoration: "none",
+    "&:hover": {
+      textDecoration: "underline",
+    }
   }
 });
 

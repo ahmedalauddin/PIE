@@ -18,11 +18,9 @@ import moment from "moment/moment";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel/index";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails/index";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary/index";
-import ExpansionPanelActions from "@material-ui/core/ExpansionPanelActions/index";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab/index";
 import AddIcon from "@material-ui/icons/Add";
-import CardContent from "@material-ui/core/CardContent/index";
 
 const rows = [
   { id: "name", numeric: false, disablePadding: true, label: "Project Name" },

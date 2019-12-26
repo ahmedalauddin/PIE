@@ -80,10 +80,6 @@ const LoginMenu = [
 
 const AdminMenu = [
   {
-    label: "Login",
-    pathname: "/login"
-  },
-  {
     label: "Dashboard",
     pathname: "/paneldashboard"
   },
@@ -110,6 +106,10 @@ const AdminMenu = [
   {
     label: "Client Filter",
     pathname: "/clientorg"
+  },
+  {
+    label: "Logout",
+    pathname: "/logout"
   },
   {
     label: "About",
@@ -161,38 +161,35 @@ function getMenu(menuType) {
 
 function getAppbarValue(menuType, currentPath)  {
   var value = 0;
-  if (menuType === "initial") {
-    if (currentPath === "/login") {
+  if (menuType === "admin") {
+    if (currentPath === "/paneldashboard") {
       value = 0;
     }
-    if (currentPath === "/paneldashboard") {
+    if (currentPath === "/mindmaplist") {
       value = 1;
     }
-    if (currentPath === "/mindmaplist") {
+    if (currentPath === "/search") {
       value = 2;
     }
-    if (currentPath === "/search") {
+    if (currentPath === "/projectdashboard") {
       value = 3;
     }
-    if (currentPath === "/projectdashboard") {
+    if (currentPath === "/listorgs") {
       value = 4;
     }
-    if (currentPath === "/listorgs") {
+    if (currentPath === "/analytics") {
       value = 5;
     }
-    if (currentPath === "/analytics") {
+    if (currentPath === "/clientorg") {
       value = 6;
     }
-    if (currentPath === "/clientorg") {
+    if (currentPath === "/logout") {
       value = 7;
     }
-    if (currentPath === "/logout") {
+    if (currentPath === "/about") {
       value = 8;
     }
-    if (currentPath === "/about") {
-      value = 9;
-    }
-  } else if (menuType === "initial") {
+  } else if (menuType === "standard") {
     if (currentPath === "/paneldashboard") {
       value = 0;
     }
@@ -221,32 +218,8 @@ function getAppbarValue(menuType, currentPath)  {
       value = 8;
     }
   } else {
-    if (currentPath === "/paneldashboard") {
+    if (currentPath === "/login") {
       value = 0;
-    }
-    if (currentPath === "/mindmaplist") {
-      value = 1;
-    }
-    if (currentPath === "/search") {
-      value = 2;
-    }
-    if (currentPath === "/projectdashboard") {
-      value = 3;
-    }
-    if (currentPath === "/listorgs") {
-      value = 4;
-    }
-    if (currentPath === "/analytics") {
-      value = 5;
-    }
-    if (currentPath === "/clientorg") {
-      value = 6;
-    }
-    if (currentPath === "/logout") {
-      value = 7;
-    }
-    if (currentPath === "/about") {
-      value = 8;
     }
   }
   return value;

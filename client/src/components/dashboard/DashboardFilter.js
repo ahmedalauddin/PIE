@@ -55,6 +55,7 @@ class DashboardFilter extends Component {
       orgId: "",
       organization:"",
       orgName: "",
+      isClicked: false,
       selected: [],
       selectedYrs: [],
       projects: [],
@@ -213,6 +214,7 @@ class DashboardFilter extends Component {
               <Button
                 variant="contained"
                 color="primary"
+                disabled={this.state.isClicked}
                 onClick={this.updateFilterValues}
                 className={classes.secondary}
               >

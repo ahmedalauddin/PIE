@@ -174,7 +174,7 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/projectdashboard") {
       value = 3;
     }
-    if (currentPath === "/listorgs") {
+    if (currentPath === "/orgdashboard") {
       value = 4;
     }
     if (currentPath === "/analytics") {
@@ -202,7 +202,7 @@ function getAppbarValue(menuType, currentPath)  {
     if (currentPath === "/projectdashboard") {
       value = 3;
     }
-    if (currentPath === "/listorgs") {
+    if (currentPath === "/orgdashboard") {
       value = 4;
     }
     if (currentPath === "/analytics") {
